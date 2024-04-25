@@ -811,7 +811,58 @@ namespace GLTFast.Export
             }
             var tasks = m_Settings.Deterministic ? null : new List<Task>(m_Meshes.Count);
 
-            var meshDataArray = UnityEngine.Mesh.AcquireReadOnlyMeshData(m_UnityMeshes);
+            using var meshDataArray = UnityEngine.Mesh.AllocateWritableMeshData(m_UnityMeshes.Count);
+            
+            for (int i = 0; i < m_UnityMeshes.Count; i++)
+            {
+                var mesh = m_UnityMeshes[i];
+                var meshData = meshDataArray[i];
+                
+                mesh.indexBufferTarget |= GraphicsBuffer.Target.Raw;
+                using var indexBuf = mesh.GetIndexBuffer();
+                var requestIndexBuf = AsyncGPUReadback.Request(indexBuf);
+
+                mesh.vertexBufferTarget |= GraphicsBuffer.Target.Raw;
+                meshData.SetVertexBufferParams(mesh.vertexCount, mesh.GetVertexAttributes());
+
+                for (int bufIndex = 0; bufIndex < mesh.vertexBufferCount; bufIndex++)
+                {
+                    using var vertexBuf = mesh.GetVertexBuffer(bufIndex);
+                    var requestVertexBuf = AsyncGPUReadback.Request(vertexBuf);
+                    requestVertexBuf.WaitForCompletion();
+                    if (requestVertexBuf.hasError)
+                        return false;
+                    
+                    using var nativeVertices = requestVertexBuf.GetData<byte>();
+                    var pos = meshData.GetVertexData<byte>(bufIndex);
+                    nativeVertices.CopyTo(pos);
+                }
+
+                requestIndexBuf.WaitForCompletion();
+                if (requestIndexBuf.hasError)
+                    return false;
+                
+                using var nativeIndices = requestIndexBuf.GetData<ushort>();
+                meshData.SetIndexBufferParams(indexBuf.count, mesh.indexFormat);
+                var ind = meshData.GetIndexData<ushort>();
+                nativeIndices.CopyTo(ind);
+                
+                meshData.subMeshCount = mesh.subMeshCount;
+                for (int j = 0; j < meshData.subMeshCount; j++)
+                {
+                    var orig = mesh.GetSubMesh(j);
+                    var descr = new SubMeshDescriptor(orig.indexStart, orig.indexCount, orig.topology);
+                    // The submeshes come directly from the mesh, so they must 
+                    // be valid. Disable checks for optimized performance.
+                    var flags 
+                        = MeshUpdateFlags.DontValidateIndices
+                        | MeshUpdateFlags.DontResetBoneBounds
+                        | MeshUpdateFlags.DontNotifyMeshUsers
+                        | MeshUpdateFlags.DontRecalculateBounds;
+                    meshData.SetSubMesh(j, descr, flags);
+                }
+            }
+
             Profiler.EndSample();
             for (var meshId = 0; meshId < m_Meshes.Count; meshId++)
             {
@@ -842,7 +893,6 @@ namespace GLTFast.Export
             {
                 await Task.WhenAll(tasks);
             }
-            meshDataArray.Dispose();
             return true;
         }
 
@@ -2003,14 +2053,6 @@ namespace GLTFast.Export
         int AddMesh(UnityEngine.Mesh uMesh)
         {
             int meshId;
-
-#if !UNITY_EDITOR
-            if (!uMesh.isReadable)
-            {
-                m_Logger?.Error(LogCode.MeshNotReadable, uMesh.name);
-                return -1;
-            }
-#endif
 
             if (m_UnityMeshes != null)
             {
