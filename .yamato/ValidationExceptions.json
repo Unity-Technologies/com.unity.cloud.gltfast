@@ -3,12 +3,12 @@
         {
             "ValidationTest": "API Validation",
             "ExceptionMessage": "Breaking changes require a new major version.",
-            "PackageVersion": "6.10.3-pre.1"
+            "PackageVersion": "6.10.3"
         },
         {
             "ValidationTest": "API Validation",
             "ExceptionMessage": "Additions require a new minor or major version.",
-            "PackageVersion": "6.10.3-pre.1"
+            "PackageVersion": "6.10.3"
         }
     ],
     "WarningExceptions": []
