@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [6.11.0] - 2025-03-13
 
 ### Added
 - [GltfImport.Load](xref:GLTFast.GltfImportBase.Load(Unity.Collections.NativeArray{System.Byte}.ReadOnly,Uri,GLTFast.ImportSettings,CancellationToken)) overload that accept glTF data in form of [NativeArray&lt;byte&gt;.ReadOnly](xref:Unity.Collections.NativeArray`1.ReadOnly).
@@ -14,14 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - (Performance) By default glTF and KTX data is not copied to managed memory implicitly when loading glTFs (true for Unity 2021 LTS or newer).
 
-### Fixed
-
-### Removed
-
 ### Deprecated
 - [GltfImport.LoadGltfBinary](xref:GLTFast.GltfImportBase.LoadGltfBinary*) (in favor of the generic [GltfImport.Load](xref:GLTFast.GltfImportBase.Load*))
-
-### Security
 
 ## [6.10.3] - 2025-02-21
 
