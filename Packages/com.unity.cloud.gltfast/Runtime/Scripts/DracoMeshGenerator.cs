@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 using Unity.Collections;
@@ -17,10 +18,8 @@ using Mesh = UnityEngine.Mesh;
 
 namespace GLTFast {
 
-    class DracoMeshGenerator : MeshGeneratorBase {
-
-        Bounds? m_Bounds;
-
+    class DracoMeshGenerator : MeshGeneratorBase
+    {
         readonly bool m_NeedsNormals;
         readonly bool m_NeedsTangents;
 
@@ -33,12 +32,6 @@ namespace GLTFast {
             )
             : base(meshName)
         {
-            // TODO: Add support for decoding multiple primitives into one mesh with sub-meshes.
-            Assert.IsTrue(
-                primitives.Count == 1,
-                "Draco-compressed, multi primitives/sub-mesh meshes are not supported."
-                );
-
             Assert.IsNull(
                 subMeshAssignments,
                 "Draco-compressed, multi primitives/sub-mesh meshes are not supported."
@@ -48,28 +41,32 @@ namespace GLTFast {
             var hasMorphTargets = morphTargets != null && morphTargets.Length > 0;
 
             var vertexCount = 0;
-            var vertexIntervals = hasMorphTargets
-                ? new int[primitives.Count + 1]
-                : null;
+            var indicesCount = 0;
+            var primitivesCount = primitives.Count;
+            var vertexIntervals = new int[primitivesCount + 1];
+            var indicesIntervals = new int[primitivesCount + 1];
+            
+            Bounds?[] bounds = new Bounds?[primitivesCount];
 
-            for (var index = 0; index < primitives.Count; index++)
+            for (var index = 0; index < primitivesCount; index++)
             {
                 var primitive = primitives[index];
                 Assert.IsTrue(primitive.IsDracoCompressed);
 
                 var posAccessor = ((IGltfBuffers)gltfImport).GetAccessor(primitive.attributes.POSITION);
+                var indicesAccessor = ((IGltfBuffers)gltfImport).GetAccessor(primitive.indices);
 
-                if (hasMorphTargets)
-                {
-                    vertexIntervals[index] = vertexCount;
-                }
+                vertexIntervals[index] = vertexCount;
                 vertexCount += posAccessor.count;
+                
+                indicesIntervals[index] = indicesCount;
+                indicesCount += indicesAccessor.count;
 
-                var bounds = posAccessor.TryGetBounds();
+                var subMeshBounds = posAccessor.TryGetBounds();
 
-                if (bounds.HasValue)
+                if (subMeshBounds.HasValue)
                 {
-                    m_Bounds = bounds.Value;
+                    bounds[index] = subMeshBounds.Value;
                 }
                 else
                 {
@@ -87,6 +84,9 @@ namespace GLTFast {
                     m_NeedsTangents |= material.RequiresTangents;
                 }
             }
+            
+            vertexIntervals[vertexIntervals.Length - 1] = vertexCount;
+            indicesIntervals[indicesIntervals.Length - 1] = indicesCount;
 
             if (hasMorphTargets)
             {
@@ -100,7 +100,7 @@ namespace GLTFast {
                     );
             }
 
-            m_CreationTask = Decode(primitives, gltfImport);
+            m_CreationTask = Decode(primitives, vertexIntervals, indicesIntervals, bounds, gltfImport);
         }
 
         void InitializeMorphTargets(
@@ -112,10 +112,9 @@ namespace GLTFast {
             GltfImportBase gltfImport
             )
         {
-            vertexIntervals[vertexIntervals.Length-1] = vertexCount;
             m_MorphTargetsGenerator = new MorphTargetsGenerator(
                 vertexCount,
-                1,
+                primitives.Count,
                 morphTargets.Length,
                 morphTargetNames,
                 morphTargets[0].NORMAL >= 0,
@@ -128,50 +127,41 @@ namespace GLTFast {
                 for (var morphTargetIndex = 0; morphTargetIndex < primitive.targets.Length; morphTargetIndex++)
                 {
                     var target = primitive.targets[morphTargetIndex];
-                    m_MorphTargetsGenerator.AddMorphTarget( 0, morphTargetIndex, target);
+                    m_MorphTargetsGenerator.AddMorphTarget(vertexIntervals[subMesh], morphTargetIndex, target);
                 }
             }
         }
 
-        async Task<Mesh> Decode(IReadOnlyList<MeshPrimitiveBase> primitives, IGltfBuffers buffers)
+        async Task<Mesh> Decode(
+            IReadOnlyList<MeshPrimitiveBase> primitives,
+            int[] vertexIntervals,
+            int[] indicesIntervals,
+            Bounds?[] bounds,
+            IGltfBuffers buffers
+            )
         {
             Mesh mesh = null;
-            foreach (var primitive in primitives)
+            var bufferViews = new NativeSlice<byte>[primitives.Count];
+            var attributesArray = new Attributes[primitives.Count];
+
+            for (var index = 0; index < primitives.Count; index++)
             {
-                var dracoExt = primitive.Extensions.KHR_draco_mesh_compression;
-                var buffer = buffers.GetBufferView(dracoExt.bufferView, out _);
-                mesh = await StartDecode(buffer, dracoExt.attributes);
+                var dracoExt = primitives[index].Extensions.KHR_draco_mesh_compression;
+                bufferViews[index] = buffers.GetBufferView(dracoExt.bufferView, out _);
+                attributesArray[index] = dracoExt.attributes;
             }
+            
+            mesh = await StartDecode(bufferViews, attributesArray, vertexIntervals, indicesIntervals, bounds);
 
             if (mesh is null) {
                 return null;
             }
 
-            if (m_Bounds.HasValue) {
-                mesh.bounds = m_Bounds.Value;
-
-                // Setting the sub-meshes' bounds to the overall bounds
-                // Calculating the actual sub-mesh bounds (by iterating the verts referenced
-                // by the sub-mesh indices) would be slow. Also, hardly any glTFs re-use
-                // the same vertex buffer across primitives of a node (which is the
-                // only way a mesh can have sub-meshes)
-                for (var i = 0; i < mesh.subMeshCount; i++) {
-                    var subMeshDescriptor = mesh.GetSubMesh(i);
-                    subMeshDescriptor.bounds = m_Bounds.Value;
-                    mesh.SetSubMesh(
-                        i,
-                        subMeshDescriptor,
-                        MeshUpdateFlags.DontValidateIndices
-                        | MeshUpdateFlags.DontResetBoneBounds
-                        | MeshUpdateFlags.DontNotifyMeshUsers
-                        | MeshUpdateFlags.DontRecalculateBounds
-                        );
-                }
-            } else {
-                mesh.RecalculateBounds();
-            }
-
-            if (m_MorphTargetsGenerator != null) {
+            if (m_MorphTargetsGenerator != null)
+            {
+                var morphTargetsJobHandle = m_MorphTargetsGenerator.GetJobHandle();
+                while (!morphTargetsJobHandle.IsCompleted)
+                    await Task.Yield();
                 await m_MorphTargetsGenerator.ApplyOnMeshAndDispose(mesh);
             }
 
@@ -184,7 +174,7 @@ namespace GLTFast {
             return mesh;
         }
 
-        async Task<Mesh> StartDecode(NativeSlice<byte> data, Attributes dracoAttributes)
+        async Task<Mesh> StartDecode(NativeSlice<byte>[] data, Attributes[] attributesArray, int[] vertexIntervals, int[] indicesIntervals, Bounds?[] bounds)
         {
             var flags = DecodeSettings.ConvertSpace;
             if (m_NeedsTangents)
@@ -200,41 +190,48 @@ namespace GLTFast {
                 flags |= DecodeSettings.ForceUnityVertexLayout;
             }
 
-            return await DracoDecoder.DecodeMesh(data, flags, GenerateAttributeIdMap(dracoAttributes));
+            return await DracoDecoder.DecodeMesh(data, flags, GenerateAttributeIdMaps(attributesArray), vertexIntervals, indicesIntervals, bounds);
         }
 
-        static Dictionary<VertexAttribute, int> GenerateAttributeIdMap(Attributes attributes)
+        static Dictionary<VertexAttribute, int>[] GenerateAttributeIdMaps(Attributes[] attributesArray)
         {
-            var result = new Dictionary<VertexAttribute, int>();
-            if (attributes.POSITION >= 0)
-                result[VertexAttribute.Position] = attributes.POSITION;
-            if (attributes.NORMAL >= 0)
-                result[VertexAttribute.Normal] = attributes.NORMAL;
-            if (attributes.TANGENT >= 0)
-                result[VertexAttribute.Tangent] = attributes.TANGENT;
-            if (attributes.COLOR_0 >= 0)
-                result[VertexAttribute.Color] = attributes.COLOR_0;
-            if (attributes.TEXCOORD_0 >= 0)
-                result[VertexAttribute.TexCoord0] = attributes.TEXCOORD_0;
-            if (attributes.TEXCOORD_1 >= 0)
-                result[VertexAttribute.TexCoord1] = attributes.TEXCOORD_1;
-            if (attributes.TEXCOORD_2 >= 0)
-                result[VertexAttribute.TexCoord2] = attributes.TEXCOORD_2;
-            if (attributes.TEXCOORD_3 >= 0)
-                result[VertexAttribute.TexCoord3] = attributes.TEXCOORD_3;
-            if (attributes.TEXCOORD_4 >= 0)
-                result[VertexAttribute.TexCoord4] = attributes.TEXCOORD_4;
-            if (attributes.TEXCOORD_5 >= 0)
-                result[VertexAttribute.TexCoord5] = attributes.TEXCOORD_5;
-            if (attributes.TEXCOORD_6 >= 0)
-                result[VertexAttribute.TexCoord6] = attributes.TEXCOORD_6;
-            if (attributes.TEXCOORD_7 >= 0)
-                result[VertexAttribute.TexCoord7] = attributes.TEXCOORD_7;
-            if (attributes.WEIGHTS_0 >= 0)
-                result[VertexAttribute.BlendWeight] = attributes.WEIGHTS_0;
-            if (attributes.JOINTS_0 >= 0)
-                result[VertexAttribute.BlendIndices] = attributes.JOINTS_0;
-            return result;
+            var results = new Dictionary<VertexAttribute, int>[attributesArray.Length];
+            for (var i = 0; i < attributesArray.Length; i++)
+            {
+                var attributes = attributesArray[i];
+                var result = new Dictionary<VertexAttribute, int>();
+                results[i] = result;
+                if (attributes.POSITION >= 0)
+                    result[VertexAttribute.Position] = attributes.POSITION;
+                if (attributes.NORMAL >= 0)
+                    result[VertexAttribute.Normal] = attributes.NORMAL;
+                if (attributes.TANGENT >= 0)
+                    result[VertexAttribute.Tangent] = attributes.TANGENT;
+                if (attributes.COLOR_0 >= 0)
+                    result[VertexAttribute.Color] = attributes.COLOR_0;
+                if (attributes.TEXCOORD_0 >= 0)
+                    result[VertexAttribute.TexCoord0] = attributes.TEXCOORD_0;
+                if (attributes.TEXCOORD_1 >= 0)
+                    result[VertexAttribute.TexCoord1] = attributes.TEXCOORD_1;
+                if (attributes.TEXCOORD_2 >= 0)
+                    result[VertexAttribute.TexCoord2] = attributes.TEXCOORD_2;
+                if (attributes.TEXCOORD_3 >= 0)
+                    result[VertexAttribute.TexCoord3] = attributes.TEXCOORD_3;
+                if (attributes.TEXCOORD_4 >= 0)
+                    result[VertexAttribute.TexCoord4] = attributes.TEXCOORD_4;
+                if (attributes.TEXCOORD_5 >= 0)
+                    result[VertexAttribute.TexCoord5] = attributes.TEXCOORD_5;
+                if (attributes.TEXCOORD_6 >= 0)
+                    result[VertexAttribute.TexCoord6] = attributes.TEXCOORD_6;
+                if (attributes.TEXCOORD_7 >= 0)
+                    result[VertexAttribute.TexCoord7] = attributes.TEXCOORD_7;
+                if (attributes.WEIGHTS_0 >= 0)
+                    result[VertexAttribute.BlendWeight] = attributes.WEIGHTS_0;
+                if (attributes.JOINTS_0 >= 0)
+                    result[VertexAttribute.BlendIndices] = attributes.JOINTS_0;
+            }
+
+            return results;
         }
     }
 }
