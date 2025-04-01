@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [6.12.0] - 2025-03-31
 
 ### Added
 - [Playables](https://docs.unity3d.com/Manual/Playables.html) option for runtime animation imports.
@@ -16,12 +16,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - (Import)`InvalidOperationException` on multi-primitive meshes with vertex colors thrown by the native container safety system (fixes [#30](https://github.com/Unity-Technologies/com.unity.cloud.gltfast/issues/30)).
 - (Export) Sub-meshes that have a base vertex other than zero are exported with correct indices now.
 - Reliability issues related to lack of certain async calls in [GltfImport](xref:GLTFast.GltfImport*) and [GltfWriter](xref:GLTFast.GltfWriter*).
-
-### Removed
-
-### Deprecated
-
-### Security
 
 ## [6.11.0] - 2025-03-13
 
