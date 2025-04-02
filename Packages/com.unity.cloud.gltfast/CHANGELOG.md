@@ -10,8 +10,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Playables](https://docs.unity3d.com/Manual/Playables.html) option for runtime animation imports.
 - Support for accessors without a buffer view when importing animation clips.
 
-### Changed
-
 ### Fixed
 - (Import)`InvalidOperationException` on multi-primitive meshes with vertex colors thrown by the native container safety system (fixes [#30](https://github.com/Unity-Technologies/com.unity.cloud.gltfast/issues/30)).
 - (Export) Sub-meshes that have a base vertex other than zero are exported with correct indices now.
