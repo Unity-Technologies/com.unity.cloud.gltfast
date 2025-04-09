@@ -9,6 +9,11 @@
             "ValidationTest": "API Validation",
             "ExceptionMessage": "Additions require a new minor or major version.",
             "PackageVersion": "6.12.1"
+        },
+        {
+            "ValidationTest": "API Validation",
+            "ExceptionMessage": "New assembly \"glTFast.Animation\" may only be added in a new minor or major version.",
+            "PackageVersion": "6.12.1"
         }
     ],
     "WarningExceptions": []
