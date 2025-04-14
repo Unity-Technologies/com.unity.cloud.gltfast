@@ -1026,7 +1026,8 @@ namespace GLTFast.Jobs
         public byte* input;
 
         [WriteOnly]
-        public NativeSlice<float4> result;
+        [NativeDisableUnsafePtrRestriction]
+        public float4* result;
 
         public void Execute(int i)
         {
@@ -1050,7 +1051,8 @@ namespace GLTFast.Jobs
         public ushort* input;
 
         [WriteOnly]
-        public NativeSlice<float4> result;
+        [NativeDisableUnsafePtrRestriction]
+        public float4* result;
 
         public void Execute(int i)
         {
@@ -1164,7 +1166,8 @@ namespace GLTFast.Jobs
         public byte* input;
 
         [WriteOnly]
-        public NativeSlice<float4> result;
+        [NativeDisableUnsafePtrRestriction]
+        public float4* result;
 
         public void Execute(int i)
         {
@@ -2323,10 +2326,11 @@ namespace GLTFast.Jobs
     }
 
     [BurstCompile]
-    struct SortAndNormalizeBoneWeightsJob : IJobParallelFor
+    unsafe struct SortAndNormalizeBoneWeightsJob : IJobParallelFor
     {
 
-        public NativeArray<VBones> bones;
+        [NativeDisableUnsafePtrRestriction]
+        public VBones* bones;
 
         /// <summary>
         /// Number of skin weights that are taken into account (project quality setting)
@@ -2408,9 +2412,10 @@ namespace GLTFast.Jobs
 
 #if GLTFAST_SAFE
     [BurstCompile]
-    struct RenormalizeBoneWeightsJob : IJobParallelFor {
+    unsafe struct RenormalizeBoneWeightsJob : IJobParallelFor {
 
-        public NativeArray<VBones> bones;
+        [NativeDisableUnsafePtrRestriction]
+        public VBones* bones;
 
         public unsafe void Execute(int index) {
             var v = bones[index];
