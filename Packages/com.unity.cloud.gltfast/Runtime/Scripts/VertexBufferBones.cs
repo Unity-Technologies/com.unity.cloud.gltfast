@@ -21,12 +21,14 @@ namespace GLTFast
         readonly ICodeLogger m_Logger;
 
         NativeArray<VBones> m_Data;
+        readonly unsafe byte* m_VDataPtr;
 
-        public VertexBufferBones(int vertexCount, ICodeLogger logger)
+        public unsafe VertexBufferBones(int vertexCount, ICodeLogger logger)
         {
             m_Logger = logger;
             Profiler.BeginSample("AllocateNativeArray");
             m_Data = new NativeArray<VBones>(vertexCount, VertexBufferGeneratorBase.defaultAllocator);
+            m_VDataPtr = (byte*)m_Data.GetUnsafeReadOnlyPtr();
             Profiler.EndSample();
         }
 
@@ -44,8 +46,6 @@ namespace GLTFast
             {
                 m_Logger?.Error(LogCode.SparseAccessor, "bone weights");
             }
-            var vDataPtr = (byte*)m_Data.GetUnsafeReadOnlyPtr();
-
             JobHandle weightsHandle;
             JobHandle jointsHandle;
 
@@ -55,7 +55,7 @@ namespace GLTFast
                     weightsAcc.count,
                     weightsAcc.componentType,
                     weightsByteStride,
-                    (float4*)(vDataPtr + offset * sizeof(VBones)),
+                    (float4*)(m_VDataPtr + offset * sizeof(VBones)),
                     32
                 );
                 if (h.HasValue)
@@ -80,7 +80,7 @@ namespace GLTFast
                     jointsAcc.count,
                     jointsAcc.componentType,
                     jointsByteStride,
-                    (uint4*)(vDataPtr + offset * sizeof(VBones) + sizeof(float4)),
+                    (uint4*)(m_VDataPtr + offset * sizeof(VBones) + sizeof(float4)),
                     32,
                     m_Logger
                 );
@@ -111,18 +111,19 @@ namespace GLTFast
 #endif
                 var job = new SortAndNormalizeBoneWeightsJob
                 {
-                    bones = m_Data,
+                    bones = (VBones*)(m_VDataPtr + offset * sizeof(VBones)),
                     skinWeights = math.max(1, skinWeights)
                 };
-                jobHandle = job.Schedule(m_Data.Length, GltfImport.DefaultBatchCount, jobHandle);
+
+                jobHandle = job.Schedule(weightsAcc.count, GltfImport.DefaultBatchCount, jobHandle);
             }
 #if GLTFAST_SAFE
             else {
                 // Re-normalizing alone is sufficient
                 var job = new RenormalizeBoneWeightsJob {
-                    bones = m_Data,
+                    bones = (VBones*)(m_VDataPtr + offset * sizeof(VBones)),
                 };
-                jobHandle = job.Schedule(m_Data.Length, GltfImport.DefaultBatchCount, jobHandle);
+                jobHandle = job.Schedule(weightsAcc.count, GltfImport.DefaultBatchCount, jobHandle);
             }
 #endif
 

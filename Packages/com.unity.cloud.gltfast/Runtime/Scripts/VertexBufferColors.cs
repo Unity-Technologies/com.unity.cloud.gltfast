@@ -48,7 +48,8 @@ namespace GLTFast
                 colorAcc.componentType,
                 colorAcc.GetAttributeType(),
                 byteStride,
-                m_Data.Slice(offset, colorAcc.count)
+                colorAcc.count,
+                (float4*)((byte*)m_Data.GetUnsafePtr() + offset * sizeof(float4))
             );
             if (h.HasValue)
             {
@@ -92,7 +93,8 @@ namespace GLTFast
             GltfComponentType inputType,
             GltfAccessorAttributeType attributeType,
             int inputByteStride,
-            NativeSlice<float4> output
+            int count,
+            float4* output
             )
         {
             Profiler.BeginSample("PrepareColors32");
@@ -110,7 +112,7 @@ namespace GLTFast
                                 inputByteStride = inputByteStride > 0 ? inputByteStride : 3,
                                 result = output
                             };
-                            jobHandle = job.Schedule(output.Length, GltfImport.DefaultBatchCount);
+                            jobHandle = job.Schedule(count, GltfImport.DefaultBatchCount);
                         }
                         break;
                     case GltfComponentType.Float:
@@ -119,9 +121,9 @@ namespace GLTFast
                             {
                                 input = (byte*)input,
                                 inputByteStride = inputByteStride > 0 ? inputByteStride : 12,
-                                result = (float4*)output.GetUnsafePtr()
+                                result = output
                             };
-                            jobHandle = job.Schedule(output.Length, GltfImport.DefaultBatchCount);
+                            jobHandle = job.Schedule(count, GltfImport.DefaultBatchCount);
                         }
                         break;
                     case GltfComponentType.UnsignedShort:
@@ -132,7 +134,7 @@ namespace GLTFast
                                 inputByteStride = inputByteStride > 0 ? inputByteStride : 6,
                                 result = output
                             };
-                            jobHandle = job.Schedule(output.Length, GltfImport.DefaultBatchCount);
+                            jobHandle = job.Schedule(count, GltfImport.DefaultBatchCount);
                         }
                         break;
                     default:
@@ -152,7 +154,7 @@ namespace GLTFast
                                 inputByteStride = inputByteStride > 0 ? inputByteStride : 4,
                                 result = output
                             };
-                            jobHandle = job.Schedule(output.Length, GltfImport.DefaultBatchCount);
+                            jobHandle = job.Schedule(count, GltfImport.DefaultBatchCount);
                         }
                         break;
                     case GltfComponentType.Float:
@@ -161,9 +163,9 @@ namespace GLTFast
                             {
                                 var job = new Jobs.MemCopyJob
                                 {
-                                    bufferSize = output.Length * 16,
+                                    bufferSize = count * 16,
                                     input = input,
-                                    result = output.GetUnsafeReadOnlyPtr()
+                                    result = output
                                 };
                                 jobHandle = job.Schedule();
                             }
@@ -173,12 +175,12 @@ namespace GLTFast
                                 {
                                     input = (byte*)input,
                                     inputByteStride = inputByteStride,
-                                    result = (float4*)output.GetUnsafePtr()
+                                    result = output
                                 };
 #if UNITY_COLLECTIONS
-                                jobHandle = job.ScheduleBatch(output.Length,GltfImport.DefaultBatchCount);
+                                jobHandle = job.ScheduleBatch(count,GltfImport.DefaultBatchCount);
 #else
-                                jobHandle = job.Schedule(output.Length, GltfImport.DefaultBatchCount);
+                                jobHandle = job.Schedule(count, GltfImport.DefaultBatchCount);
 #endif
                             }
                         }
@@ -189,12 +191,12 @@ namespace GLTFast
                             {
                                 input = (ushort*)input,
                                 inputByteStride = inputByteStride > 0 ? inputByteStride : 8,
-                                result = (float4*)output.GetUnsafePtr()
+                                result = output
                             };
 #if UNITY_COLLECTIONS
-                            jobHandle = job.ScheduleBatch(output.Length,GltfImport.DefaultBatchCount);
+                            jobHandle = job.ScheduleBatch(count,GltfImport.DefaultBatchCount);
 #else
-                            jobHandle = job.Schedule(output.Length, GltfImport.DefaultBatchCount);
+                            jobHandle = job.Schedule(count, GltfImport.DefaultBatchCount);
 #endif
                         }
                         break;
