@@ -56,13 +56,13 @@ publish_cloud_gltfast:
         unzip: true
       packages:
         ignore_artifact: true
-  - path: .yamato/wrench/validation-jobs.yml#validate_-_cloud_gltfast_-_2021_3_52f1_-_windows
+  - path: .yamato/wrench/validation-jobs.yml#validate_-_cloud_gltfast_-_2021_3_46f1_-_windows
     specific_options:
       UTR:
-        location: results/UTR/validate-cloud.gltfast-2021.3.52f1-windows
+        location: results/UTR/validate-cloud.gltfast-2021.3.46f1-windows
         unzip: true
       pvp-results:
-        location: results/pvp/validate-cloud.gltfast-2021.3.52f1-windows
+        location: results/pvp/validate-cloud.gltfast-2021.3.46f1-windows
         unzip: true
       packages:
         ignore_artifact: true
@@ -278,13 +278,13 @@ publish_dry_run_cloud_gltfast:
         unzip: true
       packages:
         ignore_artifact: true
-  - path: .yamato/wrench/validation-jobs.yml#validate_-_cloud_gltfast_-_2021_3_52f1_-_windows
+  - path: .yamato/wrench/validation-jobs.yml#validate_-_cloud_gltfast_-_2021_3_46f1_-_windows
     specific_options:
       UTR:
-        location: results/UTR/validate-cloud.gltfast-2021.3.52f1-windows
+        location: results/UTR/validate-cloud.gltfast-2021.3.46f1-windows
         unzip: true
       pvp-results:
-        location: results/pvp/validate-cloud.gltfast-2021.3.52f1-windows
+        location: results/pvp/validate-cloud.gltfast-2021.3.46f1-windows
         unzip: true
       packages:
         ignore_artifact: true

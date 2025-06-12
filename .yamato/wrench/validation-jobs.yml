@@ -13,7 +13,7 @@ validate_-_cloud_gltfast_-_2021_3_-_macos:
   - command: 7z x -aoa wrench-localapv.zip
   - command: pip install semver requests --index-url https://artifactory-slo.bf.unity3d.com/artifactory/api/pypi/pypi/simple
   - command: python PythonScripts/print_machine_info.py
-  - command: unity-downloader-cli -u 2021.3 -c Editor --fast
+  - command: unity-downloader-cli -u 2021.3/staging -c Editor --fast
     timeout: 10
     retries: 3
   - command: upm-pvp create-test-project test-cloud.gltfast --packages "upm-ci~/packages/*.tgz" --unity .Editor
@@ -81,7 +81,7 @@ validate_-_cloud_gltfast_-_2021_3_-_ubuntu:
   - command: 7z x -aoa wrench-localapv.zip
   - command: pip install semver requests --index-url https://artifactory-slo.bf.unity3d.com/artifactory/api/pypi/pypi/simple
   - command: python PythonScripts/print_machine_info.py
-  - command: unity-downloader-cli -u 2021.3 -c Editor --fast
+  - command: unity-downloader-cli -u 2021.3/staging -c Editor --fast
     timeout: 10
     retries: 3
   - command: upm-pvp create-test-project test-cloud.gltfast --packages "upm-ci~/packages/*.tgz" --unity .Editor
@@ -149,7 +149,7 @@ validate_-_cloud_gltfast_-_2021_3_-_windows:
   - command: 7z x -aoa wrench-localapv.zip
   - command: pip install semver requests --index-url https://artifactory-slo.bf.unity3d.com/artifactory/api/pypi/pypi/simple
   - command: python PythonScripts/print_machine_info.py
-  - command: unity-downloader-cli -u 2021.3 -c Editor --fast
+  - command: unity-downloader-cli -u 2021.3/staging -c Editor --fast
     timeout: 10
     retries: 3
   - command: upm-pvp create-test-project test-cloud.gltfast --packages "upm-ci~/packages/*.tgz" --unity .Editor
@@ -205,9 +205,9 @@ validate_-_cloud_gltfast_-_2021_3_-_windows:
   labels:
   - Packages:cloud.gltfast
 
-# PVP Editor and Playmode tests for Validate - cloud.gltfast - 2021.3.52f1 - windows (2021.3.52f1 - Windows).
-validate_-_cloud_gltfast_-_2021_3_52f1_-_windows:
-  name: Validate - cloud.gltfast - 2021.3 - windows
+# PVP Editor and Playmode tests for Validate - cloud.gltfast - 2021.3.46f1 - windows (2021.3.46f1 - Windows).
+validate_-_cloud_gltfast_-_2021_3_46f1_-_windows:
+  name: Validate - cloud.gltfast - 2021.3.46f1 - windows
   agent:
     image: package-ci/win10:default
     type: Unity::VM
@@ -217,7 +217,7 @@ validate_-_cloud_gltfast_-_2021_3_52f1_-_windows:
   - command: 7z x -aoa wrench-localapv.zip
   - command: pip install semver requests --index-url https://artifactory-slo.bf.unity3d.com/artifactory/api/pypi/pypi/simple
   - command: python PythonScripts/print_machine_info.py
-  - command: unity-downloader-cli -u 2021.3 -c Editor --fast
+  - command: unity-downloader-cli -u 2021.3.46f1 -c Editor --fast
     timeout: 10
     retries: 3
   - command: upm-pvp create-test-project test-cloud.gltfast --packages "upm-ci~/packages/*.tgz" --unity .Editor
