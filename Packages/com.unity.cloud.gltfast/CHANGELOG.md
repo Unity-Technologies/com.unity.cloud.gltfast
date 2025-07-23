@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [6.13.1] - 2025-07-17
 
 ### Added
 - (Test) Menu items that make switching test setups and render pipelines more accessible.
@@ -23,10 +23,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 - [Playables](https://docs.unity3d.com/Manual/Playables.html) option for runtime animation imports.
 - (Documentation) Use case for custom [Playables](https://docs.unity3d.com/Manual/Playables.html) animation implementation.
-
-### Deprecated
-
-### Security
 
 ## [6.13.0] - 2025-06-10
 
