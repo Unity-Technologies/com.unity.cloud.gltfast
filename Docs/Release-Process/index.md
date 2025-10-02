@@ -112,6 +112,25 @@ promoted to UPM. In order for this to be effective, one of the glTFast release
 managers must promote the package on the Go to the
 [glTFast Package Works portal].
 
-[glTFast Package Works portal]: https://package-works.prd.cds.internal.unity3d.com/project?id=6135)
+## Update the `main` branch
+
+Branch `main` serves as base for public contributions, so it has to be updated just like `develop`:
+
+1. Set `main` to the commit that the `release/X.Y.Z` branch was based on (has to be on `develop`'s timeline; see first step of [Prepare Release Branch](#prepare-release-branch)). This can be achieved via a local fast-forward merge (or git reset).
+1. Push `main` internally.
+    1. Temporarily un-protect the `main` branch by disabling the *Lock branch* and *Do not allow bypassing the above settings* settings in `main`'s branch protection rules.
+    1. Git push `main` to the internal Git repository.
+    1. Revert the branch protection settings.
+
+## Update the Public Repository
+
+1. Push the release tag created in [Publish Internally](#publish-internally) to the [public Git repository]([glTFastPublic]).
+1. Push branch `main` externally
+    1. Temporarily un-protect the `main` branch by disabling the *Do not allow bypassing the above settings* settings in `main`'s branch protection rules.
+    1. Git push `main` to the [public Git repository]([glTFastPublic]).
+    1. Revert the branch protection settings.
+
+[glTFast Package Works portal]: https://package-works.prd.cds.internal.unity3d.com/project?id=6135
 [shiproom channel]: https://unity.slack.com/archives/C043U33AY3B
 [Yamato glTFast project]: https://unity-ci.cds.internal.unity3d.com/project/2268?nav=branches
+[glTFastPublic]: https://github.com/Unity-Technologies/com.unity.cloud.gltfast
