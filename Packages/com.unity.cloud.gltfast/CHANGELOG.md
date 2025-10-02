@@ -9,16 +9,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 ### Changed
-- [TryGetAllUVAccessors](xref:GLTFast.Schema.Attributes.TryGetAllUVAccessors*) only returns the first 8, actually supported UV sets (and not the ninth anymore).
 
 ### Fixed
-- Avoid crash when loading meshes with more than 8 texture coordinate sets by properly limiting them.
 
 ### Removed
 
 ### Deprecated
 
 ### Security
+
+## [6.14.1] - 2025-09-30
+
+### Changed
+- [TryGetAllUVAccessors](xref:GLTFast.Schema.Attributes.TryGetAllUVAccessors*) only returns the first 8, actually supported UV sets (and not the ninth anymore).
+
+### Fixed
+- Avoid crash when loading meshes with more than 8 texture coordinate sets by properly limiting them.
 
 ## [6.14.0] - 2025-09-12
 
