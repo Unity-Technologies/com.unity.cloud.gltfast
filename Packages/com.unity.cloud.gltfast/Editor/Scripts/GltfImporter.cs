@@ -290,6 +290,8 @@ namespace GLTFast.Editor
                 Debug.LogError($"Failed to import {assetPath} (see inspector for details)", this);
             }
             reportItems = reportItemList.ToArray();
+
+            m_Gltf.DisposeRequiredForInstantiationData();
         }
 
         void ImportScene(

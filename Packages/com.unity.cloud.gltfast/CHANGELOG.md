@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 ### Fixed
+- Corrected test cases for `GltfTestModels` importer tests.
+- Properly dispose GPU instancing buffers after Editor imports.
 
 ### Removed
 

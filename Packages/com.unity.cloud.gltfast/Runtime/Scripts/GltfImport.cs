@@ -754,11 +754,31 @@ namespace GLTFast
         }
 
         /// <summary>
+        /// Disposes resources that are required for instantiation.
+        /// Does not dispose imported resources (meshes, materials, textures, etc.).
+        /// </summary>
+        internal void DisposeRequiredForInstantiationData()
+        {
+            if (m_AccessorData != null)
+            {
+                for (var index = 0; index < m_AccessorData.Length; index++)
+                {
+                    m_AccessorData[index]?.Dispose();
+                    m_AccessorData[index] = null;
+                }
+
+                m_AccessorData = null;
+            }
+        }
+
+        /// <summary>
         /// Frees up memory by disposing all sub assets.
         /// There can be no instantiation or other element access afterwards.
         /// </summary>
         public void Dispose()
         {
+            DisposeRequiredForInstantiationData();
+
             if (m_ImportInstances != null)
             {
                 foreach (var importInstance in m_ImportInstances)
@@ -791,15 +811,6 @@ namespace GLTFast
 
             DisposeArray(m_Textures);
             m_Textures = null;
-
-            if (m_AccessorData != null)
-            {
-                foreach (var ad in m_AccessorData)
-                {
-                    ad?.Dispose();
-                }
-                m_AccessorData = null;
-            }
 
             m_MeshAssignments = null;
             DisposeArray(m_Meshes);
