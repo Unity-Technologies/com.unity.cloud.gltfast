@@ -9,7 +9,7 @@ pr_trigger:
       NOT pull_request.push.changes.all match "**/*.md") OR
       pull_request.comment eq "pr"
   dependencies:
-    - .yamato/code-format-check.yml#code_format_check
+    - .yamato/dotnet-format.yml#code_format_dotnet-format
     - .yamato/package-test.yml#tests_pr
     - .yamato/project-test.yml#tests_pr
     - .yamato/project-test.yml#run_pr
@@ -21,7 +21,7 @@ tests_all_trigger:
   triggers:
     expression: |
       push.branch eq "main" OR
-      pull_request.comment eq "all" 
+      pull_request.comment eq "all"
   dependencies:
     - .yamato/package-test.yml#tests_all
     - .yamato/project-test.yml#tests_all

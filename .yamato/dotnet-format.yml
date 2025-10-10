@@ -1,0 +1,31 @@
+code_format_dotnet-format:
+  name: Code Format (dotnet-format)
+  agent:
+    type: Unity::github::action
+    action_source: dotnet-format.yml
+    forwarded_variables:
+    - GIT_BRANCH
+    action_run_name_source: run-name
+  variables:
+    commit: false
+    filter: |-
+      .github/workflows/dotnet-format.yml
+      **/*.cs
+    run-name: Code Format (dotnet-format)
+code_format_dotnet-format__commit_to_branch:
+  name: Code Format (dotnet-format) (Commit to branch)
+  agent:
+    type: Unity::github::action
+    action_source: dotnet-format.yml
+    forwarded_variables:
+    - GIT_BRANCH
+    action_run_name_source: run-name
+  variables:
+    commit: true
+    filter: |-
+      .github/workflows/dotnet-format.yml
+      **/*.cs
+    run-name: Code Format (dotnet-format) (Commit to branch)
+  triggers:
+    expression: |-
+      pull_request.comment eq "dotnet-format"

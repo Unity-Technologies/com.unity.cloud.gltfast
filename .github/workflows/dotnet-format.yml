@@ -1,0 +1,169 @@
+name: Code Format (dotnet)
+
+on:
+  workflow_dispatch:
+    inputs:
+      # NOTICE: run-name seems like it might not be needed but it's necessary in order to leverage
+      # Yamato's `action_run_name_source` feature which ensures the right jobs gets connected when multiple
+      # ones are run in parallel.
+      run-name:
+        description: "Name of the job run to be presented in the UI."
+        default: "Code Format (dotnet)"
+        required: true
+        type: string
+      GIT_BRANCH:
+        description: "Current branch. Normally the value of the GIT_BRANCH environment variable from Yamato."
+        required: true
+        type: string
+      commit:
+        description: "Commit changes to the branch"
+        default: "false"
+        type: choice
+        options:
+          - "true"
+          - "false"
+      filter:
+        description: "List of glob pattern to filter files to format separated by new line."
+        default: "**/*.cs"
+        type: string
+
+  workflow_call:
+    inputs:
+      GIT_BRANCH:
+        description: "Current branch. Normally the value of the GIT_BRANCH environment variable from Yamato."
+        required: true
+        type: string
+      commit:
+        description: "Commit changes to the branch"
+        default: "false"
+        type: string
+      filter:
+        description: "List of glob pattern to filter files to format separated by new line."
+        default: "**/*.cs"
+        type: string
+
+run-name: ${{ inputs.run-name }}
+
+env:
+  COMMIT_CHANGES: ${{ inputs.commit }}
+  CURRENT_BRANCH: ${{ inputs.GIT_BRANCH }}
+  FILTER: ${{ inputs.filter }}
+
+  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  GH_ENTERPRISE_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  GH_HOST: "github.cds.internal.unity3d.com"
+
+jobs:
+  format:
+    name: Format (http://go/format)
+    runs-on: unity-linux-runner
+    container:
+      image: europe-docker.pkg.dev/unity-cds-services-prd/ds-docker/unity-ci-format:latest@sha256:73b38fb713c2b95a142ffe870c6e130edda9d3aad61adadfda24fe985973f6b1
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ inputs.GIT_BRANCH }}
+          filter: blob:none
+          fetch-depth: 1
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /.github/workflows/**/*
+            **/.editorconfig
+            ${{ inputs.filter }}
+
+        # A reusable workflow consumed from a different repository won't be able to access other files than the workflow itself, therefore we keep configuration embedded
+      - name: Create and add problem matcher
+        shell: bash
+        env:
+          PROBLEM_MATCHER_CONTENT: |
+            {
+              "problemMatcher": [
+                {
+                  "owner": "dotnet-format",
+                  "pattern": [
+                    {
+                      "regexp": "^(.*)\\((\\d+),(\\d+)\\):\\s(.*)\\[\\.\\]$",
+                      "file": 1,
+                      "line": 2,
+                      "column": 3,
+                      "message": 4
+                    }
+                  ]
+                }
+              ]
+            }
+        run: |
+          echo "$PROBLEM_MATCHER_CONTENT" > "$RUNNER_TEMP/problem-matcher.json"
+          echo "Temp file: $RUNNER_TEMP/problem-matcher.json"
+          cat "$RUNNER_TEMP/problem-matcher.json"
+          echo "::add-matcher::$RUNNER_TEMP/problem-matcher.json"
+
+      - name: Log versions
+        shell: bash
+        run: |
+          DOTNET_VERSION=$(dotnet --version)
+          echo "Read more about code formatting: [http://go/format](http://go/format)" >> $GITHUB_STEP_SUMMARY
+          echo "dotnet: $DOTNET_VERSION" >> $GITHUB_STEP_SUMMARY
+
+          # Create a rsp file to overcome potential issues with the command line length with a large number of files
+      - name: Build RSP file
+        shell: bash
+        run: |
+          {
+            echo "format "
+            echo "whitespace "
+            echo ". "
+            echo "--folder "
+            echo "--verbosity "
+            echo "detailed "
+          } >> args.rsp
+
+          if [[ "$COMMIT_CHANGES" != "true" ]];
+          then
+            echo "--verify-no-changes " >> args.rsp
+          fi
+
+          PR_FILES=$(gh pr view $CURRENT_BRANCH --json files --jq '.files.[].path')
+          printf "PR files:\n$PR_FILES\n\n"
+
+          if [[ "$PR_FILES" == "" ]];
+          then
+              echo "No files to format."
+              echo "No files to format." >> $GITHUB_STEP_SUMMARY
+              # Add a marker to the args.rsp file to avoid passing an empty list of files
+              PR_FILES="NOTHING_TO_FORMAT_MARKER"
+          fi
+
+          echo "--include " >> args.rsp
+          echo "$PR_FILES" >> args.rsp
+
+          echo "rsp file:"
+          cat args.rsp
+
+      - name: Run Format
+        id: format
+        shell: bash
+        run: >
+          DOTNET_NOLOGO=1
+          dotnet @args.rsp
+
+      - name: Clean-up RSP file
+        shell: bash
+        run: |
+          rm args.rsp
+
+      - name: Commit changes
+        if: |
+          inputs.commit == 'true'
+        shell: bash
+        env:
+          ACTOR: ${{ github.actor }}
+          ACTOR_ID: ${{ github.actor_id }}
+        run: |
+          git config user.name "$ACTOR (via GitHub Actions)"
+          git config user.email "$ACTOR_ID+$ACTOR@users.noreply.github.com"
+          git add .
+          git diff-index --quiet HEAD || git commit -m "[skip ci] Code format"
+          git push
+
