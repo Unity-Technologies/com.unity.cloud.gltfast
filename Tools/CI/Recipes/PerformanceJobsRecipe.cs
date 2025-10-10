@@ -43,13 +43,13 @@ class PerformanceJobsRecipe : RecipeBase
     static IJobBuilder CreateJob(string editorVersion)
     {
         var commands = new List<Command>();
-        commands.Add(UnityEditorCommand.Download(new Editor(editorVersion, editorVersion), "unity-downloader-cli", k_EditorPath));
+        commands.Add(UnityEditorCommand.Download(new Editor(editorVersion, editorVersion), "unity-downloader-cli", k_EditorPath).ToRetryCommand(3, 10));
         commands.Add(UnityEditorCommand.Execute($"{k_EditorPath}\\Unity.exe", EnablePerformanceTests));
         if (editorVersion.StartsWith("2020") || editorVersion.StartsWith("2021"))
         {
             commands.Add(UnityEditorCommand.Execute($"{k_EditorPath}\\Unity.exe", CreateTestGltfFiles));
         }
-        commands.Add(UtrCommand.Run(SystemType.Windows, CreateUtrCommand));
+        commands.Add(UtrCommand.Run(SystemType.Windows, CreateUtrCommand).ToRetryCommand(2, 20));
 
         return FluentJob
             .Create($"Performance_{editorVersion}_Win")
