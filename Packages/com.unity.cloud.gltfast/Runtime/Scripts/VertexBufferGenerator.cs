@@ -147,7 +147,7 @@ namespace GLTFast
             m_HasBones = firstAttributes.WEIGHTS_0 >= 0 && firstAttributes.JOINTS_0 >= 0;
             if (m_HasBones)
             {
-                jobCount += m_Attributes.Length;
+                jobCount++;
                 m_Bones = new VertexBufferBones(VertexCount, m_GltfImport.Logger);
             }
 
@@ -204,10 +204,10 @@ namespace GLTFast
 
                 if (m_HasColors && !ScheduleColorsJobs(att, i, handles, ref handleIndex))
                     return null;
-
-                if (m_HasBones && !ScheduleVertexBonesJobs(att, i, handles, handleIndex))
-                    return null;
             }
+            if (m_HasBones && !ScheduleVertexBonesJobs(m_Attributes, handles.GetSubArray(handleIndex, 1)))
+                return null;
+
             var handle = jobCount > 1 ? JobHandle.CombineDependencies(handles) : handles[0];
             handles.Dispose();
             return handle;
@@ -375,25 +375,48 @@ namespace GLTFast
             return true;
         }
 
-        bool ScheduleVertexBonesJobs(Attributes att, int i, NativeArray<JobHandle> handles, int handleIndex)
+        bool ScheduleVertexBonesJobs(Attributes[] attributes, NativeArray<JobHandle> handles)
         {
-            var h = m_Bones.ScheduleVertexBonesJob(
-                att.WEIGHTS_0,
-                att.JOINTS_0,
-                VertexIntervals[i],
-                m_GltfImport
-            );
-            if (h.HasValue)
+            if (attributes.Length > 1)
             {
-                handles[handleIndex] = h.Value;
+                var boneHandles = new NativeArray<JobHandle>(attributes.Length, Allocator.Temp);
+                for (var i = 0; i < attributes.Length; i++)
+                {
+                    if (!ScheduleVertexBonesJob(i, out var boneHandle))
+                        return false;
+                    boneHandles[i] = boneHandle;
+                }
+                handles[0] = JobHandle.CombineDependencies(boneHandles);
+                boneHandles.Dispose();
             }
             else
             {
-                Profiler.EndSample();
-                return false;
+                if (!ScheduleVertexBonesJob(0, out var boneHandle))
+                    return false;
+                handles[0] = boneHandle;
             }
-
+            handles[0] = m_Bones.ScheduleSortAndNormalizeBoneWeightsJob(handles[0]);
             return true;
+
+            bool ScheduleVertexBonesJob(int i, out JobHandle handle)
+            {
+                var att = attributes[i];
+
+                var h = m_Bones.ScheduleVertexBonesJob(
+                    att.WEIGHTS_0,
+                    att.JOINTS_0,
+                    VertexIntervals[i],
+                    m_GltfImport
+                );
+                if (!h.HasValue)
+                {
+                    handle = default;
+                    return false;
+                }
+
+                handle = h.Value;
+                return true;
+            }
         }
 
         void CreateDescriptors()

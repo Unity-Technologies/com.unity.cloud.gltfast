@@ -11,6 +11,7 @@ using Unity.Collections;
 using Draco;
 using GLTFast.Logging;
 using GLTFast.Schema;
+using Unity.Jobs;
 using UnityEngine.Assertions;
 using UnityEngine.Rendering;
 using Mesh = UnityEngine.Mesh;
@@ -23,6 +24,11 @@ namespace GLTFast {
 
         readonly bool m_NeedsNormals;
         readonly bool m_NeedsTangents;
+
+        readonly bool m_HasMorphTargets;
+        JobHandle m_MorphTargetsJobHandle;
+
+        public override bool IsCompleted => base.IsCompleted && (!m_HasMorphTargets || m_MorphTargetsJobHandle.IsCompleted);
 
         public DracoMeshGenerator(
             IReadOnlyList<MeshPrimitiveBase> primitives,
@@ -45,10 +51,10 @@ namespace GLTFast {
                 );
 
             var morphTargets = primitives[0].targets;
-            var hasMorphTargets = morphTargets != null && morphTargets.Length > 0;
+            m_HasMorphTargets = morphTargets != null && morphTargets.Length > 0;
 
             var vertexCount = 0;
-            var vertexIntervals = hasMorphTargets
+            var vertexIntervals = m_HasMorphTargets
                 ? new int[primitives.Count + 1]
                 : null;
 
@@ -59,7 +65,7 @@ namespace GLTFast {
 
                 var posAccessor = ((IGltfBuffers)gltfImport).GetAccessor(primitive.attributes.POSITION);
 
-                if (hasMorphTargets)
+                if (m_HasMorphTargets)
                 {
                     vertexIntervals[index] = vertexCount;
                 }
@@ -88,7 +94,7 @@ namespace GLTFast {
                 }
             }
 
-            if (hasMorphTargets)
+            if (m_HasMorphTargets)
             {
                 InitializeMorphTargets(
                     primitives,
@@ -131,6 +137,7 @@ namespace GLTFast {
                     m_MorphTargetsGenerator.AddMorphTarget( 0, morphTargetIndex, target);
                 }
             }
+            m_MorphTargetsJobHandle = m_MorphTargetsGenerator.GetJobHandle();
         }
 
         async Task<Mesh> Decode(IReadOnlyList<MeshPrimitiveBase> primitives, IGltfBuffers buffers)

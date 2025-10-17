@@ -44,7 +44,8 @@ namespace GLTFast
             {
                 m_Logger?.Error(LogCode.SparseAccessor, "bone weights");
             }
-            var vDataPtr = (byte*)m_Data.GetUnsafeReadOnlyPtr();
+            // Ignoring NativeArray safety here, so that multiple jobs (one per sub-mesh) can write to the same array.
+            var vDataPtr = (byte*)NativeArrayUnsafeUtility.GetUnsafeBufferPointerWithoutChecks(m_Data);
 
             JobHandle weightsHandle;
             JobHandle jointsHandle;
@@ -95,8 +96,12 @@ namespace GLTFast
                 }
             }
 
-            var jobHandle = JobHandle.CombineDependencies(weightsHandle, jointsHandle);
+            Profiler.EndSample();
+            return JobHandle.CombineDependencies(weightsHandle, jointsHandle);
+        }
 
+        public JobHandle ScheduleSortAndNormalizeBoneWeightsJob(JobHandle dependsOn)
+        {
             var skinWeights = (int)QualitySettings.skinWeights;
 
 #if UNITY_EDITOR
@@ -109,25 +114,21 @@ namespace GLTFast
             if (skinWeights < 4)
             {
 #endif
-                var job = new SortAndNormalizeBoneWeightsJob
+                return new SortAndNormalizeBoneWeightsJob
                 {
                     bones = m_Data,
                     skinWeights = math.max(1, skinWeights)
-                };
-                jobHandle = job.Schedule(m_Data.Length, GltfImport.DefaultBatchCount, jobHandle);
+                }.Schedule(m_Data.Length, GltfImport.DefaultBatchCount, dependsOn);
             }
 #if GLTFAST_SAFE
             else {
                 // Re-normalizing alone is sufficient
-                var job = new RenormalizeBoneWeightsJob {
+                return new RenormalizeBoneWeightsJob {
                     bones = m_Data,
-                };
-                jobHandle = job.Schedule(m_Data.Length, GltfImport.DefaultBatchCount, jobHandle);
+                }.Schedule(m_Data.Length, GltfImport.DefaultBatchCount, dependsOn);
             }
 #endif
-
-            Profiler.EndSample();
-            return jobHandle;
+            return dependsOn;
         }
 
         public void AddDescriptors(VertexAttributeDescriptor[] dst, int offset, int stream)

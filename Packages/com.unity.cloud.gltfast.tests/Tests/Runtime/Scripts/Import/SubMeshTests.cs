@@ -16,7 +16,7 @@ namespace GLTFast.Tests.Import
     [Category("Import")]
     class SubMeshTests
     {
-        const string k_TestAsset = @"SubMesh\/SubMesh.gltf";
+        const string k_TestAsset = @"SubMesh\/glTF\/SubMesh.gltf";
 
         [GltfTestCase("glTF-test-models", 1, k_TestAsset)]
         public IEnumerator SubMeshTest(GltfTestCaseSet testCaseSet, GltfTestCase testCase)

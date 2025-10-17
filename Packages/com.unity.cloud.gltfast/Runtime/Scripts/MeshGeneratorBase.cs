@@ -19,7 +19,7 @@ namespace GLTFast
 
         protected Task<UnityEngine.Mesh> m_CreationTask;
 
-        public bool IsCompleted => m_CreationTask == null || m_CreationTask.IsCompleted;
+        public virtual bool IsCompleted => m_CreationTask == null || m_CreationTask.IsCompleted;
 
         protected MorphTargetsGenerator m_MorphTargetsGenerator;
 

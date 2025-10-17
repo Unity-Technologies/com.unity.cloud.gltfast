@@ -85,11 +85,6 @@ MonoBehaviour:
     expectInstantiationFail: 0
     expectedLogCodes: 
     requiredExtensions: 
-  - relativeUri: SubMesh/SubMesh.gltf
-    expectLoadFail: 0
-    expectInstantiationFail: 0
-    expectedLogCodes: 
-    requiredExtensions: 
   - relativeUri: SubMeshSharedAccessor/SubMeshSharedAccessor.gltf
     expectLoadFail: 0
     expectInstantiationFail: 0
@@ -145,6 +140,11 @@ MonoBehaviour:
     expectInstantiationFail: 0
     expectedLogCodes: 
     requiredExtensions: 01000000
+  - relativeUri: RainbowCuboid/draco/RainbowCuboid-Draco.gltf
+    expectLoadFail: 0
+    expectInstantiationFail: 0
+    expectedLogCodes: 
+    requiredExtensions: 00000000
   - relativeUri: RainbowCuboid/meshopt-c/RainbowCuboid-meshopt-c.gltf
     expectLoadFail: 0
     expectInstantiationFail: 0
@@ -170,6 +170,36 @@ MonoBehaviour:
     expectInstantiationFail: 0
     expectedLogCodes: 
     requiredExtensions: 
+  - relativeUri: RainbowCuboid/submesh/RainbowCuboidSubMesh.gltf
+    expectLoadFail: 0
+    expectInstantiationFail: 0
+    expectedLogCodes: 
+    requiredExtensions: 
+  - relativeUri: RainbowCuboid/submesh-draco/RainbowCuboidSubMesh-Draco.gltf
+    expectLoadFail: 0
+    expectInstantiationFail: 0
+    expectedLogCodes: 
+    requiredExtensions: 00000000
+  - relativeUri: RainbowCuboid/submesh-meshopt-c/RainbowCuboidSubMesh-meshopt-c.gltf
+    expectLoadFail: 0
+    expectInstantiationFail: 0
+    expectedLogCodes: 
+    requiredExtensions: 060000000b000000
+  - relativeUri: RainbowCuboid/submesh-meshopt-c-vpn/RainbowCuboidSubMesh-meshopt-c-vpn.gltf
+    expectLoadFail: 0
+    expectInstantiationFail: 0
+    expectedLogCodes: 
+    requiredExtensions: 060000000b000000
+  - relativeUri: RainbowCuboid/submesh-meshopt-cc/RainbowCuboidSubMesh-meshopt-cc.gltf
+    expectLoadFail: 0
+    expectInstantiationFail: 0
+    expectedLogCodes: 
+    requiredExtensions: 060000000b000000
+  - relativeUri: RainbowCuboid/submesh-meshopt-cc-vpn/RainbowCuboidSubMesh-meshopt-cc-vpn.gltf
+    expectLoadFail: 0
+    expectInstantiationFail: 0
+    expectedLogCodes: 
+    requiredExtensions: 060000000b000000
   - relativeUri: RelativeUri/SubFolder/RelativeUri.glb
     expectLoadFail: 0
     expectInstantiationFail: 0
@@ -210,3 +240,13 @@ MonoBehaviour:
     expectInstantiationFail: 0
     expectedLogCodes: 
     requiredExtensions: 
+  - relativeUri: SubMesh/glTF/SubMesh.gltf
+    expectLoadFail: 0
+    expectInstantiationFail: 0
+    expectedLogCodes: 
+    requiredExtensions: 
+  - relativeUri: SubMesh/glTF-Draco/SubMesh-Draco.gltf
+    expectLoadFail: 0
+    expectInstantiationFail: 0
+    expectedLogCodes: 
+    requiredExtensions: 00000000

@@ -8,12 +8,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - (Test) OpenGltfScene: Shortcut Control+X clears the previously loaded glTF. Useful for testing resource deallocation.
+- (Test) Assets variants of *SubMesh* and *Rainbow Cuboid* for testing import of compressed/uncompressed multi-primitive meshes.
 
 ### Changed
 
 ### Fixed
 - Corrected test cases for `GltfTestModels` importer tests.
 - Properly dispose GPU instancing buffers after Editor imports.
+- Multi-primitive, skinned meshes import properly to Unity meshes with multiple sub-meshes.
+- For Draco compressed meshes, it's now ensured that morph targets are retrieved to completion and resources are disposed properly.
 
 ### Removed
 
