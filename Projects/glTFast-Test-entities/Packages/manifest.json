@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "com.unity.cloud.draco": "5.2.0",
+    "com.unity.cloud.draco": "5.3.0",
     "com.unity.cloud.gltfast": "file:./../../../Packages/com.unity.cloud.gltfast",
     "com.unity.cloud.gltfast.tests": "file:./../../../Packages/com.unity.cloud.gltfast.tests",
     "com.unity.cloud.ktx": "3.5.0",
