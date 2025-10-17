@@ -1575,11 +1575,7 @@ namespace GLTFast
                                     LoadImage(
                                         imageIndex,
                                         UriHelper.GetUriString(img.uri, baseUri),
-#if UNITY_VISIONOS
-                                        false,
-#else
-                                        !m_Settings.TexturesReadable && !m_ImageReadable[imageIndex],
-#endif
+                                        !LoadImageReadable(imageIndex),
                                         imgFormat == ImageFormat.Ktx
                                         );
                                 }
@@ -1631,11 +1627,7 @@ namespace GLTFast
             var txt = CreateEmptyTexture(img, imageIndex, forceSampleLinear);
             txt.LoadImage(
                 data,
-#if UNITY_VISIONOS
-                false
-#else
-                !m_Settings.TexturesReadable && !m_ImageReadable[imageIndex]
-#endif
+                !LoadImageReadable(imageIndex)
                 );
             m_Images[imageIndex] = txt;
             Profiler.EndSample();
@@ -1726,11 +1718,7 @@ namespace GLTFast
                         // TODO: Investigate for NativeArray variant to avoid `www.data`
                         txt.LoadImage(
                             www.Data,
-#if UNITY_VISIONOS
-                            false
-#else
-                            !m_Settings.TexturesReadable && !m_ImageReadable[imageIndex]
-#endif
+                            !LoadImageReadable(imageIndex)
                             );
 #else
                         Logger?.Warning(LogCode.ImageConversionNotEnabled);
@@ -2628,11 +2616,7 @@ namespace GLTFast
 #if UNITY_IMAGECONVERSION
                         m_Images[jh.imageIndex].LoadImage(
                             jh.buffer,
-#if UNITY_VISIONOS
-                                false
-#else
-                            !m_Settings.TexturesReadable && !m_ImageReadable[jh.imageIndex]
-#endif
+                            !LoadImageReadable(jh.imageIndex)
                         );
 #endif
                         jh.gcHandle.Free();
@@ -3248,6 +3232,17 @@ namespace GLTFast
         static string GetImageName(Image img, int index)
         {
             return string.IsNullOrEmpty(img.name) ? $"image_{index}" : img.name;
+        }
+
+        bool LoadImageReadable(int imageIndex)
+        {
+#if UNITY_VISIONOS
+            // PolySpatial visionOS needs to be able to access raw texture data in order to
+            // do the material/texture conversion.
+            return true;
+#else
+            return m_Settings.TexturesReadable || m_ImageReadable[imageIndex];
+#endif
         }
 
         static void SafeDestroy(UnityEngine.Object obj)
