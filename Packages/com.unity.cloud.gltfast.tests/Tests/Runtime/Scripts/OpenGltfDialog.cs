@@ -14,6 +14,8 @@ namespace GLTFast.Tests
         [SerializeField]
         bool m_AutoLoadLastFile;
 
+        GltfAsset m_Gltf;
+
 #if UNITY_EDITOR
         const string k_LastFilePathKey = "GLTFast.Tests.OpenGltfDialog.LastFilePath";
 
@@ -25,6 +27,7 @@ namespace GLTFast.Tests
 
         async void Start()
         {
+            m_Gltf = GetComponent<GltfAsset>();
             if (m_AutoLoadLastFile)
             {
                 var lastFilePath = LastFilePath;
@@ -49,6 +52,11 @@ namespace GLTFast.Tests
                 )
             {
                 await OpenFilePanel();
+            } else if (Input.GetKeyDown(KeyCode.X)
+                       && (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))
+                      )
+            {
+                Clear();
             }
         }
 
@@ -64,10 +72,14 @@ namespace GLTFast.Tests
 
         async Task LoadGltfFile(string path)
         {
-            var gltf = GetComponent<GltfAsset>();
-            gltf.ClearScenes();
-            gltf.Dispose();
-            await gltf.Load(path);
+            Clear();
+            await m_Gltf.Load(path);
+        }
+
+        void Clear()
+        {
+            m_Gltf.ClearScenes();
+            m_Gltf.Dispose();
         }
 #else
         void Start()
