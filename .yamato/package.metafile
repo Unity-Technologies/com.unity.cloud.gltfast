@@ -7,33 +7,33 @@ test_setups:
   - project_setup: default
     project: glTFast-Test
     # # Use to limit versions
-    # editor_versions: [2021,2022,6000.0,6000.1,trunk]
+    # editor_versions: [2021,2022,6000.0,6000.3,trunk]
     # # Use to limit to platforms
     # platforms: [win,mac,ubuntu]
     utr_timeout: 1200
     pr_test_subset:
       - platform: mac
-        editor: 6000.0
+        editor: 6000.3
       - platform: win
-        editor: 2022
+        editor: 6000.0
     pr_build_subset:
       - platform: mac
-        editor: 2022
+        editor: 6000.0
     coverage_subset:
       # default for coverage: windows + current LTS
       - platform: win
-        editor: 2022
+        editor: 6000.0
   - project_setup: minimalistic
     project: glTFast-Test-minimalistic
-    editor_versions: [2021,2022,6000.0,trunk]
+    editor_versions: [2021,2022,6000.0,6000.3,trunk]
     platforms: [win]
     utr_timeout: 1200
     pr_test_subset:
       - platform: win
-        editor: 6000.0
+        editor: 6000.3
     pr_build_subset:
       - platform: win
-        editor: 6000.0
+        editor: 6000.3
     coverage_subset:
       # default for coverage: windows + current LTS
       - platform: win
@@ -43,20 +43,20 @@ test_setups:
     setup: all_defines
     render_pipeline: URP-Forward
     utr_timeout: 1200
-    editor_versions: [2021,2022,6000.0,trunk]
+    editor_versions: [2021,2022,6000.0,6000.3,trunk]
     platforms: [win]
     pr_test_subset:
       - platform: win
-        editor: 6000.0
+        editor: 6000.3
       # TODO: Move those to `urp` and `hdrp` test setup at some point
       # For URP/shader graph test all versions
       - platform: win
         editor: 2021
       - platform: win
-        editor: 2022
+        editor: 6000.0
     pr_build_subset:
       - platform: win
-        editor: 6000.0
+        editor: 6000.3
     coverage_subset:
       # default for coverage: windows + current LTS
       - platform: win
@@ -67,13 +67,13 @@ test_setups:
     render_pipeline: URP-ForwardPlus
     test_categories: "!Performance;!Export;!Graphics"
     utr_timeout: 1200
-    editor_versions: [2022,6000.0,trunk]
+    editor_versions: [2022,6000.0,6000.3,trunk]
     platforms: [win]
     pr_test_subset:
       - platform: win
-        editor: 2022
-      - platform: win
         editor: 6000.0
+      - platform: win
+        editor: 6000.3
     pr_build_subset:
       - platform: win
         editor: 6000.0
@@ -96,11 +96,11 @@ test_setups:
     utr_timeout: 3600
     agent_xlarge_required: !!bool true
     gpu_required: !!bool true
-    editor_versions: [2022,6000.0,trunk]
+    editor_versions: [2022,6000.0,6000.3,trunk]
     platforms: [win]
     pr_test_subset:
       - platform: win
-        editor: 6000.0
+        editor: 6000.3
     coverage_subset:
       # default for coverage: windows + current LTS
       - platform: win
@@ -110,7 +110,7 @@ editor_versions:
   - 2021
   - 2022
   - 6000.0
-  - 6000.1
+  - 6000.3
   - trunk
 
 platforms:
