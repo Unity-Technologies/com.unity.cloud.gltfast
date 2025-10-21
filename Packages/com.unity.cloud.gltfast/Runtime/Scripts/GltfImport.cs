@@ -2587,13 +2587,28 @@ namespace GLTFast
                     }
                     else
                     {
-                        var newImg = UnityEngine.Object.Instantiate(img);
-                        m_Resources.Add(newImg);
+                        Texture2D newImg;
+                        if (img.isReadable)
+                        {
+
+                            newImg = UnityEngine.Object.Instantiate(img);
+                            m_Resources.Add(newImg);
 #if DEBUG
-                        newImg.name = $"{img.name}_sampler{txt.sampler}";
-                        Logger?.Warning(LogCode.ImageMultipleSamplers,imageIndex.ToString());
+                            newImg.name = $"{img.name}_sampler{txt.sampler}";
+                            Logger?.Warning(LogCode.ImageMultipleSamplers,imageIndex.ToString());
 #endif
-                        sampler?.Apply(newImg, m_Settings.DefaultMinFilterMode, m_Settings.DefaultMagFilterMode);
+                            sampler?.Apply(newImg, m_Settings.DefaultMinFilterMode, m_Settings.DefaultMagFilterMode);
+                        }
+                        else
+                        {
+                            Logger?.Warning(
+                                LogCode.TextureSamplerNotApplied,
+                                txt.sampler >= 0 ? $"#{txt.sampler}" : "default",
+                                textureIndex.ToString(),
+                                imageIndex.ToString()
+                                );
+                            newImg = img;
+                        }
                         imageVariants[imageIndex][key] = newImg;
                         m_Textures[textureIndex] = newImg;
                     }

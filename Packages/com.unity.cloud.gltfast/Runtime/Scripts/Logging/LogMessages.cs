@@ -246,6 +246,10 @@ namespace GLTFast.Logging
         /// Stream read error.
         /// </summary>
         StreamError,
+        /// <summary>
+        /// Sampler settings have not been applied on texture successfully.
+        /// </summary>
+        TextureSamplerNotApplied
     }
 
     /// <summary>
@@ -308,6 +312,7 @@ is approximated. Enable Opaque Texture access in Universal Render Pipeline!" },
             { LogCode.TextureInvalidType, "Invalid {0} texture type (material: {1})" },
             { LogCode.TextureLoadFailed, "Texture #{0} not loaded" },
             { LogCode.TextureNotFound, "Texture #{0} not found" },
+            { LogCode.TextureSamplerNotApplied, "Sampler {0} has not been applied on texture #{1} (conflict on image {2})" },
             { LogCode.TopologyPointsMaterialUnsupported, "Could not find material that supports points topology" },
             { LogCode.TopologyUnsupported, "Unsupported topology {0}" },
             { LogCode.TypeUnsupported, "Unsupported {0} type {1}" },

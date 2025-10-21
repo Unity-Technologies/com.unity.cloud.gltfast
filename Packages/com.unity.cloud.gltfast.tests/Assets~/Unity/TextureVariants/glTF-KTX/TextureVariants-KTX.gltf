@@ -1,0 +1,194 @@
+{
+    "asset": {
+        "generator": "glTF-Transform v4.2.1",
+        "version": "2.0",
+        "copyright": "© 2025 Unity Technologies and the glTFast authors. Licensed under Apache 2.0. See license file at root."
+    },
+    "accessors": [
+        {
+            "type": "VEC3",
+            "componentType": 5126,
+            "count": 24,
+            "max": [
+                0.10000000149011612,
+                0.10000000149011612,
+                0.10000000149011612
+            ],
+            "min": [
+                -0.10000000149011612,
+                -0.10000000149011612,
+                -0.10000000149011612
+            ],
+            "bufferView": 0,
+            "byteOffset": 0
+        },
+        {
+            "type": "VEC3",
+            "componentType": 5126,
+            "count": 24,
+            "bufferView": 0,
+            "byteOffset": 12
+        },
+        {
+            "type": "VEC2",
+            "componentType": 5126,
+            "count": 24,
+            "bufferView": 0,
+            "byteOffset": 24
+        },
+        {
+            "type": "SCALAR",
+            "componentType": 5123,
+            "count": 36,
+            "bufferView": 1,
+            "byteOffset": 0
+        }
+    ],
+    "bufferViews": [
+        {
+            "buffer": 0,
+            "byteOffset": 0,
+            "byteLength": 768,
+            "byteStride": 32,
+            "target": 34962
+        },
+        {
+            "buffer": 0,
+            "byteOffset": 768,
+            "byteLength": 72,
+            "target": 34963
+        }
+    ],
+    "samplers": [
+        {
+            "magFilter": 9729,
+            "minFilter": 9987,
+            "wrapS": 10497,
+            "wrapT": 10497
+        },
+        {
+            "magFilter": 9728,
+            "minFilter": 9984,
+            "wrapS": 10497,
+            "wrapT": 10497
+        }
+    ],
+    "textures": [
+        {
+            "sampler": 0,
+            "extensions": {
+                "KHR_texture_basisu": {
+                    "source": 0
+                }
+            }
+        },
+        {
+            "sampler": 1,
+            "extensions": {
+                "KHR_texture_basisu": {
+                    "source": 0
+                }
+            }
+        }
+    ],
+    "images": [
+        {
+            "name": "Texture0",
+            "mimeType": "image/ktx2",
+            "uri": "Texture0.ktx2"
+        }
+    ],
+    "buffers": [
+        {
+            "uri": "TextureVariants.bin",
+            "byteLength": 840
+        }
+    ],
+    "materials": [
+        {
+            "name": "Material0",
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+                "roughnessFactor": 0.5,
+                "metallicFactor": 0,
+                "baseColorTexture": {
+                    "index": 0
+                }
+            }
+        },
+        {
+            "name": "Material1",
+            "doubleSided": true,
+            "pbrMetallicRoughness": {
+                "roughnessFactor": 0.5,
+                "metallicFactor": 0,
+                "baseColorTexture": {
+                    "index": 1
+                }
+            }
+        }
+    ],
+    "meshes": [
+        {
+            "name": "Cube",
+            "primitives": [
+                {
+                    "attributes": {
+                        "POSITION": 0,
+                        "NORMAL": 1,
+                        "TEXCOORD_0": 2
+                    },
+                    "mode": 4,
+                    "material": 0,
+                    "indices": 3
+                }
+            ]
+        },
+        {
+            "name": "Cube",
+            "primitives": [
+                {
+                    "attributes": {
+                        "POSITION": 0,
+                        "NORMAL": 1,
+                        "TEXCOORD_0": 2
+                    },
+                    "mode": 4,
+                    "material": 1,
+                    "indices": 3
+                }
+            ]
+        }
+    ],
+    "nodes": [
+        {
+            "name": "Cube",
+            "mesh": 0
+        },
+        {
+            "name": "Cube.001",
+            "translation": [
+                0.30000001192092896,
+                0,
+                0
+            ],
+            "mesh": 1
+        }
+    ],
+    "scenes": [
+        {
+            "name": "Scene",
+            "nodes": [
+                0,
+                1
+            ]
+        }
+    ],
+    "scene": 0,
+    "extensionsUsed": [
+        "KHR_texture_basisu"
+    ],
+    "extensionsRequired": [
+        "KHR_texture_basisu"
+    ]
+}

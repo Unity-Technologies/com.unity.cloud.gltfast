@@ -20,19 +20,19 @@ namespace GLTFast.Tests.Import
     [TestFixture, Category("Import")]
     class AssetsTests
     {
-        [GltfTestCase("glTF-test-models", 47)]
+        [GltfTestCase("glTF-test-models", 54)]
         public IEnumerator GltfTestModels(GltfTestCaseSet testCaseSet, GltfTestCase testCase)
         {
             yield return AsyncWrapper.WaitForTask(RunTestCase(testCaseSet, testCase));
         }
 
-        [GltfTestCase("glTF-test-models", 1, @"glTF-Binary\/.*\.glb$")]
+        [GltfTestCase("glTF-test-models", 2, @"glTF-Binary\/.*\.glb$")]
         public IEnumerator GltfTestModelsBinary(GltfTestCaseSet testCaseSet, GltfTestCase testCase)
         {
             yield return AsyncWrapper.WaitForTask(RunTestCase(testCaseSet, testCase));
         }
 
-        [GltfTestCase("glTF-test-models", 1, @"glTF-Embedded\/.*\.gltf$")]
+        [GltfTestCase("glTF-test-models", 2, @"glTF-Embedded\/.*\.gltf$")]
         public IEnumerator GltfTestModelsEmbedded(GltfTestCaseSet testCaseSet, GltfTestCase testCase)
         {
             yield return AsyncWrapper.WaitForTask(RunTestCase(testCaseSet, testCase));

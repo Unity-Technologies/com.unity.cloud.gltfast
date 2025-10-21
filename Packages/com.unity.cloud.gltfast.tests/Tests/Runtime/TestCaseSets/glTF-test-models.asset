@@ -250,3 +250,38 @@ MonoBehaviour:
     expectInstantiationFail: 0
     expectedLogCodes: 
     requiredExtensions: 00000000
+  - relativeUri: TextureVariants/glTF/TextureVariants.gltf
+    expectLoadFail: 0
+    expectInstantiationFail: 0
+    expectedLogCodes: 
+    requiredExtensions: 
+  - relativeUri: TextureVariants/glTF-Binary/TextureVariants.glb
+    expectLoadFail: 0
+    expectInstantiationFail: 0
+    expectedLogCodes: 
+    requiredExtensions: 
+  - relativeUri: TextureVariants/glTF-Binary-KTX/TextureVariants-KTX.glb
+    expectLoadFail: 0
+    expectInstantiationFail: 0
+    expectedLogCodes: 
+    requiredExtensions: 07000000
+  - relativeUri: TextureVariants/glTF-Embedded/TextureVariants-Embedded.gltf
+    expectLoadFail: 0
+    expectInstantiationFail: 0
+    expectedLogCodes: 
+    requiredExtensions: 
+  - relativeUri: TextureVariants/glTF-Embedded-KTX/TextureVariants-Embedded-KTX.gltf
+    expectLoadFail: 0
+    expectInstantiationFail: 0
+    expectedLogCodes: 
+    requiredExtensions: 07000000
+  - relativeUri: TextureVariants/glTF-KTX/TextureVariants-KTX.gltf
+    expectLoadFail: 0
+    expectInstantiationFail: 0
+    expectedLogCodes: 
+    requiredExtensions: 07000000
+  - relativeUri: TextureVariants/glTF-TextureEmbedded/TextureVariants-TextureEmbedded.gltf
+    expectLoadFail: 0
+    expectInstantiationFail: 0
+    expectedLogCodes: 
+    requiredExtensions: 

@@ -60,7 +60,7 @@ namespace GLTFast.Tests.Import
             yield return GetAllObjectsTestInternal(LoadFileInternal(testCaseSet, testCase), true);
         }
 
-        [GltfTestCase("glTF-test-models", 47)]
+        [GltfTestCase("glTF-test-models", 54)]
         public IEnumerator LoadUnload_TestModels(GltfTestCaseSet testCaseSet, GltfTestCase testCase)
         {
             yield return GetAllObjectsTestInternal(LoadFileInternal(testCaseSet, testCase), true);
