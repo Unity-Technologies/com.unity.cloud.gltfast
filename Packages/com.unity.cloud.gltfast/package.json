@@ -3,7 +3,7 @@
   "version": "6.14.2-pre.1",
   "displayName": "Unity glTFast",
   "description": "Use glTFast to import and export glTF 3D files efficiently at runtime or in the Editor",
-  "unity": "2021.3",
+  "unity": "2022.3",
   "keywords": [
     "mesh",
     "gltf",
@@ -25,5 +25,5 @@
   "relatedPackages": {
     "com.unity.cloud.gltfast.tests": "0.0.0"
   },
-  "unityRelease": "46f1"
+  "unityRelease": "67f2"
 }

@@ -5,6 +5,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 using NUnit.Framework;
 using UnityEngine;
+using UnityEngine.TestTools;
 
 namespace GLTFast.Editor.Tests
 {
@@ -58,6 +59,31 @@ namespace GLTFast.Editor.Tests
                 docMinVersion,
                 "Difference in minimum required Unity version between package and documentation " +
                 $"(is \"{docMinVersion}\", should be \"{expectedMinVersion}\") ");
+        }
+
+        [Test]
+        public void PackageSetupCheckTest()
+        {
+            var replacement = new PackageReplacement
+            {
+                name = "Example",
+                identifier = "com.example.pkg",
+                legacyName = "Old Example",
+                legacyIdentifier = "com.old-example.pkg",
+                feature = "Feature",
+                featureUri = "https://some.feature",
+                upgradeDocsUri = "https://some.feature/documentation/",
+            };
+
+            replacement.LogUpgradeMessage();
+
+            LogAssert.Expect(
+                LogType.Warning,
+                "Deprecated package <i>Old Example</i> (<i>com.old-example.pkg</i>) detected!\n" +
+                "<i>glTFast</i> now requires <i>Example</i> (<i>com.example.pkg</i>) instead to provide support for " +
+                "<a href=\"https://some.feature\">Feature</a>.\nYou can <a command=\"replace\" " +
+                "arg=\"com.old-example.pkg\">automatically replace</a> the deprecated package or do it manually " +
+                "following the <a href=\"https://some.feature/documentation/\">documentation</a>.");
         }
     }
 }

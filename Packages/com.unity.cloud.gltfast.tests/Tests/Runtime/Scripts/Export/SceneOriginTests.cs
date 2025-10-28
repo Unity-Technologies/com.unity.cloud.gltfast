@@ -98,13 +98,7 @@ namespace GLTFast.Tests.Export
             LoggerTest.AssertLogger(logger);
 
             var jsonParser = new GltfJsonUtilityParser();
-            var gltf = jsonParser.ParseJson(
-#if UNITY_2021_3_OR_NEWER
-                await File.ReadAllTextAsync(path)
-#else
-                File.ReadAllText(path)
-#endif
-                );
+            var gltf = jsonParser.ParseJson(await File.ReadAllTextAsync(path));
 
             Assert.IsNotNull(gltf?.Nodes);
             Assert.AreEqual(1, gltf.Nodes.Count);

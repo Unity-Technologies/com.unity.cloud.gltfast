@@ -215,28 +215,16 @@ namespace GLTFast.Editor.Tests
             var target = EditorUserBuildSettings.activeBuildTarget;
             var group = BuildPipeline.GetBuildTargetGroup(target);
 
-#if UNITY_2021_2_OR_NEWER
             var namedBuildTarget = UnityEditor.Build.NamedBuildTarget.FromBuildTargetGroup(group);
             var scriptingDefineSymbols = PlayerSettings.GetScriptingDefineSymbols(namedBuildTarget);
-#else
-            var scriptingDefineSymbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(group);
-#endif
             var defines = new HashSet<string>(scriptingDefineSymbols.Split(';'));
 
             foreach (var define in newDefines)
             {
-#if UNITY_2021_2_OR_NEWER
                 Debug.Log($"Adding scripting define {define} ({namedBuildTarget}).");
-#else
-                Debug.Log($"Adding scripting define {define} ({group}).");
-#endif
                 defines.Add(define);
             }
-#if UNITY_2021_2_OR_NEWER
             PlayerSettings.SetScriptingDefineSymbols(namedBuildTarget, defines.ToArray());
-#else
-            PlayerSettings.SetScriptingDefineSymbolsForGroup(group, defines.ToArray());
-#endif
         }
     }
 }

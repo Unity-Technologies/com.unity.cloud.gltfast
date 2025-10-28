@@ -1,21 +1,16 @@
 // SPDX-FileCopyrightText: 2023 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
-#if UNITY_2021_2_OR_NEWER
-#define HYPERLINK
-#define COMBINED
-#endif
-
 using System;
-using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.PackageManager;
 using UnityEditor.PackageManager.Requests;
 using UnityEngine;
+using UnityEngine.TestTools;
 
 namespace GLTFast.Editor
 {
-    [InitializeOnLoad]
+    [InitializeOnLoad, ExcludeFromCoverage]
     static class PackageSetupCheck
     {
         static ListRequest s_ListRequest;
@@ -48,9 +43,7 @@ namespace GLTFast.Editor
         {
             EditorApplication.update += WaitForPackageList;
             s_ListRequest = Client.List(true);
-#if HYPERLINK
             EditorGUI.hyperLinkClicked += HyperLinkClicked;
-#endif
         }
 
         static void WaitForPackageList()
@@ -90,10 +83,9 @@ namespace GLTFast.Editor
             }
         }
 
-#if HYPERLINK
         static void HyperLinkClicked(EditorWindow window, HyperLinkClickedEventArgs args)
         {
-            if(args.hyperLinkData.TryGetValue("command", out var command) && command=="replace")
+            if (args.hyperLinkData.TryGetValue("command", out var command) && command == "replace")
             {
                 if (args.hyperLinkData.TryGetValue("arg", out var pkg))
                 {
@@ -107,9 +99,7 @@ namespace GLTFast.Editor
                 }
             }
         }
-#endif
 
-#if COMBINED
         static void ReplacePackage(PackageReplacement package)
         {
             if (EditorUtility.DisplayDialog(
@@ -126,7 +116,6 @@ namespace GLTFast.Editor
                     );
             }
         }
-#endif
     }
 
     struct PackageReplacement
@@ -144,14 +133,9 @@ namespace GLTFast.Editor
             var message = $"Deprecated package <i>{legacyName}</i> (<i>{legacyIdentifier}</i>) detected!\n" +
                 $"<i>glTFast</i> now requires <i>{name}</i> (<i>{identifier}</i>) instead to provide support for " +
                 $"<a href=\"{featureUri}\">{feature}</a>.\n";
-#if HYPERLINK
             message +=
                 $"You can <a command=\"replace\" arg=\"{legacyIdentifier}\">automatically replace</a> the " +
                 $"deprecated package or do it manually following the <a href=\"{upgradeDocsUri}\">documentation</a>.";
-#else
-            message += "To upgrade the package, follow the documentation at " +
-                $"<a href=\"{upgradeDocsUri}\">{upgradeDocsUri}</a>";
-#endif
             Debug.LogWarning(message);
         }
     }

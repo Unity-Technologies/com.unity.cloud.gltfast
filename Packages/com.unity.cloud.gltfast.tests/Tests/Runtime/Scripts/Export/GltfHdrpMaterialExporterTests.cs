@@ -50,22 +50,14 @@ namespace GLTFast.Tests.Export
         public void BaseColorTextureCutout()
         {
             CertifyRequirements();
-#if !USING_URP || USING_URP_12_OR_NEWER
             BaseColorTextureCutoutTest(RenderPipeline.HighDefinition);
-#else
-            Assert.Ignore("Not testing legacy URP version older than 12.x.");
-#endif
         }
 
         [Test]
         public void BaseColorTextureTransparent()
         {
             CertifyRequirements();
-#if !USING_URP || USING_URP_12_OR_NEWER
             BaseColorTextureTransparentTest(RenderPipeline.HighDefinition);
-#else
-            Assert.Ignore("Not testing legacy URP version older than 12.x.");
-#endif
         }
 
         [Test]
@@ -163,11 +155,7 @@ namespace GLTFast.Tests.Export
         public void DoubleSided()
         {
             CertifyRequirements();
-#if !USING_URP || USING_URP_12_OR_NEWER
             DoubleSidedTest(RenderPipeline.HighDefinition);
-#else
-            Assert.Ignore("Not testing legacy URP version older than 12.x.");
-#endif
         }
 
         static void CertifyRequirements()

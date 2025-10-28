@@ -44,7 +44,7 @@
   ],
   "jobs_to_monitor": {
     "com.unity.cloud.gltfast": [
-      ".yamato/wrench/api-validation-jobs.yml#api_validation_-_cloud_gltfast_-_2021_3_-_windows",
+      ".yamato/wrench/api-validation-jobs.yml#api_validation_-_cloud_gltfast_-_2022_3_-_windows",
       ".yamato/wrench/preview-a-p-v.yml#all_preview_apv_jobs",
       ".yamato/wrench/promotion-jobs.yml#publish_dry_run_cloud_gltfast"
     ]

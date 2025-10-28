@@ -17,7 +17,7 @@ namespace GLTFast
         {
             get
             {
-#if ENABLE_UNITY_COLLECTIONS_CHECKS && UNITY_2022_2_OR_NEWER
+#if ENABLE_UNITY_COLLECTIONS_CHECKS
                 // Making sure the source was not disposed already.
                 // This indirectly triggers a check of the original's safety handle as in
                 // `AtomicSafetyHandle.CheckReadAndThrow(m_Source.m_Safety);`
@@ -27,7 +27,7 @@ namespace GLTFast
             }
         }
 
-#if ENABLE_UNITY_COLLECTIONS_CHECKS && UNITY_2022_2_OR_NEWER
+#if ENABLE_UNITY_COLLECTIONS_CHECKS
         readonly NativeArray<T>.ReadOnly m_Source;
 #endif
 
@@ -35,9 +35,7 @@ namespace GLTFast
         {
             var bufferAddress = data.GetUnsafeReadOnlyPtr();
 #if ENABLE_UNITY_COLLECTIONS_CHECKS
-#if UNITY_2022_2_OR_NEWER
             m_Source = data;
-#endif
             var safety = AtomicSafetyHandle.Create();
             m_Array = new ReadOnlyNativeArray<T>(bufferAddress, data.Length, ref safety);
 #else

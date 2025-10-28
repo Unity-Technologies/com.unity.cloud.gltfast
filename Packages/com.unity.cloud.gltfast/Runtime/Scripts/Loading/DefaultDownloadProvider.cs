@@ -52,11 +52,7 @@ namespace GLTFast.Loading
     /// <summary>
     /// Default <see cref="IDownload"/> implementation that loads URIs via <see cref="UnityWebRequest"/>
     /// </summary>
-    public class AwaitableDownload :
-        IDownload
-#if UNITY_2021_3_OR_NEWER
-        ,INativeDownload
-#endif
+    public class AwaitableDownload : IDownload, INativeDownload
     {
         const string k_MimeTypeGltfBinary = "model/gltf-binary";
         const string k_MimeTypeGltf = "model/gltf+json";
@@ -127,10 +123,8 @@ namespace GLTFast.Loading
             }
         }
 
-#if UNITY_2021_3_OR_NEWER
         /// <inheritdoc />
         public NativeArray<byte>.ReadOnly NativeData => m_Request?.downloadHandler.nativeData ?? default;
-#endif
 
         /// <summary>
         /// Downloaded data as string
@@ -155,11 +149,7 @@ namespace GLTFast.Loading
                         return false;
                 }
 
-#if UNITY_2021_3_OR_NEWER
                 return GltfGlobals.IsGltfBinary(NativeData);
-#else
-                return null;
-#endif
             }
         }
 

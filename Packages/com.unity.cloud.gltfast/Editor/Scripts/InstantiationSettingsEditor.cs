@@ -30,9 +30,7 @@ namespace GLTFast.Editor
             prop = serializedObject.FindProperty($"{pathPrefix}layer");
             var layerField = new LayerField("Destination Layer");
 
-#if UNITY_2021_2_OR_NEWER
             layerField.AddToClassList(BaseField<LayerField>.alignedFieldUssClassName);
-#endif
             layerField.BindProperty(prop);
             container.Add(layerField);
 

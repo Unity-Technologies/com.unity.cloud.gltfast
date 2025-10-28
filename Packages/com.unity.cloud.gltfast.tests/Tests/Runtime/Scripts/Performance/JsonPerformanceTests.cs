@@ -54,30 +54,22 @@ namespace GLTFast.Tests.Performance
         [Test, Performance]
         public void Empty()
         {
-#if UNITY_2022_1_OR_NEWER
             var jsonParser = new GltfJsonUtilityParserWrapper();
             RunTest(
                 s_GltfJsonEmpty.AsReadOnly(),
                 "Empty.JsonUtility",
                 jsonParser.ParseJson
             );
-#else
-            Assert.Ignore("Test requires Unity 2021 or newer.");
-#endif
         }
 
         [Test, Performance]
         public void EmptyExtended()
         {
-#if UNITY_2022_1_OR_NEWER
             RunTest(
                 s_GltfJsonEmpty.AsReadOnly(),
                 "Empty.NewtonsoftJson",
                 JsonConvertWrapper
             );
-#else
-            Assert.Ignore("Test requires Unity 2021 or newer.");
-#endif
         }
 
         [Test, Performance]
@@ -86,16 +78,12 @@ namespace GLTFast.Tests.Performance
 #if !RUN_PERFORMANCE_TESTS
             Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
 #endif
-#if UNITY_2022_1_OR_NEWER
             var jsonParser = new GltfJsonUtilityParserWrapper();
             RunTest(
                 m_GltfJsonFlatHierarchy.AsReadOnly(),
                 "FlatHierarchy.JsonUtility",
                 jsonParser.ParseJson
             );
-#else
-            Assert.Ignore("Test requires Unity 2021 or newer.");
-#endif
         }
 
         [Test]
@@ -104,16 +92,12 @@ namespace GLTFast.Tests.Performance
 #if !RUN_PERFORMANCE_TESTS
             Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
 #endif
-#if UNITY_2022_1_OR_NEWER
             var jsonParser = new GltfJsonUtilityParser();
             Profiler.BeginSample("UTF-Conversion");
             var json = System.Text.Encoding.UTF8.GetString(m_GltfJsonFlatHierarchy);
             Profiler.EndSample();
             var gltf = jsonParser.ParseJson(json);
             CheckFlatHierarchy(gltf);
-#else
-            Assert.Ignore("Test requires Unity 2021 or newer.");
-#endif
         }
 
         [Test, Performance]
@@ -122,15 +106,11 @@ namespace GLTFast.Tests.Performance
 #if !RUN_PERFORMANCE_TESTS
             Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
 #endif
-#if UNITY_2022_1_OR_NEWER
             RunTest(
                 m_GltfJsonFlatHierarchy.AsReadOnly(),
                 "FlatHierarchy.NewtonsoftJson",
                 JsonConvertWrapper
             );
-#else
-            Assert.Ignore("Test requires Unity 2021 or newer.");
-#endif
         }
 
         [Test]
@@ -139,15 +119,11 @@ namespace GLTFast.Tests.Performance
 #if !RUN_PERFORMANCE_TESTS
             Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
 #endif
-#if UNITY_2022_1_OR_NEWER
             Profiler.BeginSample("UTF-Conversion");
             var jsonString = System.Text.Encoding.UTF8.GetString(m_GltfJsonFlatHierarchy);
             Profiler.EndSample();
             var gltf = JsonConvert.DeserializeObject<Newtonsoft.Schema.Root>(jsonString);
             CheckFlatHierarchy(gltf);
-#else
-            Assert.Ignore("Test requires Unity 2021 or newer.");
-#endif
         }
 
         static void CheckFlatHierarchy(RootBase gltf)
@@ -168,7 +144,6 @@ namespace GLTFast.Tests.Performance
             Assert.AreEqual(9999, gltf.Scenes[0].nodes[9999]);
         }
 
-#if UNITY_2022_1_OR_NEWER
         class GltfJsonUtilityParserWrapper
         {
             GltfJsonUtilityParser m_Parser = new();
@@ -189,7 +164,6 @@ namespace GLTFast.Tests.Performance
             Profiler.EndSample();
             return JsonConvert.DeserializeObject<Newtonsoft.Schema.Root>(jsonString);
         }
-#endif
 
         static void RunTest<T>(
             NativeArray<byte>.ReadOnly gltfJson,

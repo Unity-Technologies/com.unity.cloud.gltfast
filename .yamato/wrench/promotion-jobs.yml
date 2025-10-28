@@ -26,46 +26,6 @@ publish_cloud_gltfast:
       browsable: onNonSuccess
   dependencies:
   - path: .yamato/wrench/package-pack-jobs.yml#package_pack_-_cloud_gltfast
-  - path: .yamato/wrench/validation-jobs.yml#validate_-_cloud_gltfast_-_2021_3_-_macos
-    specific_options:
-      UTR:
-        location: results/UTR/validate-cloud.gltfast-2021.3-macos
-        unzip: true
-      pvp-results:
-        location: results/pvp/validate-cloud.gltfast-2021.3-macos
-        unzip: true
-      packages:
-        ignore_artifact: true
-  - path: .yamato/wrench/validation-jobs.yml#validate_-_cloud_gltfast_-_2021_3_-_ubuntu
-    specific_options:
-      UTR:
-        location: results/UTR/validate-cloud.gltfast-2021.3-ubuntu
-        unzip: true
-      pvp-results:
-        location: results/pvp/validate-cloud.gltfast-2021.3-ubuntu
-        unzip: true
-      packages:
-        ignore_artifact: true
-  - path: .yamato/wrench/validation-jobs.yml#validate_-_cloud_gltfast_-_2021_3_-_windows
-    specific_options:
-      UTR:
-        location: results/UTR/validate-cloud.gltfast-2021.3-windows
-        unzip: true
-      pvp-results:
-        location: results/pvp/validate-cloud.gltfast-2021.3-windows
-        unzip: true
-      packages:
-        ignore_artifact: true
-  - path: .yamato/wrench/validation-jobs.yml#validate_-_cloud_gltfast_-_2021_3_46f1_-_windows
-    specific_options:
-      UTR:
-        location: results/UTR/validate-cloud.gltfast-2021.3.46f1-windows
-        unzip: true
-      pvp-results:
-        location: results/pvp/validate-cloud.gltfast-2021.3.46f1-windows
-        unzip: true
-      packages:
-        ignore_artifact: true
   - path: .yamato/wrench/validation-jobs.yml#validate_-_cloud_gltfast_-_2022_3_-_macos
     specific_options:
       UTR:
@@ -93,6 +53,16 @@ publish_cloud_gltfast:
         unzip: true
       pvp-results:
         location: results/pvp/validate-cloud.gltfast-2022.3-windows
+        unzip: true
+      packages:
+        ignore_artifact: true
+  - path: .yamato/wrench/validation-jobs.yml#validate_-_cloud_gltfast_-_2022_3_67f2_-_windows
+    specific_options:
+      UTR:
+        location: results/UTR/validate-cloud.gltfast-2022.3.67f2-windows
+        unzip: true
+      pvp-results:
+        location: results/pvp/validate-cloud.gltfast-2022.3.67f2-windows
         unzip: true
       packages:
         ignore_artifact: true
@@ -278,46 +248,6 @@ publish_dry_run_cloud_gltfast:
       browsable: onNonSuccess
   dependencies:
   - path: .yamato/wrench/package-pack-jobs.yml#package_pack_-_cloud_gltfast
-  - path: .yamato/wrench/validation-jobs.yml#validate_-_cloud_gltfast_-_2021_3_-_macos
-    specific_options:
-      UTR:
-        location: results/UTR/validate-cloud.gltfast-2021.3-macos
-        unzip: true
-      pvp-results:
-        location: results/pvp/validate-cloud.gltfast-2021.3-macos
-        unzip: true
-      packages:
-        ignore_artifact: true
-  - path: .yamato/wrench/validation-jobs.yml#validate_-_cloud_gltfast_-_2021_3_-_ubuntu
-    specific_options:
-      UTR:
-        location: results/UTR/validate-cloud.gltfast-2021.3-ubuntu
-        unzip: true
-      pvp-results:
-        location: results/pvp/validate-cloud.gltfast-2021.3-ubuntu
-        unzip: true
-      packages:
-        ignore_artifact: true
-  - path: .yamato/wrench/validation-jobs.yml#validate_-_cloud_gltfast_-_2021_3_-_windows
-    specific_options:
-      UTR:
-        location: results/UTR/validate-cloud.gltfast-2021.3-windows
-        unzip: true
-      pvp-results:
-        location: results/pvp/validate-cloud.gltfast-2021.3-windows
-        unzip: true
-      packages:
-        ignore_artifact: true
-  - path: .yamato/wrench/validation-jobs.yml#validate_-_cloud_gltfast_-_2021_3_46f1_-_windows
-    specific_options:
-      UTR:
-        location: results/UTR/validate-cloud.gltfast-2021.3.46f1-windows
-        unzip: true
-      pvp-results:
-        location: results/pvp/validate-cloud.gltfast-2021.3.46f1-windows
-        unzip: true
-      packages:
-        ignore_artifact: true
   - path: .yamato/wrench/validation-jobs.yml#validate_-_cloud_gltfast_-_2022_3_-_macos
     specific_options:
       UTR:
@@ -345,6 +275,16 @@ publish_dry_run_cloud_gltfast:
         unzip: true
       pvp-results:
         location: results/pvp/validate-cloud.gltfast-2022.3-windows
+        unzip: true
+      packages:
+        ignore_artifact: true
+  - path: .yamato/wrench/validation-jobs.yml#validate_-_cloud_gltfast_-_2022_3_67f2_-_windows
+    specific_options:
+      UTR:
+        location: results/UTR/validate-cloud.gltfast-2022.3.67f2-windows
+        unzip: true
+      pvp-results:
+        location: results/pvp/validate-cloud.gltfast-2022.3.67f2-windows
         unzip: true
       packages:
         ignore_artifact: true

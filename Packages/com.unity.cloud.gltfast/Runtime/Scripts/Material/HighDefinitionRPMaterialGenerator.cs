@@ -9,9 +9,7 @@ using UnityEditor;
 #endif
 using UnityEngine;
 using UnityEngine.Rendering;
-#if USING_HDRP_10_OR_NEWER
 using UnityEngine.Rendering.HighDefinition;
-#endif
 
 namespace GLTFast.Materials {
 
@@ -29,7 +27,6 @@ namespace GLTFast.Materials {
 
         static readonly int k_ZTestDepthEqualForOpaque = Shader.PropertyToID("_ZTestDepthEqualForOpaque");
 
-#if USING_HDRP_10_OR_NEWER
         static readonly int k_RenderQueueType = Shader.PropertyToID("_RenderQueueType");
         const string k_DoubleSidedOnKeyword = "_DOUBLESIDED_ON";
 
@@ -46,37 +43,6 @@ namespace GLTFast.Materials {
         static bool s_MetallicStackLitShaderQueried;
         static Shader s_MetallicStackLitShader;
 
-#if !UNITY_SHADER_GRAPH_12_OR_NEWER
-
-        /// <summary>
-        /// Forces non-legacy shader graph for HDRP 10.x
-        /// </summary>
-        /// <param name="features">Shader features</param>
-        /// <returns>Shader name</returns>
-        // TODO: Drop it when 2020 support is dropped
-        protected override string GetMetallicShaderName(MetallicShaderFeatures features) {
-            return MetallicShader;
-        }
-
-        /// <summary>
-        /// Forces non-legacy shader graph for HDRP 10.x
-        /// </summary>
-        /// <param name="features">Shader features</param>
-        /// <returns>Shader name</returns>
-        protected override string GetSpecularShaderName(SpecularShaderFeatures features) {
-            return SpecularShader;
-        }
-
-        /// <summary>
-        /// Forces non-legacy shader graph for HDRP 10.x
-        /// </summary>
-        /// <param name="features">Shader features</param>
-        /// <returns>Shader name</returns>
-        protected override string GetUnlitShaderName(UnlitShaderFeatures features) {
-            return UnlitShader;
-        }
-#endif // !UNITY_SHADER_GRAPH_12_OR_NEWER
-
         protected override void SetDoubleSided(Schema.MaterialBase gltfMaterial, Material material) {
             base.SetDoubleSided(gltfMaterial,material);
 
@@ -90,7 +56,6 @@ namespace GLTFast.Materials {
             material.SetFloat(MaterialProperty.CullMode, (int)CullMode.Off);
             material.SetFloat(CullModeForwardProperty, (int)CullMode.Off);
         }
-#endif // USING_HDRP_10_OR_NEWER
 
         protected override void SetAlphaModeMask(Schema.MaterialBase gltfMaterial, Material material) {
             base.SetAlphaModeMask(gltfMaterial,material);
@@ -101,7 +66,6 @@ namespace GLTFast.Materials {
 
 
             if (gltfMaterial.Extensions?.KHR_materials_unlit != null) {
-#if USING_HDRP_10_OR_NEWER
                 material.EnableKeyword(SurfaceTypeTransparentKeyword);
                 material.EnableKeyword(DisableSsrTransparentKeyword);
                 material.EnableKeyword(EnableFogOnTransparentKeyword);
@@ -113,7 +77,6 @@ namespace GLTFast.Materials {
                 material.SetShaderPassEnabled(ShaderPassDepthOnlyPass, false);
 
                 material.SetFloat(AlphaDstBlendProperty, (int)BlendMode.OneMinusSrcAlpha);//10
-#endif // USING_HDRP_10_OR_NEWER
                 material.SetOverrideTag(RenderTypeTag,TransparentRenderType);
                 material.SetShaderPassEnabled(DistortionVectorsPass,false);
                 material.SetFloat(MaterialProperty.DstBlend, (int)BlendMode.OneMinusSrcAlpha);//10
@@ -125,7 +88,6 @@ namespace GLTFast.Materials {
             }
         }
 
-#if USING_HDRP_10_OR_NEWER
         /// <summary>
         /// Picks more advanced StackLit based shader graph, if any material feature requires it.
         /// </summary>
@@ -180,11 +142,8 @@ namespace GLTFast.Materials {
             material.SetFloat(AlphaDstBlendProperty, (int)BlendMode.OneMinusSrcAlpha);//10
             material.SetFloat(MaterialProperty.DstBlend, (int)BlendMode.OneMinusSrcAlpha);//10
             material.SetFloat(MaterialProperty.SrcBlend, (int) BlendMode.SrcAlpha);//5
-#if UNITY_2021_1_OR_NEWER
             material.SetFloat(MaterialProperty.EnableBlendModePreserveSpecularLighting, 0);
-#endif
         }
-#endif // USING_HDRP_10_OR_NEWER
     }
 }
 #endif // USING_URP

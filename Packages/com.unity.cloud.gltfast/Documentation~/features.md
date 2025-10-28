@@ -308,7 +308,7 @@ Possibly incomplete list of things that are known to not work with Entities yet:
 
 ## Unity Version Support
 
-*Unity glTFast* requires Unity 2021.3.46f1 or newer.
+*Unity glTFast* requires Unity 2022.3.67f2 or newer.
 
 ## Legend
 

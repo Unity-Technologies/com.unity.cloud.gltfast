@@ -491,12 +491,12 @@ namespace GLTFast
             CancellationToken cancellationToken = default
             )
         {
-#if UNITY_2021_3_OR_NEWER && NET_STANDARD_2_1
+#if NET_STANDARD_2_1
             await using
 #endif
             var fs = new FileStream(localPath, FileMode.Open, FileAccess.Read);
             var result = await LoadStream(fs, uri, importSettings, cancellationToken);
-#if !UNITY_2021_3_OR_NEWER || !NET_STANDARD_2_1
+#if !NET_STANDARD_2_1
             fs.Dispose();
 #endif
             return result;
@@ -554,13 +554,8 @@ namespace GLTFast
                 }
                 using var data = new NativeArray<byte>((int)length, Allocator.Persistent);
                 var dataStream = data.ToUnmanagedMemoryStream();
-#if UNITY_2021_3_OR_NEWER
                 await dataStream.WriteAsync(firstBytes, cancellationToken);
                 await dataStream.WriteAsync(glbHeader, cancellationToken);
-#else
-                await dataStream.WriteAsync(firstBytes, 0, firstBytes.Length, cancellationToken);
-                await dataStream.WriteAsync(glbHeader, 0, glbHeader.Length, cancellationToken);
-#endif
                 await stream.CopyToAsync(dataStream, (int)(length - dataStream.Position), cancellationToken);
                 var result = await LoadGltfBinaryInternal(data.AsReadOnly(), uri, importSettings, cancellationToken);
                 return result;
@@ -3221,11 +3216,7 @@ namespace GLTFast
 
         Texture2D CreateEmptyTexture(Image img, int index, bool forceSampleLinear)
         {
-#if UNITY_2022_1_OR_NEWER
             var textureCreationFlags = TextureCreationFlags.DontUploadUponCreate | TextureCreationFlags.DontInitializePixels;
-#else
-            var textureCreationFlags = TextureCreationFlags.None;
-#endif
             if (m_Settings.GenerateMipMaps)
             {
                 textureCreationFlags |= TextureCreationFlags.MipChain;

@@ -1,16 +1,13 @@
 // SPDX-FileCopyrightText: 2023 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
-#if USING_URP || USING_HDRP || (UNITY_SHADER_GRAPH_12_OR_NEWER && GLTFAST_BUILTIN_SHADER_GRAPH)
+#if USING_URP || USING_HDRP || GLTFAST_BUILTIN_SHADER_GRAPH
 #define GLTFAST_SHADER_GRAPH
 #endif
 
 #if GLTFAST_SHADER_GRAPH
 
 using System;
-#if !UNITY_SHADER_GRAPH_12_OR_NEWER
-using System.Collections.Generic;
-#endif
 
 using GLTFast.Logging;
 using GLTFast.Schema;
@@ -57,15 +54,6 @@ namespace GLTFast.Materials {
             DoubleSided = 1<<2
         }
 
-#if !UNITY_SHADER_GRAPH_12_OR_NEWER
-        [Flags]
-        protected enum UnlitShaderFeatures {
-            Default = 0,
-            AlphaBlend = 1<<1,
-            DoubleSided = 1<<2
-        }
-#endif
-
         // These are used in HighDefinitionRPMaterialGenerator.cs for older versions of HDRP
         // ReSharper disable MemberCanBePrivate.Global
         // ReSharper disable MemberCanBeProtected.Global
@@ -98,11 +86,7 @@ namespace GLTFast.Materials {
         // ReSharper restore MemberCanBeProtected.Global
 
 #if UNITY_EDITOR
-#if UNITY_SHADER_GRAPH_12_OR_NEWER || USING_HDRP_10_OR_NEWER
         const string k_ShaderPathPrefix = "Packages/" + GltfGlobals.GltfPackageName + "/Runtime/Shader/";
-#else
-        const string k_ShaderPathPrefix = "Packages/" + GltfGlobals.GltfPackageName + "/Runtime/Shader/Legacy/";
-#endif
 #endif
 
         const string k_ShaderGraphsPrefix = "Shader Graphs/";
@@ -162,7 +146,6 @@ namespace GLTFast.Materials {
         /// <summary>Shader keyword _CLEARCOAT</summary>
         const string k_ClearcoatKeyword = "_CLEARCOAT";
 
-#if USING_HDRP_10_OR_NEWER || USING_URP_12_OR_NEWER
         // ReSharper disable MemberCanBeProtected.Global
         // const string KW_DISABLE_DECALS = "_DISABLE_DECALS";
         /// <summary>Shader keyword _DISABLE_SSR_TRANSPARENT</summary>
@@ -188,13 +171,7 @@ namespace GLTFast.Materials {
         /// <summary>Shader property ID for property _ZTestGBuffer</summary>
         public static readonly int ZTestGBufferProperty = Shader.PropertyToID("_ZTestGBuffer");
         // ReSharper restore MemberCanBeProtected.Global
-#endif
 
-#if !UNITY_SHADER_GRAPH_12_OR_NEWER
-        static Dictionary<MetallicShaderFeatures,Shader> s_MetallicShaders = new Dictionary<MetallicShaderFeatures,Shader>();
-        static Dictionary<SpecularShaderFeatures,Shader> s_SpecularShaders = new Dictionary<SpecularShaderFeatures,Shader>();
-        static Dictionary<UnlitShaderFeatures,Shader> s_UnlitShaders = new Dictionary<UnlitShaderFeatures,Shader>();
-#else
         static Shader s_MetallicShader;
         static Shader s_SpecularShader;
         static Shader s_UnlitShader;
@@ -202,7 +179,6 @@ namespace GLTFast.Materials {
         static bool s_MetallicShaderQueried;
         static bool s_SpecularShaderQueried;
         static bool s_UnlitShaderQueried;
-#endif
 
         /// <inheritdoc />
         protected override Material GenerateDefaultMaterial(bool pointsSupport = false) {
@@ -267,11 +243,7 @@ namespace GLTFast.Materials {
                 if (specGloss != null) {
                     baseColorLinear = specGloss.DiffuseColor;
                     material.SetVector( MaterialProperty.DiffuseFactor, specGloss.DiffuseColor.gamma);
-#if UNITY_SHADER_GRAPH_12_OR_NEWER
                     material.SetVector(MaterialProperty.SpecularFactor, specGloss.SpecularColor);
-#else
-                    material.SetVector(MaterialProperty.SpecularFactor, specGloss.SpecularColor);
-#endif
                     material.SetFloat(MaterialProperty.GlossinessFactor, specGloss.glossinessFactor);
 
                     TrySetTexture(
@@ -514,7 +486,6 @@ namespace GLTFast.Materials {
         // ReSharper disable once UnusedParameter.Local
         protected virtual Shader GetMetallicShader(MetallicShaderFeatures features)
         {
-#if UNITY_SHADER_GRAPH_12_OR_NEWER
             if (!s_MetallicShaderQueried) {
 #if UNITY_EDITOR
                 s_MetallicShader = LoadShaderByGuid(new GUID(k_MetallicShaderGuid));
@@ -524,18 +495,10 @@ namespace GLTFast.Materials {
                 s_MetallicShaderQueried = true;
             }
             return s_MetallicShader;
-#else
-            if (!s_MetallicShaders.TryGetValue(features, value: out var shader) || shader == null) {
-                shader = LoadShaderByName(GetMetallicShaderName(features));
-                s_MetallicShaders[features] = shader;
-            }
-            return shader;
-#endif
         }
 
         // ReSharper disable once UnusedParameter.Local
         Shader GetUnlitShader(MaterialBase gltfMaterial) {
-#if UNITY_SHADER_GRAPH_12_OR_NEWER
             if (!s_UnlitShaderQueried) {
 #if UNITY_EDITOR
                 s_UnlitShader = LoadShaderByGuid(new GUID(k_UnlitShaderGuid));
@@ -545,20 +508,11 @@ namespace GLTFast.Materials {
                 s_UnlitShaderQueried = true;
             }
             return s_UnlitShader;
-#else
-            var features = GetUnlitShaderFeatures(gltfMaterial);
-            if (!s_UnlitShaders.TryGetValue(features, out var shader) || shader == null) {
-                shader = LoadShaderByName(GetUnlitShaderName(features));
-                s_UnlitShaders[features] = shader;
-            }
-            return shader;
-#endif
         }
 
 
         // ReSharper disable once UnusedParameter.Local
         Shader GetSpecularShader(SpecularShaderFeatures features) {
-#if UNITY_SHADER_GRAPH_12_OR_NEWER
             if (!s_SpecularShaderQueried) {
 #if UNITY_EDITOR
                 s_SpecularShader = LoadShaderByGuid(new GUID(k_SpecularShaderGuid));
@@ -568,13 +522,6 @@ namespace GLTFast.Materials {
                 s_SpecularShaderQueried = true;
             }
             return s_SpecularShader;
-#else
-            if (!s_SpecularShaders.TryGetValue(features, out var shader) || shader == null) {
-                shader = LoadShaderByName(GetSpecularShaderName(features));
-                s_SpecularShaders[features] = shader;
-            }
-            return shader;
-#endif
         }
 
 #if UNITY_EDITOR
@@ -603,11 +550,9 @@ namespace GLTFast.Materials {
 
         protected virtual void SetAlphaModeMask(MaterialBase gltfMaterial, Material material) {
             material.SetFloat(MaterialProperty.AlphaCutoff, gltfMaterial.alphaCutoff);
-#if USING_HDRP_10_OR_NEWER || USING_URP_12_OR_NEWER
             material.EnableKeyword(AlphaTestOnKeyword);
             material.SetOverrideTag(RenderTypeTag, TransparentCutoutRenderType);
             material.SetFloat(ZTestGBufferProperty, (int)CompareFunction.Equal); //3
-#endif
         }
 
         protected virtual void SetShaderModeOpaque(MaterialBase gltfMaterial, Material material) { }
@@ -690,58 +635,6 @@ namespace GLTFast.Materials {
             }
             return feature;
         }
-
-#if !UNITY_SHADER_GRAPH_12_OR_NEWER
-
-        /// <summary>
-        /// Picks correct legacy shader for HDRP 7.x and URP 10.x or lower
-        /// </summary>
-        /// <param name="features">Shader features</param>
-        /// <returns>Legacy shader name</returns>
-        // TODO: Drop it when 2020 support is dropped
-        protected virtual string  GetMetallicShaderName(MetallicShaderFeatures features) {
-            var doubleSided = (features & MetallicShaderFeatures.DoubleSided) != 0;
-            var mode = (ShaderMode)(features & MetallicShaderFeatures.ModeMask);
-            return $"{MetallicShader}-{mode}{(doubleSided ? "-double" : "")}";
-        }
-
-        /// <summary>
-        /// Picks correct legacy shader for HDRP 7.x and URP 10.x or lower
-        /// </summary>
-        /// <param name="features">Shader features</param>
-        /// <returns>Legacy shader name</returns>
-        // TODO: Drop it when 2020 support is dropped
-        protected virtual string GetUnlitShaderName(UnlitShaderFeatures features) {
-            var doubleSided = (features & UnlitShaderFeatures.DoubleSided) != 0;
-            var alphaBlend = (features & UnlitShaderFeatures.AlphaBlend) != 0;
-            var shaderName = $"{UnlitShader}{(alphaBlend ? "-Blend" : "-Opaque")}{(doubleSided ? "-double" : "")}";
-            return shaderName;
-        }
-
-        /// <summary>
-        /// Picks correct legacy shader for HDRP 7.x and URP 10.x or lower
-        /// </summary>
-        /// <param name="features">Shader features</param>
-        /// <returns>Legacy shader name</returns>
-        // TODO: Drop it when 2020 support is dropped
-        protected virtual string GetSpecularShaderName(SpecularShaderFeatures features) {
-            var alphaBlend = (features & SpecularShaderFeatures.AlphaBlend) != 0;
-            var doubleSided = (features & SpecularShaderFeatures.DoubleSided) != 0;
-            var shaderName = $"{SpecularShader}{(alphaBlend ? "-Blend" : "-Opaque")}{(doubleSided ? "-double" : "")}";
-            return shaderName;
-        }
-
-        static UnlitShaderFeatures GetUnlitShaderFeatures(MaterialBase gltfMaterial) {
-
-            var feature = UnlitShaderFeatures.Default;
-            if (gltfMaterial.doubleSided) feature |= UnlitShaderFeatures.DoubleSided;
-
-            if (gltfMaterial.GetAlphaMode() != AlphaMode.Opaque) {
-                feature |= UnlitShaderFeatures.AlphaBlend;
-            }
-            return feature;
-        }
-#endif
     }
 }
 #endif // GLTFAST_SHADER_GRAPH

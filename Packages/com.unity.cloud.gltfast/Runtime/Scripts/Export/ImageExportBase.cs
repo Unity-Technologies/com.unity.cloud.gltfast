@@ -4,9 +4,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.Assertions;
-#if UNITY_2022_1_OR_NEWER
 using UnityEngine.Experimental.Rendering;
-#endif
 using Object = UnityEngine.Object;
 
 namespace GLTFast.Export
@@ -105,17 +103,11 @@ namespace GLTFast.Export
                     texture.width,
                     texture.height,
 #if UNITY_2023_2_OR_NEWER
-                    // ~20 times faster texture construction
                     !hasAlpha && SystemInfo.IsFormatSupported(GraphicsFormat.R8G8B8_UNorm, GraphicsFormatUsage.Sample) ?  GraphicsFormat.R8G8B8_UNorm : GraphicsFormat.R8G8B8A8_UNorm,
                     TextureCreationFlags.DontInitializePixels | TextureCreationFlags.DontUploadUponCreate
-#elif UNITY_2022_1_OR_NEWER
-                    // ~20 times faster texture construction
+#else
                     !hasAlpha && SystemInfo.IsFormatSupported(GraphicsFormat.R8G8B8_UNorm, FormatUsage.Sample) ?  GraphicsFormat.R8G8B8_UNorm : GraphicsFormat.R8G8B8A8_UNorm,
                     TextureCreationFlags.DontInitializePixels | TextureCreationFlags.DontUploadUponCreate
-#else
-                    hasAlpha ? TextureFormat.ARGB32 : TextureFormat.RGB24,
-                    false,
-                    true
 #endif
                 );
                 exportTexture.ReadPixels(new Rect(0, 0, destRenderTexture.width, destRenderTexture.height), 0, 0);

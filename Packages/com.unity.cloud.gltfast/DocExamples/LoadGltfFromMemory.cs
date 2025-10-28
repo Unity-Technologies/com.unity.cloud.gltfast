@@ -24,7 +24,6 @@ namespace GLTFast.Documentation.Examples
             await LoadGltfFile();
         }
 
-#if UNITY_2021_3_OR_NEWER
         #region LoadGltfFromMemory
         async Task LoadGltfFile()
         {
@@ -41,21 +40,5 @@ namespace GLTFast.Documentation.Examples
             }
         }
         #endregion
-#else
-        async Task LoadGltfFile()
-        {
-            var gltfDataAsByteArray = File.ReadAllBytes(filePath);
-            var gltf = new GltfImport(logger: new ConsoleLogger());
-            var success = await gltf.Load(
-                gltfDataAsByteArray,
-                // The URI of the original data is important for resolving relative URIs within the glTF
-                new Uri(filePath)
-                );
-            if (success)
-            {
-                await gltf.InstantiateMainSceneAsync(transform);
-            }
-        }
-#endif
     }
 }

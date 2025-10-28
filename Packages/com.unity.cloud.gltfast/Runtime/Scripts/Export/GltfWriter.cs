@@ -655,18 +655,9 @@ namespace GLTFast.Export
             return true;
         }
 
-        static
-#if UNITY_2021_3_OR_NEWER
-            async
-#endif
-            Task WriteBytesToStream(Stream outStream, byte[] bytes)
+        static async Task WriteBytesToStream(Stream outStream, byte[] bytes)
         {
-#if UNITY_2021_3_OR_NEWER
             await outStream.WriteAsync(bytes);
-#else
-            outStream.Write(bytes);
-            return Task.CompletedTask;
-#endif
         }
 
         async Task WriteJsonToStream(Stream outStream)
@@ -989,7 +980,6 @@ namespace GLTFast.Export
                 }
                 else
                 {
-#if UNITY_2021_3_OR_NEWER
                     meshData[i] = mesh.indexFormat == IndexFormat.UInt16
                         ? new NonReadableMeshData<ushort>(mesh)
                         : new NonReadableMeshData<uint>(mesh);
@@ -1005,7 +995,6 @@ namespace GLTFast.Export
                             indexMap.Add(a);
                         }
                     }
-#endif
                     nonReadableMesh = true;
                 }
             }
@@ -2197,13 +2186,9 @@ namespace GLTFast.Export
                 Debug.LogWarning($"Exporting non-readable meshes is not reliable in builds across platforms and " +
                     $"graphics APIs! Consider making mesh \"{uMesh.name}\" readable.", uMesh);
 #endif
-                // Unity 2020 and older does not support accessing non-readable meshes via GraphicsBuffer.
-#if UNITY_2021_3_OR_NEWER
-                // As of now Draco for Unity does not support encoding non-readable meshes.
                 if ((m_Settings.Compression & Compression.Draco) != 0)
-#endif
                 {
-#if UNITY_2021_3_OR_NEWER && UNITY_EDITOR
+#if UNITY_EDITOR
                     // Non-readable meshes are unsupported during playmode or in builds, but work in Editor exports.
                     if (Application.isPlaying)
 #endif

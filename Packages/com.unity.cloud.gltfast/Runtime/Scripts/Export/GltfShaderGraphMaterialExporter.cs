@@ -20,23 +20,15 @@ namespace GLTFast.Export
     {
         protected override bool IsDoubleSided(Material material)
         {
-#if !USING_URP || USING_URP_12_OR_NEWER
             if (TryGetValue(material, MaterialProperty.Cull, out int cull))
             {
                 return cull == (int)CullMode.Off;
             }
             return false;
-#else
-            // Legacy URP shader graphs have postfix "-double" in their name if they are double-sided.
-            var shaderName = material.shader.name;
-
-            return shaderName.EndsWith("-double", StringComparison.InvariantCulture);
-#endif
         }
 
         protected override MaterialBase.AlphaMode GetAlphaMode(Material material)
         {
-#if !USING_URP || USING_URP_12_OR_NEWER
             if (TryGetValue(material, MaterialProperty.AlphaClip, out int alphaClip)
                 && alphaClip == 1)
             {
@@ -48,18 +40,6 @@ namespace GLTFast.Export
                     ? MaterialBase.AlphaMode.Opaque
                     : MaterialBase.AlphaMode.Blend;
             }
-#else
-            // Legacy URP shader graphs have postfix "-Blend" or "-Blend-double" in their name if they are blended.
-            var shaderName = material.shader.name;
-
-            var startIndex = math.max(0, shaderName.Length - 14);
-            if (shaderName.LastIndexOf("-Blend", startIndex, StringComparison.InvariantCulture) >= 0
-                || shaderName.LastIndexOf("-Premultiply", startIndex, StringComparison.InvariantCulture) >= 0)
-            {
-                return MaterialBase.AlphaMode.Blend;
-            }
-#endif
-
             return MaterialBase.AlphaMode.Opaque;
         }
 

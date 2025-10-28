@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2023 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
-#if ! ( USING_URP || USING_HDRP || (UNITY_SHADER_GRAPH_12_OR_NEWER && GLTFAST_BUILTIN_SHADER_GRAPH) )
+#if ! ( USING_URP || USING_HDRP || GLTFAST_BUILTIN_SHADER_GRAPH )
 #define GLTFAST_BUILTIN_RP
 #endif
 

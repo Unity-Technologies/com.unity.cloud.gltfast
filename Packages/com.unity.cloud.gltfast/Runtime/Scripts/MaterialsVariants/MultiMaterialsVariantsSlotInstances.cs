@@ -29,9 +29,6 @@ namespace GLTFast
             )
         {
             var firstIteration = true;
-#if !UNITY_2022_2_OR_NEWER
-            Material[] materialsArray = null;
-#endif
             foreach (var renderer in m_Renderers)
             {
                 if (firstIteration)
@@ -68,16 +65,9 @@ namespace GLTFast
                         }
                     }
 
-#if !UNITY_2022_2_OR_NEWER
-                    materialsArray = materials.ToArray();
-#endif
                     firstIteration = false;
                 }
-#if UNITY_2022_2_OR_NEWER
                 renderer.SetSharedMaterials(materials);
-#else
-                renderer.sharedMaterials = materialsArray;
-#endif
             }
         }
     }

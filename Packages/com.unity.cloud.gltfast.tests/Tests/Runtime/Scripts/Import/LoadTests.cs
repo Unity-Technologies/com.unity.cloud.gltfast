@@ -201,11 +201,7 @@ namespace GLTFast.Tests.Import
                 case LoadType.Stream:
                     var stream = new FileStream(path, FileMode.Open);
                     success = await gltf.LoadStream(stream, new Uri(path));
-#if UNITY_2021_3_OR_NEWER
                     await stream.DisposeAsync();
-#else
-                    stream.Dispose();
-#endif
                     break;
                 case LoadType.Json:
                     var json = await ReadAllTextAsync(path);
@@ -250,11 +246,7 @@ namespace GLTFast.Tests.Import
             // TODO: Use downloadHandler.nativeData directly!
             return new NativeArray<byte>(downloadHandler.data, Allocator.Persistent);
 #else
-#if UNITY_2021_3_OR_NEWER
             var data = await File.ReadAllBytesAsync(path);
-#else
-            var data = File.ReadAllBytes(path);
-#endif
             // TODO: Read into NativeArray directly!
             return new NativeArray<byte>(data, Allocator.Persistent);
 #endif
@@ -269,11 +261,7 @@ namespace GLTFast.Tests.Import
             return downloadHandler.data;
 #else
             // TODO: Read into NativeArray directly!
-#if UNITY_2021_3_OR_NEWER
             return await File.ReadAllBytesAsync(path);
-#else
-            return File.ReadAllBytes(path);
-#endif
 #endif
         }
 
@@ -283,11 +271,7 @@ namespace GLTFast.Tests.Import
             var downloadHandler = await UnityWebRequestDownload(path);
             return downloadHandler.text;
 #else
-#if UNITY_2021_3_OR_NEWER
             return await File.ReadAllTextAsync(path);
-#else
-            return File.ReadAllText(path);
-#endif
 #endif
         }
         // TODO: Remove pragma, as is is required for 2020 LTS and earlier only.

@@ -41,7 +41,6 @@ namespace GLTFast.Logging
         /// <param name="code">Message's log code</param>
         /// <param name="messages">Additional, optional message parts</param>
         public void Log(LogType logType, LogCode code, params string[] messages)
-#if UNITY_2021_3_OR_NEWER
         {
             switch (logType)
             {
@@ -56,9 +55,6 @@ namespace GLTFast.Logging
                     break;
             }
         }
-#else
-            ;
-#endif
 
         /// <summary>
         /// Dispatches a critical error message.

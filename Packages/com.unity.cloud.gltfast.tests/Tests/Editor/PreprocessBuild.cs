@@ -81,11 +81,7 @@ namespace GLTFast.Editor.Tests
                 case RenderPipeline.Unknown:
                 case RenderPipeline.Universal:
                 default:
-#if UNITY_2021_2_OR_NEWER
                     name = "urp.12";
-#else
-                    name = "urp.10";
-#endif
                     break;
             }
 

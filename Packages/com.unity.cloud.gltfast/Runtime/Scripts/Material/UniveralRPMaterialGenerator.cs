@@ -24,7 +24,6 @@ namespace GLTFast.Materials {
 
         static bool s_SupportsCameraOpaqueTexture;
 
-#if USING_URP_12_OR_NEWER
 #if UNITY_EDITOR
         /// <summary>Guid of the shader graph with clearcoat support</summary>
         const string k_MetallicClearcoatShaderGuid = "c18c97ae1ce021b4980c5d19a54f0d3c";
@@ -34,13 +33,11 @@ namespace GLTFast.Materials {
 
         static bool s_MetallicClearcoatShaderQueried;
         static Shader s_MetallicClearcoatShader;
-#endif
 
         public UniversalRPMaterialGenerator(UniversalRenderPipelineAsset renderPipelineAsset) {
             s_SupportsCameraOpaqueTexture = renderPipelineAsset.supportsCameraOpaqueTexture;
         }
 
-#if USING_URP_12_OR_NEWER
         protected override void SetDoubleSided(MaterialBase gltfMaterial, Material material) {
             base.SetDoubleSided(gltfMaterial,material);
             material.SetFloat(MaterialProperty.Cull, (int)CullMode.Off);
@@ -97,7 +94,6 @@ namespace GLTFast.Materials {
 
             return base.GetMetallicShader(features);
         }
-#endif
 
         protected override ShaderMode? ApplyTransmissionShaderFeatures(MaterialBase gltfMaterial) {
             if (!s_SupportsCameraOpaqueTexture) {

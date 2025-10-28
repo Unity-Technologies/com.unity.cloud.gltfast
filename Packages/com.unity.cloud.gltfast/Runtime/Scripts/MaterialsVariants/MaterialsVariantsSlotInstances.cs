@@ -59,11 +59,7 @@ namespace GLTFast
                     getMaterialTasks.Remove(task);
                 }
             }
-#if UNITY_2022_2_OR_NEWER
             m_Renderer.SetSharedMaterials(materials);
-#else
-            m_Renderer.sharedMaterials = materials.ToArray();
-#endif
         }
     }
 }

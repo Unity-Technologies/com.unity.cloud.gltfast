@@ -30,9 +30,6 @@ namespace GLTFast.Tests.Export
             var task = ExportObjects(
                 "NonReadableMesh",
                 new[] { model }
-#if !UNITY_2021_3_OR_NEWER
-                , expectedLogCodes: new[] { LogCode.MeshNotReadable }
-#endif
             );
             yield return AsyncWrapper.WaitForTask(task);
         }
@@ -50,18 +47,12 @@ namespace GLTFast.Tests.Export
             var task = ExportObjects(
                 "MixedReadableMesh-01",
                 new[] { model, readable }
-#if !UNITY_2021_3_OR_NEWER
-                , expectedLogCodes: new[] { LogCode.MeshNotReadable }
-#endif
                 );
             yield return AsyncWrapper.WaitForTask(task);
 
             task = ExportObjects(
                 "MixedReadableMesh-10",
                 new[] { readable, model }
-#if !UNITY_2021_3_OR_NEWER
-                , expectedLogCodes: new[] { LogCode.MeshNotReadable }
-#endif
                 );
             yield return AsyncWrapper.WaitForTask(task);
         }
@@ -137,7 +128,7 @@ namespace GLTFast.Tests.Export
             {
                 Assert.Ignore("Exporting non-readable meshes is unreliable on OpenGL/OpenGLES.");
             }
-#if !(UNITY_6000_0_OR_NEWER || (UNITY_EDITOR && UNITY_2022_3_OR_NEWER))
+#if !(UNITY_6000_0_OR_NEWER || UNITY_EDITOR)
             Assert.Ignore("Exporting non-readable meshes is unreliable on Unity versions before 6.");
 #endif
         }

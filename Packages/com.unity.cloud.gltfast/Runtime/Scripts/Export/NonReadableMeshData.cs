@@ -1,7 +1,6 @@
 // SPDX-FileCopyrightText: 2024 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
-#if UNITY_2021_3_OR_NEWER
 #if UNITY_2023_3_OR_NEWER
 #define ASYNC_MESH_DATA
 #endif
@@ -89,4 +88,3 @@ namespace GLTFast.Export
         }
     }
 }
-#endif // UNITY_2021_2_OR_NEWER
