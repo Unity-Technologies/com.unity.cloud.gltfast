@@ -1,0 +1,5 @@
+system: jira
+server: jira.unity3d.com
+project: GLTF
+issuetype: Bug
+package: Unity glTFast
