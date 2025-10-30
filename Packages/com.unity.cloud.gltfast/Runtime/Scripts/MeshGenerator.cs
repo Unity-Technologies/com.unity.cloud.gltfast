@@ -123,7 +123,7 @@ namespace GLTFast
                         var material = gltfImport.GetSourceMaterial(primitive.material);
                         if (material.RequiresTangents)
                         {
-                            mainBufferType |= MainBufferType.Tangent;
+                            mainBufferType |= MainBufferType.Normal | MainBufferType.Tangent;
                         }
                         else if (material.RequiresNormals)
                         {

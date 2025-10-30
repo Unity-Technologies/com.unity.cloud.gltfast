@@ -13,7 +13,7 @@ namespace GLTFast
         Normal = 0x2,
         Tangent = 0x4,
 
-        PosNorm = 0x3,
-        PosNormTan = 0x7,
+        PosNorm = Position | Normal,
+        PosNormTan = Position | Normal | Tangent,
     }
 }

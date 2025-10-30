@@ -60,6 +60,11 @@ MonoBehaviour:
     expectInstantiationFail: 0
     expectedLogCodes: 34000000
     requiredExtensions: 
+  - relativeUri: NoNormals/NoNormals.gltf
+    expectLoadFail: 0
+    expectInstantiationFail: 0
+    expectedLogCodes: 
+    requiredExtensions: 
   - relativeUri: NoScene/NoScene.gltf
     expectLoadFail: 0
     expectInstantiationFail: 0

@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - (Test) OpenGltfScene: Shortcut Control+X clears the previously loaded glTF. Useful for testing resource deallocation.
 - (Test) Assets variants of *SubMesh* and *Rainbow Cuboid* for testing import of compressed/uncompressed multi-primitive meshes.
 - (Test) glTFs with different kinds of image formats and sources.
+- (Test) *No Normal* test asset.
 
 ### Changed
 
@@ -19,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Multi-primitive, skinned meshes import properly to Unity meshes with multiple sub-meshes.
 - For Draco compressed meshes, it's now ensured that morph targets are retrieved to completion and resources are disposed properly.
 - Sampler settings conflicts result in a proper warning message if they cannot be resolved by instantiating the Texture2D (can occur on design-time imports).
+- Implicitly add normals to the vertex attribute layout if tangents are required (fixes [#41](https://github.com/Unity-Technologies/com.unity.cloud.gltfast/issues/41)).
 
 ### Removed
 
