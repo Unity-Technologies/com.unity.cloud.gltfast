@@ -2,14 +2,17 @@
 
 ## Install the *Unity glTFast* package using the Unity Package Manager
 
+> [!TIP]
+> Click the following link to fast-track the installation and skip to step 5: [com.unity.cloud.gltfast](com.unity3d.kharma:upmpackage/com.unity.cloud.gltfast)
+
 To install the *Unity glTFast* package, follow these steps:
 
-- In your Unity project, go to Windows > Package Manager.
-- On the status bar, select the Add (+) button.
-- From the Add menu, select Add + package by name. Name and Version fields appear.
-- In the Name field, enter `com.unity.cloud.gltfast`.
-- Select Add.
-- The Editor installs the latest available version of the package and any dependent packages.
+1. In your Unity project, go to Windows > Package Manager.
+2. On the status bar, select the Add (+) button.
+3. From the Add menu, select Add + package by name. Name and Version fields appear.
+4. In the Name field, enter `com.unity.cloud.gltfast`.
+5. Click *Add*.
+6. The Editor installs the latest available version of the package and any dependent packages.
 
 ## Optional Packages
 
