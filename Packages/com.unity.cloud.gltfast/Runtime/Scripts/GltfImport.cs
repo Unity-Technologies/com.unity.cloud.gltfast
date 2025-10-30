@@ -3157,8 +3157,8 @@ namespace GLTFast
                             if(m_KtxLoadContextsBuffer==null) {
                                 m_KtxLoadContextsBuffer = new List<KtxLoadContextBase>();
                             }
-                            var ktxContext = new KtxLoadNativeContext(
-                                i,((IGltfBuffers)this).GetBufferView(img.bufferView, out _));
+                            var ktxContext = new KtxLoadContext(
+                                i, ((IGltfBuffers)this).GetBufferView(img.bufferView, out _).AsNativeArrayReadOnly());
                             m_KtxLoadContextsBuffer.Add(ktxContext);
                             Profiler.EndSample();
                             await DeferAgent.BreakPoint();
