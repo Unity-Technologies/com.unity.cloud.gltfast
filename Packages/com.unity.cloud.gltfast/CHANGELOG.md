@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - (Test) *No Normal* test asset.
 
 ### Changed
+- (Performance) Texture data is not copied into managed memory before loading via [Texture2D.LoadImage](xref:UnityEngine.Texture2D.LoadImage*) (applies for Unity 6.0 or newer).
 - (Performance) Avoid copy of entire data URI string by using `ReadOnlySpan` instead sub-stringing.
 
 ### Fixed
@@ -23,6 +24,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Sampler settings conflicts result in a proper warning message if they cannot be resolved by instantiating the Texture2D (can occur on design-time imports).
 - Implicitly add normals to the vertex attribute layout if tangents are required (fixes [#41](https://github.com/Unity-Technologies/com.unity.cloud.gltfast/issues/41)).
 - Properly release native resources bound by morph targets jobs in context of decoding Draco compressed meshes.
+- Avoid pointless copying of glb-embedded textures if ImageConversion module is disabled anyways.
+- Avoid download of textures if ImageConversion module is disabled anyways.
 
 ### Removed
 

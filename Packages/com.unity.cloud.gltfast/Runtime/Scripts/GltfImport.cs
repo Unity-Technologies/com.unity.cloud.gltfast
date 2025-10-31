@@ -191,22 +191,23 @@ namespace GLTFast
         GlbBinChunk[] m_BinChunks;
 
         Dictionary<int, Task<IDownload>> m_DownloadTasks;
+
+#if UNITY_IMAGECONVERSION
+        Dictionary<int, TextureDownloadBase> m_TextureDownloadTasks;
+#if !UNITY_6000_0_OR_NEWER
+        List<ImageCreateContext> m_ImageCreateContexts;
+#endif // !UNITY_6000_0_OR_NEWER
+#endif // UNITY_IMAGECONVERSION
 #if KTX_IS_ENABLED
         Dictionary<int,Task<IDownload>> m_KtxDownloadTasks;
-#endif
-        Dictionary<int, TextureDownloadBase> m_TextureDownloadTasks;
+        List<KtxLoadContextBase> m_KtxLoadContextsBuffer;
+#endif // KTX_IS_ENABLED
 
         IDisposable[] m_AccessorData;
         AccessorUsage[] m_AccessorUsage;
         JobHandle m_AccessorJobsHandle;
 
         List<MeshOrder> m_MeshOrders;
-
-        List<ImageCreateContext> m_ImageCreateContexts;
-#if KTX_IS_ENABLED
-        List<KtxLoadContextBase> m_KtxLoadContextsBuffer;
-#endif // KTX_IS_ENABLED
-
 
         /// <summary>
         /// Loaded glTF images (Raw texture without sampler settings)
@@ -1248,12 +1249,13 @@ namespace GLTFast
             }
 #endif
 
+#if UNITY_IMAGECONVERSION
             if (m_TextureDownloadTasks != null)
             {
                 success = success && await WaitForTextureDownloads();
                 m_TextureDownloadTasks.Clear();
             }
-
+#endif // UNITY_IMAGECONVERSION
 #if KTX_IS_ENABLED
             if (m_KtxDownloadTasks != null) {
                 success = success && await WaitForKtxDownloads();
@@ -1627,7 +1629,7 @@ namespace GLTFast
             m_Images[imageIndex] = txt;
             Profiler.EndSample();
         }
-#endif
+#endif // UNITY_IMAGECONVERSION
 
         async Task<bool> WaitForBufferDownloads()
         {
@@ -1686,6 +1688,7 @@ namespace GLTFast
             return true;
         }
 
+#if UNITY_IMAGECONVERSION
         async Task<bool> WaitForTextureDownloads()
         {
             foreach (var dl in m_TextureDownloadTasks)
@@ -1707,23 +1710,34 @@ namespace GLTFast
                     // on Render thread, which is occupied by Gfx.UploadTextureData for 19 ms for a 2k by 2k texture
                     if (LoadImageFromBytes(imageIndex))
                     {
-#if UNITY_IMAGECONVERSION
+                        Profiler.BeginSample("Texture2D.LoadImage");
                         var forceSampleLinear = m_ImageGamma!=null && !m_ImageGamma[imageIndex];
                         txt = CreateEmptyTexture(Root.Images[imageIndex], imageIndex, forceSampleLinear);
-                        // TODO: Investigate for NativeArray variant to avoid `www.data`
-                        txt.LoadImage(
-                            www.Data,
-                            !LoadImageReadable(imageIndex)
+                        var markNonReadable = !LoadImageReadable(imageIndex);
+#if UNITY_6000_0_OR_NEWER
+                        if(www is INativeDownload nativeDownload)
+                        {
+                            txt.LoadImage(
+                                nativeDownload.NativeData.AsReadOnlySpan(),
+                                markNonReadable
                             );
-#else
-                        Logger?.Warning(LogCode.ImageConversionNotEnabled);
-                        txt = null;
+                        }
+                        else
 #endif
+                        {
+                            txt.LoadImage(
+                                www.Data,
+                                markNonReadable
+                                );
+                        }
+                        Profiler.EndSample();
                     }
                     else
                     {
                         Assert.IsTrue(www is ITextureDownload);
+                        Profiler.BeginSample("ITextureDownload.Texture");
                         txt = ((ITextureDownload)www).Texture;
+                        Profiler.EndSample();
                         txt.name = GetImageName(Root.Images[imageIndex], imageIndex);
                     }
                     www.Dispose();
@@ -1739,7 +1753,7 @@ namespace GLTFast
             }
             return true;
         }
-
+#endif // UNITY_IMAGECONVERSION
 
 #if KTX_IS_ENABLED
         async Task<bool> WaitForKtxDownloads() {
@@ -2233,11 +2247,7 @@ namespace GLTFast
                 {
                     Assert.AreEqual(m_Images.Length, Root.Images.Count);
                 }
-                m_ImageCreateContexts = new List<ImageCreateContext>();
-#if KTX_IS_ENABLED
-                await
-#endif
-                CreateTexturesFromBuffers(Root.Images, Root.BufferViews, m_ImageCreateContexts);
+                await CreateTexturesFromBuffers(Root.Images, Root.BufferViews);
             }
             await DeferAgent.BreakPoint();
 
@@ -2269,10 +2279,12 @@ namespace GLTFast
             }
 #endif // KTX_IS_ENABLED
 
+#if UNITY_IMAGECONVERSION && !UNITY_6000_0_OR_NEWER
             if (m_ImageCreateContexts != null)
             {
                 await WaitForImageCreateContexts();
             }
+#endif // UNITY_IMAGECONVERSION && !UNITY_6000_0_OR_NEWER
 
             if (m_Images != null && Root.Textures != null)
             {
@@ -2623,6 +2635,7 @@ namespace GLTFast
             }
         }
 
+#if UNITY_IMAGECONVERSION && !UNITY_6000_0_OR_NEWER
         async Task WaitForImageCreateContexts()
         {
             var imageCreateContextsLeft = true;
@@ -2635,12 +2648,12 @@ namespace GLTFast
                     if (jh.jobHandle.IsCompleted)
                     {
                         jh.jobHandle.Complete();
-#if UNITY_IMAGECONVERSION
+                        Profiler.BeginSample("Texture2D.LoadImage");
                         m_Images[jh.imageIndex].LoadImage(
                             jh.buffer,
                             !LoadImageReadable(jh.imageIndex)
                         );
-#endif
+                        Profiler.EndSample();
                         jh.gcHandle.Free();
                         m_ImageCreateContexts.RemoveAt(i);
                         loadedAny = true;
@@ -2655,6 +2668,7 @@ namespace GLTFast
             }
             m_ImageCreateContexts = null;
         }
+#endif // UNITY_IMAGECONVERSION && !UNITY_6000_0_OR_NEWER
 
         void SetMaterialPointsSupport(int materialIndex)
         {
@@ -2793,10 +2807,15 @@ namespace GLTFast
                 m_DownloadTasks = null;
             }
 
-            m_TextureDownloadTasks = null;
-
             m_AccessorUsage = null;
+
+#if UNITY_IMAGECONVERSION
+            m_TextureDownloadTasks = null;
+#if !UNITY_6000_0_OR_NEWER
             m_ImageCreateContexts = null;
+#endif
+#endif
+
             m_Images = null;
             m_ImageFormats = null;
 #if !UNITY_VISIONOS
@@ -3127,17 +3146,14 @@ namespace GLTFast
             return result;
         }
 
-#if KTX_IS_ENABLED
-        async Task
-#else
-        void
-#endif
-        CreateTexturesFromBuffers(
+        async Task CreateTexturesFromBuffers(
             IReadOnlyList<Image> srcImages,
-            IReadOnlyList<BufferViewBase> bufferViews,
-            ICollection<ImageCreateContext> contexts
+            IReadOnlyList<BufferViewBase> bufferViews
         )
         {
+#if UNITY_IMAGECONVERSION && !UNITY_6000_0_OR_NEWER
+            m_ImageCreateContexts = new List<ImageCreateContext>();
+#endif
             for (int i = 0; i < m_Images.Length; i++)
             {
                 Profiler.BeginSample("CreateTexturesFromBuffers.ImageFormat");
@@ -3157,55 +3173,74 @@ namespace GLTFast
                 }
                 Profiler.EndSample();
 
-                if (imgFormat != ImageFormat.Unknown)
+                if (imgFormat != ImageFormat.Unknown && img.bufferView >= 0)
                 {
-                    if (img.bufferView >= 0)
+                    if (imgFormat == ImageFormat.Ktx)
                     {
-
-                        if (imgFormat == ImageFormat.Ktx)
-                        {
 #if KTX_IS_ENABLED
-                            Profiler.BeginSample("CreateTexturesFromBuffers.KtxLoadNativeContext");
-                            if(m_KtxLoadContextsBuffer==null) {
-                                m_KtxLoadContextsBuffer = new List<KtxLoadContextBase>();
-                            }
-                            var ktxContext = new KtxLoadContext(
-                                i, ((IGltfBuffers)this).GetBufferView(img.bufferView, out _).AsNativeArrayReadOnly());
-                            m_KtxLoadContextsBuffer.Add(ktxContext);
-                            Profiler.EndSample();
-                            await DeferAgent.BreakPoint();
+                        Profiler.BeginSample("CreateTexturesFromBuffers.KtxLoadNativeContext");
+                        if(m_KtxLoadContextsBuffer==null) {
+                            m_KtxLoadContextsBuffer = new List<KtxLoadContextBase>();
+                        }
+                        var ktxContext = new KtxLoadContext(
+                            i, ((IGltfBuffers)this).GetBufferView(img.bufferView, out _).AsNativeArrayReadOnly());
+                        m_KtxLoadContextsBuffer.Add(ktxContext);
+                        Profiler.EndSample();
+                        await DeferAgent.BreakPoint();
 #else
-                            Logger?.Error(LogCode.PackageMissing, "KTX for Unity", ExtensionName.TextureBasisUniversal);
+                        Logger?.Error(LogCode.PackageMissing, "KTX for Unity", ExtensionName.TextureBasisUniversal);
 #endif // KTX_IS_ENABLED
-                        }
-                        else
-                        {
-                            Profiler.BeginSample("CreateTexturesFromBuffers.ExtractBuffer");
-                            var bufferView = bufferViews[img.bufferView];
-                            var buffer = GetBuffer(bufferView.buffer);
-                            var chunk = m_BinChunks[bufferView.buffer];
+                    }
+                    else
+                    {
+#if UNITY_IMAGECONVERSION
 
-                            bool forceSampleLinear = m_ImageGamma != null && !m_ImageGamma[i];
-                            var txt = CreateEmptyTexture(img, i, forceSampleLinear);
-                            var icc = new ImageCreateContext();
-                            icc.imageIndex = i;
-                            icc.buffer = new byte[bufferView.byteLength];
-                            icc.gcHandle = GCHandle.Alloc(icc.buffer, GCHandleType.Pinned);
+                        var forceSampleLinear = m_ImageGamma != null && !m_ImageGamma[i];
+                        var txt = CreateEmptyTexture(img, i, forceSampleLinear);
+#if UNITY_6000_0_OR_NEWER
+                        Profiler.BeginSample("Texture2D.LoadImage");
+                        var data = ((IGltfBuffers)this).GetBufferView(img.bufferView, out _);
+                        txt.LoadImage(
+                            data.AsNativeArrayReadOnly().AsReadOnlySpan(),
+#if UNITY_VISIONOS
+                            false
+#else // UNITY_VISIONOS
+                            !m_Settings.TexturesReadable && !m_ImageReadable[i]
+#endif // UNITY_VISIONOS
+                        );
+                        Profiler.EndSample();
+                        await DeferAgent.BreakPoint();
+#else // UNITY_6000_0_OR_NEWER
+                        Profiler.BeginSample("CreateTexturesFromBuffers.ExtractBuffer");
+                        var bufferView = bufferViews[img.bufferView];
+                        var buffer = GetBuffer(bufferView.buffer);
+                        var chunk = m_BinChunks[bufferView.buffer];
 
-                            var job = CreateMemCopyJob(bufferView, buffer, chunk, icc);
-                            icc.jobHandle = job.Schedule();
+                        var icc = new ImageCreateContext();
+                        icc.imageIndex = i;
+                        icc.buffer = new byte[bufferView.byteLength];
+                        icc.gcHandle = GCHandle.Alloc(icc.buffer, GCHandleType.Pinned);
 
-                            contexts.Add(icc);
+                        var job = CreateMemCopyJob(bufferView, buffer, chunk, icc);
+                        icc.jobHandle = job.Schedule();
 
-                            m_Images[i] = txt;
-                            m_Resources.Add(txt);
-                            Profiler.EndSample();
-                        }
+                        m_ImageCreateContexts.Add(icc);
+                        Profiler.EndSample();
+#endif // UNITY_6000_0_OR_NEWER
+                        m_Images[i] = txt;
+                        m_Resources.Add(txt);
+#else // UNITY_IMAGECONVERSION
+                        Logger?.Warning(LogCode.ImageConversionNotEnabled);
+#endif // UNITY_IMAGECONVERSION
                     }
                 }
             }
+#if !(UNITY_IMAGECONVERSION && !UNITY_6000_0_OR_NEWER) && !KTX_IS_ENABLED
+            await DeferAgent.BreakPoint();
+#endif
         }
 
+#if UNITY_IMAGECONVERSION && !UNITY_6000_0_OR_NEWER
         static unsafe MemCopyJob CreateMemCopyJob(
             BufferViewBase bufferView,
             ReadOnlyNativeArray<byte> nativeArray,
@@ -3225,6 +3260,7 @@ namespace GLTFast
 
             return job;
         }
+#endif // UNITY_IMAGECONVERSION && !UNITY_6000_0_OR_NEWER
 
         Texture2D CreateEmptyTexture(Image img, int index, bool forceSampleLinear)
         {
