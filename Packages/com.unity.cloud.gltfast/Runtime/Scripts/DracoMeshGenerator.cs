@@ -179,6 +179,7 @@ namespace GLTFast {
             }
 
             if (m_MorphTargetsGenerator != null) {
+                m_MorphTargetsJobHandle.Complete();
                 await m_MorphTargetsGenerator.ApplyOnMeshAndDispose(mesh);
             }
 
