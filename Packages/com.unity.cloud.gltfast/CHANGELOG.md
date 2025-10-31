@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - (Test) *No Normal* test asset.
 
 ### Changed
+- (Performance) Avoid copy of entire data URI string by using `ReadOnlySpan` instead sub-stringing.
 
 ### Fixed
 - Corrected test cases for `GltfTestModels` importer tests.

@@ -30,9 +30,6 @@ using System;
 using System.Text;
 using GLTFast.Addons;
 using GLTFast.Jobs;
-#if MEASURE_TIMINGS
-using GLTFast.Tests;
-#endif
 #if KTX_IS_ENABLED
 using KtxUnity;
 #endif
@@ -1322,16 +1319,16 @@ namespace GLTFast
                     {
                         if (buffer.uri.StartsWith("data:"))
                         {
-                            var decodedBuffer = await DecodeEmbedBufferAsync(
+                            var (data, _) = await DecodeDataUriAsync(
                                 buffer.uri,
                                 true // usually there's just one buffer and it's time-critical
                             );
-                            if (decodedBuffer?.Item1 == null)
+                            if (data == null)
                             {
                                 Logger?.Error(LogCode.EmbedBufferLoadFailed);
                                 return false;
                             }
-                            var decodedNativeBuffer = new ReadOnlyNativeArrayFromManagedArray<byte>(decodedBuffer.Item1);
+                            var decodedNativeBuffer = new ReadOnlyNativeArrayFromManagedArray<byte>(data);
                             m_VolatileDisposables ??= new List<IDisposable>();
                             m_VolatileDisposables.Add(decodedNativeBuffer);
                             m_Buffers[i] = decodedNativeBuffer.Array;
@@ -1535,11 +1532,9 @@ namespace GLTFast
                     if (!string.IsNullOrEmpty(img.uri) && img.uri.StartsWith("data:"))
                     {
 #if UNITY_IMAGECONVERSION
-                        var decodedBufferTask = DecodeEmbedBufferAsync(img.uri);
-                        if (imageTasks == null) {
-                            imageTasks = new List<Task>();
-                        }
+                        var decodedBufferTask = DecodeDataUriAsync(img.uri);
                         var imageTask = LoadImageFromBuffer(decodedBufferTask, imageIndex, img);
+                        imageTasks ??= new List<Task>();
                         imageTasks.Add(imageTask);
 #else
                         Logger?.Warning(LogCode.ImageConversionNotEnabled);
@@ -1595,7 +1590,12 @@ namespace GLTFast
         }
 
 #if UNITY_IMAGECONVERSION
-        async Task LoadImageFromBuffer(Task<Tuple<byte[],string>> decodeBufferTask, int imageIndex, Image img) {
+        async Task LoadImageFromBuffer(
+            ValueTask<(byte[] data, string mimeType)> decodeBufferTask,
+            int imageIndex,
+            Image img
+            )
+        {
             var decodedBuffer = await decodeBufferTask;
             await DeferAgent.BreakPoint();
             Profiler.BeginSample("LoadImages.FromBase64");
@@ -1803,21 +1803,20 @@ namespace GLTFast
             Profiler.EndSample();
         }
 
-        async Task<Tuple<byte[], string>> DecodeEmbedBufferAsync(string encodedBytes, bool timeCritical = false)
+        async ValueTask<(byte[] data, string mimeType)> DecodeDataUriAsync(string dataUri, bool timeCritical = false)
         {
-            var predictedTime = encodedBytes.Length / (float)k_Base64DecodeSpeed;
+            var predictedTime = dataUri.Length / (float)k_Base64DecodeSpeed;
 #if MEASURE_TIMINGS
             var stopWatch = new Stopwatch();
             stopWatch.Start();
 #elif GLTFAST_THREADS
             if (!timeCritical || DeferAgent.ShouldDefer(predictedTime))
             {
-                // TODO: Not sure if thread safe? Maybe create a dedicated Report for the thread and merge them afterwards?
-                return await Task.Run(() => DecodeEmbedBuffer(encodedBytes, Logger));
+                return await Task.Run(() => DecodeDataUri(dataUri, Logger));
             }
 #endif
             await DeferAgent.BreakPoint(predictedTime);
-            var decodedBuffer = DecodeEmbedBuffer(encodedBytes, Logger);
+            var result = DecodeDataUri(dataUri, Logger);
 #if MEASURE_TIMINGS
             stopWatch.Stop();
             var elapsedSeconds = stopWatch.ElapsedMilliseconds / 1000f;
@@ -1825,32 +1824,45 @@ namespace GLTFast
             if (Mathf.Abs(relativeDiff) > .2f) {
                 Debug.LogWarning($"Base 64 unexpected duration! diff: {relativeDiff:0.00}% predicted: {predictedTime} sec actual: {elapsedSeconds} sec");
             }
-            var throughput = encodedBytes.Length / elapsedSeconds;
-            Debug.Log($"Base 64 throughput: {throughput} bytes/sec ({encodedBytes.Length} bytes in {elapsedSeconds} seconds)");
+            var throughput = dataUri.Length / elapsedSeconds;
+            Debug.Log($"Base 64 throughput: {throughput} bytes/sec ({dataUri.Length} bytes in {elapsedSeconds} seconds)");
 #endif
-            return decodedBuffer;
+            return result;
         }
 
-        static Tuple<byte[], string> DecodeEmbedBuffer(string encodedBytes, ICodeLogger logger)
+        static (byte[] data, string mimeType) DecodeDataUri(string dataUri, ICodeLogger logger)
         {
-            Profiler.BeginSample("DecodeEmbedBuffer");
+            Profiler.BeginSample("DecodeDataUri");
             logger?.Warning(LogCode.EmbedSlow);
-            var mediaTypeEnd = encodedBytes.IndexOf(';', 5, Math.Min(encodedBytes.Length - 5, 1000));
+            var mediaTypeEnd = dataUri.IndexOf(';', 5, Math.Min(dataUri.Length - 5, 1000));
             if (mediaTypeEnd < 0)
             {
                 Profiler.EndSample();
-                return null;
+                return default;
             }
-            var mimeType = encodedBytes.Substring(5, mediaTypeEnd - 5);
-            var tmp = encodedBytes.Substring(mediaTypeEnd + 1, 7);
-            if (tmp != "base64,")
+            var mimeType = dataUri[5..mediaTypeEnd];
+            if (!dataUri.AsSpan(mediaTypeEnd + 1, 7).SequenceEqual("base64,"))
             {
                 Profiler.EndSample();
-                return null;
+                return default;
             }
-            var data = Convert.FromBase64String(encodedBytes.Substring(mediaTypeEnd + 8));
+            var padding = 0;
+            if (dataUri.Length > 0 && dataUri[^1] == '=')
+            {
+                padding = dataUri.Length > 1 && dataUri[^2] == '=' ? 2 : 1;
+            }
+
+            var startIndex = mediaTypeEnd + 8;
+            var dataLength = ((dataUri.Length - startIndex) * 3 + 3) / 4 - padding;
+            var data = new byte[dataLength];
+            if (!Convert.TryFromBase64Chars(dataUri.AsSpan(startIndex), data.AsSpan(), out var bytesWritten)
+               || bytesWritten != dataLength)
+            {
+                // Invalidate buffer to signal decoding failed.
+                data = null;
+            }
             Profiler.EndSample();
-            return new Tuple<byte[], string>(data, mimeType);
+            return (data, mimeType);
         }
 
         void LoadImage(int imageIndex, Uri url, bool nonReadable, bool isKtx)
