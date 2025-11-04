@@ -290,3 +290,8 @@ MonoBehaviour:
     expectInstantiationFail: 0
     expectedLogCodes: 
     requiredExtensions: 
+  - relativeUri: TextureVariants/glTF-TextureEmbedded-KTX/TextureVariants-TextureEmbedded-KTX.gltf
+    expectLoadFail: 0
+    expectInstantiationFail: 0
+    expectedLogCodes: 
+    requiredExtensions: 07000000

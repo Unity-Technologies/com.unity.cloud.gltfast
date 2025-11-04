@@ -19,6 +19,8 @@ namespace GLTFast
                 return ImageFormat.PNG;
             if (subType.SequenceEqual("ktx") || subType.SequenceEqual("ktx2"))
                 return ImageFormat.Ktx;
+            if (subType.SequenceEqual("webp"))
+                return ImageFormat.WebP;
             return ImageFormat.Unknown;
         }
     }

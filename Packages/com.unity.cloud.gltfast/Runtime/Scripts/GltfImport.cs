@@ -1626,8 +1626,11 @@ namespace GLTFast
                     Logger?.Warning(LogCode.ImageConversionNotEnabled);
 #endif
                     break;
-                // TODO: support embed KTX textures
                 case ImageFormat.Ktx:
+#if KTX_IS_ENABLED
+                    m_Images[imageIndex] = await LoadImageKtxFromDataUri(imageIndex, img, startIndex, byteLength);
+                    break;
+#endif
                 default:
                     Logger?.Error(LogCode.EmbedImageUnsupportedType, m_ImageFormats[imageIndex].ToString());
                     break;
@@ -1669,6 +1672,54 @@ namespace GLTFast
             return texture;
         }
 #endif // UNITY_IMAGECONVERSION
+
+#if KTX_IS_ENABLED
+        async Task<Texture2D> LoadImageKtxFromDataUri(int imageIndex, Image img, int startIndex, int byteLength)
+        {
+            var data = await DecodeDataUriAsync(img.uri, startIndex, byteLength);
+            if (!data.IsCreated)
+            {
+                Logger?.Error(LogCode.EmbedImageLoadFailed);
+                return null;
+            }
+            await DeferAgent.BreakPoint();
+            var texture = await LoadImageKtx(imageIndex, img, data.AsReadOnly());
+            data.Dispose();
+            return texture;
+        }
+
+        async Task<Texture2D> LoadImageKtx(
+            int imageIndex,
+            Image img,
+            NativeArray<byte>.ReadOnly data)
+        {
+            Profiler.BeginSample("LoadImageKtx");
+
+            var forceSampleLinear = m_ImageGamma != null && !m_ImageGamma[imageIndex];
+            // var readable = LoadImageReadable(imageIndex);
+
+            Texture2D texture = null;
+
+            var ktxTexture = new KtxTexture();
+            var errorCode = ktxTexture.Open(data);
+            if (errorCode != ErrorCode.Success) {
+                Logger?.Error(LogCode.EmbedImageLoadFailed);
+                return null;
+            }
+            var result = await ktxTexture.LoadTexture2D(forceSampleLinear);
+            ktxTexture.Dispose();
+            if (result.errorCode == ErrorCode.Success) {
+                texture = result.texture;
+                texture.name = GetImageName(img, imageIndex);
+            }
+            else {
+                Logger?.Error(LogCode.EmbedImageLoadFailed);
+            }
+
+            Profiler.EndSample();
+            return texture;
+        }
+#endif
 
         async Task<bool> WaitForBufferDownloads()
         {

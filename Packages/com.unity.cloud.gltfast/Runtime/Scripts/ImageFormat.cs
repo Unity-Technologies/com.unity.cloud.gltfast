@@ -10,6 +10,7 @@ namespace GLTFast
         Unknown,
         PNG,
         Jpeg,
-        Ktx
+        Ktx,
+        WebP
     }
 }

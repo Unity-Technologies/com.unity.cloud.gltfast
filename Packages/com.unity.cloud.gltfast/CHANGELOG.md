@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Loading KTX textures from data URIs.
 - (Test) OpenGltfScene: Shortcut Control+X clears the previously loaded glTF. Useful for testing resource deallocation.
 - (Test) Assets variants of *SubMesh* and *Rainbow Cuboid* for testing import of compressed/uncompressed multi-primitive meshes.
 - (Test) glTFs with different kinds of image formats and sources.
