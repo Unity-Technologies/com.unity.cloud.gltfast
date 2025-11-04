@@ -85,8 +85,9 @@ namespace GLTFast.Logging
         /// </summary>
         EmbedBufferLoadFailed,
         /// <summary>
-        /// Inconsistent embed image type
+        /// Inconsistent embed image type between data URI mediatype and image.mimeType.
         /// </summary>
+        [Obsolete("The glTF 2.0 specification requires data URIs to have a valid mediatype. Therefore it's not checked against image.mimeType anymore.")]
         EmbedImageInconsistentType,
         /// <summary>
         /// Loading embedded image failed
@@ -249,7 +250,11 @@ namespace GLTFast.Logging
         /// <summary>
         /// Sampler settings have not been applied on texture successfully.
         /// </summary>
-        TextureSamplerNotApplied
+        TextureSamplerNotApplied,
+        /// <summary>Base64-encoded buffer has unexpected mime type</summary>
+        BufferDataUriUnexpectedMimeType,
+        /// <summary>Buffer's actual length is smaller than what its byteLength property suggests.</summary>
+        BufferContentUndersized,
     }
 
     /// <summary>
@@ -270,6 +275,8 @@ See details in corresponding issue at https://github.com/atteneder/glTFast/issue
             { LogCode.AnimationChannelSamplerInvalid, "Animation channel {0} has invalid sampler id or output" },
             { LogCode.AnimationFormatInvalid, "Invalid animation format {0}" },
             { LogCode.AnimationTargetPathUnsupported, "Unsupported animation target path {0}" },
+            { LogCode.BufferDataUriUnexpectedMimeType, "Buffer {0}: Unexpected mime type {1}" },
+            { LogCode.BufferContentUndersized, "Buffer {0} byteLength {1} is greater than actual length {2}" },
             { LogCode.BufferLoadFailed, "Download buffer {1} failed: {0}" },
             { LogCode.BufferMainInvalidType, "Invalid mainBufferType {0}" },
             { LogCode.ChunkJsonInvalid, "Invalid JSON chunk" },
@@ -278,7 +285,6 @@ See details in corresponding issue at https://github.com/atteneder/glTFast/issue
             { LogCode.ColorFormatUnsupported, "Unsupported color format {0}" },
             { LogCode.Download, "Download URL {1} failed: {0}" },
             { LogCode.EmbedBufferLoadFailed, "Loading embed buffer failed" },
-            { LogCode.EmbedImageInconsistentType, "Inconsistent embed image type {0}!={1}" },
             { LogCode.EmbedImageLoadFailed, "Loading embedded image failed" },
             { LogCode.EmbedImageUnsupportedType, "Unsupported embed image format {0}" },
             { LogCode.EmbedSlow, "JSON embed buffers are slow! consider using glTF binary" },

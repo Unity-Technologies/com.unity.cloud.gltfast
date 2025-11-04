@@ -1321,19 +1321,8 @@ namespace GLTFast
                     {
                         if (buffer.uri.StartsWith("data:"))
                         {
-                            var (data, _) = await DecodeDataUriAsync(
-                                buffer.uri,
-                                true // usually there's just one buffer and it's time-critical
-                            );
-                            if (data == null)
-                            {
-                                Logger?.Error(LogCode.EmbedBufferLoadFailed);
+                            if (!await LoadBufferFromDataUri(i, buffer))
                                 return false;
-                            }
-                            var decodedNativeBuffer = new ReadOnlyNativeArrayFromManagedArray<byte>(data);
-                            m_VolatileDisposables ??= new List<IDisposable>();
-                            m_VolatileDisposables.Add(decodedNativeBuffer);
-                            m_Buffers[i] = decodedNativeBuffer.Array;
                         }
                         else
                         {
@@ -1343,6 +1332,31 @@ namespace GLTFast
                 }
             }
 
+            return true;
+        }
+
+        async Task<bool> LoadBufferFromDataUri(int bufferIndex, Buffer buffer)
+        {
+            if (!TryGetBufferDataUriDescriptor(
+                    bufferIndex, buffer.byteLength, buffer.uri, out var startIndex, out var byteLength))
+            {
+                return false;
+            }
+
+            var data = await DecodeDataUriAsync(
+                buffer.uri,
+                startIndex,
+                byteLength,
+                true // usually there's just one buffer and it's time-critical
+            );
+            if (!data.IsCreated)
+            {
+                Logger?.Error(LogCode.EmbedBufferLoadFailed);
+                return false;
+            }
+            m_VolatileDisposables ??= new List<IDisposable>();
+            m_VolatileDisposables.Add(data);
+            m_Buffers[bufferIndex] = new ReadOnlyNativeArray<byte>(data);
             return true;
         }
 
@@ -1533,14 +1547,9 @@ namespace GLTFast
 
                     if (!string.IsNullOrEmpty(img.uri) && img.uri.StartsWith("data:"))
                     {
-#if UNITY_IMAGECONVERSION
-                        var decodedBufferTask = DecodeDataUriAsync(img.uri);
-                        var imageTask = LoadImageFromBuffer(decodedBufferTask, imageIndex, img);
+                        var imageTask = LoadImageFromDataUri(imageIndex, img);
                         imageTasks ??= new List<Task>();
                         imageTasks.Add(imageTask);
-#else
-                        Logger?.Warning(LogCode.ImageConversionNotEnabled);
-#endif
                     }
                     else
                     {
@@ -1549,7 +1558,7 @@ namespace GLTFast
                         {
                             imgFormat = string.IsNullOrEmpty(img.mimeType)
                                 ? UriHelper.GetImageFormatFromUri(img.uri)
-                                : GetImageFormatFromMimeType(img.mimeType);
+                                : ImageFormatExtensions.FromMimeType(img.mimeType);
                             m_ImageFormats[imageIndex] = imgFormat;
                         }
                         else
@@ -1591,43 +1600,73 @@ namespace GLTFast
             }
         }
 
-#if UNITY_IMAGECONVERSION
-        async Task LoadImageFromBuffer(
-            ValueTask<(byte[] data, string mimeType)> decodeBufferTask,
-            int imageIndex,
-            Image img
-            )
+        // TODO: If no suitable image loader is found, this method won't use the await operator, thus causing a warning.
+        //       For now we'll ignore that warning. In the future, we'll encapsulate this in a better way.
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
+        async Task LoadImageFromDataUri(int imageIndex, Image img)
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
         {
-            var decodedBuffer = await decodeBufferTask;
-            await DeferAgent.BreakPoint();
-            Profiler.BeginSample("LoadImages.FromBase64");
-            var data = decodedBuffer.Item1;
-            string mimeType = decodedBuffer.Item2;
-            var imgFormat = GetImageFormatFromMimeType(mimeType);
-            if (data == null || imgFormat == ImageFormat.Unknown) {
+            if (!TryGetImageDataUriDescriptor(img.uri, out var imageFormat, out var startIndex, out var byteLength))
+            {
                 Logger?.Error(LogCode.EmbedImageLoadFailed);
                 return;
             }
+            m_ImageFormats[imageIndex] = imageFormat;
 
-            if (m_ImageFormats[imageIndex] != ImageFormat.Unknown && m_ImageFormats[imageIndex] != imgFormat) {
-                Logger?.Error(LogCode.EmbedImageInconsistentType, m_ImageFormats[imageIndex].ToString(), imgFormat.ToString());
-            }
-
-            m_ImageFormats[imageIndex] = imgFormat;
-            if (m_ImageFormats[imageIndex] != ImageFormat.Jpeg && m_ImageFormats[imageIndex] != ImageFormat.PNG) {
+            switch (imageFormat)
+            {
+                case ImageFormat.Unknown:
+                    Logger?.Error(LogCode.EmbedImageLoadFailed);
+                    break;
+                case ImageFormat.Jpeg:
+                case ImageFormat.PNG:
+#if UNITY_IMAGECONVERSION
+                    m_Images[imageIndex] = await LoadImageJpegOrPngFromDataUri(imageIndex, img, startIndex, byteLength);
+#else
+                    Logger?.Warning(LogCode.ImageConversionNotEnabled);
+#endif
+                    break;
                 // TODO: support embed KTX textures
-                Logger?.Error(LogCode.EmbedImageUnsupportedType, m_ImageFormats[imageIndex].ToString());
+                case ImageFormat.Ktx:
+                default:
+                    Logger?.Error(LogCode.EmbedImageUnsupportedType, m_ImageFormats[imageIndex].ToString());
+                    break;
             }
+        }
 
+#if UNITY_IMAGECONVERSION
+        async Task<Texture2D> LoadImageJpegOrPngFromDataUri(int imageIndex, Image img, int startIndex, int byteLength)
+        {
+#if UNITY_6000_0_OR_NEWER
+            var data = await DecodeDataUriAsync(img.uri, startIndex, byteLength);
+            if (!data.IsCreated)
+            {
+                Logger?.Error(LogCode.EmbedImageLoadFailed);
+                return null;
+            }
+#else
+            var data = await DecodeDataUriToManagedArrayAsync(img.uri, startIndex, byteLength);
+            if (data == null)
+            {
+                Logger?.Error(LogCode.EmbedImageLoadFailed);
+                return null;
+            }
+#endif
+            await DeferAgent.BreakPoint();
+            Profiler.BeginSample("LoadImageJpegOrPngFromDataUri");
             // TODO: Investigate alternative: native texture creation in worker thread
-            bool forceSampleLinear = m_ImageGamma != null && !m_ImageGamma[imageIndex];
-            var txt = CreateEmptyTexture(img, imageIndex, forceSampleLinear);
-            txt.LoadImage(
+            var forceSampleLinear = m_ImageGamma != null && !m_ImageGamma[imageIndex];
+            var texture = CreateEmptyTexture(img, imageIndex, forceSampleLinear);
+            texture.LoadImage(
+#if UNITY_6000_0_OR_NEWER
+                data.AsReadOnlySpan(),
+#else
                 data,
+#endif
                 !LoadImageReadable(imageIndex)
-                );
-            m_Images[imageIndex] = txt;
+            );
             Profiler.EndSample();
+            return texture;
         }
 #endif // UNITY_IMAGECONVERSION
 
@@ -1817,7 +1856,12 @@ namespace GLTFast
             Profiler.EndSample();
         }
 
-        async ValueTask<(byte[] data, string mimeType)> DecodeDataUriAsync(string dataUri, bool timeCritical = false)
+        async ValueTask<NativeArray<byte>> DecodeDataUriAsync(
+            string dataUri,
+            int startIndex,
+            int byteLength,
+            bool timeCritical = false
+            )
         {
             var predictedTime = dataUri.Length / (float)k_Base64DecodeSpeed;
 #if MEASURE_TIMINGS
@@ -1826,11 +1870,11 @@ namespace GLTFast
 #elif GLTFAST_THREADS
             if (!timeCritical || DeferAgent.ShouldDefer(predictedTime))
             {
-                return await Task.Run(() => DecodeDataUri(dataUri, Logger));
+                return await Task.Run(() => DecodeDataUri(dataUri, startIndex, byteLength));
             }
 #endif
             await DeferAgent.BreakPoint(predictedTime);
-            var result = DecodeDataUri(dataUri, Logger);
+            var result = DecodeDataUri(dataUri, startIndex, byteLength);
 #if MEASURE_TIMINGS
             stopWatch.Stop();
             var elapsedSeconds = stopWatch.ElapsedMilliseconds / 1000f;
@@ -1844,21 +1888,45 @@ namespace GLTFast
             return result;
         }
 
-        static (byte[] data, string mimeType) DecodeDataUri(string dataUri, ICodeLogger logger)
+#if !UNITY_6000_0_OR_NEWER
+        async ValueTask<byte[]> DecodeDataUriToManagedArrayAsync(
+            string dataUri,
+            int startIndex,
+            int byteLength,
+            bool timeCritical = false)
         {
-            Profiler.BeginSample("DecodeDataUri");
-            logger?.Warning(LogCode.EmbedSlow);
+            var predictedTime = dataUri.Length / (float)k_Base64DecodeSpeed;
+#if GLTFAST_THREADS
+            if (!timeCritical || DeferAgent.ShouldDefer(predictedTime))
+            {
+                return await Task.Run(() => DecodeDataUriToManagedArray(dataUri, startIndex, byteLength));
+            }
+#endif
+            await DeferAgent.BreakPoint(predictedTime);
+            var result = DecodeDataUriToManagedArray(dataUri, startIndex, byteLength);
+            return result;
+        }
+#endif // !UNITY_6000_0_OR_NEWER
+
+        bool TryGetDataUriDescriptor(string dataUri, out ReadOnlySpan<char> mimeType, out int startIndex, out int byteLength)
+        {
+            Logger?.Warning(LogCode.EmbedSlow);
             var mediaTypeEnd = dataUri.IndexOf(';', 5, Math.Min(dataUri.Length - 5, 1000));
             if (mediaTypeEnd < 0)
             {
                 Profiler.EndSample();
-                return default;
+                mimeType = null;
+                startIndex = 0;
+                byteLength = -1;
+                return false;
             }
-            var mimeType = dataUri[5..mediaTypeEnd];
+            mimeType = dataUri.AsSpan(5, mediaTypeEnd - 5);
             if (!dataUri.AsSpan(mediaTypeEnd + 1, 7).SequenceEqual("base64,"))
             {
                 Profiler.EndSample();
-                return default;
+                startIndex = 0;
+                byteLength = -1;
+                return false;
             }
             var padding = 0;
             if (dataUri.Length > 0 && dataUri[^1] == '=')
@@ -1866,18 +1934,100 @@ namespace GLTFast
                 padding = dataUri.Length > 1 && dataUri[^2] == '=' ? 2 : 1;
             }
 
-            var startIndex = mediaTypeEnd + 8;
-            var dataLength = ((dataUri.Length - startIndex) * 3 + 3) / 4 - padding;
-            var data = new byte[dataLength];
+            startIndex = mediaTypeEnd + 8;
+            byteLength = ((dataUri.Length - startIndex) * 3 + 3) / 4 - padding;
+            return true;
+        }
+
+        bool TryGetBufferDataUriDescriptor(
+            int bufferIndex,
+            uint expectedLength,
+            string dataUri,
+            out int startIndex,
+            out int byteLength
+            )
+        {
+            if (TryGetDataUriDescriptor(dataUri, out var mimeType, out startIndex, out byteLength))
+            {
+                if (!mimeType.StartsWith("application/")
+                    || !(
+                        mimeType[12..].SequenceEqual("octet-stream")
+                        || mimeType[12..].SequenceEqual("gltf-buffer")
+                        )
+                    )
+                {
+                    Logger?.Error(
+                        LogCode.BufferDataUriUnexpectedMimeType,
+                        bufferIndex.ToString(),
+                        mimeType.ToString()
+                        );
+                    return false;
+                }
+
+                if (byteLength < expectedLength)
+                {
+                    Logger?.Error(
+                        LogCode.BufferContentUndersized,
+                        bufferIndex.ToString(),
+                        expectedLength.ToString(),
+                        byteLength.ToString()
+                    );
+                    return false;
+                }
+
+                return true;
+            }
+
+            Logger?.Error(LogCode.EmbedBufferLoadFailed);
+            return false;
+        }
+
+        bool TryGetImageDataUriDescriptor(
+            string dataUri,
+            out ImageFormat imageFormat,
+            out int startIndex,
+            out int byteLength
+            )
+        {
+            if (TryGetDataUriDescriptor(dataUri, out var mimeType, out startIndex, out byteLength))
+            {
+                imageFormat = ImageFormatExtensions.FromMimeType(mimeType);
+                return true;
+            }
+
+            imageFormat = ImageFormat.Unknown;
+            return false;
+        }
+
+        static NativeArray<byte> DecodeDataUri(string dataUri, int startIndex, int dataLength)
+        {
+            Profiler.BeginSample("DecodeDataUri");
+            var data = new NativeArray<byte>(dataLength, Allocator.Persistent);
             if (!Convert.TryFromBase64Chars(dataUri.AsSpan(startIndex), data.AsSpan(), out var bytesWritten)
                || bytesWritten != dataLength)
+            {
+                // Invalidate buffer to signal decoding failed.
+                data.Dispose();
+            }
+            Profiler.EndSample();
+            return data;
+        }
+
+#if !UNITY_6000_0_OR_NEWER
+        static byte[] DecodeDataUriToManagedArray(string dataUri, int startIndex, int dataLength)
+        {
+            Profiler.BeginSample("DecodeDataUriToManagedArray");
+            var data = new byte[dataLength];
+            if (!Convert.TryFromBase64Chars(dataUri.AsSpan(startIndex), data.AsSpan(), out var bytesWritten)
+                || bytesWritten != dataLength)
             {
                 // Invalidate buffer to signal decoding failed.
                 data = null;
             }
             Profiler.EndSample();
-            return (data, mimeType);
+            return data;
         }
+#endif // !UNITY_6000_0_OR_NEWER
 
         void LoadImage(int imageIndex, Uri url, bool nonReadable, bool isKtx)
         {
@@ -3169,7 +3319,7 @@ namespace GLTFast
                         // Image is missing mime type
                         // try to determine type by file extension
                         ? UriHelper.GetImageFormatFromUri(img.uri)
-                        : GetImageFormatFromMimeType(img.mimeType);
+                        : ImageFormatExtensions.FromMimeType(img.mimeType);
                 }
                 Profiler.EndSample();
 
@@ -4107,24 +4257,6 @@ namespace GLTFast
                 var buffer = GetBuffer(bufferIndex);
                 data = (byte*)buffer.GetUnsafeReadOnlyPtr()
                     + (sparseValues.byteOffset + bufferView.byteOffset + m_BinChunks[bufferIndex].Start);
-            }
-        }
-
-        static ImageFormat GetImageFormatFromMimeType(string mimeType)
-        {
-            if (!mimeType.StartsWith("image/")) return ImageFormat.Unknown;
-            var sub = mimeType.Substring(6);
-            switch (sub)
-            {
-                case "jpeg":
-                    return ImageFormat.Jpeg;
-                case "png":
-                    return ImageFormat.PNG;
-                case "ktx":
-                case "ktx2":
-                    return ImageFormat.Ktx;
-                default:
-                    return ImageFormat.Unknown;
             }
         }
 

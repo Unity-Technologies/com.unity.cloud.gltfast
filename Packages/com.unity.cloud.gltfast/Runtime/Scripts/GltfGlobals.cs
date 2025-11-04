@@ -6,15 +6,6 @@ using Unity.Collections;
 
 namespace GLTFast
 {
-
-    enum ImageFormat
-    {
-        Unknown,
-        PNG,
-        Jpeg,
-        Ktx
-    }
-
     enum ChunkFormat : uint
     {
         Json = 0x4e4f534a,

@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - (Performance) Texture data is not copied into managed memory before loading via [Texture2D.LoadImage](xref:UnityEngine.Texture2D.LoadImage*) (applies for Unity 6.0 or newer).
 - (Performance) Avoid copy of entire data URI string by using `ReadOnlySpan` instead sub-stringing.
+- (Performance) Base64-encoded data URIs are now decoded into [NativeArray&lt;byte&gt;](xref:Unity.Collections.NativeArray`1) instead of `byte[]`, reducing GC allocations.
 
 ### Fixed
 - Corrected test cases for `GltfTestModels` importer tests.
@@ -26,8 +27,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Properly release native resources bound by morph targets jobs in context of decoding Draco compressed meshes.
 - Avoid pointless copying of glb-embedded textures if ImageConversion module is disabled anyways.
 - Avoid download of textures if ImageConversion module is disabled anyways.
+- Gracefully fail when buffer data URI has incorrect media-type field or undersized content length.
 
 ### Removed
+- Broken consistency check between image data URI mediatype against image's mimeType.
 
 ### Deprecated
 
