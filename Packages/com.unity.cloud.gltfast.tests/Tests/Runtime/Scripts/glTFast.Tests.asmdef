@@ -68,7 +68,7 @@
         },
         {
             "name": "com.unity.cloud.ktx",
-            "expression": "3",
+            "expression": "3.6.0",
             "define": "KTX_IS_RECENT"
         },
         {

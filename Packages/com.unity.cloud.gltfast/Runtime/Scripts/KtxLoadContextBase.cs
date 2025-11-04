@@ -24,7 +24,7 @@ namespace GLTFast {
             m_Data = data;
         }
 
-        public abstract Task<TextureResult> LoadTexture2D(bool linear);
+        public abstract Task<TextureResult> LoadTexture2D(bool linear, bool readable);
     }
 }
 #endif // KTX_IS_INSTALLED

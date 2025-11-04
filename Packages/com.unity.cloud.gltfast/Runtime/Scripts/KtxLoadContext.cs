@@ -21,13 +21,13 @@ namespace GLTFast {
             m_KtxTexture = new KtxTexture();
         }
 
-        public override async Task<TextureResult> LoadTexture2D(bool linear) {
+        public override async Task<TextureResult> LoadTexture2D(bool linear, bool readable) {
             var errorCode = m_KtxTexture.Open(m_Data);
             if (errorCode != ErrorCode.Success) {
                 return new TextureResult(errorCode);
             }
 
-            var result = await m_KtxTexture.LoadTexture2D(linear);
+            var result = await m_KtxTexture.LoadTexture2D(linear, readable);
 
             m_KtxTexture.Dispose();
             return result;

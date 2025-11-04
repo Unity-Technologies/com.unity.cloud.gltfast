@@ -1696,7 +1696,7 @@ namespace GLTFast
             Profiler.BeginSample("LoadImageKtx");
 
             var forceSampleLinear = m_ImageGamma != null && !m_ImageGamma[imageIndex];
-            // var readable = LoadImageReadable(imageIndex);
+            var readable = LoadImageReadable(imageIndex);
 
             Texture2D texture = null;
 
@@ -1706,7 +1706,7 @@ namespace GLTFast
                 Logger?.Error(LogCode.EmbedImageLoadFailed);
                 return null;
             }
-            var result = await ktxTexture.LoadTexture2D(forceSampleLinear);
+            var result = await ktxTexture.LoadTexture2D(forceSampleLinear, readable);
             ktxTexture.Dispose();
             if (result.errorCode == ErrorCode.Success) {
                 texture = result.texture;
@@ -1877,7 +1877,8 @@ namespace GLTFast
                 }
                 var ktxContext = new KtxLoadContext(imageIndex,data);
                 var forceSampleLinear = m_ImageGamma!=null && !m_ImageGamma[imageIndex];
-                var result = await ktxContext.LoadTexture2D(forceSampleLinear);
+                var readable = LoadImageReadable(imageIndex);
+                var result = await ktxContext.LoadTexture2D(forceSampleLinear, readable);
                 if (result.errorCode == ErrorCode.Success) {
                     m_Images[imageIndex] = result.texture;
                     if (!result.orientation.IsYFlipped())
@@ -3401,14 +3402,7 @@ namespace GLTFast
 #if UNITY_6000_0_OR_NEWER
                         Profiler.BeginSample("Texture2D.LoadImage");
                         var data = ((IGltfBuffers)this).GetBufferView(img.bufferView, out _);
-                        txt.LoadImage(
-                            data.AsNativeArrayReadOnly().AsReadOnlySpan(),
-#if UNITY_VISIONOS
-                            false
-#else // UNITY_VISIONOS
-                            !m_Settings.TexturesReadable && !m_ImageReadable[i]
-#endif // UNITY_VISIONOS
-                        );
+                        txt.LoadImage(data.AsNativeArrayReadOnly().AsReadOnlySpan(), !LoadImageReadable(i));
                         Profiler.EndSample();
                         await DeferAgent.BreakPoint();
 #else // UNITY_6000_0_OR_NEWER
@@ -4263,10 +4257,16 @@ namespace GLTFast
             public TextureResult result;
         }
 
-        static async Task<KtxTranscodeTaskWrapper> KtxLoadAndTranscode(int index, KtxLoadContextBase ktx, bool linear) {
+        static async Task<KtxTranscodeTaskWrapper> KtxLoadAndTranscode(
+            int index,
+            KtxLoadContextBase ktx,
+            bool linear,
+            bool readable
+            )
+        {
             return new KtxTranscodeTaskWrapper {
                 index = index,
-                result = await ktx.LoadTexture2D(linear)
+                result = await ktx.LoadTexture2D(linear, readable)
             };
         }
 
@@ -4281,7 +4281,8 @@ namespace GLTFast
                 while (ktxTasks.Count < maxCount && startedCount < totalCount) {
                     var ktx = m_KtxLoadContextsBuffer[startedCount];
                     var forceSampleLinear = m_ImageGamma != null && !m_ImageGamma[ktx.imageIndex];
-                    ktxTasks.Add(KtxLoadAndTranscode(startedCount, ktx, forceSampleLinear));
+                    var readable = LoadImageReadable(ktx.imageIndex);
+                    ktxTasks.Add(KtxLoadAndTranscode(startedCount, ktx, forceSampleLinear, readable));
                     startedCount++;
                     await DeferAgent.BreakPoint();
                 }
