@@ -63,7 +63,7 @@
         },
         {
             "name": "com.unity.cloud.draco",
-            "expression": "5.2.0",
+            "expression": "5.4.0",
             "define": "DRACO_IS_RECENT"
         },
         {

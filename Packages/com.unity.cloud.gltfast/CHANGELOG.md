@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - (Test) *No Normal* test asset.
 
 ### Changed
+- Primitives of a Draco compressed mesh will be decoded into in a single Unity mesh with multiple sub-meshes instead of multiple Unity meshes.
+- [Draco for Unity] minimum required version was raised to 5.4.0.
 - (Performance) Texture data is not copied into managed memory before loading via [Texture2D.LoadImage](xref:UnityEngine.Texture2D.LoadImage*) (applies for Unity 6.0 or newer).
 - (Performance) Avoid copy of entire data URI string by using `ReadOnlySpan` instead sub-stringing.
 - (Performance) Base64-encoded data URIs are now decoded into [NativeArray&lt;byte&gt;](xref:Unity.Collections.NativeArray`1) instead of `byte[]`, reducing GC allocations.

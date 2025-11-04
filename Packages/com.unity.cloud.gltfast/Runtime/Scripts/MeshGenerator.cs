@@ -298,6 +298,7 @@ namespace GLTFast
                 var morphTarget = primitive.targets[morphTargetIndex];
                 var success = m_MorphTargetsGenerator.AddMorphTarget(
                     vertexOffset,
+                    subMesh,
                     morphTargetIndex,
                     morphTarget
                 );

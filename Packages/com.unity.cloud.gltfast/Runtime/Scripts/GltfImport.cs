@@ -3545,27 +3545,16 @@ namespace GLTFast
                 meshAssignmentIndices[0] = 0;
             }
             var meshAssignmentCounter = 0;
-            var primitiveSingles = new Dictionary<MeshPrimitiveBase, MeshOrder>(s_MeshComparer);
             var primitiveSets = new Dictionary<IReadOnlyList<MeshPrimitiveBase>, MeshOrder>(s_MeshComparer);
             for (var meshIndex = 0; meshIndex < meshCount; meshIndex++)
             {
                 var mesh = Root.Meshes[meshIndex];
                 // TODO: Optimized path for single primitive meshes!
                 var clusteredPrimitives = new Dictionary<VertexBufferDescriptor, PrimitiveSet>();
-#if DRACO_IS_ENABLED
-                var singlePrimitives = new List<PrimitiveSingle>();
-#endif
+
                 for (var primIndex = 0; primIndex < mesh.Primitives.Count; primIndex++)
                 {
                     var primitive = mesh.Primitives[primIndex];
-#if DRACO_IS_ENABLED
-                    var isDraco = primitive.IsDracoCompressed;
-                    if (isDraco)
-                    {
-                        singlePrimitives.Add(new PrimitiveSingle(primIndex, primitive));
-                    }
-                    else
-#endif
                     {
                         var vertexBufferDesc = VertexBufferDescriptor.FromPrimitive(primitive);
                         if (!clusteredPrimitives.ContainsKey(vertexBufferDesc))
@@ -3579,7 +3568,7 @@ namespace GLTFast
                     {
                         AccessorUsage usage;
 #if DRACO_IS_ENABLED
-                        if (isDraco)
+                        if (primitive.IsDracoCompressed)
                         {
                             usage = AccessorUsage.Ignore;
                         }
@@ -3646,51 +3635,8 @@ namespace GLTFast
 
                     meshNumeration++;
                 }
-#if DRACO_IS_ENABLED
-                foreach (var primitiveSingle in singlePrimitives)
-                {
-#if DEBUG
-                    if (perPrimitiveSetIndices != null
-                        && CheckVertexBufferUsage(perPrimitiveSetIndices, primitiveSingle))
-                    {
-                        // Poor accessor sharing has been detected and logged.
-                        // Unset perPrimitiveSetIndices to prevent redundant logging.
-                        perPrimitiveSetIndices = null;
-                    }
-#endif
-                    int[] primIndexArray;
-                    if (primitiveSingles.TryGetValue(primitiveSingle.Primitive, out var meshOrder))
-                    {
-                        primitiveSingle.BuildAndDispose(out primIndexArray, out _);
-                        meshOrder.AddRecipient(new MeshSubset(meshIndex, meshNumeration, primIndexArray));
-                    }
-                    else
-                    {
-                        meshOrder = CreateMeshOrder(
-                            primitiveSingle,
-                            mesh,
-                            meshIndex,
-                            meshNumeration,
-                            out primIndexArray,
-                            out _
-                            );
-                        m_MeshOrders.Add(meshOrder);
-                    }
 
-                    MeshResultAssigned?.Invoke(
-                        meshNumeration,
-                        meshIndex,
-                        primIndexArray
-                    );
-
-                    meshNumeration++;
-                }
-
-#endif
                 meshAssignmentCounter += clusteredPrimitives.Count;
-#if DRACO_IS_ENABLED
-                meshAssignmentCounter += singlePrimitives.Count;
-#endif
                 meshAssignmentIndices[meshIndex + 1] = meshAssignmentCounter;
             }
 
@@ -3923,7 +3869,7 @@ namespace GLTFast
 #if DRACO_IS_ENABLED
             if (primitives[0].IsDracoCompressed)
             {
-                generator = new DracoMeshGenerator(primitives, subMeshes, morphTargetNames, mesh.name, this);
+                generator = new DracoMeshGenerator(primitives, morphTargetNames, mesh.name, this);
             }
             else
 #endif

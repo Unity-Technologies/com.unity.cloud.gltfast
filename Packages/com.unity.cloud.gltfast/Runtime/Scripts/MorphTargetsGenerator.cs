@@ -46,6 +46,7 @@ namespace GLTFast
 
         public bool AddMorphTarget(
             int offset,
+            int subMesh,
             int morphTargetIndex,
             MorphTarget morphTarget
             )
@@ -58,8 +59,7 @@ namespace GLTFast
                 );
             if (jobHandle.HasValue)
             {
-                m_Handles[morphTargetIndex] = jobHandle.Value;
-                m_Contexts[morphTargetIndex] = morphTargetGenerator;
+                m_Handles[subMesh * m_Contexts.Length + morphTargetIndex] = jobHandle.Value;
             }
             else
             {
@@ -70,7 +70,7 @@ namespace GLTFast
 
         public JobHandle GetJobHandle()
         {
-            var handle = m_Contexts.Length > 1 ? JobHandle.CombineDependencies(m_Handles) : m_Handles[0];
+            var handle = m_Handles.Length > 1 ? JobHandle.CombineDependencies(m_Handles) : m_Handles[0];
             m_Handles.Dispose();
             return handle;
         }
@@ -128,7 +128,7 @@ namespace GLTFast
                 morphTarget.POSITION,
                 out var posAcc,
                 out var posData,
-                out var posByteStride
+                out _
                 );
 
             var jobCount = 1;

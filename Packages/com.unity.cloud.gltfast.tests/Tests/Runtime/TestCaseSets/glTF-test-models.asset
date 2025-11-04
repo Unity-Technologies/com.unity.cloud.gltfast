@@ -115,6 +115,11 @@ MonoBehaviour:
     expectInstantiationFail: 0
     expectedLogCodes: 20000000
     requiredExtensions: 
+  - relativeUri: DracoSpecialCases/glTF/DracoSpecialCases.gltf
+    expectLoadFail: 0
+    expectInstantiationFail: 0
+    expectedLogCodes: 2000000034000000
+    requiredExtensions: 00000000
   - relativeUri: FormatVariants/glTF/FormatVariants.gltf
     expectLoadFail: 0
     expectInstantiationFail: 0
