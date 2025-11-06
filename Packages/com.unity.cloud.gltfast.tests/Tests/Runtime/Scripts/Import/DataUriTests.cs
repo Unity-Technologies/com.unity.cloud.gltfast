@@ -10,7 +10,8 @@ using UnityEngine.TestTools;
 
 namespace GLTFast.Tests.Import
 {
-    public class DataUriTests
+    [Category("Import")]
+    class DataUriTests
     {
         const string k_TestDataBase64 = "rQbwDQ=="; // AD06F00D, a dog food ;)
         const string k_TestDataBase64Invalid = "rQbw}Q==";
@@ -59,8 +60,6 @@ namespace GLTFast.Tests.Import
         public IEnumerator ImageDataUriUnexpectedEncoding()
         {
             var gltf = $@"{{""images"":[{{""uri"":""data:image/webp;base32,{k_TestDataBase64Invalid}""}}],""textures"":[{{""source"":0}}]}}";
-            // TODO: LoadGltfJson currently returns true even if image loading fails.
-            //       Fix this and change the assert to Assert.IsFalse
             var task = Test(gltf, true, LogCode.EmbedImageLoadFailed);
             yield return AsyncWrapper.WaitForTask(task);
         }
@@ -69,8 +68,6 @@ namespace GLTFast.Tests.Import
         public IEnumerator ImageDataUriUnexpectedMimeType()
         {
             var gltf = $@"{{""images"":[{{""uri"":""data:image/fantasy-format;base64,{k_TestDataBase64Invalid}""}}],""textures"":[{{""source"":0}}]}}";
-            // TODO: LoadGltfJson currently returns true even if image loading fails.
-            //       Fix this and change the assert to Assert.IsFalse
             var task = Test(gltf, true, LogCode.EmbedImageLoadFailed);
             yield return AsyncWrapper.WaitForTask(task);
         }
@@ -79,8 +76,6 @@ namespace GLTFast.Tests.Import
         public IEnumerator ImageDataUriUnsupportedMimeType()
         {
             var gltf = $@"{{""images"":[{{""uri"":""data:image/webp;base64,{k_TestDataBase64Invalid}""}}],""textures"":[{{""source"":0}}]}}";
-            // TODO: LoadGltfJson currently returns true even if image loading fails.
-            //       Fix this and change the assert to Assert.IsFalse
             var task = Test(gltf, true, LogCode.EmbedImageUnsupportedType);
             yield return AsyncWrapper.WaitForTask(task);
         }
@@ -89,8 +84,6 @@ namespace GLTFast.Tests.Import
         public IEnumerator ImageContentInvalid()
         {
             var gltf = $@"{{""images"":[{{""uri"":""data:image/jpeg;base64,{k_TestDataBase64Invalid}""}}],""textures"":[{{""source"":0}}]}}";
-            // TODO: LoadGltfJson currently returns true even if image loading fails.
-            //       Fix this and change the assert to Assert.IsFalse
             var task = Test(gltf, true, LogCode.EmbedImageLoadFailed);
             yield return AsyncWrapper.WaitForTask(task);
         }
@@ -99,8 +92,6 @@ namespace GLTFast.Tests.Import
         public IEnumerator ImageKtxContentInvalid()
         {
             var gltf = $@"{{""images"":[{{""uri"":""data:image/ktx2;base64,{k_TestDataBase64Invalid}""}}],""textures"":[{{""source"":0}}]}}";
-            // TODO: LoadGltfJson currently returns true even if image loading fails.
-            //       Fix this and change the assert to Assert.IsFalse
             var task = Test(
                 gltf, true,
 #if KTX_IS_RECENT
@@ -116,8 +107,6 @@ namespace GLTFast.Tests.Import
         public IEnumerator ImageKtxContentBroken()
         {
             var gltf = $@"{{""images"":[{{""uri"":""data:image/ktx2;base64,{k_TestDataBase64}""}}],""textures"":[{{""source"":0}}]}}";
-            // TODO: LoadGltfJson currently returns true even if image loading fails.
-            //       Fix this and change the assert to Assert.IsFalse
             var task = Test(
                 gltf, true,
 #if KTX_IS_RECENT

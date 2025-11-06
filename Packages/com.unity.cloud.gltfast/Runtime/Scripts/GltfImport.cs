@@ -622,9 +622,10 @@ namespace GLTFast
             )
         {
             m_Settings = importSettings ?? new ImportSettings();
-            var success = await LoadGltf(json, uri);
-            if (success) await LoadContent();
-            success = success && await Prepare();
+            var success =
+                await LoadGltf(json, uri)
+                && await LoadContent()
+                && await Prepare();
             DisposeVolatileData();
             LoadingError = !success;
             LoadingDone = true;
@@ -1205,11 +1206,9 @@ namespace GLTFast
                     download.Dispose();
                     success = await LoadGltf(text, url);
                 }
-                if (success)
-                {
-                    success = await LoadContent();
-                }
-                success = success && await Prepare();
+                success = success
+                    && await LoadContent()
+                    && await Prepare();
             }
             else
             {
@@ -1230,8 +1229,9 @@ namespace GLTFast
         {
             m_Settings = importSettings ?? new ImportSettings();
             var success = await LoadGltfBinaryBuffer(bytes, uri);
-            if (success) await LoadContent();
-            success = success && await Prepare();
+            success = success
+                && await LoadContent()
+                && await Prepare();
             DisposeVolatileData();
             LoadingError = !success;
             LoadingDone = true;
@@ -1252,13 +1252,15 @@ namespace GLTFast
 #if UNITY_IMAGECONVERSION
             if (m_TextureDownloadTasks != null)
             {
-                success = success && await WaitForTextureDownloads();
+                if(success)
+                    await WaitForTextureDownloads();
                 m_TextureDownloadTasks.Clear();
             }
 #endif // UNITY_IMAGECONVERSION
 #if KTX_IS_ENABLED
             if (m_KtxDownloadTasks != null) {
-                success = success && await WaitForKtxDownloads();
+                if(success)
+                    await WaitForKtxDownloads();
                 m_KtxDownloadTasks.Clear();
             }
 #endif // KTX_IS_ENABLED
@@ -1450,16 +1452,15 @@ namespace GLTFast
         {
             var baseUri = UriHelper.GetBaseUri(url);
             var success = await ParseJsonAndLoadBuffers(json, baseUri);
-            if (success) await LoadImages(baseUri);
+            if (success)
+                await LoadImages(baseUri);
             return success;
         }
 
         async Task LoadImages(Uri baseUri)
         {
-
             if (Root.Textures != null && Root.Images != null)
             {
-
                 Profiler.BeginSample("LoadImages.Prepare");
 
                 m_Images = new Texture2D[Root.Images.Count];
@@ -1537,9 +1538,9 @@ namespace GLTFast
                     }
                 }
 #endif
-
                 Profiler.EndSample();
-                List<Task> imageTasks = null;
+
+                List<Task<bool>> imageTasks = null;
 
                 for (int imageIndex = 0; imageIndex < Root.Images.Count; imageIndex++)
                 {
@@ -1548,7 +1549,7 @@ namespace GLTFast
                     if (!string.IsNullOrEmpty(img.uri) && img.uri.StartsWith("data:"))
                     {
                         var imageTask = LoadImageFromDataUri(imageIndex, img);
-                        imageTasks ??= new List<Task>();
+                        imageTasks ??= new List<Task<bool>>();
                         imageTasks.Add(imageTask);
                     }
                     else
@@ -1603,13 +1604,13 @@ namespace GLTFast
         // TODO: If no suitable image loader is found, this method won't use the await operator, thus causing a warning.
         //       For now we'll ignore that warning. In the future, we'll encapsulate this in a better way.
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
-        async Task LoadImageFromDataUri(int imageIndex, Image img)
+        async Task<bool> LoadImageFromDataUri(int imageIndex, Image img)
 #pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
         {
             if (!TryGetImageDataUriDescriptor(img.uri, out var imageFormat, out var startIndex, out var byteLength))
             {
                 Logger?.Error(LogCode.EmbedImageLoadFailed);
-                return;
+                return false;
             }
             m_ImageFormats[imageIndex] = imageFormat;
 
@@ -1617,23 +1618,39 @@ namespace GLTFast
             {
                 case ImageFormat.Unknown:
                     Logger?.Error(LogCode.EmbedImageLoadFailed);
-                    break;
+                    return false;
                 case ImageFormat.Jpeg:
                 case ImageFormat.PNG:
 #if UNITY_IMAGECONVERSION
-                    m_Images[imageIndex] = await LoadImageJpegOrPngFromDataUri(imageIndex, img, startIndex, byteLength);
+                {
+                    var texture = await LoadImageJpegOrPngFromDataUri(imageIndex, img, startIndex, byteLength);
+                    if (texture is not null)
+                    {
+                        m_Images[imageIndex] = texture;
+                        return true;
+                    }
+                    return false;
+                }
 #else
                     Logger?.Warning(LogCode.ImageConversionNotEnabled);
+                    return true;
 #endif
-                    break;
                 case ImageFormat.Ktx:
 #if KTX_IS_ENABLED
-                    m_Images[imageIndex] = await LoadImageKtxFromDataUri(imageIndex, img, startIndex, byteLength);
-                    break;
+                {
+                    var texture = await LoadImageKtxFromDataUri(imageIndex, img, startIndex, byteLength);
+                    if (texture is not null)
+                    {
+                        m_Images[imageIndex] = texture;
+                        return true;
+                    }
+
+                    return false;
+                }
 #endif
                 default:
                     Logger?.Error(LogCode.EmbedImageUnsupportedType, m_ImageFormats[imageIndex].ToString());
-                    break;
+                    return false;
             }
         }
 

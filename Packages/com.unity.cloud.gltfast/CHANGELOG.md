@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - (Test) *No Normal* test asset.
 
 ### Changed
+- *glTFast* will return a success value of `true` even if an image fails to load (which has not been consistent across the API before). This makes it easier to display assets despite of non-critical loading errors. Users who need stricter behavior can resort to monitoring for error logs (see the runtime import manual about logging or the `logger` parameter of [GltfImport constructor](xref:GLTFast.GltfImportBase.#ctor(GLTFast.Loading.IDownloadProvider,GLTFast.IDeferAgent,GLTFast.Materials.IMaterialGenerator,GLTFast.Logging.ICodeLogger))).
 - Primitives of a Draco compressed mesh will be decoded into in a single Unity mesh with multiple sub-meshes instead of multiple Unity meshes.
 - [Draco for Unity] minimum required version was raised to 5.4.0.
 - (Performance) Texture data is not copied into managed memory before loading via [Texture2D.LoadImage](xref:UnityEngine.Texture2D.LoadImage*) (applies for Unity 6.0 or newer).
@@ -33,6 +34,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Avoid download of textures if ImageConversion module is disabled anyways.
 - Gracefully fail when buffer data URI has incorrect media-type field or undersized content length.
 - Just like PNG or Jpeg, KTX textures are now loaded readable as well if it's required by the import settings, the platform or for applying multiple sampler settings.
+- Properly abort if loading of a data URI encoded image failed.
+- Don't crash when a buffer failed to load when loading from `string`, `byte` arrays or `Stream`.
+- Return value of [GltfImport](xref:GLTFast.GltfImportBase) loading methods ([Load](xref:GLTFast.GltfImportBase.Load*), [LoadFile](xref:GLTFast.GltfImportBase.LoadFile*), [LoadGltfBinary](xref:GLTFast.GltfImportBase.LoadGltfBinary*), [LoadGltfBinary](xref:GLTFast.GltfImportBase.LoadGltfJson*) and [LoadStream](xref:GLTFast.GltfImportBase.LoadStream*)) has been made consistent.
 
 ### Removed
 - Broken consistency check between image data URI mediatype against image's mimeType.

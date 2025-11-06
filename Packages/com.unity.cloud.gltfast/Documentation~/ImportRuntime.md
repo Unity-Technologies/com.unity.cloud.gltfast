@@ -204,6 +204,7 @@ async void Start()
 When loading a glTF file, *Unity glTFast* logs messages of varying severity (errors, warnings or infos). Developers can choose what to make of those log messages. Examples:
 
 - Log to console in readable form
+- React to non-critical errors (like an image texture failed to load) in a nuanced way
 - Feed the information into an analytics framework
 - Display details to the users
 
