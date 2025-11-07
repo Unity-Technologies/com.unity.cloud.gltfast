@@ -7,7 +7,7 @@ You can load a glTF&trade; asset from an URL or a file path.
 
 ## Runtime Loading via Component
 
-Add a `GltfAsset` component to a GameObject. It offers a lot of settings for import and instantiation.
+Add a [GltfAsset] component to a GameObject. It offers a lot of settings for import and instantiation.
 
 ![GltfAsset component][gltfasset_component]
 
@@ -15,7 +15,7 @@ Add a `GltfAsset` component to a GameObject. It offers a lot of settings for imp
 
 ```C#
 var gltf = gameObject.AddComponent<GLTFast.GltfAsset>();
-gltf.Url = "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/Duck/glTF/Duck.gltf";
+gltf.Url = "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/Duck/glTF/Duck.gltf";
 ```
 
 ### Load from byte array
@@ -37,7 +37,7 @@ Loading via script allows you to:
 - Customize [instantiation](#instantiation)
 - Load glTF once and instantiate its scenes many times (see example [below](#custom-post-loading-behavior))
 - Access data of glTF scene (for example get material; see example [below](#custom-post-loading-behavior))
-- [Logging](#logging) allow reacting and communicating incidents during loading and instantiation
+- [Logging](#logging) allows reacting to and communicating incidents during loading and instantiation
 - Tweak and optimize loading performance
 
 ### Import Settings
@@ -208,7 +208,7 @@ When loading a glTF file, *Unity glTFast* logs messages of varying severity (err
 - Feed the information into an analytics framework
 - Display details to the users
 
-The [GltfAsset][GltfAsset] component logs all of those messages to the console by default.
+The [GltfAsset] component logs all of those messages to the console by default.
 
 You can customize logging by providing an implementation of [ICodeLogger][ICodeLogger] to the constructors of [GltfImport] or [GameObjectInstantiator].
 
@@ -226,7 +226,7 @@ When loading glTFs, *Unity glTFast* let's you optimize towards one of two diamet
 - A stable frame rate
 - Fastest loading time
 
-By default each `GltfAsset` instance tries not to block the main thread for longer than a certain time budget and defer the remaining loading process to the next frame / game loop iteration.
+By default each [GltfAsset] instance tries not to block the main thread for longer than a certain time budget and defer the remaining loading process to the next frame / game loop iteration.
 
 If you load many glTF files at once, by default they won't be aware of each other and collectively might block the main game loop for too long.
 

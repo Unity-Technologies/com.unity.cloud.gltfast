@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - *glTFast* will return a success value of `true` even if an image fails to load (which has not been consistent across the API before). This makes it easier to display assets despite of non-critical loading errors. Users who need stricter behavior can resort to monitoring for error logs (see the runtime import manual about logging or the `logger` parameter of [GltfImport constructor](xref:GLTFast.GltfImportBase.#ctor(GLTFast.Loading.IDownloadProvider,GLTFast.IDeferAgent,GLTFast.Materials.IMaterialGenerator,GLTFast.Logging.ICodeLogger))).
-- Primitives of a Draco compressed mesh will be decoded into in a single Unity mesh with multiple sub-meshes instead of multiple Unity meshes.
+- Primitives of a Draco compressed mesh will be decoded into in a single Unity mesh with multiple sub-meshes instead of multiple Unity meshes (thanks [Kibsgaard](https://github.com/Kibsgaard) for initiating this in [#33](https://github.com/Unity-Technologies/com.unity.cloud.gltfast/pull/33)).
 - [Draco for Unity] minimum required version was raised to 5.4.0.
 - (Performance) Texture data is not copied into managed memory before loading via [Texture2D.LoadImage](xref:UnityEngine.ImageConversion.LoadImage(UnityEngine.Texture2D,System.Byte[],System.Boolean)) (applies for Unity 6.0 or newer).
 - (Performance) Avoid copy of entire data URI string by using `ReadOnlySpan` instead sub-stringing.

@@ -49,7 +49,7 @@ Add a `GltfAsset` component to a GameObject.
 
 ```C#
 var gltf = gameObject.AddComponent<GLTFast.GltfAsset>();
-gltf.url = "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/Duck/glTF/Duck.gltf";
+gltf.url = "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/Duck/glTF/Duck.gltf";
 ```
 
 See [Runtime Loading via Script](./Documentation~/ImportRuntime.md#runtime-loading-via-script) in the documentation for more details and instructions how to [customize the loading behavior](./Documentation~/ImportRuntime.md#customize-loading-behavior) via script.
