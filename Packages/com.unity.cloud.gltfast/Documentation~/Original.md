@@ -16,6 +16,6 @@ If you want to clone the GIT repository and installed the package locally (which
 
 The package identifier in the `main` branch was changed, which likely leads to errors if you've cloned it before and pulled that change. In that case either switch to the `openupm` branch or [transition to the new package identifier][transition].
 
-[fork]: ./UpgradeGuides#unity-fork
-[transition]: ./UpgradeGuides#transition-to-unity-gltfast
+[fork]: ./UpgradeGuides.md#unity-fork
+[transition]: ./UpgradeGuides.md#transition-to-unity-gltfast
 [OpenUPM]: https://openupm.com/

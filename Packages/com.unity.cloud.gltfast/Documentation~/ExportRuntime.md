@@ -36,7 +36,7 @@ Further, the export can be customized by passing [ExportSettings](xref:GLTFast.E
 
 ### Scene Origin
 
-When adding GameObjects to a glTF scene, the resulting glTF root nodes' positions will be their original GameObjects' world position in the Unity scene. That might be undesirable (e.g. if the scene is far off the origin and thus not centered), so [AddScene](xref:GLTFast.Export.GameObjectExport.AddScene(ICollection{UnityEngine.GameObject},Unity.Mathematics.float4x4,System.String)) allows you to provide an inverse scene origin matrix that'll be applied to all root-level nodes.
+When adding GameObjects to a glTF scene, the resulting glTF root nodes' positions will be their original GameObjects' world position in the Unity scene. That might be undesirable (e.g. if the scene is far off the origin and thus not centered), so [AddScene](xref:GLTFast.Export.GameObjectExport.AddScene(System.Collections.Generic.ICollection{UnityEngine.GameObject},Unity.Mathematics.float4x4,System.String)) allows you to provide an inverse scene origin matrix that'll be applied to all root-level nodes.
 
 Here's an example how to export a GameObject, discarding its transform:
 

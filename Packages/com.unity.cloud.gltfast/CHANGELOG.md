@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - *glTFast* will return a success value of `true` even if an image fails to load (which has not been consistent across the API before). This makes it easier to display assets despite of non-critical loading errors. Users who need stricter behavior can resort to monitoring for error logs (see the runtime import manual about logging or the `logger` parameter of [GltfImport constructor](xref:GLTFast.GltfImportBase.#ctor(GLTFast.Loading.IDownloadProvider,GLTFast.IDeferAgent,GLTFast.Materials.IMaterialGenerator,GLTFast.Logging.ICodeLogger))).
 - Primitives of a Draco compressed mesh will be decoded into in a single Unity mesh with multiple sub-meshes instead of multiple Unity meshes.
 - [Draco for Unity] minimum required version was raised to 5.4.0.
-- (Performance) Texture data is not copied into managed memory before loading via [Texture2D.LoadImage](xref:UnityEngine.Texture2D.LoadImage*) (applies for Unity 6.0 or newer).
+- (Performance) Texture data is not copied into managed memory before loading via [Texture2D.LoadImage](xref:UnityEngine.ImageConversion.LoadImage(UnityEngine.Texture2D,System.Byte[],System.Boolean)) (applies for Unity 6.0 or newer).
 - (Performance) Avoid copy of entire data URI string by using `ReadOnlySpan` instead sub-stringing.
 - (Performance) Base64-encoded data URIs are now decoded into [NativeArray&lt;byte&gt;](xref:Unity.Collections.NativeArray`1) instead of `byte[]`, reducing GC allocations.
 - [KTX for Unity] minimum required version was raised to 3.6.0.
@@ -37,6 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Properly abort if loading of a data URI encoded image failed.
 - Don't crash when a buffer failed to load when loading from `string`, `byte` arrays or `Stream`.
 - Return value of [GltfImport](xref:GLTFast.GltfImportBase) loading methods ([Load](xref:GLTFast.GltfImportBase.Load*), [LoadFile](xref:GLTFast.GltfImportBase.LoadFile*), [LoadGltfBinary](xref:GLTFast.GltfImportBase.LoadGltfBinary*), [LoadGltfBinary](xref:GLTFast.GltfImportBase.LoadGltfJson*) and [LoadStream](xref:GLTFast.GltfImportBase.LoadStream*)) has been made consistent.
+- (Documentation) various broken links fixed.
 
 ### Removed
 - Broken consistency check between image data URI mediatype against image's mimeType.
@@ -76,8 +77,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - (CI) SonarQube scan job.
 
 ### Deprecated
-- [GLTFast.ManagedNativeArray](xref:GLTFast.ManagedNativeArray`2). It will be removed from public API in a future release. For internal development it's been replaced by `ReadOnlyBufferManagedArray<T>`.
-- [GLTFast.Export.ManagedNativeArray](xref:GLTFast.Export.ManagedNativeArray`2). It will get sealed or removed from public API in a future release.
+- `GLTFast.ManagedNativeArray`. It will be removed from public API in a future release. For internal development it's been replaced by `ReadOnlyNativeArrayFromManagedArray<T>`.
+- `GLTFast.Export.ManagedNativeArray`. It will get sealed or removed from public API in a future release.
 - [IGltfReadable.GetAccessorData](xref:GLTFast.IGltfReadable.GetAccessorData(System.Int32)). Along with [IGltfReadable.GetAccessor](xref:GLTFast.IGltfReadable.GetAccessor(System.Int32)) it is going to be removed and replaced with an improved way to access accessors' data in a future release.
 
 ## [6.13.1] - 2025-07-17
@@ -124,12 +125,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - (Import)`InvalidOperationException` on multi-primitive meshes with vertex colors thrown by the native container safety system (fixes [#30](https://github.com/Unity-Technologies/com.unity.cloud.gltfast/issues/30)).
 - (Export) Sub-meshes that have a base vertex other than zero are exported with correct indices now.
-- Reliability issues related to lack of certain async calls in [GltfImport](xref:GLTFast.GltfImport*) and [GltfWriter](xref:GLTFast.GltfWriter*).
+- Reliability issues related to lack of certain async calls in [GltfImport](xref:GLTFast.GltfImport) and [GltfWriter](xref:GLTFast.Export.GltfWriter).
 
 ## [6.11.0] - 2025-03-13
 
 ### Added
-- [GltfImport.Load](xref:GLTFast.GltfImportBase.Load(Unity.Collections.NativeArray{System.Byte}.ReadOnly,Uri,GLTFast.ImportSettings,CancellationToken)) overload that accept glTF data in form of [NativeArray&lt;byte&gt;.ReadOnly](xref:Unity.Collections.NativeArray`1.ReadOnly).
+- [GltfImport.Load](xref:GLTFast.GltfImportBase.Load(Unity.Collections.NativeArray{System.Byte}.ReadOnly,System.Uri,GLTFast.ImportSettings,System.Threading.CancellationToken)) overload that accept glTF data in form of [NativeArray&lt;byte&gt;.ReadOnly](xref:Unity.Collections.NativeArray`1.ReadOnly).
 - [INativeDownload](xref:GLTFast.Loading.INativeDownload), which can be used to expand [IDownload](xref:GLTFast.Loading.IDownload) implementations to provide access to downloaded data directly without creating a copy in managed memory.
 - Content-based glTF JSON vs. glTF-Binary detection (limited to Unity 2021 LTS or newer; resolves [#193](https://github.com/atteneder/glTFast/issues/193)).
 

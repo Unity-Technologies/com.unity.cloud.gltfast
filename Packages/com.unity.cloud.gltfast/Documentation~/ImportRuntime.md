@@ -210,7 +210,7 @@ When loading a glTF file, *Unity glTFast* logs messages of varying severity (err
 
 The [GltfAsset][GltfAsset] component logs all of those messages to the console by default.
 
-You can customize logging by providing an implementation of [ICodeLogger][ICodeLogger] to the constructors of [GltfImport][GltfImportCtor] or [GameObjectInstantiator][GameObjectInstantiatorCtor].
+You can customize logging by providing an implementation of [ICodeLogger][ICodeLogger] to the constructors of [GltfImport] or [GameObjectInstantiator].
 
 > [!IMPORTANT]
 > Not providing an `ICodeLogger` will disable logging altogether, which makes finding the cause of problems hard! Always use a logger like the `ConsoleLogger` during development.
@@ -286,12 +286,10 @@ When you no longer need a loaded instance of a glTF scene you might want to remo
 [ConsoleLogger]: xref:GLTFast.Logging.ConsoleLogger
 [GltfAsset]: xref:GLTFast.GltfAsset
 [GltfImport]: xref:GLTFast.GltfImport
-[GltfImportCtor]: xref:GLTFast.GltfImport.#ctor*
-[GltfImportDispose]: xref:GLTFast.GltfImport.Dispose
+[GltfImportDispose]: xref:GLTFast.GltfImportBase.Dispose
 [GltfImportLoad]: xref:GLTFast.GltfImportBase.Load*
 [GltfImportLoadGltfBinary]: xref:GLTFast.GltfImportBase.LoadGltfBinary*
 [GameObjectInstantiator]: xref:GLTFast.GameObjectInstantiator
-[GameObjectInstantiatorCtor]: xref:GLTFast.GameObjectInstantiator.#ctor*
 [gltfasset_component]: Images/gltfasset_component.png  "Inspector showing a GltfAsset component added to a GameObject"
 [ICodeLogger]: xref:GLTFast.Logging.ICodeLogger
 [IDownload]: xref:GLTFast.Loading.IDownload

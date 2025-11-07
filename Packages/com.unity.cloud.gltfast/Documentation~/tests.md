@@ -5,7 +5,7 @@
 Once your project is correctly setup (by either opening one of the provided [test projects](test-project-setup.md#test-projects) or following the steps to [setup your own project](test-project-setup.md#setup-a-custom-project)) you'll be able to run all tests via the *Test Runner* window (under *Window* → *General* → *Test Runner*; see [Test Framework documentation][UTFRunTests] for details about running tests).
 
 > [!NOTE]
-> Passing all tests is a requirement for getting a [contribution](contribute.md) accepted.
+> Passing all tests is a requirement for getting a [contribution](contributing.md) accepted.
 
 On an unmodified copy of *glTFast* all tests should pass. Once you start introducing changes it's recommended to periodically check that the tests still pass.
 
