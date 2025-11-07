@@ -29,11 +29,6 @@
             "define": "USING_URP"
         },
         {
-            "name": "com.unity.render-pipelines.universal",
-            "expression": "12",
-            "define": "USING_URP_12_OR_NEWER"
-        },
-        {
             "name": "com.unity.render-pipelines.high-definition",
             "expression": "7.3.1",
             "define": "USING_HDRP"
