@@ -8,13 +8,13 @@
 #if KTX_IS_RECENT
 #define KTX_IS_ENABLED
 #elif KTX_IS_INSTALLED
-#warning You have to update *KTX for Unity* to enable support for KTX textures in glTFast
+#error You have to update the *KTX for Unity* package in package manager to enable support for KTX textures in *glTFast*.
 #endif
 
 #if DRACO_IS_RECENT
 #define DRACO_IS_ENABLED
 #elif DRACO_IS_INSTALLED
-#warning You have to update the *Draco for Unity* package to enable support for decompressing Draco meshes in glTFast.
+#error You have to update the *Draco for Unity* package in package manager to enable support for decompressing Draco meshes in *glTFast*.
 #endif
 
 // #define MEASURE_TIMINGS

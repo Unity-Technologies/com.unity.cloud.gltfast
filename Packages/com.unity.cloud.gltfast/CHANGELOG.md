@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - (Performance) Avoid copy of entire data URI string by using `ReadOnlySpan` instead sub-stringing.
 - (Performance) Base64-encoded data URIs are now decoded into [NativeArray&lt;byte&gt;](xref:Unity.Collections.NativeArray`1) instead of `byte[]`, reducing GC allocations.
 - [KTX for Unity] minimum required version was raised to 3.6.0.
+- Up-to-date versions of soft-dependencies [KTX for Unity] or [Draco for Unity] are enforced by raising a compiler error if an outdated version of either of those is installed.
 
 ### Fixed
 - Corrected test cases for `GltfTestModels` importer tests.
