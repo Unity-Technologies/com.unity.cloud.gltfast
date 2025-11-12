@@ -19,7 +19,7 @@ on:
         required: false
   schedule:
     # Default daily scheduled run. Feel free to change this to run when you want it to.
-    - cron: '25 17 * * *'
+    - cron: '25 7 * * 1-5'
 
 jobs:
   renovate:
