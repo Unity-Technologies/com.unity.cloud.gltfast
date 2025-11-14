@@ -394,7 +394,7 @@ namespace GLTFast
         /// <param name="url">Uniform Resource Locator. Can be a file path (using the "file://" scheme) or a web address.</param>
         /// <param name="importSettings">Import Settings (<see cref="ImportSettings"/> for details)</param>
         /// <param name="cancellationToken">Token to submit cancellation requests. The default value is None.</param>
-        /// <returns>True if loading was successful, false otherwise</returns>
+        /// <returns>True if loading was mainly successful and no critical error occurred, false otherwise</returns>
         public async Task<bool> Load(
             string url,
             ImportSettings importSettings = null,
@@ -411,7 +411,7 @@ namespace GLTFast
         /// <param name="url">Uniform Resource Locator. Can be a file path (using the "file://" scheme) or a web address.</param>
         /// <param name="importSettings">Import Settings (<see cref="ImportSettings"/> for details)</param>
         /// <param name="cancellationToken">Token to submit cancellation requests. The default value is None.</param>
-        /// <returns>True if loading was successful, false otherwise</returns>
+        /// <returns>True if loading was mainly successful and no critical error occurred, false otherwise</returns>
         public async Task<bool> Load(
             Uri url,
             ImportSettings importSettings = null,
@@ -429,7 +429,7 @@ namespace GLTFast
         /// <param name="uri">Base URI for relative paths of external buffers or images</param>
         /// <param name="importSettings">Import Settings (<see cref="ImportSettings"/> for details)</param>
         /// <param name="cancellationToken">Token to submit cancellation requests. The default value is None.</param>
-        /// <returns>True if loading was successful, false otherwise</returns>
+        /// <returns>True if loading was mainly successful and no critical error occurred, false otherwise</returns>
         public async Task<bool> Load(
             byte[] data,
             Uri uri = null,
@@ -455,7 +455,7 @@ namespace GLTFast
         /// <param name="uri">Base URI for relative paths of external buffers or images</param>
         /// <param name="importSettings">Import Settings (<see cref="ImportSettings"/> for details)</param>
         /// <param name="cancellationToken">Token to submit cancellation requests. The default value is None.</param>
-        /// <returns>True if loading was successful, false otherwise</returns>
+        /// <returns>True if loading was mainly successful and no critical error occurred, false otherwise</returns>
         public async Task<bool> Load(
             NativeArray<byte>.ReadOnly data,
             Uri uri = null,
@@ -481,7 +481,7 @@ namespace GLTFast
         /// <param name="uri">Base URI for relative paths of external buffers or images</param>
         /// <param name="importSettings">Import Settings (<see cref="ImportSettings"/> for details)</param>
         /// <param name="cancellationToken">Token to submit cancellation requests. The default value is None.</param>
-        /// <returns>True if loading was successful, false otherwise</returns>
+        /// <returns>True if loading was mainly successful and no critical error occurred, false otherwise</returns>
         public async Task<bool> LoadFile(
             string localPath,
             Uri uri = null,
@@ -507,7 +507,7 @@ namespace GLTFast
         /// <param name="uri">Base URI for relative paths of external buffers or images</param>
         /// <param name="importSettings">Import Settings (<see cref="ImportSettings"/> for details)</param>
         /// <param name="cancellationToken">Token to submit cancellation requests. The default value is None.</param>
-        /// <returns>True if loading was successful, false otherwise</returns>
+        /// <returns>True if loading was mainly successful and no critical error occurred, false otherwise</returns>
         public async Task<bool> LoadStream(
             Stream stream,
             Uri uri = null,
@@ -586,7 +586,7 @@ namespace GLTFast
         /// <param name="uri">Base URI for relative paths of external buffers or images</param>
         /// <param name="importSettings">Import Settings (<see cref="ImportSettings"/> for details)</param>
         /// <param name="cancellationToken">Token to submit cancellation requests. The default value is None.</param>
-        /// <returns>True if loading was successful, false otherwise</returns>
+        /// <returns>True if loading was mainly successful and no critical error occurred, false otherwise</returns>
         [Obsolete("Use the generic Load instead.")]
         public async Task<bool> LoadGltfBinary(
             byte[] bytes,
@@ -613,7 +613,7 @@ namespace GLTFast
         /// <param name="uri">Base URI for relative paths of external buffers or images</param>
         /// <param name="importSettings">Import Settings (<see cref="ImportSettings"/> for details)</param>
         /// <param name="cancellationToken">Token to submit cancellation requests. The default value is None.</param>
-        /// <returns>True if loading was successful, false otherwise</returns>
+        /// <returns>True if loading was mainly successful and no critical error occurred, false otherwise</returns>
         public async Task<bool> LoadGltfJson(
             string json,
             Uri uri = null,
