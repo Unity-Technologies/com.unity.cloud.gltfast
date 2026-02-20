@@ -25,7 +25,7 @@
 1. Wait for approval and wait for the Yamato job to complete successfully. If
    any issues arise, communicate with the appropriate owners until resolved.
 1. Currently (as of version 6.x) the automatic API validation is muted due to false negatives and has to be manually checked.
-   1. Locate the Yamato Job *API Validation - cloud.gltfast - 2021.3 - windows* and unzip its *logs* artifact.
+   1. Locate the Yamato Job *API Validation - cloud.gltfast - 2022.3 - win10* and unzip its *logs* artifact.
    1. Download `ValidationSuiteReports/ApiValidationReport.json` and compare it against `Docs/Release-Process/<A.B.C>-ApiValidationReportReference.json` (where `<A.B.C>` represent the version of the last release that introduced API changes). Ensure no difference goes undetected by using a specialised comparison tool like [TextCompare](https://www.textcompare.org/).
    1. Make sure no unknown breaking change was added at [JsonPath](https://github.com/json-path/JsonPath) `$.assemblyChanges[*].breakingChanges`
    1. Additions (new entries at the path `$.assemblyChanges[*].additions`) are tolerated but those imply that this release's minor version number is **required** to be increased. If that does not align with the version number chosen, restart the process with the correct version number.

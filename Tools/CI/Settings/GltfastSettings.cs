@@ -18,7 +18,11 @@ public class GltfastSettings : AnnotatedSettingsBase
             new PackageOptions
             {
                 ReleaseOptions = new ReleaseOptions { IsReleasing = true },
-                ValidationOptions = new ValidationOptions { UtrTestingYamatoTimeout = 30 },
+                ValidationOptions = new ValidationOptions
+                {
+                    UtrTestingYamatoTimeout = 60,
+                    ProjectPath = "test-cloud.gltfast",
+                },
             }
         }
     };
