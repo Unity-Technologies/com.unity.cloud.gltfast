@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
+### Changed
+
+### Fixed
+
+### Removed
+
+### Deprecated
+
+### Security
+
+## [6.16.1] - 2026-02-19
+
+### Added
 - (Test) *Empty Scene* test asset.
 
 ### Changed
@@ -35,12 +49,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - (Shader) Incorrect normal unpacking when using default normal map on Android (fixes [#791](https://github.com/atteneder/glTFast/issues/791) and [802](https://github.com/atteneder/glTFast/issues/802)).
 - (Export) Texture scaling not preserved on URP/Lit export (fixes [#805](https://github.com/atteneder/glTFast/issues/805)).
 
-### Removed
-
 ### Deprecated
 - Generic built-in/Universal render pipeline [StandardMaterialExport](xref:GLTFast.Export.StandardMaterialExport).
-
-### Security
 
 ## [6.16.0] - 2026-01-20
 
