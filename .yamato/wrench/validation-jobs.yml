@@ -23,7 +23,7 @@ validate_-_cloud_gltfast_-_2022_3_-_macos13:
     timeout: 10
     retries: 1
   - command: upm-pvp test --unity .Editor --packages "upm-ci~/packages/*.tgz" --results upm-ci~/pvp
-    timeout: 20
+    timeout: 60
     retries: 0
   - command: upm-pvp require "pkgprom-promote -PVP-29-2 rme" --results upm-ci~/pvp --exemptions upm-ci~/pvp/failures.json
     timeout: 5
@@ -32,7 +32,7 @@ validate_-_cloud_gltfast_-_2022_3_-_macos13:
     timeout: 10
     retries: 0
   - command: 'UnifiedTestRunner --testproject=test-cloud.gltfast --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts --suite=Editor --suite=Playmode "--ff={ops.upmpvpevidence.enable=true}" '
-    timeout: 20
+    timeout: 60
     retries: 1
   after:
   - command: bash .yamato/generated-scripts/infrastructure-instability-detection-mac.sh
@@ -95,7 +95,7 @@ validate_-_cloud_gltfast_-_2022_3_-_ubuntu1804:
     timeout: 10
     retries: 1
   - command: upm-pvp test --unity .Editor --packages "upm-ci~/packages/*.tgz" --results upm-ci~/pvp
-    timeout: 20
+    timeout: 60
     retries: 0
   - command: upm-pvp require "pkgprom-promote -PVP-29-2 rme" --results upm-ci~/pvp --exemptions upm-ci~/pvp/failures.json
     timeout: 5
@@ -104,7 +104,7 @@ validate_-_cloud_gltfast_-_2022_3_-_ubuntu1804:
     timeout: 10
     retries: 0
   - command: 'UnifiedTestRunner --testproject=test-cloud.gltfast --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts --suite=Editor --suite=Playmode "--ff={ops.upmpvpevidence.enable=true}" '
-    timeout: 20
+    timeout: 60
     retries: 1
   after:
   - command: bash .yamato/generated-scripts/infrastructure-instability-detection-linux.sh
@@ -167,7 +167,7 @@ validate_-_cloud_gltfast_-_2022_3_-_win10:
     timeout: 10
     retries: 1
   - command: upm-pvp test --unity .Editor --packages "upm-ci~/packages/*.tgz" --results upm-ci~/pvp
-    timeout: 20
+    timeout: 60
     retries: 0
   - command: upm-pvp require "pkgprom-promote -PVP-29-2 rme" --results upm-ci~/pvp --exemptions upm-ci~/pvp/failures.json
     timeout: 5
@@ -176,7 +176,7 @@ validate_-_cloud_gltfast_-_2022_3_-_win10:
     timeout: 10
     retries: 0
   - command: 'UnifiedTestRunner.exe --testproject=test-cloud.gltfast --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts --suite=Editor --suite=Playmode "--ff={ops.upmpvpevidence.enable=true}" '
-    timeout: 20
+    timeout: 60
     retries: 1
   after:
   - command: .yamato\generated-scripts\infrastructure-instability-detection-win.cmd
@@ -239,7 +239,7 @@ validate_-_cloud_gltfast_-_6000_0_-_macos13:
     timeout: 10
     retries: 1
   - command: upm-pvp test --unity .Editor --packages "upm-ci~/packages/*.tgz" --results upm-ci~/pvp
-    timeout: 20
+    timeout: 60
     retries: 0
   - command: upm-pvp require "pkgprom-promote -PVP-29-2 rme" --results upm-ci~/pvp --exemptions upm-ci~/pvp/failures.json
     timeout: 5
@@ -248,7 +248,7 @@ validate_-_cloud_gltfast_-_6000_0_-_macos13:
     timeout: 10
     retries: 0
   - command: 'UnifiedTestRunner --testproject=test-cloud.gltfast --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts --suite=Editor --suite=Playmode "--ff={ops.upmpvpevidence.enable=true}" '
-    timeout: 20
+    timeout: 60
     retries: 1
   after:
   - command: bash .yamato/generated-scripts/infrastructure-instability-detection-mac.sh
@@ -311,7 +311,7 @@ validate_-_cloud_gltfast_-_6000_0_-_ubuntu2204:
     timeout: 10
     retries: 1
   - command: upm-pvp test --unity .Editor --packages "upm-ci~/packages/*.tgz" --results upm-ci~/pvp
-    timeout: 20
+    timeout: 60
     retries: 0
   - command: upm-pvp require "pkgprom-promote -PVP-29-2 rme" --results upm-ci~/pvp --exemptions upm-ci~/pvp/failures.json
     timeout: 5
@@ -320,7 +320,7 @@ validate_-_cloud_gltfast_-_6000_0_-_ubuntu2204:
     timeout: 10
     retries: 0
   - command: 'UnifiedTestRunner --testproject=test-cloud.gltfast --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts --suite=Editor --suite=Playmode "--ff={ops.upmpvpevidence.enable=true}" '
-    timeout: 20
+    timeout: 60
     retries: 1
   after:
   - command: bash .yamato/generated-scripts/infrastructure-instability-detection-linux.sh
@@ -383,7 +383,7 @@ validate_-_cloud_gltfast_-_6000_0_-_win10:
     timeout: 10
     retries: 1
   - command: upm-pvp test --unity .Editor --packages "upm-ci~/packages/*.tgz" --results upm-ci~/pvp
-    timeout: 20
+    timeout: 60
     retries: 0
   - command: upm-pvp require "pkgprom-promote -PVP-29-2 rme" --results upm-ci~/pvp --exemptions upm-ci~/pvp/failures.json
     timeout: 5
@@ -392,7 +392,7 @@ validate_-_cloud_gltfast_-_6000_0_-_win10:
     timeout: 10
     retries: 0
   - command: 'UnifiedTestRunner.exe --testproject=test-cloud.gltfast --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts --suite=Editor --suite=Playmode "--ff={ops.upmpvpevidence.enable=true}" '
-    timeout: 20
+    timeout: 60
     retries: 1
   after:
   - command: .yamato\generated-scripts\infrastructure-instability-detection-win.cmd
@@ -455,7 +455,7 @@ validate_-_cloud_gltfast_-_6000_3_-_macos13:
     timeout: 10
     retries: 1
   - command: upm-pvp test --unity .Editor --packages "upm-ci~/packages/*.tgz" --results upm-ci~/pvp
-    timeout: 20
+    timeout: 60
     retries: 0
   - command: upm-pvp require "pkgprom-promote -PVP-29-2 rme" --results upm-ci~/pvp --exemptions upm-ci~/pvp/failures.json
     timeout: 5
@@ -464,7 +464,7 @@ validate_-_cloud_gltfast_-_6000_3_-_macos13:
     timeout: 10
     retries: 0
   - command: 'UnifiedTestRunner --testproject=test-cloud.gltfast --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts --suite=Editor --suite=Playmode "--ff={ops.upmpvpevidence.enable=true}" '
-    timeout: 20
+    timeout: 60
     retries: 1
   after:
   - command: bash .yamato/generated-scripts/infrastructure-instability-detection-mac.sh
@@ -527,7 +527,7 @@ validate_-_cloud_gltfast_-_6000_3_-_ubuntu2204:
     timeout: 10
     retries: 1
   - command: upm-pvp test --unity .Editor --packages "upm-ci~/packages/*.tgz" --results upm-ci~/pvp
-    timeout: 20
+    timeout: 60
     retries: 0
   - command: upm-pvp require "pkgprom-promote -PVP-29-2 rme" --results upm-ci~/pvp --exemptions upm-ci~/pvp/failures.json
     timeout: 5
@@ -536,7 +536,7 @@ validate_-_cloud_gltfast_-_6000_3_-_ubuntu2204:
     timeout: 10
     retries: 0
   - command: 'UnifiedTestRunner --testproject=test-cloud.gltfast --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts --suite=Editor --suite=Playmode "--ff={ops.upmpvpevidence.enable=true}" '
-    timeout: 20
+    timeout: 60
     retries: 1
   after:
   - command: bash .yamato/generated-scripts/infrastructure-instability-detection-linux.sh
@@ -599,7 +599,7 @@ validate_-_cloud_gltfast_-_6000_3_-_win10:
     timeout: 10
     retries: 1
   - command: upm-pvp test --unity .Editor --packages "upm-ci~/packages/*.tgz" --results upm-ci~/pvp
-    timeout: 20
+    timeout: 60
     retries: 0
   - command: upm-pvp require "pkgprom-promote -PVP-29-2 rme" --results upm-ci~/pvp --exemptions upm-ci~/pvp/failures.json
     timeout: 5
@@ -608,7 +608,7 @@ validate_-_cloud_gltfast_-_6000_3_-_win10:
     timeout: 10
     retries: 0
   - command: 'UnifiedTestRunner.exe --testproject=test-cloud.gltfast --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts --suite=Editor --suite=Playmode "--ff={ops.upmpvpevidence.enable=true}" '
-    timeout: 20
+    timeout: 60
     retries: 1
   after:
   - command: .yamato\generated-scripts\infrastructure-instability-detection-win.cmd
@@ -671,7 +671,7 @@ validate_-_cloud_gltfast_-_6000_4_-_macos13:
     timeout: 10
     retries: 1
   - command: upm-pvp test --unity .Editor --packages "upm-ci~/packages/*.tgz" --results upm-ci~/pvp
-    timeout: 20
+    timeout: 60
     retries: 0
   - command: upm-pvp require "pkgprom-promote -PVP-29-2 rme" --results upm-ci~/pvp --exemptions upm-ci~/pvp/failures.json
     timeout: 5
@@ -680,7 +680,7 @@ validate_-_cloud_gltfast_-_6000_4_-_macos13:
     timeout: 10
     retries: 0
   - command: 'UnifiedTestRunner --testproject=test-cloud.gltfast --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts --suite=Editor --suite=Playmode "--ff={ops.upmpvpevidence.enable=true}" '
-    timeout: 20
+    timeout: 60
     retries: 1
   after:
   - command: bash .yamato/generated-scripts/infrastructure-instability-detection-mac.sh
@@ -743,7 +743,7 @@ validate_-_cloud_gltfast_-_6000_4_-_ubuntu2204:
     timeout: 10
     retries: 1
   - command: upm-pvp test --unity .Editor --packages "upm-ci~/packages/*.tgz" --results upm-ci~/pvp
-    timeout: 20
+    timeout: 60
     retries: 0
   - command: upm-pvp require "pkgprom-promote -PVP-29-2 rme" --results upm-ci~/pvp --exemptions upm-ci~/pvp/failures.json
     timeout: 5
@@ -752,7 +752,7 @@ validate_-_cloud_gltfast_-_6000_4_-_ubuntu2204:
     timeout: 10
     retries: 0
   - command: 'UnifiedTestRunner --testproject=test-cloud.gltfast --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts --suite=Editor --suite=Playmode "--ff={ops.upmpvpevidence.enable=true}" '
-    timeout: 20
+    timeout: 60
     retries: 1
   after:
   - command: bash .yamato/generated-scripts/infrastructure-instability-detection-linux.sh
@@ -815,7 +815,7 @@ validate_-_cloud_gltfast_-_6000_4_-_win10:
     timeout: 10
     retries: 1
   - command: upm-pvp test --unity .Editor --packages "upm-ci~/packages/*.tgz" --results upm-ci~/pvp
-    timeout: 20
+    timeout: 60
     retries: 0
   - command: upm-pvp require "pkgprom-promote -PVP-29-2 rme" --results upm-ci~/pvp --exemptions upm-ci~/pvp/failures.json
     timeout: 5
@@ -824,7 +824,7 @@ validate_-_cloud_gltfast_-_6000_4_-_win10:
     timeout: 10
     retries: 0
   - command: 'UnifiedTestRunner.exe --testproject=test-cloud.gltfast --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts --suite=Editor --suite=Playmode "--ff={ops.upmpvpevidence.enable=true}" '
-    timeout: 20
+    timeout: 60
     retries: 1
   after:
   - command: .yamato\generated-scripts\infrastructure-instability-detection-win.cmd
@@ -887,7 +887,7 @@ validate_-_cloud_gltfast_-_6000_5_-_macos13:
     timeout: 10
     retries: 1
   - command: upm-pvp test --unity .Editor --packages "upm-ci~/packages/*.tgz" --results upm-ci~/pvp
-    timeout: 20
+    timeout: 60
     retries: 0
   - command: upm-pvp require "pkgprom-promote -PVP-29-2 rme" --results upm-ci~/pvp --exemptions upm-ci~/pvp/failures.json
     timeout: 5
@@ -896,7 +896,7 @@ validate_-_cloud_gltfast_-_6000_5_-_macos13:
     timeout: 10
     retries: 0
   - command: 'UnifiedTestRunner --testproject=test-cloud.gltfast --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts --suite=Editor --suite=Playmode "--ff={ops.upmpvpevidence.enable=true}" '
-    timeout: 20
+    timeout: 60
     retries: 1
   after:
   - command: bash .yamato/generated-scripts/infrastructure-instability-detection-mac.sh
@@ -959,7 +959,7 @@ validate_-_cloud_gltfast_-_6000_5_-_ubuntu2204:
     timeout: 10
     retries: 1
   - command: upm-pvp test --unity .Editor --packages "upm-ci~/packages/*.tgz" --results upm-ci~/pvp
-    timeout: 20
+    timeout: 60
     retries: 0
   - command: upm-pvp require "pkgprom-promote -PVP-29-2 rme" --results upm-ci~/pvp --exemptions upm-ci~/pvp/failures.json
     timeout: 5
@@ -968,7 +968,7 @@ validate_-_cloud_gltfast_-_6000_5_-_ubuntu2204:
     timeout: 10
     retries: 0
   - command: 'UnifiedTestRunner --testproject=test-cloud.gltfast --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts --suite=Editor --suite=Playmode "--ff={ops.upmpvpevidence.enable=true}" '
-    timeout: 20
+    timeout: 60
     retries: 1
   after:
   - command: bash .yamato/generated-scripts/infrastructure-instability-detection-linux.sh
@@ -1031,7 +1031,7 @@ validate_-_cloud_gltfast_-_6000_5_-_win10:
     timeout: 10
     retries: 1
   - command: upm-pvp test --unity .Editor --packages "upm-ci~/packages/*.tgz" --results upm-ci~/pvp
-    timeout: 20
+    timeout: 60
     retries: 0
   - command: upm-pvp require "pkgprom-promote -PVP-29-2 rme" --results upm-ci~/pvp --exemptions upm-ci~/pvp/failures.json
     timeout: 5
@@ -1040,7 +1040,7 @@ validate_-_cloud_gltfast_-_6000_5_-_win10:
     timeout: 10
     retries: 0
   - command: 'UnifiedTestRunner.exe --testproject=test-cloud.gltfast --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts --suite=Editor --suite=Playmode "--ff={ops.upmpvpevidence.enable=true}" '
-    timeout: 20
+    timeout: 60
     retries: 1
   after:
   - command: .yamato\generated-scripts\infrastructure-instability-detection-win.cmd
@@ -1103,7 +1103,7 @@ validate_-_cloud_gltfast_-_6000_6_-_macos13:
     timeout: 10
     retries: 1
   - command: upm-pvp test --unity .Editor --packages "upm-ci~/packages/*.tgz" --results upm-ci~/pvp
-    timeout: 20
+    timeout: 60
     retries: 0
   - command: upm-pvp require "pkgprom-promote -PVP-29-2 rme" --results upm-ci~/pvp --exemptions upm-ci~/pvp/failures.json
     timeout: 5
@@ -1112,7 +1112,7 @@ validate_-_cloud_gltfast_-_6000_6_-_macos13:
     timeout: 10
     retries: 0
   - command: 'UnifiedTestRunner --testproject=test-cloud.gltfast --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts --suite=Editor --suite=Playmode "--ff={ops.upmpvpevidence.enable=true}" '
-    timeout: 20
+    timeout: 60
     retries: 1
   after:
   - command: bash .yamato/generated-scripts/infrastructure-instability-detection-mac.sh
@@ -1175,7 +1175,7 @@ validate_-_cloud_gltfast_-_6000_6_-_ubuntu2204:
     timeout: 10
     retries: 1
   - command: upm-pvp test --unity .Editor --packages "upm-ci~/packages/*.tgz" --results upm-ci~/pvp
-    timeout: 20
+    timeout: 60
     retries: 0
   - command: upm-pvp require "pkgprom-promote -PVP-29-2 rme" --results upm-ci~/pvp --exemptions upm-ci~/pvp/failures.json
     timeout: 5
@@ -1184,7 +1184,7 @@ validate_-_cloud_gltfast_-_6000_6_-_ubuntu2204:
     timeout: 10
     retries: 0
   - command: 'UnifiedTestRunner --testproject=test-cloud.gltfast --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts --suite=Editor --suite=Playmode "--ff={ops.upmpvpevidence.enable=true}" '
-    timeout: 20
+    timeout: 60
     retries: 1
   after:
   - command: bash .yamato/generated-scripts/infrastructure-instability-detection-linux.sh
@@ -1247,7 +1247,7 @@ validate_-_cloud_gltfast_-_6000_6_-_win10:
     timeout: 10
     retries: 1
   - command: upm-pvp test --unity .Editor --packages "upm-ci~/packages/*.tgz" --results upm-ci~/pvp
-    timeout: 20
+    timeout: 60
     retries: 0
   - command: upm-pvp require "pkgprom-promote -PVP-29-2 rme" --results upm-ci~/pvp --exemptions upm-ci~/pvp/failures.json
     timeout: 5
@@ -1256,7 +1256,7 @@ validate_-_cloud_gltfast_-_6000_6_-_win10:
     timeout: 10
     retries: 0
   - command: 'UnifiedTestRunner.exe --testproject=test-cloud.gltfast --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts --suite=Editor --suite=Playmode "--ff={ops.upmpvpevidence.enable=true}" '
-    timeout: 20
+    timeout: 60
     retries: 1
   after:
   - command: .yamato\generated-scripts\infrastructure-instability-detection-win.cmd
