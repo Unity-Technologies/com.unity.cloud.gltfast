@@ -23,6 +23,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - (Test) *Empty Scene* test asset.
+- (Import) Support for 16-bit mesh indices reduces memory footprint for meshes with less than 65k vertices per sub-mesh.
+  - 16-bit indices are not converted to 32-bit anymore.
+  - 8-bit indices ar converted to 16-bit (instead of 32-bit).
 
 ### Changed
 - [GltfImport.Load](xref:GLTFast.GltfImportBase.Load*), [GltfImport.InstantiateSceneAsync](xref:GLTFast.GltfImportBase.InstantiateSceneAsync*) and their variants now throw an `OperationCanceledException` when cancelled before completion.
