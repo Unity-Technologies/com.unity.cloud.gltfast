@@ -37,6 +37,10 @@ using System;
 using System.Text;
 using GLTFast.Addons;
 using GLTFast.Jobs;
+using GLTFast.Loading;
+using GLTFast.Logging;
+using GLTFast.Materials;
+using GLTFast.Schema;
 #if KTX_IS_ENABLED
 using KtxUnity;
 #endif
@@ -55,16 +59,13 @@ using UnityEngine.Assertions;
 using UnityEngine.Experimental.Rendering;
 using UnityEngine.Profiling;
 using UnityEngine;
+using Buffer = GLTFast.Schema.Buffer;
 using Debug = UnityEngine.Debug;
+using Sampler = GLTFast.Schema.Sampler;
+using TextureBase = GLTFast.Schema.TextureBase;
 
 namespace GLTFast
 {
-
-    using Loading;
-    using Logging;
-    using Materials;
-    using Schema;
-
     /// <summary>
     /// Loads a glTF's content, converts it to Unity resources and is able to
     /// feed it to an <see cref="IInstantiator"/> for instantiation.
@@ -202,7 +203,7 @@ namespace GLTFast
 
         IMaterialGenerator m_MaterialGenerator;
 
-        Dictionary<Type, ImportAddonInstance> m_ImportInstances;
+        ImportAddonInstanceCollection m_Addons;
 
         ImportSettings m_Settings;
 
@@ -381,11 +382,8 @@ namespace GLTFast
         /// <typeparam name="T">Type of the import instance</typeparam>
         public void AddImportAddonInstance<T>(T importInstance) where T : ImportAddonInstance
         {
-            if (m_ImportInstances == null)
-            {
-                m_ImportInstances = new Dictionary<Type, ImportAddonInstance>();
-            }
-            m_ImportInstances[typeof(T)] = importInstance;
+            m_Addons ??= new ImportAddonInstanceCollection();
+            m_Addons.Add(importInstance);
         }
 
         /// <summary>
@@ -395,15 +393,7 @@ namespace GLTFast
         /// <returns>The import instance that was previously added. False if there was none.</returns>
         public T GetImportAddonInstance<T>() where T : ImportAddonInstance
         {
-            if (m_ImportInstances == null)
-                return null;
-
-            if (m_ImportInstances.TryGetValue(typeof(T), out var addonInstance))
-            {
-                return (T)addonInstance;
-            }
-
-            return null;
+            return m_Addons?.Get<T>();
         }
 
         /// <summary>
@@ -856,14 +846,7 @@ namespace GLTFast
         {
             DisposeRequiredForInstantiationData();
 
-            if (m_ImportInstances != null)
-            {
-                foreach (var importInstance in m_ImportInstances)
-                {
-                    importInstance.Value.Dispose();
-                }
-                m_ImportInstances = null;
-            }
+            m_Addons?.Dispose();
 
             m_NodeNames = null;
 
@@ -1549,18 +1532,9 @@ namespace GLTFast
             var allExtensionsSupported = true;
             foreach (var ext in extensions)
             {
-                var supported = k_SupportedExtensions.Contains(ext);
-                if (!supported && m_ImportInstances != null)
-                {
-                    foreach (var extension in m_ImportInstances)
-                    {
-                        if (extension.Value.SupportsGltfExtension(ext))
-                        {
-                            supported = true;
-                            break;
-                        }
-                    }
-                }
+                var supported = k_SupportedExtensions.Contains(ext)
+                    || (m_Addons != null && m_Addons.AnySupportsGltfExtension(ext));
+
                 if (!supported)
                 {
 #if !DRACO_IS_ENABLED
@@ -3158,13 +3132,7 @@ namespace GLTFast
 
         async Task InstantiateSceneInternal(IInstantiator instantiator, int sceneId, CancellationToken cancellationToken)
         {
-            if (m_ImportInstances != null)
-            {
-                foreach (var extension in m_ImportInstances)
-                {
-                    extension.Value.Inject(instantiator);
-                }
-            }
+            m_Addons?.ForEach(addon => addon.Inject(instantiator));
 
             async Task IterateNodes(uint nodeIndex, uint? parentIndex, Action<uint, uint?> callback)
             {

@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 ### Changed
+- (Add-Ons) GltfImport now accepts multiple import add-on instances of the same type.
+  - [GetImportAddonInstance](xref:GLTFast.GltfImportBase.GetImportAddonInstance*) returns the first instance that matches the type.
 - Ensured compatibility with [Fast Enter Play Mode](https://unity.com/blog/engine-platform/enter-play-mode-faster-in-unity-2019-3).
 
 ### Fixed
