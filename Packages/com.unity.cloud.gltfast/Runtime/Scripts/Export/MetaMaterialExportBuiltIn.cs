@@ -74,5 +74,16 @@ namespace GLTFast.Export
             materialExport = null;
             return false;
         }
+
+#if UNITY_EDITOR
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void ResetStaticsOnLoad()
+        {
+            // Reset static state
+            s_LitMaterialExport = null;
+            s_GltfBuiltInMaterialExport = null;
+            s_GltfUnlitMaterialExport = null;
+        }
+#endif
     }
 }

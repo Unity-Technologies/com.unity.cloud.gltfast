@@ -335,5 +335,16 @@ namespace GLTFast.Export
                 && m_OccTexture == other.m_OccTexture
                 && m_SmoothnessTexture == other.m_SmoothnessTexture;
         }
+
+#if UNITY_EDITOR
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void ResetStaticsOnLoad()
+        {
+            // Reset static state
+            s_MetalGlossBlitMaterial = null;
+            s_OcclusionBlitMaterial = null;
+            s_GlossBlitMaterial = null;
+        }
+#endif
     }
 }

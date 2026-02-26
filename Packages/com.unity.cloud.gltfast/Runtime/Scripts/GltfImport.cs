@@ -88,6 +88,15 @@ namespace GLTFast
             s_Parser ??= new GltfJsonUtilityParser();
             return s_Parser.ParseJson(json);
         }
+
+#if UNITY_EDITOR
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void ResetStaticsOnLoad()
+        {
+            // Reset static state
+            s_Parser = null;
+        }
+#endif
     }
 
     /// <inheritdoc cref="GltfImportBase"/>
@@ -181,7 +190,7 @@ namespace GLTFast
         };
 
         static IDeferAgent s_DefaultDeferAgent;
-        static MeshComparer s_MeshComparer = new MeshComparer();
+        static MeshComparer s_MeshComparer = new();
 
         /// <summary>Logger used by this glTF import instance.</summary>
         public ICodeLogger Logger => m_Context.Logger;
@@ -4433,6 +4442,14 @@ namespace GLTFast
         /// runtime loading.
         /// </summary>
         static bool IsEditorImport => !EditorApplication.isPlaying;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void ResetStaticsOnLoad()
+        {
+            // Reset static state
+            s_DefaultDeferAgent = null;
+            s_MeshComparer = new ();
+        }
 #endif // UNITY_EDITOR
     }
 }

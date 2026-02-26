@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace GLTFast.Addons
 {
@@ -48,5 +49,14 @@ namespace GLTFast.Addons
                 // TODO: Investigate if add-ons can be auto-registered via reflection
             }
         }
+
+#if UNITY_EDITOR
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void ResetStaticsOnLoad()
+        {
+            // Reset static state
+            s_Addons = null;
+        }
+#endif
     }
 }

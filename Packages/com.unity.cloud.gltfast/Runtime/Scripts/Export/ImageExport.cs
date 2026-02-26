@@ -234,6 +234,15 @@ namespace GLTFast.Export
             return GraphicsFormatUtility.HasAlphaChannel(GraphicsFormatUtility.GetGraphicsFormat(texture.format, false));
         }
 
+        static Material GetColorBlitMaterial()
+        {
+            if (s_ColorBlitMaterial == null)
+            {
+                s_ColorBlitMaterial = LoadBlitMaterial("glTFExportColor");
+            }
+            return s_ColorBlitMaterial;
+        }
+
 #if UNITY_EDITOR
         static ImageFormat GetFormatFromExtension(string assetPath) {
             if (assetPath.EndsWith(".png", StringComparison.OrdinalIgnoreCase)) {
@@ -245,15 +254,13 @@ namespace GLTFast.Export
             }
             return ImageFormat.Unknown;
         }
-#endif
 
-        static Material GetColorBlitMaterial()
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void ResetStaticsOnLoad()
         {
-            if (s_ColorBlitMaterial == null)
-            {
-                s_ColorBlitMaterial = LoadBlitMaterial("glTFExportColor");
-            }
-            return s_ColorBlitMaterial;
+            // Reset static state
+            s_ColorBlitMaterial = null;
         }
+#endif
     }
 }
