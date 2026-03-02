@@ -14,11 +14,11 @@ namespace GLTFast.Tests
         /// <summary>
         /// Wraps a <see cref="Task"/> in an <see cref="IEnumerator"/>.
         /// </summary>
-        /// <param name="task">The async Task to wait form</param>
+        /// <param name="task">The async Task to wait for</param>
         /// <param name="timeout">Optional timeout in seconds</param>
         /// <returns>IEnumerator</returns>
         /// <exception cref="AggregateException"></exception>
-        /// <exception cref="TimeoutException">Thrown when a timout was set and the task took too long</exception>
+        /// <exception cref="TimeoutException">Thrown when a timeout was set and the task took too long</exception>
         public static IEnumerator WaitForTask(Task task, float timeout = -1)
         {
             var startTime = Time.realtimeSinceStartup;
@@ -43,6 +43,35 @@ namespace GLTFast.Tests
                     }
                     throw exception;
                 }
+                if (timeout > 0 && Time.realtimeSinceStartup - startTime > timeout)
+                {
+                    throw new TimeoutException();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Wraps a <see cref="ValueTask{TResult}"/> in an <see cref="IEnumerator"/>.
+        /// </summary>
+        /// <param name="task">The async ValueTask to wait for</param>
+        /// <param name="timeout">Optional timeout in seconds</param>
+        /// <returns>IEnumerator</returns>
+        /// <exception cref="TimeoutException">Thrown when a timeout was set and the task took too long</exception>
+        public static IEnumerator WaitForTask<T>(ValueTask<T> task, float timeout = -1)
+        {
+            var startTime = Time.realtimeSinceStartup;
+
+            while (!task.IsCompleted)
+            {
+                CheckTimeout();
+                yield return null;
+            }
+
+            CheckTimeout();
+            yield break;
+
+            void CheckTimeout()
+            {
                 if (timeout > 0 && Time.realtimeSinceStartup - startTime > timeout)
                 {
                     throw new TimeoutException();

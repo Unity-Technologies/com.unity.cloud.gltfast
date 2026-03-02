@@ -16,6 +16,7 @@ namespace GLTFast.Tests
             Assert.AreEqual(ImageFormat.PNG, ImageFormatExtensions.FromMimeType("image/png"));
             Assert.AreEqual(ImageFormat.Ktx, ImageFormatExtensions.FromMimeType("image/ktx"));
             Assert.AreEqual(ImageFormat.Ktx, ImageFormatExtensions.FromMimeType("image/ktx2"));
+            Assert.AreEqual(ImageFormat.WebP, ImageFormatExtensions.FromMimeType("image/webp"));
             Assert.AreEqual(ImageFormat.Unknown, ImageFormatExtensions.FromMimeType("image/fantasy-format"));
             Assert.AreEqual(ImageFormat.Unknown, ImageFormatExtensions.FromMimeType("application/jpeg"));
             Assert.AreEqual(ImageFormat.Unknown, ImageFormatExtensions.FromMimeType(null));

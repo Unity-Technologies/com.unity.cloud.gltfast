@@ -7,13 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Explicit error message when unsupported image format WebP is detected ([LogCode.ImageFormatUnsupported](xref:GLTFast.Logging.LogCode.ImageFormatUnsupported)).
 
 ### Changed
 - (Add-Ons) GltfImport now accepts multiple import add-on instances of the same type.
   - [GetImportAddonInstance](xref:GLTFast.GltfImportBase.GetImportAddonInstance*) returns the first instance that matches the type.
 - Ensured compatibility with [Fast Enter Play Mode](https://unity.com/blog/engine-platform/enter-play-mode-faster-in-unity-2019-3).
+- Image type detection is based on content (instead of mime-type depicted in glTF JSON, data URI mediatype or file extension).
+- Improved error message when image format is detected, but not supported (e.g. WebP).
 
 ### Fixed
+- (Import) [AnisotropicFilterLevel setting](xref:GLTFast.ImportSettings.AnisotropicFilterLevel) is applied to KTX textures as well.
+- (Import) Leak of textures in case of loading errors.
 
 ### Removed
 

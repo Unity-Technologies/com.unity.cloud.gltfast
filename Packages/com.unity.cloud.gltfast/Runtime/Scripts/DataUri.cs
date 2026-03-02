@@ -14,7 +14,7 @@ using UnityEngine.Profiling;
 
 namespace GLTFast
 {
-    class DataUri
+    static class DataUri
     {
         /// <summary>
         /// Base 64 string to byte array decode speed in bytes per second
@@ -27,6 +27,33 @@ namespace GLTFast
 #else
             150_000_000;
 #endif
+
+        public static bool IsDataUri(ReadOnlySpan<char> dataUri)
+        {
+            return dataUri.StartsWith("data:", StringComparison.Ordinal);
+        }
+
+        public static async ValueTask<IReadOnlyDisposableData> DecodeDataUriAsync(
+            string dataUri,
+            IDeferAgent deferAgent,
+            CancellationToken cancellationToken
+        )
+        {
+            if (!TryGetDataUriDescriptor(
+                    dataUri, out _, out var startIndex, out var byteLength))
+            {
+                return null;
+            }
+
+            var data = await DecodeDataUriAsync(
+                dataUri, startIndex, byteLength, deferAgent, cancellationToken);
+            if (!data.IsCreated)
+            {
+                return null;
+            }
+
+            return new ReadOnlyDisposableData(data);
+        }
 
         public static async ValueTask<NativeArray<byte>> DecodeDataUriAsync(
             string dataUri,
@@ -99,30 +126,16 @@ namespace GLTFast
         }
 #endif // !UNITY_6000_0_OR_NEWER
 
-        public static bool TryGetImageDataUriDescriptor(
+        public static bool TryGetDataUriDescriptor(
             string dataUri,
-            out ImageFormat imageFormat,
+            out ReadOnlySpan<char> mimeType,
             out int startIndex,
             out int byteLength
-        )
-        {
-            if (TryGetDataUriDescriptor(
-                    dataUri, out var mimeType, out startIndex, out byteLength))
-            {
-                imageFormat = ImageFormatExtensions.FromMimeType(mimeType);
-                return true;
-            }
-
-            imageFormat = ImageFormat.Unknown;
-            return false;
-        }
-
-        public static bool TryGetDataUriDescriptor(string dataUri, out ReadOnlySpan<char> mimeType, out int startIndex, out int byteLength)
+            )
         {
             var mediaTypeEnd = dataUri.IndexOf(';', 5, Math.Min(dataUri.Length - 5, 1000));
             if (mediaTypeEnd < 0)
             {
-                Profiler.EndSample();
                 mimeType = null;
                 startIndex = 0;
                 byteLength = -1;
@@ -131,7 +144,6 @@ namespace GLTFast
             mimeType = dataUri.AsSpan(5, mediaTypeEnd - 5);
             if (!dataUri.AsSpan(mediaTypeEnd + 1, 7).SequenceEqual("base64,"))
             {
-                Profiler.EndSample();
                 startIndex = 0;
                 byteLength = -1;
                 return false;

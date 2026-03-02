@@ -261,6 +261,8 @@ namespace GLTFast.Logging
         OperationCanceled,
         /// <summary>Invalid index format</summary>
         IndexCountInvalid,
+        /// <summary>Image format is not supported.</summary>
+        ImageFormatUnsupported,
     }
 
     /// <summary>
@@ -301,7 +303,8 @@ See details in corresponding issue at https://github.com/atteneder/glTFast/issue
             { LogCode.GltfUnsupportedVersion, "Unsupported glTF version {0}" },
             { LogCode.HierarchyInvalid, "Invalid hierarchy" },
             { LogCode.ImageConversionNotEnabled, $"Jpeg/PNG textures failed because required built-in packages \"Image Conversion\"/\"Unity Web Request Texture\" are not enabled. {k_LinkProjectSetupTextureSupport}" },
-            { LogCode.ImageFormatUnknown, "Unknown image format (image {0};uri:{1})" },
+            { LogCode.ImageFormatUnknown, "Image {0}: unknown format" },
+            { LogCode.ImageFormatUnsupported, "Image {0}: format {1} not supported" },
             { LogCode.ImageMultipleSamplers, "Have to create copy of image {0} due to different samplers. This is harmless, but requires more memory." },
             { LogCode.InconsistentVertexColorUsage, "Potential visual discrepancy due to inconsistent vertex colors usage on mesh {0}" },
             { LogCode.IndexCountInvalid, "Invalid index count {0}" },
