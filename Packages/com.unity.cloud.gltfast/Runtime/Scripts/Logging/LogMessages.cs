@@ -259,10 +259,12 @@ namespace GLTFast.Logging
         UnexpectedEndOfContent,
         /// <summary>The operation was canceled.</summary>
         OperationCanceled,
-        /// <summary>Invalid index format</summary>
+        /// <summary>Invalid index count</summary>
         IndexCountInvalid,
         /// <summary>Image format is not supported.</summary>
         ImageFormatUnsupported,
+        /// <summary>Invalid vertex count</summary>
+        VertexCountInvalid,
     }
 
     /// <summary>
@@ -338,6 +340,7 @@ is approximated. Enable Opaque Texture access in Universal Render Pipeline!" },
             { LogCode.UnityWebRequestTextureNotEnabled, $"PNG/Jpeg textures load slower because built-in package \"Unity Web Request Texture\" is not enabled. {k_LinkProjectSetupTextureSupport}" },
             { LogCode.UVLimit, "Only eight UV sets will get imported" },
             { LogCode.UVMulti, "UV set index {0} is not supported in current render pipeline" },
+            { LogCode.VertexCountInvalid, "Invalid vertex count {0}" },
         };
 #endif
 

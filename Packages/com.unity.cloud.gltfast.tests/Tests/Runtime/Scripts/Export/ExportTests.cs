@@ -1018,5 +1018,41 @@ namespace GLTFast.Tests.Export
             SetupTests();
 #endif
         }
+
+        static IEnumerable MeshContentsSource
+        {
+            get
+            {
+                yield return new TestCaseData(0, 0, LogCode.VertexCountInvalid).Returns(null).SetName("NoVertices");
+                yield return new TestCaseData(3, 0, LogCode.IndexCountInvalid).Returns(null).SetName("NoTriangles");
+                yield return new TestCaseData(3, 3, null).Returns(null).SetName("ValidVerticesAndTriangles");
+            }
+        }
+
+        [UnityTest]
+        [TestCaseSource(nameof(MeshContentsSource))]
+        public IEnumerator MeshContents(int vertices, int triangles, LogCode? expectedLogCode)
+        {
+            var root = new GameObject("root", typeof(MeshFilter), typeof(MeshRenderer));
+
+            var mesh = new Mesh
+            {
+                name = $"Mesh_{vertices}v_{triangles}t",
+                vertices = new Vector3[vertices],
+                triangles = new int[triangles]
+            };
+            var meshFilter = root.GetComponent<MeshFilter>();
+            meshFilter.mesh = mesh;
+
+            var logger = new CollectingLogger();
+            var export = new GameObjectExport(logger: logger);
+            export.AddScene(new[] { root }, "UnityScene");
+            var path = Path.Combine(Application.persistentDataPath, "root.gltf");
+            var task = export.SaveToFileAndDispose(path);
+            yield return AsyncWrapper.WaitForTask(task);
+            var success = task.Result;
+            Assert.IsTrue(success);
+            LoggerTest.AssertLogger(logger, expectedLogCode.HasValue ? new[] { expectedLogCode.Value } : Array.Empty<LogCode>());
+        }
     }
 }
