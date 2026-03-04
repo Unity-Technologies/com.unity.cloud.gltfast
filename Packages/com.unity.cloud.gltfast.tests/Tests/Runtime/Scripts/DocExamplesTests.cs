@@ -72,7 +72,7 @@ namespace GLTFast.DocExamples.Tests
         }
 
 #if UNITY_ANIMATION
-        [GltfTestCase("glTF-test-models", 3, "LightsPoint|ColorSpace|RainbowCuboid\\.gltf$")]
+        [GltfTestCase("glTF-test-models", 3, "/(LightsPoint|ColorSpace|RainbowCuboid)\\.gltf$")]
         public IEnumerator SceneInstanceAccess(GltfTestCaseSet testCaseSet, GltfTestCase testCase)
         {
             var component = new GameObject()

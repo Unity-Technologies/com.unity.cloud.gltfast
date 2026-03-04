@@ -20,6 +20,7 @@ namespace GLTFast.Tests
                 ExtensionName.MeshQuantization => Extension.MeshQuantization,
                 ExtensionName.TextureBasisUniversal => Extension.TextureBasisUniversal,
                 ExtensionName.TextureTransform => Extension.TextureTransform,
+                ExtensionName.TextureWebP => Extension.TextureWebP,
                 ExtensionName.MaterialsClearcoat => Extension.MaterialsClearcoat,
                 ExtensionName.MaterialsVariants => Extension.MaterialsVariants,
                 ExtensionName.MeshoptCompression => Extension.MeshoptCompression,

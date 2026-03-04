@@ -39,7 +39,7 @@ namespace GLTFast.Tests.Import
         }
 #endif // UNITY_ENTITIES_GRAPHICS
 
-        [GltfTestCase("glTF-test-models", 59)]
+        [GltfTestCase("glTF-test-models", 63)]
         public IEnumerator GltfTestModels(GltfTestCaseSet testCaseSet, GltfTestCase testCase)
         {
             yield return AsyncWrapper.WaitForTask(RunTestCase(testCaseSet, testCase));
@@ -254,6 +254,9 @@ namespace GLTFast.Tests.Import
                         Assert.Ignore("Requires meshoptimizer decompression for Unity package to be installed.");
                         break;
 #endif
+                    case Extension.TextureWebP:
+                        Assert.Ignore("WebP is not generally supported yet.");
+                        break;
                     default:
                         break;
                 }

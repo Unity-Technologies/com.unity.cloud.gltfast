@@ -69,6 +69,10 @@ namespace GLTFast
         /// <a href="https://github.com/KhronosGroup/glTF/tree/main/extensions/2.0/Khronos/KHR_materials_specular">KHR_materials_specular</a> glTF extension
         /// </summary>
         MaterialsSpecular,
+        /// <summary>
+        /// <a href="https://github.com/KhronosGroup/glTF/blob/main/extensions/2.0/Vendor/EXT_texture_webp/README.md">EXT_texture_webp</a> glTF extension
+        /// </summary>
+        TextureWebP,
     }
 
     /// <summary>
@@ -94,6 +98,8 @@ namespace GLTFast
         public const string TextureBasisUniversal = "KHR_texture_basisu";
         /// <inheritdoc cref="Extension.TextureTransform"/>
         public const string TextureTransform = "KHR_texture_transform";
+        /// <inheritdoc cref="Extension.TextureWebP"/>
+        public const string TextureWebP = "EXT_texture_webp";
         /// <inheritdoc cref="Extension.LightsPunctual"/>
         public const string LightsPunctual = "KHR_lights_punctual";
         /// <inheritdoc cref="Extension.MaterialsClearcoat"/>
@@ -134,6 +140,8 @@ namespace GLTFast
                     return TextureBasisUniversal;
                 case Extension.TextureTransform:
                     return TextureTransform;
+                case Extension.TextureWebP:
+                    return TextureWebP;
                 case Extension.MaterialsClearcoat:
                     return MaterialsClearcoat;
                 case Extension.MaterialsVariants:
