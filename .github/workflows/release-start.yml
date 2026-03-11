@@ -1,0 +1,66 @@
+name: Start Release
+on:
+  workflow_dispatch:
+    inputs:
+      release-number:
+        description: 'Semantic version with format major.minor.patch (for example 4.2.0)'
+        type: string
+        required: true
+      start-point:
+        description: 'Starting point of the release. Can be a SHA, a branch or a tag. Default is origin/develop'
+        type: string
+        default: 'develop'
+
+jobs:
+  release:
+    runs-on: [unity-linux-runner]
+    steps:
+      - name: Display inputs
+        run: |
+          echo ${{ inputs.release-number }}
+          echo ${{ inputs.start-point }}
+
+      - name: Checkout
+        uses: actions/checkout@v6
+        id: checkout
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+          ref: '${{ inputs.start-point }}'
+
+      - name: Release branch creation
+        env:
+          RELEASE_SEMVER: ${{ inputs.release-number }}
+        run: |
+          release_branch="release/$RELEASE_SEMVER"
+          git branch "$release_branch"
+          git push -u origin "$release_branch"
+
+      - name: Working branch creation
+        env:
+          RELEASE_SEMVER: ${{ inputs.release-number }}
+        run: |
+          working_branch="release/${RELEASE_SEMVER}-working"
+          git branch "$working_branch"
+          dotnet run --file Tools/scripts/changelog.cs -- release $RELEASE_SEMVER -i "$(pwd)/Packages/com.unity.cloud.gltfast/CHANGELOG.md"
+          Tools/scripts/release-start.sh $RELEASE_SEMVER
+          git add -u
+          git commit -m "Release $RELEASE_SEMVER"
+          git push -u origin "$working_branch"
+
+      - name: Create Pr
+        id: cpr
+        uses: peter-evans/create-pull-request@v5
+        with:
+          title: "[Automated] Release ${{inputs.release-number}}"
+          branch: "release/${{ inputs.release-number }}-working"
+          base: "release/${{inputs.release-number}}"
+          commit-message: "Release ${{inputs.release-number}}"
+          committer: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+          body-path: Scripts/report.md
+          reviewers: |
+            andreas-atteneder
+          labels: |
+            automated pr
+            release
+          delete-branch: true
