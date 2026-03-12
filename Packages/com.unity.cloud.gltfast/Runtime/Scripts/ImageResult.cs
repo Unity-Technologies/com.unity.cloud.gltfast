@@ -9,17 +9,17 @@ namespace GLTFast
     /// <summary>
     /// Imported glTF image containing a <see cref="Texture2D" /> and metadata.
     /// </summary>
-    struct ImageResult
+    public struct ImageResult
     {
         /// <summary>
         /// Imported texture.
         /// </summary>
-        public readonly Texture2D texture;
+        public Texture2D Texture { get; }
 
         /// <summary>
         /// If true, the image is flipped vertically.
         /// </summary>
-        public readonly bool isYFlipped;
+        public bool IsYFlipped { get; }
 
         /// <summary>
         /// Empty image. Indicates a failed load.
@@ -33,8 +33,8 @@ namespace GLTFast
         /// <param name="isYFlipped">Must be true if texture is flipped vertically.</param>
         public ImageResult(Texture2D texture, bool isYFlipped = false)
         {
-            this.texture = texture;
-            this.isYFlipped = isYFlipped;
+            Texture = texture;
+            IsYFlipped = isYFlipped;
         }
     }
 }

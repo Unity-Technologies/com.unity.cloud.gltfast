@@ -13,7 +13,7 @@ namespace GLTFast.Tests
         public void FromMimeType()
         {
             Assert.AreEqual(ImageFormat.Jpeg, ImageFormatExtensions.FromMimeType("image/jpeg"));
-            Assert.AreEqual(ImageFormat.PNG, ImageFormatExtensions.FromMimeType("image/png"));
+            Assert.AreEqual(ImageFormat.Png, ImageFormatExtensions.FromMimeType("image/png"));
             Assert.AreEqual(ImageFormat.Ktx, ImageFormatExtensions.FromMimeType("image/ktx"));
             Assert.AreEqual(ImageFormat.Ktx, ImageFormatExtensions.FromMimeType("image/ktx2"));
             Assert.AreEqual(ImageFormat.WebP, ImageFormatExtensions.FromMimeType("image/webp"));

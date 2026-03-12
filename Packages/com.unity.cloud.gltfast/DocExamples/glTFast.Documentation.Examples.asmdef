@@ -2,6 +2,7 @@
     "name": "glTFast.Documentation.Examples",
     "rootNamespace": "GLTFast.Documentation.Examples",
     "references": [
+        "Unity.Burst",
         "Unity.Mathematics",
         "glTFast",
         "glTFast.Export",
@@ -9,7 +10,7 @@
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
-    "allowUnsafeCode": false,
+    "allowUnsafeCode": true,
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": false,
@@ -19,6 +20,11 @@
             "name": "com.unity.modules.animation",
             "expression": "",
             "define": "UNITY_ANIMATION"
+        },
+        {
+            "name": "com.unity.modules.imageconversion",
+            "expression": "",
+            "define": "UNITY_IMAGECONVERSION"
         },
         {
             "name": "com.unity.nuget.newtonsoft-json",

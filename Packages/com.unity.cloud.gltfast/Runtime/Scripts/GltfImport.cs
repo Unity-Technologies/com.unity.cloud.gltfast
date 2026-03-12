@@ -221,6 +221,8 @@ namespace GLTFast
         Dictionary<int, int> m_TextureReuseMap;
         /// <summary>Key: texture index; Value: index of original texture to instantiate off.</summary>
         Dictionary<int, int> m_TextureResampleMap;
+        /// <summary>Key: texture index; Value: new image index</summary>
+        Dictionary<int, int> m_TextureImageOverrides;
         HashSet<int> m_NonFlippedYTextureIndices;
 
         /// optional glTF-binary buffer
@@ -1205,7 +1207,6 @@ namespace GLTFast
         /// <param name="image">glTF image</param>
         /// <param name="cancellationToken">Can be used to abort the loading procedure.</param>
         /// <returns>Image's data (needs to be disposed after consumption)</returns>
-        /// <exception cref="InvalidDataException">Is thrown if the image's data couldn't be loaded.</exception>
         async Task<IReadOnlyDisposableData> GetImageDataAsync(Image image, CancellationToken cancellationToken)
         {
             if (image.bufferView >= 0)
@@ -1236,7 +1237,7 @@ namespace GLTFast
             }
 
             Logger?.Error(LogCode.MissingImageURL);
-            throw new InvalidDataException();
+            return null;
         }
 
         /// <inheritdoc />
@@ -1627,6 +1628,23 @@ namespace GLTFast
 
             if (Root.Textures is { Count: > 0 })
             {
+                Dictionary<int, ITextureImageLoader> textureImageLoaderMap = null;
+                bool OverridesImage(ITextureImageLoader loader, TextureBase texture, out int imageIndex)
+                {
+                    return loader.IsAbleToLoad(texture, out imageIndex);
+                }
+
+                m_Addons?.ForEachTryGet<ITextureImageLoader, TextureBase, int>(
+                    Root.Textures,
+                    OverridesImage,
+                    (addon, textureIndex, imageIndex) =>
+                    {
+                        m_TextureImageOverrides ??= new Dictionary<int, int>();
+                        m_TextureImageOverrides[textureIndex] = imageIndex;
+                        textureImageLoaderMap ??= new Dictionary<int, ITextureImageLoader>();
+                        textureImageLoaderMap[textureIndex] = addon;
+                    }
+                );
 
                 bool[] textureGamma = null;
 
@@ -1693,7 +1711,7 @@ namespace GLTFast
                             key = defaultKey;
                         }
 
-                        var imageIndex = txt.GetImageIndex();
+                        var imageIndex = GetImageIndexFromTexture(txt, textureIndex);
                         if (imageIndex >= 0 && imageIndex < Root.Images.Count)
                         {
                             if (imageVariants[imageIndex] == null)
@@ -1750,12 +1768,6 @@ namespace GLTFast
                     {
                         continue;
                     }
-                    var imageIndex = texture.GetImageIndex();
-                    if (imageIndex < 0 || imageIndex >= Root.Images.Count)
-                    {
-                        continue;
-                    }
-                    var img = Root.Images[imageIndex];
                     var forceSampleLinear = textureGamma != null && !textureGamma[textureIndex];
 
 #if UNITY_VISIONOS
@@ -1767,6 +1779,27 @@ namespace GLTFast
                         || (readableTextureIndices != null && readableTextureIndices.Contains(textureIndex));
 #endif
 
+                    var imageIndex = GetImageIndexFromTexture(texture, textureIndex);
+                    if (imageIndex < 0 || imageIndex >= Root.Images.Count)
+                    {
+                        continue;
+                    }
+                    var img = Root.Images[imageIndex];
+
+                    if (textureImageLoaderMap != null && textureImageLoaderMap.TryGetValue(textureIndex, out var loader))
+                    {
+                        m_TextureLoadTasks[textureIndex] = ImageImport.LoadImageAsync(
+                                GetImageDataAsync(img, cancellationToken),
+                                forceSampleLinear,
+                                readable,
+                                m_Settings.GenerateMipMaps,
+                                cancellationToken,
+                                loader,
+                                DeferAgent
+                            );
+                        continue;
+                    }
+
                     if (!string.IsNullOrEmpty(img.uri) && !DataUri.IsDataUri(img.uri))
                     {
                         // Load from URI
@@ -1775,8 +1808,34 @@ namespace GLTFast
                             ? UriHelper.GetImageFormatFromUri(img.uri)
                             : ImageFormatExtensions.FromMimeType(img.mimeType);
 
-                        if (imgFormat is ImageFormat.Jpeg or ImageFormat.PNG)
+                        if (imgFormat is ImageFormat.Jpeg or ImageFormat.Png)
                         {
+                            if (m_Addons?.TryGet(
+                                imgFormat,
+                                (IDefaultImageFormatLoader defaultLoader, ImageFormat format, out Task<ImageResult> task) =>
+                                {
+                                    if (defaultLoader.IsAbleToLoad(format))
+                                    {
+                                        task = ImageImport.LoadImageAsync(
+                                            GetImageDataAsync(img, cancellationToken),
+                                            forceSampleLinear,
+                                            readable,
+                                            m_Settings.GenerateMipMaps,
+                                            cancellationToken,
+                                            defaultLoader,
+                                            DeferAgent
+                                            );
+                                        return true;
+                                    }
+                                    task = null;
+                                    return false;
+                                },
+                                out var defaultTask) ?? false)
+                            {
+                                m_TextureLoadTasks[textureIndex] = defaultTask;
+                                continue;
+                            }
+
                             // Jpeg and PNG are a special case. If feasible, they're loaded via UnityWebRequestTexture,
                             // which decodes them in a worker thread.
 #if UNITY_IMAGECONVERSION
@@ -1820,7 +1879,9 @@ namespace GLTFast
                         imageIndex,
                         forceSampleLinear,
                         readable,
+                        m_Settings.GenerateMipMaps,
                         GetImageDataAsync(img, cancellationToken),
+                        m_Addons,
                         cancellationToken
                     );
                 }
@@ -2280,17 +2341,17 @@ namespace GLTFast
                 foreach (var textureLoadTask in m_TextureLoadTasks)
                 {
                     var result = await textureLoadTask.Value;
-                    if (result.texture is not null)
+                    if (result.Texture is not null)
                     {
-                        if (!result.isYFlipped)
+                        if (!result.IsYFlipped)
                         {
                             m_NonFlippedYTextureIndices ??= new HashSet<int>(m_TextureLoadTasks.Count);
                             m_NonFlippedYTextureIndices.Add(textureLoadTask.Key);
                         }
-                        result.texture.name = GetObjectName(Root.Textures[textureLoadTask.Key], textureLoadTask.Key);
-                        result.texture.anisoLevel = m_Settings.AnisotropicFilterLevel;
-                        m_Textures[textureLoadTask.Key] = result.texture;
-                        m_Resources.Add(result.texture);
+                        result.Texture.name = GetObjectName(Root.Textures[textureLoadTask.Key], textureLoadTask.Key);
+                        result.Texture.anisoLevel = m_Settings.AnisotropicFilterLevel;
+                        m_Textures[textureLoadTask.Key] = result.Texture;
+                        m_Resources.Add(result.Texture);
                     }
                 }
             }
@@ -2610,7 +2671,7 @@ namespace GLTFast
                         var texture = UnityEngine.Object.Instantiate(originalTexture);
 #if DEBUG
                         texture.name = $"{originalTexture.name}_sampler{txt.sampler}";
-                        Logger?.Warning(LogCode.ImageMultipleSamplers, txt.GetImageIndex().ToString());
+                        Logger?.Warning(LogCode.ImageMultipleSamplers, GetImageIndexFromTexture(txt, textureIndex).ToString());
 #endif
                         sampler.Apply(texture, m_Settings.DefaultMinFilterMode, m_Settings.DefaultMagFilterMode);
                         m_Resources.Add(texture);
@@ -2637,6 +2698,15 @@ namespace GLTFast
                     m_Textures[textureIndex] = originalTexture;
                 }
             }
+        }
+
+        int GetImageIndexFromTexture(TextureBase txt, int textureIndex)
+        {
+            if (m_TextureImageOverrides != null && m_TextureImageOverrides.TryGetValue(textureIndex, out var mappedImageIndex))
+            {
+                return mappedImageIndex;
+            }
+            return txt.GetImageIndex();
         }
 
         void SetMaterialPointsSupport(int materialIndex)
@@ -2757,9 +2827,9 @@ namespace GLTFast
                 foreach (var textureLoadTask in m_TextureLoadTasks)
                 {
                     var result = await textureLoadTask.Value;
-                    if (result.texture is not null)
+                    if (result.Texture is not null)
                     {
-                        SafeDestroy(result.texture);
+                        SafeDestroy(result.Texture);
                     }
                 }
 
@@ -2789,6 +2859,8 @@ namespace GLTFast
             m_AccessorUsage = null;
 
             m_TextureLoadTasks = null;
+            m_TextureImageOverrides = null;
+
             m_GlbBinChunk = null;
             m_MaterialPointsSupport = null;
 

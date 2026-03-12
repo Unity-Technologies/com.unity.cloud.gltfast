@@ -14,10 +14,14 @@ glTFs with different kinds of image formats and sources.
 |[TextureVariants-KTX.glb](./glTF-Binary-KTX/TextureVariants-KTX.glb)| KTX | glTF-binary main buffer |
 |[TextureVariants-Embedded-KTX.gltf](./glTF-Embedded-KTX/TextureVariants-Embedded-KTX.gltf)| KTX | Within data URI buffer (base64-encoded) |
 |[TextureVariants-TextureEmbedded-KTX.gltf](./glTF-TextureEmbedded-KTX/TextureVariants-TextureEmbedded-KTX.gltf)| KTX | Data URI (base64-encoded) |
+|[TextureVariants-WebP.gltf](./glTF-WebP/TextureVariants-WebP.gltf)| WebP | Relative path URI |
+|[TextureVariants-WebP.glb](./glTF-Binary-WebP/TextureVariants-WebP.glb)| WebP | glTF-binary main buffer |
+|[TextureVariants-WebP-Invalid.gltf](./glTF-WebP-Invalid/TextureVariants-WebP-Invalid.gltf)| WebP | Relative path URI without correct extension |
 
 ## Extensions used
 
-- [KHR_texture_basisu][KHR_texture_basisu]
+- [EXT_texture_webp]
+- [KHR_texture_basisu]
 
 ## Legal
 
@@ -27,4 +31,5 @@ Attribution notice for the files directly associated with the above-referenced m
 
 &copy; 2025, Unity Technologies and the glTFast authors. Licensed under Apache 2.0. See [license file at root](https://github.com/Unity-Technologies/com.unity.cloud.gltfast/blob/main/LICENSE.md).
 
+[EXT_texture_webp]: https://github.com/KhronosGroup/glTF/tree/main/extensions/2.0/Vendor/EXT_texture_webp
 [KHR_texture_basisu]: https://github.com/KhronosGroup/glTF/tree/main/extensions/2.0/Khronos/KHR_texture_basisu

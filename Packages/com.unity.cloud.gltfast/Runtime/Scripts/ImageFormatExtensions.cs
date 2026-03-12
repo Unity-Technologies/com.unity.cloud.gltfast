@@ -16,7 +16,7 @@ namespace GLTFast
             if (subType.SequenceEqual("jpeg"))
                 return ImageFormat.Jpeg;
             if (subType.SequenceEqual("png"))
-                return ImageFormat.PNG;
+                return ImageFormat.Png;
             if (subType.SequenceEqual("ktx") || subType.SequenceEqual("ktx2"))
                 return ImageFormat.Ktx;
             if (subType.SequenceEqual("webp"))

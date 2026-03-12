@@ -202,6 +202,34 @@ namespace GLTFast.DocExamples.Tests
             Object.Destroy(go);
         }
 
+        [GltfTestCase("glTF-test-models", 3, "TextureVariants-WebP(-Invalid)?\\.gl(tf|b)$", "AddOnsImage")]
+        public IEnumerator WebpTextureAddon(GltfTestCaseSet testCaseSet, GltfTestCase testCase)
+        {
+            LogAssert.Expect(LogType.Error, "For this example to work, you need to compile <a href=\"https://chromium.googlesource.com/webm/libwebp\">libwebp</a> as a native plugin and name it 'webp-unity'.");
+            LogAssert.Expect(LogType.Error, "Texture #0 not loaded");
+            LogAssert.Expect(LogType.Error, "Texture #1 not loaded");
+
+            var go = new GameObject();
+            var import = go.AddComponent<TextureAddOnExample>();
+            import.uri = Path.Combine(testCaseSet.RootPath, testCase.relativeUri);
+            import.enabled = false; // Prevent automatic execution of Start
+
+            yield return AsyncWrapper.WaitForTask(import.LoadGltf());
+            Object.Destroy(go);
+        }
+
+        [GltfTestCase("glTF-test-models", 2, "TextureVariants\\.gl(tf|b)$", "AddOnsImage")]
+        public IEnumerator PngTextureAddon(GltfTestCaseSet testCaseSet, GltfTestCase testCase)
+        {
+            var go = new GameObject();
+            var import = go.AddComponent<TextureAddOnExample>();
+            import.uri = Path.Combine(testCaseSet.RootPath, testCase.relativeUri);
+            import.enabled = false; // Prevent automatic execution of Start
+
+            yield return AsyncWrapper.WaitForTask(import.LoadGltf());
+            Object.Destroy(go);
+        }
+
         public async void Setup()
         {
 #if UNITY_EDITOR
