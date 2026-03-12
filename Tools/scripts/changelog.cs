@@ -60,23 +60,27 @@ static class MainClass
     {
         var unreleased = changelog
             .OfType<Section>()
-            .FirstOrDefault(x => x.IsUnreleased)
-            ?? throw new InvalidDataException("Changelog file must contain a level 2 'Unreleased' section.");
+            .FirstOrDefault(x => x.IsUnreleased);
 
         var lastRelease = changelog
             .OfType<Section>()
             .FirstOrDefault(x => x.IsRelease);
 
-        Console.WriteLine(
-            lastRelease == null
-                ? "Unreleased changes:"
-                : $"Unreleased changes since {lastRelease.ReleaseInfo!.Value.Date:yyyy-MM-dd}:"
-            );
-
-        foreach (var content in unreleased)
+        var writer = Console.Out;
+        if (unreleased is not null)
         {
-            Console.WriteLine(content.Text);
+            writer.WriteLine(
+                lastRelease == null
+                    ? "Unreleased changes:"
+                    : $"Unreleased changes since {lastRelease.ReleaseInfo!.Value.Date:yyyy-MM-dd}:"
+                );
+            unreleased.WriteTo(writer);
         }
+        else if (lastRelease is not null)
+        {
+            lastRelease.WriteTo(writer);
+        }
+        writer.Flush();
     }
 }
 
@@ -343,22 +347,16 @@ public partial class Section : Content
         return count;
     }
 
-    public void WriteTo(TextWriter writer)
+    protected internal override void WriteTo(TextWriter writer, bool entryPoint)
     {
+        if (!entryPoint)
+        {
+            writer.WriteLine();
+        }
         writer.Write(Text);
         foreach (var child in this)
         {
-            switch (child)
-            {
-                case Section section:
-                    writer.WriteLine();
-                    section.WriteTo(writer);
-                    break;
-                case not null:
-                    writer.WriteLine();
-                    writer.Write(child.Text);
-                    break;
-            }
+            child.WriteTo(writer, false);
         }
     }
 
@@ -381,6 +379,21 @@ public partial class Section : Content
 public class Content(string text) : List<Content>
 {
     public string Text { get; protected set; } = text;
+
+    public void WriteTo(TextWriter writer)
+    {
+        WriteTo(writer, true);
+    }
+
+    protected internal virtual void WriteTo(TextWriter writer, bool entryPoint)
+    {
+        writer.WriteLine();
+        writer.Write(Text);
+        foreach (var child in this)
+        {
+            child.WriteTo(writer, false);
+        }
+    }
 
     public override string ToString()
     {
