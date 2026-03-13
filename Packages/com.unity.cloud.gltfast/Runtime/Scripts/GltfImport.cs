@@ -3556,12 +3556,14 @@ namespace GLTFast
 #if DRACO_IS_ENABLED
             if (primitives[0].IsDracoCompressed)
             {
-                generator = new DracoMeshGenerator(primitives, morphTargetNames, mesh.name, this);
+                generator = new DracoMeshGenerator(
+                    primitives, morphTargetNames, mesh.name, this, this, DeferAgent, Logger);
             }
             else
 #endif
             {
-                generator = new MeshGenerator(primitives, subMeshes, morphTargetNames, mesh.name, this);
+                generator = new MeshGenerator(
+                    primitives, subMeshes, morphTargetNames, mesh.name, this, this, DeferAgent, Logger);
             }
 
             var meshOrder = new MeshOrder(generator);
