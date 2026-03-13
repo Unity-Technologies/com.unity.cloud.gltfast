@@ -119,7 +119,7 @@ MonoBehaviour:
     expectLoadFail: 0
     expectInstantiationFail: 0
     expectedLogCodes: 
-    requiredExtensions: 
+    requiredExtensions: 04000000
   - relativeUri: Bounds/Bounds/Bounds.gltf
     expectLoadFail: 0
     expectInstantiationFail: 0
