@@ -3088,17 +3088,16 @@ namespace GLTFast
 
         /// <summary>
         /// Called at the beginning of <see cref="DisposeVolatileData"/> before buffers are freed.
-        /// Override to process import addon instances while data is still accessible.
+        /// Override to process data while it is still accessible.
         /// </summary>
-        /// <param name="importInstances">The import addon instances dictionary, may be null.</param>
-        protected virtual void OnBeforeDisposeVolatileData(Dictionary<Type, ImportAddonInstance> importInstances) { }
+        protected virtual void OnBeforeDisposeVolatileData() { }
 
         /// <summary>
         /// Free up volatile loading resources
         /// </summary>
         async Task DisposeVolatileData()
         {
-            OnBeforeDisposeVolatileData(m_ImportInstances);
+            OnBeforeDisposeVolatileData();
 
             m_Buffers = null;
             m_BinChunks = null;
