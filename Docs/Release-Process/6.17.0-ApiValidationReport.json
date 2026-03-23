@@ -50,12 +50,11 @@
         {
             "assemblyName": "glTFast",
             "additions": [
+                "MemberAdded ( -> GLTFast.Extension GLTFast.Extension::TextureWebP)",
+                "MemberAdded ( -> System.String GLTFast.ExtensionName::TextureWebP)",
                 "MemberAdded ( -> System.Void GLTFast.GameObjectInstantiator::AddAnimation(UnityEngine.AnimationClip[]))",
                 "MemberAdded ( -> UnityEngine.Animation GLTFast.GameObjectSceneInstance::LegacyAnimation())",
                 "MemberAdded ( -> System.Nullable`1<UnityEngine.Playables.Playable> GLTFast.GameObjectSceneInstance::Playable())",
-                "MemberAdded ( -> System.Int32 GLTFast.GltfAsset::SceneId())",
-                "MemberAdded ( -> System.Int32 GLTFast.GltfAsset::SceneId())",
-                "MemberAdded ( -> System.Boolean GLTFast.GltfAsset::PlayAutomatically())",
                 "MemberAdded ( -> UnityEngine.AnimationClip[] GLTFast.GltfImportBase::GetAnimationClips())",
                 "MemberAdded ( -> System.Void GLTFast.IInstantiator::AddAnimation(UnityEngine.AnimationClip[]))",
                 "MemberAdded ( -> System.Collections.Generic.IReadOnlyList`1<GLTFast.Schema.AnimationChannelBase> GLTFast.Schema.AnimationBase::Channels())",
@@ -63,10 +62,13 @@
                 "MemberAdded ( -> TAnimation[] GLTFast.Schema.RootBase`15::animations)",
                 "MemberAdded ( -> System.Collections.Generic.IReadOnlyList`1<GLTFast.Schema.AnimationBase> GLTFast.Schema.RootBase::Animations())",
                 "MemberAdded ( -> System.Boolean GLTFast.Schema.RootBase::HasAnimation())",
-                "MemberAdded ( -> UnityEngine.Shader GLTFast.Materials.BuiltInMaterialGenerator::FindShaderMetallicRoughness())",
-                "MemberAdded ( -> UnityEngine.Shader GLTFast.Materials.BuiltInMaterialGenerator::FindShaderSpecularGlossiness())",
-                "MemberAdded ( -> UnityEngine.Shader GLTFast.Materials.BuiltInMaterialGenerator::FindShaderUnlit())",
-                "MemberAdded ( -> UnityEngine.Shader GLTFast.Materials.MaterialGenerator::FindShader(System.String))",
+                "MemberAdded ( -> GLTFast.Logging.LogCode GLTFast.Logging.LogCode::ImageFormatUnsupported)",
+                "MemberAdded ( -> GLTFast.Logging.LogCode GLTFast.Logging.LogCode::VertexCountInvalid)",
+                "TypeAddedChange ( -> GLTFast.IDefaultImageFormatLoader)",
+                "TypeAddedChange ( -> GLTFast.ImageFormat)",
+                "TypeAddedChange ( -> GLTFast.ImageFormatDetection)",
+                "TypeAddedChange ( -> GLTFast.ImageResult)",
+                "TypeAddedChange ( -> GLTFast.ITextureImageLoader)",
                 "TypeAddedChange ( -> GLTFast.Schema.AnimationChannel)",
                 "TypeAddedChange ( -> GLTFast.Schema.AnimationChannelBase`1)",
                 "TypeAddedChange ( -> GLTFast.Schema.AnimationChannelBase)",
@@ -85,6 +87,6 @@
         }
     ],
     "breakingChanges": 2,
-    "additions": 66,
+    "additions": 68,
     "removedAssemblyCount": 0
 }
