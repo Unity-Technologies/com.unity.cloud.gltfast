@@ -1465,6 +1465,13 @@ namespace GLTFast
                 return false;
             }
 
+            if (m_Addons?
+                    .Any<IPostJsonDeserialization>(addon => !addon.PostJsonDeserialization())
+                ?? false)
+            {
+                return false;
+            }
+
             if (!CheckExtensionSupport())
             {
                 return false;
