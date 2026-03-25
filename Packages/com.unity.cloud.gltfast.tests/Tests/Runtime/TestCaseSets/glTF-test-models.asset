@@ -275,6 +275,11 @@ MonoBehaviour:
     expectInstantiationFail: 0
     expectedLogCodes: 
     requiredExtensions: 00000000
+  - relativeUri: SubMeshIncompatible/glTF/SubMeshIncompatible.gltf
+    expectLoadFail: 0
+    expectInstantiationFail: 0
+    expectedLogCodes: 
+    requiredExtensions: 
   - relativeUri: TextureVariants/glTF/TextureVariants.gltf
     expectLoadFail: 0
     expectInstantiationFail: 0

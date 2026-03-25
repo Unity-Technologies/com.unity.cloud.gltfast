@@ -26,7 +26,7 @@ namespace GLTFast.Tests.Import
             yield return CancellationTestInternal(testCaseSet, testCase, k_MaxIterations);
         }
 
-        [GltfTestCase("glTF-test-models", 63)]
+        [GltfTestCase("glTF-test-models", 64)]
         public IEnumerator CancelImport_TestModels(GltfTestCaseSet testCaseSet, GltfTestCase testCase)
         {
             yield return CancellationTestInternal(testCaseSet, testCase, k_MaxIterations);
