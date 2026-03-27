@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 ### Fixed
+- (Shader) Back-face normals are now correctly flipped in URP (fixes [#38](https://github.com/Unity-Technologies/com.unity.cloud.gltfast/issues/38)).
 
 ### Removed
 
