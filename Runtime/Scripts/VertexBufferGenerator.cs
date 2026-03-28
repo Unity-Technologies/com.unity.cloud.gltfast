@@ -50,7 +50,7 @@ namespace GLTFast
             vertexCount = VertexIntervals[subMesh + 1] - baseVertex;
         }
 
-        public override bool TryGetBounds(int subMesh, out Bounds bounds)
+        public override bool TryGetBounds(int subMesh, ICodeLogger logger, out Bounds bounds)
         {
             Assert.IsNotNull(m_PositionAccessors);
             var boundsOpt = m_PositionAccessors[subMesh].TryGetBounds();
@@ -59,13 +59,13 @@ namespace GLTFast
                 bounds = boundsOpt.Value;
                 return true;
             }
-            m_GltfImport.Logger?.Error(LogCode.MeshBoundsMissing, m_Attributes[subMesh].POSITION.ToString());
+            logger?.Error(LogCode.MeshBoundsMissing, m_Attributes[subMesh].POSITION.ToString());
             bounds = default;
             return false;
         }
 
-        public VertexBufferGenerator(int primitiveCount, GltfImportBase gltfImport)
-            : base(primitiveCount, gltfImport)
+        public VertexBufferGenerator(int primitiveCount, IGltfBuffers buffers, ICodeLogger logger)
+            : base(primitiveCount, buffers, logger)
         { }
 
         public override void AddPrimitive(Attributes att)
@@ -82,7 +82,7 @@ namespace GLTFast
             for (var i = 0; i < m_Attributes.Length; i++)
             {
                 VertexIntervals[i] = vertexCount;
-                m_PositionAccessors[i] = ((IGltfBuffers)m_GltfImport).GetAccessor(m_Attributes[i].POSITION);
+                m_PositionAccessors[i] = m_Buffers.GetAccessor(m_Attributes[i].POSITION);
                 vertexCount += m_PositionAccessors[i].count;
             }
             VertexIntervals[m_Attributes.Length] = vertexCount;
@@ -119,21 +119,21 @@ namespace GLTFast
                 if (uvSetCount > maxUvSetCount)
                 {
                     // More than eight UV sets are not supported yet
-                    m_GltfImport.Logger?.Warning(LogCode.UVLimit);
+                    m_Logger?.Warning(LogCode.UVLimit);
                     uvSetCount = maxUvSetCount;
                 }
 
                 jobCount += uvSetCount * m_Attributes.Length;
                 m_TexCoords = uvSetCount switch
                 {
-                    1 => new VertexBufferTexCoords<VTexCoord1>(uvSetCount, VertexCount, m_GltfImport.Logger),
-                    2 => new VertexBufferTexCoords<VTexCoord2>(uvSetCount, VertexCount, m_GltfImport.Logger),
-                    3 => new VertexBufferTexCoords<VTexCoord3>(uvSetCount, VertexCount, m_GltfImport.Logger),
-                    4 => new VertexBufferTexCoords<VTexCoord4>(uvSetCount, VertexCount, m_GltfImport.Logger),
-                    5 => new VertexBufferTexCoords<VTexCoord5>(uvSetCount, VertexCount, m_GltfImport.Logger),
-                    6 => new VertexBufferTexCoords<VTexCoord6>(uvSetCount, VertexCount, m_GltfImport.Logger),
-                    7 => new VertexBufferTexCoords<VTexCoord7>(uvSetCount, VertexCount, m_GltfImport.Logger),
-                    _ => new VertexBufferTexCoords<VTexCoord8>(uvSetCount, VertexCount, m_GltfImport.Logger)
+                    1 => new VertexBufferTexCoords<VTexCoord1>(uvSetCount, VertexCount, m_Logger),
+                    2 => new VertexBufferTexCoords<VTexCoord2>(uvSetCount, VertexCount, m_Logger),
+                    3 => new VertexBufferTexCoords<VTexCoord3>(uvSetCount, VertexCount, m_Logger),
+                    4 => new VertexBufferTexCoords<VTexCoord4>(uvSetCount, VertexCount, m_Logger),
+                    5 => new VertexBufferTexCoords<VTexCoord5>(uvSetCount, VertexCount, m_Logger),
+                    6 => new VertexBufferTexCoords<VTexCoord6>(uvSetCount, VertexCount, m_Logger),
+                    7 => new VertexBufferTexCoords<VTexCoord7>(uvSetCount, VertexCount, m_Logger),
+                    _ => new VertexBufferTexCoords<VTexCoord8>(uvSetCount, VertexCount, m_Logger)
                 };
             }
 
@@ -141,14 +141,14 @@ namespace GLTFast
             if (m_HasColors)
             {
                 jobCount += m_Attributes.Length;
-                m_Colors = new VertexBufferColors(VertexCount, m_GltfImport.Logger);
+                m_Colors = new VertexBufferColors(VertexCount, m_Logger);
             }
 
             m_HasBones = firstAttributes.WEIGHTS_0 >= 0 && firstAttributes.JOINTS_0 >= 0;
             if (m_HasBones)
             {
                 jobCount++;
-                m_Bones = new VertexBufferBones(VertexCount, m_GltfImport.Logger);
+                m_Bones = new VertexBufferBones(VertexCount, m_Logger);
             }
 
             for (var i = 0; i < m_Attributes.Length; i++)
@@ -220,7 +220,7 @@ namespace GLTFast
             if (m_PositionAccessors[i].bufferView >= 0)
             {
                 h = GetVector3Job(
-                    m_GltfImport,
+                    m_Buffers,
                     m_PositionAccessors[i],
                     (float3*)(vDataPtr + outputByteStride * VertexIntervals[i]),
                     outputByteStride,
@@ -231,8 +231,8 @@ namespace GLTFast
 
             if (m_PositionAccessors[i].IsSparse)
             {
-                m_GltfImport.GetAccessorSparseIndices(m_PositionAccessors[i].Sparse.Indices, out var posIndexData);
-                m_GltfImport.GetAccessorSparseValues(m_PositionAccessors[i].Sparse.Values, out var posValueData);
+                m_Buffers.GetAccessorSparseIndices(m_PositionAccessors[i].Sparse.Indices, out var posIndexData);
+                m_Buffers.GetAccessorSparseValues(m_PositionAccessors[i].Sparse.Values, out var posValueData);
                 var sparseJobHandle = GetVector3SparseJob(
                     posIndexData,
                     posValueData,
@@ -272,7 +272,7 @@ namespace GLTFast
 
         unsafe bool ScheduleNormalsJobs(Attributes att, byte* vDataPtr, int outputByteStride, int i, NativeArray<JobHandle> handles, ref int handleIndex)
         {
-            ((IGltfBuffers)m_GltfImport).GetAccessorAndData(
+            m_Buffers.GetAccessorAndData(
                 att.NORMAL,
                 out var nrmAcc,
                 out var input,
@@ -280,11 +280,11 @@ namespace GLTFast
             );
             if (nrmAcc.IsSparse)
             {
-                m_GltfImport.Logger?.Error(LogCode.SparseAccessor, "normals");
+                m_Logger?.Error(LogCode.SparseAccessor, "normals");
             }
 
             var h = GetVector3Job(
-                m_GltfImport,
+                m_Buffers,
                 nrmAcc,
                 (float3*)(vDataPtr + outputByteStride * VertexIntervals[i] + 12),
                 outputByteStride,
@@ -308,7 +308,7 @@ namespace GLTFast
 
         unsafe bool ScheduleTangentsJobs(Attributes att, byte* vDataPtr, int outputByteStride, int i, NativeArray<JobHandle> handles, ref int handleIndex)
         {
-            ((IGltfBuffers)m_GltfImport).GetAccessorAndData(
+            m_Buffers.GetAccessorAndData(
                 att.TANGENT,
                 out var tanAcc,
                 out var input,
@@ -316,7 +316,7 @@ namespace GLTFast
             );
             if (tanAcc.IsSparse)
             {
-                m_GltfImport.Logger?.Error(LogCode.SparseAccessor, "tangents");
+                m_Logger?.Error(LogCode.SparseAccessor, "tangents");
             }
 
             var h = GetTangentsJob(
@@ -352,7 +352,7 @@ namespace GLTFast
                 VertexIntervals[i],
                 uvAccessors,
                 handles.GetSubArray(handleIndex, uvAccessors.Length),
-                m_GltfImport
+                m_Buffers
             );
             handleIndex += uvAccessors.Length;
             return handleIndex;
@@ -364,7 +364,7 @@ namespace GLTFast
                 att.COLOR_0,
                 VertexIntervals[i],
                 handles.GetSubArray(handleIndex, 1),
-                m_GltfImport
+                m_Buffers
             );
             if (!success)
             {
@@ -406,7 +406,7 @@ namespace GLTFast
                     att.WEIGHTS_0,
                     att.JOINTS_0,
                     VertexIntervals[i],
-                    m_GltfImport
+                    m_Buffers
                 );
                 if (!h.HasValue)
                 {

@@ -32,7 +32,10 @@ namespace GLTFast {
             IReadOnlyList<MeshPrimitiveBase> primitives,
             string[] morphTargetNames,
             string meshName,
-            GltfImportBase gltfImport
+            IGltfReadable gltf,
+            IGltfBuffers buffers,
+            IDeferAgent deferAgent,
+            ICodeLogger logger
             )
             : base(meshName)
         {
@@ -52,7 +55,7 @@ namespace GLTFast {
                 var primitive = primitives[index];
                 Assert.IsTrue(primitive.IsDracoCompressed);
 
-                var posAccessor = ((IGltfBuffers)gltfImport).GetAccessor(primitive.attributes.POSITION);
+                var posAccessor = buffers.GetAccessor(primitive.attributes.POSITION);
 
                 if (m_HasMorphTargets)
                 {
@@ -70,7 +73,7 @@ namespace GLTFast {
                     }
                     else
                     {
-                        gltfImport.Logger?.Error(LogCode.MeshBoundsMissing, primitive.attributes.POSITION.ToString());
+                        logger?.Error(LogCode.MeshBoundsMissing, primitive.attributes.POSITION.ToString());
                         bounds = null;
                     }
                 }
@@ -81,7 +84,7 @@ namespace GLTFast {
                 }
                 else
                 {
-                    var material = gltfImport.GetSourceMaterial(primitive.material);
+                    var material = gltf.GetSourceMaterial(primitive.material);
                     m_NeedsNormals |= material.RequiresNormals;
                     m_NeedsTangents |= material.RequiresTangents;
                 }
@@ -96,11 +99,12 @@ namespace GLTFast {
                     vertexIntervals,
                     vertexCount,
                     morphTargets,
-                    gltfImport
+                    buffers,
+                    deferAgent
                     );
             }
 
-            m_CreationTask = Decode(primitives, gltfImport, bounds);
+            m_CreationTask = Decode(primitives, buffers, bounds);
         }
 
         void InitializeMorphTargets(
@@ -109,7 +113,8 @@ namespace GLTFast {
             int[] vertexIntervals,
             int vertexCount,
             MorphTarget[] morphTargets,
-            GltfImportBase gltfImport
+            IGltfBuffers buffers,
+            IDeferAgent deferAgent
             )
         {
             m_MorphTargetsGenerator = new MorphTargetsGenerator(
@@ -119,7 +124,8 @@ namespace GLTFast {
                 morphTargetNames,
                 morphTargets[0].NORMAL >= 0,
                 morphTargets[0].TANGENT >= 0,
-                gltfImport
+                buffers,
+                deferAgent
             );
             for (var subMesh = 0; subMesh < primitives.Count; subMesh++)
             {

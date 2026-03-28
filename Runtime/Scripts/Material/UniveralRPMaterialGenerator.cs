@@ -22,8 +22,6 @@ namespace GLTFast.Materials {
         // Keywords
         const string k_TransmissionKeyword = "_TRANSMISSION";
 
-        static bool s_SupportsCameraOpaqueTexture;
-
 #if UNITY_EDITOR
         /// <summary>Guid of the shader graph with clearcoat support</summary>
         const string k_MetallicClearcoatShaderGuid = "c18c97ae1ce021b4980c5d19a54f0d3c";
@@ -34,8 +32,10 @@ namespace GLTFast.Materials {
         static bool s_MetallicClearcoatShaderQueried;
         static Shader s_MetallicClearcoatShader;
 
+        bool m_SupportsCameraOpaqueTexture;
+
         public UniversalRPMaterialGenerator(UniversalRenderPipelineAsset renderPipelineAsset) {
-            s_SupportsCameraOpaqueTexture = renderPipelineAsset.supportsCameraOpaqueTexture;
+            m_SupportsCameraOpaqueTexture = renderPipelineAsset.supportsCameraOpaqueTexture;
         }
 
         protected override void SetDoubleSided(MaterialBase gltfMaterial, Material material) {
@@ -96,7 +96,7 @@ namespace GLTFast.Materials {
         }
 
         protected override ShaderMode? ApplyTransmissionShaderFeatures(MaterialBase gltfMaterial) {
-            if (!s_SupportsCameraOpaqueTexture) {
+            if (!m_SupportsCameraOpaqueTexture) {
                 // Fall back to makeshift approximation via premultiply or blend
                 return base.ApplyTransmissionShaderFeatures(gltfMaterial);
             }
@@ -118,7 +118,7 @@ namespace GLTFast.Materials {
             Material material,
             RenderQueue? renderQueue
         ) {
-            if (s_SupportsCameraOpaqueTexture) {
+            if (m_SupportsCameraOpaqueTexture) {
                 if (transmission.transmissionFactor > 0f) {
                     material.EnableKeyword(k_TransmissionKeyword);
                     material.SetFloat(TransmissionFactorProperty, transmission.transmissionFactor);
@@ -144,6 +144,16 @@ namespace GLTFast.Materials {
                 renderQueue
                 );
         }
+
+#if UNITY_EDITOR
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void ResetStaticsOnLoad()
+        {
+            // Reset static state
+            s_MetallicClearcoatShader = null;
+            s_MetallicClearcoatShaderQueried = false;
+        }
+#endif
     }
 }
 #endif // USING_URP

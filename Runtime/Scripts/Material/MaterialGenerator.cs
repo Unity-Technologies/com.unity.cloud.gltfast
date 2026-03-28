@@ -511,5 +511,16 @@ namespace GLTFast.Materials
                 return false;
             }
         }
+
+#if UNITY_EDITOR
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void ResetStaticsOnLoad()
+        {
+            // Reset static state
+            s_DefaultMaterialGenerator = null;
+            s_DefaultMaterialGenerated = false;
+            s_DefaultMaterial = null;
+        }
+#endif
     }
 }

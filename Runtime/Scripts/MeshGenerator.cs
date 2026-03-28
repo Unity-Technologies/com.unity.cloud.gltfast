@@ -37,21 +37,26 @@ namespace GLTFast
             SubMeshAssignment[] subMeshAssignments,
             string[] morphTargetNames,
             string meshName,
-            GltfImportBase gltfImport
+            IGltfReadable gltf,
+            IGltfBuffers buffers,
+            IDeferAgent deferAgent,
+            ICodeLogger logger
         )
             : base(meshName)
         {
             m_Primitives = primitives;
             m_SubMeshAssignments = subMeshAssignments;
-            if (CreateVertexGenerator(gltfImport, out var hasNormals, out var hasTangents))
+            if (CreateVertexGenerator(gltf, buffers, logger, out var hasNormals, out var hasTangents))
             {
-                CreateMorphTargetGenerator(morphTargetNames, hasNormals, hasTangents, gltfImport);
-                m_CreationTask = GenerateMesh(gltfImport);
+                CreateMorphTargetGenerator(morphTargetNames, hasNormals, hasTangents, buffers, deferAgent, logger);
+                m_CreationTask = GenerateMesh(buffers, logger);
             }
         }
 
         bool CreateVertexGenerator(
-            GltfImportBase gltfImport,
+            IGltfReadable gltf,
+            IGltfBuffers buffers,
+            ICodeLogger logger,
             out bool hasNormals,
             out bool hasTangents
             )
@@ -59,24 +64,24 @@ namespace GLTFast
             var drawMode = m_Primitives[0].mode;
             if (!SetTopology(drawMode))
             {
-                gltfImport.Logger?.Error(LogCode.PrimitiveModeUnsupported, drawMode.ToString());
+                logger?.Error(LogCode.PrimitiveModeUnsupported, drawMode.ToString());
             }
 
-            var mainBufferType = GetMainBufferType(gltfImport, out hasNormals, out hasTangents);
+            var mainBufferType = GetMainBufferType(gltf, out hasNormals, out hasTangents);
 
             switch (mainBufferType)
             {
                 case MainBufferType.Position:
-                    m_VertexData = new VertexBufferGenerator<Vertex.VPos>(m_Primitives.Count, gltfImport);
+                    m_VertexData = new VertexBufferGenerator<Vertex.VPos>(m_Primitives.Count, buffers, logger);
                     break;
                 case MainBufferType.PosNorm:
-                    m_VertexData = new VertexBufferGenerator<Vertex.VPosNorm>(m_Primitives.Count, gltfImport);
+                    m_VertexData = new VertexBufferGenerator<Vertex.VPosNorm>(m_Primitives.Count, buffers, logger);
                     break;
                 case MainBufferType.PosNormTan:
-                    m_VertexData = new VertexBufferGenerator<Vertex.VPosNormTan>(m_Primitives.Count, gltfImport);
+                    m_VertexData = new VertexBufferGenerator<Vertex.VPosNormTan>(m_Primitives.Count, buffers, logger);
                     break;
                 default:
-                    gltfImport.Logger?.Error(LogCode.BufferMainInvalidType, mainBufferType.ToString());
+                    logger?.Error(LogCode.BufferMainInvalidType, mainBufferType.ToString());
                     return false;
             }
             m_VertexData.calculateNormals = !hasNormals && (mainBufferType & MainBufferType.Normal) > 0;
@@ -92,7 +97,7 @@ namespace GLTFast
         }
 
         MainBufferType GetMainBufferType(
-            GltfImportBase gltfImport,
+            IGltfReadable gltf,
             out bool hasNormals,
             out bool hasTangents
             )
@@ -120,7 +125,7 @@ namespace GLTFast
                     }
                     else
                     {
-                        var material = gltfImport.GetSourceMaterial(primitive.material);
+                        var material = gltf.GetSourceMaterial(primitive.material);
                         if (material.RequiresTangents)
                         {
                             mainBufferType |= MainBufferType.Normal | MainBufferType.Tangent;
@@ -166,7 +171,9 @@ namespace GLTFast
             string[] morphTargetNames,
             bool hasNormals,
             bool hasTangents,
-            GltfImportBase gltfImport
+            IGltfBuffers buffers,
+            IDeferAgent deferAgent,
+            ICodeLogger logger
             )
         {
             var morphTargets = m_Primitives[0].targets;
@@ -179,12 +186,13 @@ namespace GLTFast
                     morphTargetNames,
                     hasNormals,
                     hasTangents,
-                    gltfImport
+                    buffers,
+                    deferAgent
                 );
             }
         }
 
-        async Task<Mesh> GenerateMesh(GltfImportBase gltfImport)
+        async Task<Mesh> GenerateMesh(IGltfBuffers buffers, ICodeLogger logger)
         {
             if (!await m_VertexData.CreateVertexBuffer())
                 return null;
@@ -194,7 +202,7 @@ namespace GLTFast
             {
                 if (primitive.indices >= 0)
                 {
-                    var accessor = ((IGltfBuffers)gltfImport).GetAccessor(primitive.indices);
+                    var accessor = buffers.GetAccessor(primitive.indices);
                     if (accessor.componentType == GltfComponentType.UnsignedInt)
                     {
                         indexFormat = IndexFormat.UInt32;
@@ -203,7 +211,7 @@ namespace GLTFast
                 }
                 else
                 {
-                    var vertexCount = ((IGltfBuffers)gltfImport).GetAccessor(primitive.attributes.POSITION).count;
+                    var vertexCount = buffers.GetAccessor(primitive.attributes.POSITION).count;
                     if (vertexCount > ushort.MaxValue)
                     {
                         indexFormat = IndexFormat.UInt32;
@@ -220,7 +228,7 @@ namespace GLTFast
                 if (primitive.indices >= 0)
                 {
                     var flip = primitive.mode == DrawMode.Triangles;
-                    var accessor = ((IGltfBuffers)gltfImport).GetAccessor(primitive.indices);
+                    var accessor = buffers.GetAccessor(primitive.indices);
 
                     var minIndexCount = 3;
                     var indexCount = accessor.count;
@@ -243,7 +251,7 @@ namespace GLTFast
 
                     if (accessor.count < minIndexCount)
                     {
-                        gltfImport.Logger?.Error(
+                        logger?.Error(
                             LogCode.IndexCountInvalid,
                             accessor.count.ToString()
                         );
@@ -254,7 +262,7 @@ namespace GLTFast
 
                     m_Indices.Allocate(subMeshIndex, indexCount);
 
-                    var accessorData = ((IGltfBuffers)gltfImport).GetBufferView(
+                    var accessorData = buffers.GetBufferView(
                         accessor.bufferView,
                         out _,
                         accessor.byteOffset,
@@ -264,7 +272,7 @@ namespace GLTFast
                     Assert.AreEqual(accessor.GetAttributeType(), GltfAccessorAttributeType.SCALAR);
                     if (accessor.IsSparse)
                     {
-                        gltfImport.Logger?.Error(LogCode.SparseAccessor, "indices");
+                        logger?.Error(LogCode.SparseAccessor, "indices");
                     }
 
                     switch (indexFormat)
@@ -272,13 +280,13 @@ namespace GLTFast
                         case IndexFormat.UInt16:
                         {
                             var indices = m_Indices.GetIndices16(subMeshIndex);
-                            GetIndicesUInt16Job(gltfImport, accessor, accessorData, indices, out getIndicesJob, flip);
+                            GetIndicesUInt16Job(accessor, accessorData, indices, out getIndicesJob, flip, logger);
                             break;
                         }
                         case IndexFormat.UInt32:
                         {
                             var indices = m_Indices.GetIndices32(subMeshIndex);
-                            GetIndicesUInt32Job(gltfImport, accessor, accessorData, indices, out getIndicesJob, flip);
+                            GetIndicesUInt32Job(accessor, accessorData, indices, out getIndicesJob, flip, logger);
                             break;
                         }
                     }
@@ -356,7 +364,7 @@ namespace GLTFast
                 }
                 else
                 {
-                    var vertexCount = ((IGltfBuffers)gltfImport).GetAccessor(primitive.attributes.POSITION).count;
+                    var vertexCount = buffers.GetAccessor(primitive.attributes.POSITION).count;
                     var indexCount = primitive.mode switch
                     {
                         DrawMode.TriangleStrip or DrawMode.TriangleFan => (vertexCount - 2) * 3,
@@ -384,14 +392,14 @@ namespace GLTFast
                 for (var subMeshIndex = 0; subMeshIndex < m_Primitives.Count; subMeshIndex++)
                 {
                     var primitive = m_Primitives[subMeshIndex];
-                    AddMorphTargets(subMeshIndex, primitive, gltfImport.Logger);
+                    AddMorphTargets(subMeshIndex, primitive, logger);
                 }
                 tmpList.Add(m_MorphTargetsGenerator.GetJobHandle());
             }
 
             await AwaitJobs(tmpList);
 
-            return await CreateMeshResultAsync();
+            return await CreateMeshResultAsync(logger);
         }
 
         void AddMorphTargets(int subMesh, MeshPrimitiveBase primitive, ICodeLogger logger)
@@ -415,7 +423,7 @@ namespace GLTFast
             }
         }
 
-        async Task<Mesh> CreateMeshResultAsync()
+        async Task<Mesh> CreateMeshResultAsync(ICodeLogger logger)
         {
             Profiler.BeginSample("CreateMesh");
             var msh = new Mesh
@@ -455,7 +463,7 @@ namespace GLTFast
                 Profiler.BeginSample("SetSubMesh");
                 var vertexBufferIndex = m_SubMeshAssignments != null ? m_SubMeshAssignments[i].VertexBufferIndex : i;
                 m_VertexData.GetVertexRange(vertexBufferIndex, out var baseVertex, out var vertexCount);
-                var subMeshBoundsValid = m_VertexData.TryGetBounds(vertexBufferIndex, out var subMeshBounds);
+                var subMeshBoundsValid = m_VertexData.TryGetBounds(vertexBufferIndex, logger, out var subMeshBounds);
                 var subMeshDescriptor = new SubMeshDescriptor
                 {
                     indexStart = indexCount,
@@ -573,12 +581,12 @@ namespace GLTFast
 
 
         static void GetIndicesUInt16Job(
-            GltfImportBase gltfImport,
             AccessorBase accessor,
             ReadOnlyNativeArray<byte> accessorData,
             NativeArray<ushort> indices,
             out JobHandle? jobHandle,
-            bool flip
+            bool flip,
+            ICodeLogger logger
             )
         {
             Profiler.BeginSample("GetIndicesUInt16Job");
@@ -633,7 +641,7 @@ namespace GLTFast
                     break;
                 }
                 default:
-                    gltfImport.Logger?.Error(LogCode.IndexFormatInvalid, accessor.componentType.ToString());
+                    logger?.Error(LogCode.IndexFormatInvalid, accessor.componentType.ToString());
                     jobHandle = null;
                     break;
             }
@@ -641,12 +649,12 @@ namespace GLTFast
         }
 
         static void GetIndicesUInt32Job(
-            GltfImportBase gltfImport,
             AccessorBase accessor,
             ReadOnlyNativeArray<byte> accessorData,
             NativeArray<uint> indices,
             out JobHandle? jobHandle,
-            bool flip
+            bool flip,
+            ICodeLogger logger
             )
         {
             Profiler.BeginSample("GetIndicesUInt32Job");
@@ -724,7 +732,7 @@ namespace GLTFast
                     break;
                 }
                 default:
-                    gltfImport.Logger?.Error(LogCode.IndexFormatInvalid, accessor.componentType.ToString());
+                    logger?.Error(LogCode.IndexFormatInvalid, accessor.componentType.ToString());
                     jobHandle = null;
                     break;
             }

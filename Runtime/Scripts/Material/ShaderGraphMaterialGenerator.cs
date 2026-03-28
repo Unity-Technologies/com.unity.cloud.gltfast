@@ -642,6 +642,20 @@ namespace GLTFast.Materials {
             }
             return feature;
         }
+
+#if UNITY_EDITOR
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void ResetStaticsOnLoad()
+        {
+            // Reset static state
+            s_MetallicShader = null;
+            s_SpecularShader = null;
+            s_UnlitShader = null;
+            s_MetallicShaderQueried = false;
+            s_SpecularShaderQueried = false;
+            s_UnlitShaderQueried = false;
+        }
+#endif
     }
 }
 #endif // GLTFAST_SHADER_GRAPH

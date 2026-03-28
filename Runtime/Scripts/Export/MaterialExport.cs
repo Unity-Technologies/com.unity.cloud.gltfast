@@ -85,5 +85,14 @@ namespace GLTFast.Export
             textureId = gltf.AddTexture(imageId, samplerId);
             return true;
         }
+
+#if UNITY_EDITOR
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void ResetStaticsOnLoad()
+        {
+            // Reset static state
+            s_MaterialExport = null;
+        }
+#endif
     }
 }

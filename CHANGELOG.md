@@ -4,6 +4,30 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.17.0] - 2026-03-17
+
+### Added
+- Texture loading is fully customizable via Add-Ons.
+  - Inject support for glTF texture extensions (see [ITextureImageLoader](xref:GLTFast.ITextureImageLoader)).
+  - Customize PNG and Jpeg loading (see [IDefaultImageFormatLoader](xref:GLTFast.IDefaultImageFormatLoader)).
+  - See *ImageAddonTest* scene in the tests package which use the *AddOnsImage* samples from the `DocExamples` directory.
+- Explicit error message when unsupported image format WebP is detected ([LogCode.ImageFormatUnsupported](xref:GLTFast.Logging.LogCode.ImageFormatUnsupported)).
+- [ImageResult](xref:GLTFast.ImageResult) which depicts an imported glTF image.
+- (Test) TextureVariants test glTFs with WebP image format.
+- [Extension.TextureWebP](xref:GLTFast.Extension.TextureWebP) (no general WebP support, just for handling WebP cases).
+
+### Changed
+- (Add-Ons) GltfImport now accepts multiple import add-on instances of the same type.
+  - [GetImportAddonInstance](xref:GLTFast.GltfImportBase.GetImportAddonInstance*) returns the first instance that matches the type.
+- Ensured compatibility with [Fast Enter Play Mode](https://unity.com/blog/engine-platform/enter-play-mode-faster-in-unity-2019-3).
+- Image type detection is based on content (instead of mime-type depicted in glTF JSON, data URI mediatype or file extension).
+- Improved error message when image format is detected, but not supported (e.g. WebP).
+
+### Fixed
+- (Import) [AnisotropicFilterLevel setting](xref:GLTFast.ImportSettings.AnisotropicFilterLevel) is applied to KTX textures as well.
+- (Import) Leak of textures in case of loading errors.
+- (Export) Meshes with zero vertices or indices will now be skipped and an error will be logged instead of an exception being thrown (fixes [#806](https://github.com/atteneder/glTFast/issues/806)).
+
 ## [6.16.1] - 2026-02-19
 
 ### Added
@@ -335,7 +359,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Moved code examples that are referenced by the documentation into a different folder (`DocExamples`).
 - Renamed code example assembly/namespace to `GLTFast.Documentation.Examples` for consistency.
-- Support for KTX (Khronos Texture) is now provided by [*KTX for Unity* (com.unity.cloud.ktx)][KtxForUnity], which is a fork of and replaces [*KtxUnity* (com.atteneder.ktx)][KtxUnity].
 
 ### Fixed
 - (Test) LoadTests on Android now succeed by using `UnityWebRequest` to retrieve data from the compressed JAR file.
@@ -357,7 +380,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 - Outdated and unused code coverage badge.
-- Tests (applies to OpenUPM branch only!)
 
 ## [6.8.0] - 2024-09-05
 

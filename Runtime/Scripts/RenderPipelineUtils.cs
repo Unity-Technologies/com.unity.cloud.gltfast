@@ -83,5 +83,14 @@ namespace GLTFast
 #endif
             return RenderPipeline.BuiltIn;
         }
+
+#if UNITY_EDITOR
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void ResetStaticsOnLoad()
+        {
+            // Reset static state
+            s_RenderPipeline = RenderPipeline.Unknown;
+        }
+#endif
     }
 }

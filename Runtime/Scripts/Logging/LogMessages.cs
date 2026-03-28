@@ -259,8 +259,12 @@ namespace GLTFast.Logging
         UnexpectedEndOfContent,
         /// <summary>The operation was canceled.</summary>
         OperationCanceled,
-        /// <summary>Invalid index format</summary>
+        /// <summary>Invalid index count</summary>
         IndexCountInvalid,
+        /// <summary>Image format is not supported.</summary>
+        ImageFormatUnsupported,
+        /// <summary>Invalid vertex count</summary>
+        VertexCountInvalid,
     }
 
     /// <summary>
@@ -301,7 +305,8 @@ See details in corresponding issue at https://github.com/atteneder/glTFast/issue
             { LogCode.GltfUnsupportedVersion, "Unsupported glTF version {0}" },
             { LogCode.HierarchyInvalid, "Invalid hierarchy" },
             { LogCode.ImageConversionNotEnabled, $"Jpeg/PNG textures failed because required built-in packages \"Image Conversion\"/\"Unity Web Request Texture\" are not enabled. {k_LinkProjectSetupTextureSupport}" },
-            { LogCode.ImageFormatUnknown, "Unknown image format (image {0};uri:{1})" },
+            { LogCode.ImageFormatUnknown, "Image {0}: unknown format" },
+            { LogCode.ImageFormatUnsupported, "Image {0}: format {1} not supported" },
             { LogCode.ImageMultipleSamplers, "Have to create copy of image {0} due to different samplers. This is harmless, but requires more memory." },
             { LogCode.InconsistentVertexColorUsage, "Potential visual discrepancy due to inconsistent vertex colors usage on mesh {0}" },
             { LogCode.IndexCountInvalid, "Invalid index count {0}" },
@@ -335,6 +340,7 @@ is approximated. Enable Opaque Texture access in Universal Render Pipeline!" },
             { LogCode.UnityWebRequestTextureNotEnabled, $"PNG/Jpeg textures load slower because built-in package \"Unity Web Request Texture\" is not enabled. {k_LinkProjectSetupTextureSupport}" },
             { LogCode.UVLimit, "Only eight UV sets will get imported" },
             { LogCode.UVMulti, "UV set index {0} is not supported in current render pipeline" },
+            { LogCode.VertexCountInvalid, "Invalid vertex count {0}" },
         };
 #endif
 

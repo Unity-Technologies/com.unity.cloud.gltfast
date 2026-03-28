@@ -166,9 +166,10 @@ namespace GLTFast
             var extStartIndex = uri.LastIndexOf('.', queryStartIndex - 1, Mathf.Min(5, queryStartIndex)); // we assume that the first period before the query string is the file format period.
             if (extStartIndex < 0) return ImageFormat.Unknown; // if we can't find a period, we don't know the file format.
             var fileExtension = uri.Substring(extStartIndex + 1, queryStartIndex - extStartIndex - 1); // extract the file ending
-            if (fileExtension.Equals("png", StringComparison.OrdinalIgnoreCase)) return ImageFormat.PNG;
+            if (fileExtension.Equals("png", StringComparison.OrdinalIgnoreCase)) return ImageFormat.Png;
             if (fileExtension.Equals("jpg", StringComparison.OrdinalIgnoreCase) || fileExtension.Equals("jpeg", StringComparison.OrdinalIgnoreCase)) return ImageFormat.Jpeg;
             if (fileExtension.Equals("ktx", StringComparison.OrdinalIgnoreCase) || fileExtension.Equals("ktx2", StringComparison.OrdinalIgnoreCase)) return ImageFormat.Ktx;
+            if (fileExtension.Equals("webp", StringComparison.OrdinalIgnoreCase)) return ImageFormat.WebP;
             return ImageFormat.Unknown;
         }
 

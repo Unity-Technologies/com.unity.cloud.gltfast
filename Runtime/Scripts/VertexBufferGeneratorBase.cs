@@ -32,12 +32,14 @@ namespace GLTFast
         public bool calculateTangents = false;
 
         protected VertexAttributeDescriptor[] m_Descriptors;
-        protected GltfImportBase m_GltfImport;
+        protected IGltfBuffers m_Buffers;
+        protected ICodeLogger m_Logger;
 
-        protected VertexBufferGeneratorBase(int primitiveCount, GltfImportBase gltfImport)
+        protected VertexBufferGeneratorBase(int primitiveCount, IGltfBuffers buffers, ICodeLogger logger)
         {
             m_Attributes = new Attributes[primitiveCount];
-            m_GltfImport = gltfImport;
+            m_Buffers = buffers;
+            m_Logger = logger;
         }
 
         public abstract void AddPrimitive(Attributes att);
@@ -48,7 +50,7 @@ namespace GLTFast
         public abstract int VertexCount { get; }
         public abstract int[] VertexIntervals { get; protected set; }
         public abstract void GetVertexRange(int subMesh, out int baseVertex, out int vertexCount);
-        public abstract bool TryGetBounds(int subMesh, out Bounds bounds);
+        public abstract bool TryGetBounds(int subMesh, ICodeLogger logger, out Bounds bounds);
 
         public void Dispose()
         {
@@ -358,7 +360,7 @@ namespace GLTFast
                     break;
                 }
                 default:
-                    m_GltfImport.Logger?.Error(LogCode.TypeUnsupported, "Tangent", inputType.ToString());
+                    m_Logger?.Error(LogCode.TypeUnsupported, "Tangent", inputType.ToString());
                     jobHandle = null;
                     break;
             }

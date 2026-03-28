@@ -179,6 +179,10 @@ namespace GLTFast.Export
         {
             if ((m_Settings.ComponentMask & ComponentType.Mesh) == 0) return;
             CertifyNotDisposed();
+
+            if (!ValidateMesh(uMesh))
+                return;
+
             var node = m_Nodes[nodeId];
 
             // Always export positions.
@@ -2239,25 +2243,6 @@ namespace GLTFast.Export
         int AddMesh(UnityEngine.Mesh uMesh, VertexAttributeUsage attributeUsage)
         {
             int meshId;
-            if (!uMesh.isReadable)
-            {
-#if DEBUG && !UNITY_6000_0_OR_NEWER
-                Debug.LogWarning($"Exporting non-readable meshes is not reliable in builds across platforms and " +
-                    $"graphics APIs! Consider making mesh \"{uMesh.name}\" readable.", uMesh);
-#endif
-                if ((m_Settings.Compression & Compression.Draco) != 0)
-                {
-#if UNITY_EDITOR
-                    // Non-readable meshes are unsupported during playmode or in builds, but work in Editor exports.
-                    if (Application.isPlaying)
-#endif
-                    {
-                        m_Logger?.Error(LogCode.MeshNotReadable, uMesh.name);
-                        return -1;
-                    }
-                }
-            }
-
             if (m_UnityMeshes != null)
             {
                 meshId = m_UnityMeshes.IndexOf(uMesh);
@@ -2491,6 +2476,46 @@ namespace GLTFast.Export
                 | VertexAttributeUsage.Tangent
                 | VertexAttributeUsage.AllTexCoords
                 | VertexAttributeUsage.Skinning;
+        }
+
+        bool ValidateMesh(UnityEngine.Mesh uMesh)
+        {
+            if (uMesh.vertexCount == 0)
+            {
+                m_Logger?.Error(LogCode.VertexCountInvalid, uMesh.vertexCount.ToString());
+                return false;
+            }
+
+            // glTF mesh is invalid if any submesh is empty
+            for (var i = 0; i < uMesh.subMeshCount; i++)
+            {
+                if (uMesh.GetIndexCount(i) == 0)
+                {
+                    m_Logger?.Error(LogCode.IndexCountInvalid, "0");
+                    return false;
+                }
+            }
+
+            if (!uMesh.isReadable)
+            {
+#if DEBUG && !UNITY_6000_0_OR_NEWER
+                Debug.LogWarning($"Exporting non-readable meshes is not reliable in builds across platforms and " +
+                    $"graphics APIs! Consider making mesh \"{uMesh.name}\" readable.", uMesh);
+#endif
+                if ((m_Settings.Compression & Compression.Draco) != 0)
+                {
+#if UNITY_EDITOR
+                    // Non-readable meshes are unsupported during playmode or in builds, but work in Editor exports.
+                    if (Application.isPlaying)
+#endif
+                    {
+                        m_Logger?.Error(LogCode.MeshNotReadable, uMesh.name);
+                        return false;
+                    }
+                }
+            }
+
+            return true;
         }
     }
 }

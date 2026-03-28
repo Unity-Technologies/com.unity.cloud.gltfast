@@ -51,5 +51,14 @@ namespace GLTFast.Export
             imageData = null;
             return false;
         }
+
+#if UNITY_EDITOR
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void ResetStaticsOnLoad()
+        {
+            // Reset static state
+            s_NormalBlitMaterial = null;
+        }
+#endif
     }
 }
