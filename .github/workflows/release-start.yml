@@ -3,11 +3,11 @@ on:
   workflow_dispatch:
     inputs:
       release-number:
-        description: 'Semantic version with format major.minor.patch (for example 4.2.0)'
+        description: 'Release Version (semver format major.minor.patch with optional suffix; e.g. 4.2.0-exp.1)'
         type: string
         required: true
       start-point:
-        description: 'Starting point of the release. Can be a SHA, a branch or a tag. Default is origin/develop'
+        description: 'Starting point for the release. Can be a branch, tag or SHA.'
         type: string
         default: 'develop'
 
