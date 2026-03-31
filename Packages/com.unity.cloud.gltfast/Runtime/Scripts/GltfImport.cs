@@ -1233,6 +1233,15 @@ namespace GLTFast
                 }
 
                 var uri = UriHelper.GetUriString(image.uri, BaseUri);
+                if (!uri.IsAbsoluteUri && BaseUri == null)
+                {
+                    Logger?.Error(
+                        LogCode.TextureDownloadFailed,
+                        $"Couldn't resolve relative URI. Please provide a base URI.",
+                        uri.ToString());
+                    return null;
+                }
+
                 return await ImageImport.LoadDataAsync(m_Context, uri, cancellationToken);
             }
 
