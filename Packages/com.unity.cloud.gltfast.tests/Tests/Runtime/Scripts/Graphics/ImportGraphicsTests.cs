@@ -92,7 +92,7 @@ namespace GLTFast.Tests.Graphics
             yield return AsyncWrapper.WaitForTask(RunTestCaseAsync(testCaseSet, testCase, ViewType.Perspective));
         }
 
-        [GltfTestCase("glTF-test-models", 1, includeFilter: "AlphaColorSpace\\.gltf$", testPrefix: "gfx-")]
+        [GltfTestCase("glTF-test-models", 1, includeFilter: "AlphaColorSpace\\.gltf$", testPrefix: "gfx-Front-")]
         public IEnumerator AlphaColorSpace(GltfTestCaseSet testCaseSet, GltfTestCase testCase)
         {
             yield return AsyncWrapper.WaitForTask(RunTestCaseAsync(testCaseSet, testCase, ViewType.Front));

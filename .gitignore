@@ -50,7 +50,10 @@ sysinfo.txt
 
 # glTFast test projects
 /Projects/*/ProjectSettings/*
+!Projects/*/ProjectSettings/ProjectSettings.asset
 !Projects/*/ProjectSettings/ProjectVersion.txt
+!Projects/*/ProjectSettings/GraphicsSettings.asset
+!Projects/*/ProjectSettings/HDRPProjectSettings.asset
 /Projects/*/UserSettings
 /Projects/*/Assets/Resources*
 /Projects/*/Assets/StreamingAssets*

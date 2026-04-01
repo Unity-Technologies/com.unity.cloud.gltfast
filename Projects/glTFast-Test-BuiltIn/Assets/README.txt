@@ -1,0 +1,1 @@
+This README file is a placeholder so that the `Assets` folder is included in the GIT repository.

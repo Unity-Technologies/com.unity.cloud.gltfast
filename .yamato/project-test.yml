@@ -82,17 +82,6 @@ test_{{ test_setup.project_setup }}_{{ platform_id }}_{{ editor }}:
       -quit
       -logFile {{ results_path }}/UnityProjectSetup.log
 {% endif -%}
-{% if test_setup.render_pipeline -%}
-    # Apply render pipeline asset
-    - >
-      {{ editor_exe }}
-      -projectPath Projects/{{ test_setup.project }}
-      -executeMethod GLTFast.Editor.Tests.SetupProject.SetRenderPipeline SRP:{{ test_setup.render_pipeline }}
-      -upmNoDefaultPackages
-      -batchmode
-      -quit
-      -logFile {{ results_path }}/UnityRenderPipelineSetup.log
-{% endif -%}
 
     # Run Tests
     # TODO: upm-ci rocks UPM and other cache directories. Maybe we can speed things up this way as well.
@@ -167,17 +156,6 @@ build_{{ test_setup.project_setup }}_{{ platform_id }}_{{ editor }}:
       -quit
       -logFile {{ results_path }}/UnityProjectSetup.log
 {% endif -%}
-{% if test_setup.render_pipeline -%}
-    # Apply render pipeline asset
-    - >
-      {{ editor_exe }}
-      -projectPath Projects/{{ test_setup.project }}
-      -executeMethod GLTFast.Editor.Tests.SetupProject.SetRenderPipeline SRP:{{ test_setup.render_pipeline }}
-      -upmNoDefaultPackages
-      -batchmode
-      -quit
-      -logFile {{ results_path }}/UnityProjectSetup.log
-{% endif -%}
 
     # Run Tests
     # TODO: upm-ci rocks UPM and other cache directories. Maybe we can speed things up this way as well.
@@ -248,17 +226,6 @@ run_{{ test_setup.project_setup }}_{{ platform_id }}_{{ editor }}:
       -executeMethod GLTFast.Editor.Tests.SetupProject.ApplySetup glTFastSetup:{{ test_setup.setup }}
       -upmNoDefaultPackages
       -enablePackageManagerTraces
-      -batchmode
-      -quit
-      -logFile {{ results_path }}/UnityProjectSetup.log
-{% endif -%}
-{% if test_setup.render_pipeline -%}
-    # Apply render pipeline asset
-    - >
-      {{ editor_exe }}
-      -projectPath Projects/{{ test_setup.project }}
-      -executeMethod GLTFast.Editor.Tests.SetupProject.SetRenderPipeline SRP:{{ test_setup.render_pipeline }}
-      -upmNoDefaultPackages
       -batchmode
       -quit
       -logFile {{ results_path }}/UnityProjectSetup.log

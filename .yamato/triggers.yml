@@ -28,7 +28,7 @@ tests_all_trigger:
     - .yamato/project-test.yml#run_all
     - .yamato/wrench/api-validation-jobs.yml#all_api_validation_jobs
     - .yamato/performance.yml#performance_all
-    - .yamato/graphics-tests.yml
+    - .yamato/graphics-tests.yml#graphics_all
 
 tests_all_weekly:
   name: _Tests All [Weekly]

@@ -15,6 +15,9 @@ using UnityEditor.Build.Reporting;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Rendering;
+#if USING_URP
+using UnityEngine.Rendering.Universal;
+#endif
 using Object = UnityEngine.Object;
 
 namespace GLTFast.Editor.Tests
@@ -30,6 +33,7 @@ namespace GLTFast.Editor.Tests
             if ((target.summary.options & BuildOptions.IncludeTestAssemblies) != 0)
             {
                 SyncTestAssets();
+                DisableRenderCompatibilityMode();
                 AddShaderVariantCollections();
                 ExportTests.CertifyStreamingAssetsFolder();
                 ExportTests.SetupTests();
@@ -87,7 +91,7 @@ namespace GLTFast.Editor.Tests
                 case RenderPipeline.Unknown:
                 case RenderPipeline.Universal:
                 default:
-                    name = "urp.12";
+                    name = "urp";
                     break;
             }
 
@@ -131,6 +135,29 @@ namespace GLTFast.Editor.Tests
             }
 
             obj.ApplyModifiedProperties();
+        }
+
+        static void DisableRenderCompatibilityMode()
+        {
+#if USING_URP && UNITY_6000_3_OR_NEWER && URP_COMPATIBILITY_MODE
+            // TODO: When support for Unity 2022 is removed, set enableRenderCompatibilityMode to false
+            // (use render graphs) statically in the project's graphics settings and remove this code.
+            // Also remove the URP_COMPATIBILITY_MODE scripting define from all test projects,
+            // which was required for this crutch to work.
+            if (RenderPipelineUtils.RenderPipeline == RenderPipeline.Universal)
+            {
+                var s = GraphicsSettings.GetRenderPipelineSettings<RenderGraphSettings>();
+                if (s != null)
+                {
+                    s.enableRenderCompatibilityMode = false;
+                }
+                else
+                {
+                    Debug.LogError("Failed to get RenderGraphSettings from GraphicsSettings. " +
+                        "URP compatibility mode may not be disabled.");
+                }
+            }
+#endif
         }
 
         static void CopyExportTargetsToStreamingAssets()

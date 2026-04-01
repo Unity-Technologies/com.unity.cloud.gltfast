@@ -41,7 +41,6 @@ test_setups:
   - project_setup: all_defines
     project: glTFast-Test
     setup: all_defines
-    render_pipeline: URP-Forward
     utr_timeout: 1200
     editor_versions: [2022,6000.0,6000.3,trunk]
     platforms: [win]
@@ -63,8 +62,6 @@ test_setups:
         editor: 6000.0
   - project_setup: entities
     project: glTFast-Test-entities
-    setup: urp
-    render_pipeline: URP-ForwardPlus
     test_categories: "!Performance;!Export;!Graphics"
     utr_timeout: 1200
     editor_versions: [2022,6000.0,6000.3,trunk]
@@ -82,9 +79,7 @@ test_setups:
       - platform: win
         editor: 6000.0
   - project_setup: hdrp
-    project: glTFast-Test
-    setup: hdrp
-    render_pipeline: HDRP-Deferred
+    project: glTFast-Test-HDRP
     utr_timeout: 3600
     agent_xlarge_required: !!bool true
     gpu_required: !!bool true
@@ -93,6 +88,19 @@ test_setups:
     pr_test_subset:
       - platform: win
         editor: 6000.3
+    coverage_subset:
+      # default for coverage: windows + current LTS
+      - platform: win
+        editor: 6000.0
+  - project_setup: builtin
+    project: glTFast-Test-BuiltIn
+    utr_timeout: 1200
+    pr_test_subset:
+      - platform: win
+        editor: 6000.0
+    pr_build_subset:
+      - platform: win
+        editor: 6000.0
     coverage_subset:
       # default for coverage: windows + current LTS
       - platform: win

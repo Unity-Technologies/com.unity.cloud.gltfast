@@ -1,16 +1,42 @@
-name: Graphics Tests
-agent:
-  type: Unity::VM::GPU
-  image: package-ci/win10:v4
-  flavor: b1.large
-commands:
-  - gsudo choco install unity-downloader-cli -y -s https://artifactory.prd.it.unity3d.com/artifactory/api/nuget/unity-choco-local
-  - unity-downloader-cli -u 6000 -c Editor --wait --fast
-  - UnifiedTestRunner.exe  --editor-location=.Editor --suite=playmode --category=Graphic --testproject="./Projects/glTFast-Test" --artifacts_path=test-results
-triggers:
-  expression: |
-    pull_request.comment eq "gfx"
-artifacts:
-  logs:
-    paths:
-      -  test-results/**
+graphics_win:
+  name: Graphics Tests - Windows
+  agent:
+    type: Unity::VM::GPU
+    image: package-ci/win10:v4
+    flavor: b1.large
+  commands:
+    - gsudo choco install unity-downloader-cli -y -s https://artifactory.prd.it.unity3d.com/artifactory/api/nuget/unity-choco-local
+    - unity-downloader-cli -u 2022.3 -c Editor --wait --fast
+    - UnifiedTestRunner.exe  --editor-location=.Editor --suite=playmode --category=Graphic --testproject="./Projects/glTFast-Test" --artifacts_path=test-results
+  artifacts:
+    logs:
+      paths:
+        -  test-results/**
+
+graphics_mac:
+  name: Graphics Tests - macOS
+  agent:
+    type: Unity::VM::osx
+    image: package-ci/macos-13:v4
+    flavor: m1.mac
+  commands:
+    - command: unity-downloader-cli -u 2022.3 -c editor --path .Editor --fast
+      timeout: 10
+      retries: 3
+    - command: 'UnifiedTestRunner --testproject=./Projects/glTFast-Test --editor-location=.Editor --artifacts_path=test-results --suite=Playmode --category=Graphic'
+      timeout: 60
+      retries: 1
+  artifacts:
+    logs:
+      paths:
+        -  test-results/**
+
+
+graphics_all:
+  name: Graphics Tests - All
+  triggers:
+    expression: |
+      pull_request.comment eq "gfx"
+  dependencies:
+    - .yamato/graphics-tests.yml#graphics_mac
+    - .yamato/graphics-tests.yml#graphics_win
