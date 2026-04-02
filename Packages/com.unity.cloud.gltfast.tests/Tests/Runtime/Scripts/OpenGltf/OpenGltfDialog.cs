@@ -148,11 +148,14 @@ namespace GLTFast.Tests
 #if !UNITY_ENTITIES_GRAPHICS
                     m_SceneInstance = instantiator.SceneInstance;
 
-                    var sceneBounds = m_SceneInstance != null ? instantiator.CalculateBounds() : null;
+                    var sceneBounds = instantiator.CalculateBounds();
                     if (sceneBounds.HasValue)
                     {
                         BoundsUpdated?.Invoke(sceneBounds.Value);
                     }
+#if UNITY_ANIMATION
+                    m_SceneInstance?.LegacyAnimation?.Play();
+#endif
 #endif
                 }
                 else

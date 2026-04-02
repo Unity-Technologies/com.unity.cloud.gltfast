@@ -42,7 +42,7 @@ namespace GLTFast.Editor.Tests
 #if GLTFAST_EDITOR_IMPORT_OFF
             Assert.Ignore("glTF Editor import is disabled via GLTFAST_EDITOR_IMPORT_OFF scripting define.");
 #else
-            AssetsTests.AssertRequiredExtensions(testCase.requiredExtensions);
+            GltfTestCaseRunner.AssertRequiredExtensions(testCase.requiredExtensions);
             var directories = testCase.relativeUri.Split('/');
             Assert.NotNull(directories);
             Assert.GreaterOrEqual(directories.Length, 2);
@@ -78,7 +78,7 @@ namespace GLTFast.Editor.Tests
             var importer = (GltfImporter)AssetImporter.GetAtPath(destination);
             Assert.NotNull(importer, $"No glTF importer at {destination}");
 
-            AssetsTests.AssertLogItems(importer.reportItems, testCase);
+            GltfTestCaseRunner.AssertLogItems(importer.reportItems, testCase);
 #endif
             yield return null;
         }

@@ -20,6 +20,20 @@ namespace GLTFast.Tests.Import
     {
         const int k_MaxIterations = 100;
 
+        GltfTestCaseRunner m_Runner;
+
+        [OneTimeSetUp]
+        public void OneTimeSetup()
+        {
+            m_Runner = new GltfTestCaseRunner();
+        }
+
+        [OneTimeTearDown]
+        public void OneTimeTearDown()
+        {
+            m_Runner.Dispose();
+        }
+
         [GltfTestCase("glTF-Sample-Assets", 38, @"glTF(-JPG-PNG)?\/.*\.gltf$")]
         public IEnumerator CancelImport_SampleAssets(GltfTestCaseSet testCaseSet, GltfTestCase testCase)
         {
@@ -42,7 +56,7 @@ namespace GLTFast.Tests.Import
             {
                 using var cts = new CancellationTokenSource();
                 var action = SetCancellationAfterIteration(cts, i);
-                yield return AsyncWrapper.WaitForTask(AssetsTests.RunTestCase(testCaseSet, testCase, i == 0, cts.Token));
+                yield return AsyncWrapper.WaitForTask(m_Runner.Run(testCaseSet, testCase, i == 0, cts.Token));
                 // exit once we reach max iterations or when asset is successfully instantiated without any cancellation
                 if (!cts.IsCancellationRequested || i == maxIterations - 1)
                 {

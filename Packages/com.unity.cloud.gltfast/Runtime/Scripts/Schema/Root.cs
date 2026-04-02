@@ -85,7 +85,7 @@ namespace GLTFast.Schema
         /// <inheritdoc cref="Accessors"/>
         public TAccessor[] accessors;
 
-#if UNITY_ANIMATION
+#if UNITY_ANIMATION || GLTFAST_ANIMATION
         /// <inheritdoc cref="Animations"/>
         public TAnimation[] animations;
 #endif
@@ -132,7 +132,7 @@ namespace GLTFast.Schema
         /// <inheritdoc />
         public override IReadOnlyList<AccessorBase> Accessors => accessors;
 
-#if UNITY_ANIMATION
+#if UNITY_ANIMATION || GLTFAST_ANIMATION
         /// <inheritdoc />
         public override IReadOnlyList<AnimationBase> Animations => animations;
 #endif
@@ -205,7 +205,7 @@ namespace GLTFast.Schema
         /// </summary>
         public abstract IReadOnlyList<AccessorBase> Accessors { get; }
 
-#if UNITY_ANIMATION
+#if UNITY_ANIMATION || GLTFAST_ANIMATION
         /// <summary>
         /// An array of keyframe animations.
         /// </summary>
@@ -286,9 +286,9 @@ namespace GLTFast.Schema
         /// </summary>
         internal abstract void UnsetExtensions();
 
-#if UNITY_ANIMATION
+#if UNITY_ANIMATION || GLTFAST_ANIMATION
         public bool HasAnimation => Animations != null && Animations.Count > 0;
-#endif // UNITY_ANIMATION
+#endif // UNITY_ANIMATION || GLTFAST_ANIMATION
 
         /// <summary>
         /// Looks up if a certain accessor points to interleaved data.
@@ -337,7 +337,7 @@ namespace GLTFast.Schema
                 writer.AddArrayProperty("extensionsUsed", extensionsUsed);
             }
 
-#if UNITY_ANIMATION
+#if UNITY_ANIMATION || GLTFAST_ANIMATION
             if (Animations!=null) {
                 writer.AddArray("animations");
                 foreach( var animation in Animations) {

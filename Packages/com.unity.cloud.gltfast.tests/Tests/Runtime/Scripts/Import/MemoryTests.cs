@@ -34,12 +34,21 @@ namespace GLTFast.Tests.Import
 
         static Object s_TrackedObject;
 
+        GltfTestCaseRunner m_Runner;
+
         [OneTimeSetUp]
-        public void OneTimeSetUp()
+        public void OneTimeSetup()
         {
             // call GetDefaultMaterial here first to avoid it counting as an allocation in the first executed test
             var materialGenerator = MaterialGenerator.GetDefaultMaterialGenerator();
             _ = materialGenerator.GetDefaultMaterial();
+            m_Runner = new GltfTestCaseRunner();
+        }
+
+        [OneTimeTearDown]
+        public void OneTimeTearDown()
+        {
+            m_Runner.Dispose();
         }
 
         [UnityTest]
@@ -66,12 +75,12 @@ namespace GLTFast.Tests.Import
             yield return GetAllObjectsTestInternal(LoadFileInternal(testCaseSet, testCase), true);
         }
 
-        static IEnumerator LoadFileInternal(GltfTestCaseSet testCaseSet, GltfTestCase testCase)
+        IEnumerator LoadFileInternal(GltfTestCaseSet testCaseSet, GltfTestCase testCase)
         {
 #if UNITY_ANDROID && !UNITY_EDITOR
             Assert.Ignore("Cannot load from StreamingAssets file on Android, as they are in the compressed JAR file.");
 #endif
-            yield return AsyncWrapper.WaitForTask(AssetsTests.RunTestCase(testCaseSet, testCase));
+            yield return AsyncWrapper.WaitForTask(m_Runner.Run(testCaseSet, testCase));
             yield return null;
         }
 

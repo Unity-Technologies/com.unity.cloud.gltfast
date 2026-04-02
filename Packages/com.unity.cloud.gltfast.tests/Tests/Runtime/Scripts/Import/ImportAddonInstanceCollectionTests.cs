@@ -122,7 +122,9 @@ namespace GLTFast.Tests
 
                     Dictionary<int, int> overrides = null;
 
-                    m_TextureAddons.ForEachTryGet<ITextureImageLoader, TextureBase, int>(
+                    m_TextureAddons
+                        .SubCollection<ITextureImageLoader>()
+                        .ForEachTryGet<TextureBase, int>(
                         m_Textures,
                         OverridesImage,
                         (addon, textureIndex, imageIndex) =>

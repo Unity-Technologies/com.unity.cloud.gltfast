@@ -47,7 +47,7 @@ namespace GLTFast.Tests.Import
             var success = await gltf.Load(path);
             Assert.IsTrue(success);
 
-            AssetsTests.AssertLoggers(new[] { logger }, testCase);
+            GltfTestCaseRunner.AssertLoggers(new[] { logger }, testCase);
 
             Assert.AreEqual(2, gltf.Meshes.Count);
 

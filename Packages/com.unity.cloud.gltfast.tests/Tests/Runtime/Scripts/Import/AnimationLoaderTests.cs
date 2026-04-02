@@ -1,0 +1,227 @@
+// SPDX-FileCopyrightText: 2026 Unity Technologies and the glTFast authors
+// SPDX-License-Identifier: Apache-2.0
+
+using System.Collections;
+using System.Collections.Generic;
+using GLTFast.Addons;
+using GLTFast.Schema;
+using NUnit.Framework;
+using Unity.Collections;
+using Unity.Mathematics;
+using UnityEngine;
+
+namespace GLTFast.Tests.Import
+{
+    class AnimationLoaderTests
+    {
+        GltfTestCaseRunner m_Runner;
+
+        [OneTimeSetUp]
+        public void OneTimeSetup()
+        {
+            m_Runner = new GltfTestCaseRunner();
+        }
+
+        [OneTimeTearDown]
+        public void OneTimeTearDown()
+        {
+            m_Runner.Dispose();
+        }
+
+        [GltfTestCase("glTF-Sample-Assets", 1, "AnimatedTriangle.gltf$")]
+        public IEnumerator AnimationTest(GltfTestCaseSet testCaseSet, GltfTestCase testCase)
+        {
+#if UNITY_ANIMATION || GLTFAST_ANIMATION
+            yield return AsyncWrapper.WaitForTask(
+                m_Runner.Run(
+                    testCaseSet,
+                    testCase,
+                    preLoadCallback: gltf =>
+            {
+                var animation = new MyAnimationLoader();
+                animation.Inject(gltf);
+            })
+                );
+#else
+            Assert.Ignore("Animation is not available in current project setup.");
+            yield break;
+#endif
+        }
+    }
+
+    class MyAnimationLoader : ImportAddonInstance, IAnimationLoader, IPostJsonDeserialization
+    {
+        GltfImport m_Gltf;
+        MyAnimationClip[] m_Clips;
+
+        public void AddClip(int index, string name)
+        {
+            m_Clips[index] = new MyAnimationClip(name);
+        }
+
+        public void AddTranslationCurves(
+            int clipIndex,
+            int targetNode,
+            INodeHierarchyInfo nodeHierarchyInfo,
+            NativeArray<float>.ReadOnly times,
+            NativeArray<float3>.ReadOnly values,
+            InterpolationType interpolationType
+            )
+        {
+            m_Clips[clipIndex].AddTranslationCurve(
+                targetNode,
+                times,
+                values,
+                interpolationType
+                );
+        }
+
+        public void AddRotationCurves(
+            int clipIndex,
+            int targetNode,
+            INodeHierarchyInfo nodeHierarchyInfo,
+            NativeArray<float>.ReadOnly times,
+            NativeArray<quaternion>.ReadOnly values,
+            InterpolationType interpolationType
+            )
+        {
+            m_Clips[clipIndex].AddRotationCurve(
+                targetNode,
+                times,
+                values,
+                interpolationType
+                );
+        }
+
+        public void AddScaleCurves(
+            int clipIndex,
+            int targetNode,
+            INodeHierarchyInfo nodeHierarchyInfo,
+            NativeArray<float>.ReadOnly times,
+            NativeArray<float3>.ReadOnly values,
+            InterpolationType interpolationType)
+        {
+            m_Clips[clipIndex].AddScaleCurve(
+                targetNode,
+                times,
+                values,
+                interpolationType);
+        }
+
+        public void AddMorphTargetWeightCurves(
+            int clipIndex,
+            int targetNode,
+            int meshNumeration,
+            string meshName,
+            INodeHierarchyInfo nodeHierarchyInfo,
+            NativeArray<float>.ReadOnly times,
+            NativeArray<float>.ReadOnly values,
+            InterpolationType interpolationType, string[] morphTargetNames = null)
+        {
+            m_Clips[clipIndex].AddMorphTargetWeightCurve(targetNode, times, values, interpolationType);
+        }
+
+        public override bool SupportsGltfExtension(string extensionName) => false;
+
+        public override void Inject(GltfImportBase gltfImport)
+        {
+            gltfImport.AddImportAddonInstance(this);
+            m_Gltf = gltfImport as GltfImport;
+        }
+
+        public override void Inject(IInstantiator instantiator) { }
+
+        public override void Dispose() { }
+
+        public bool PostJsonDeserialization()
+        {
+#if UNITY_ANIMATION || GLTFAST_ANIMATION
+            var root = m_Gltf?.GetSourceRoot();
+            Assert.NotNull(root?.animations);
+            Assert.AreEqual(1, root.animations.Length);
+            m_Clips = new MyAnimationClip[root.animations.Length];
+#endif
+            return true;
+        }
+    }
+
+    readonly struct MyAnimationClip
+    {
+        string Name { get; }
+
+        List<MyCurve<float3>> TranslationCurves { get; }
+        List<MyCurve<quaternion>> RotationCurves { get; }
+        List<MyCurve<float3>> ScaleCurves { get; }
+        List<MyCurve<float>> MorphTargetWeightCurves { get; }
+
+        public MyAnimationClip(string name)
+        {
+            Name = name;
+            TranslationCurves = new List<MyCurve<float3>>();
+            RotationCurves = new List<MyCurve<quaternion>>();
+            ScaleCurves = new List<MyCurve<float3>>();
+            MorphTargetWeightCurves = new List<MyCurve<float>>();
+        }
+
+        public void AddTranslationCurve(
+            int targetNode,
+            NativeArray<float>.ReadOnly times,
+            NativeArray<float3>.ReadOnly values,
+            InterpolationType interpolationType
+            )
+        {
+            TranslationCurves.Add(new MyCurve<float3>(targetNode, times, values, interpolationType));
+        }
+
+        public void AddScaleCurve(
+            int targetNode,
+            NativeArray<float>.ReadOnly times,
+            NativeArray<float3>.ReadOnly values,
+            InterpolationType interpolationType
+            )
+        {
+            ScaleCurves.Add(new MyCurve<float3>(targetNode, times, values, interpolationType));
+        }
+
+        public void AddRotationCurve(
+            int targetNode,
+            NativeArray<float>.ReadOnly times,
+            NativeArray<quaternion>.ReadOnly values,
+            InterpolationType interpolationType
+            )
+        {
+            RotationCurves.Add(new MyCurve<quaternion>(targetNode, times, values, interpolationType));
+        }
+
+        public void AddMorphTargetWeightCurve(
+            int targetNode,
+            NativeArray<float>.ReadOnly times,
+            NativeArray<float>.ReadOnly values,
+            InterpolationType interpolationType
+            )
+        {
+            MorphTargetWeightCurves.Add(new MyCurve<float>(targetNode, times, values, interpolationType));
+        }
+    }
+
+    struct MyCurve<T> where T : struct
+    {
+        public int TargetNode { get; }
+        public NativeArray<float>.ReadOnly Times { get; }
+        public NativeArray<T>.ReadOnly Values { get; }
+        public InterpolationType InterpolationType { get; }
+
+        public MyCurve(
+            int targetNode,
+            NativeArray<float>.ReadOnly times,
+            NativeArray<T>.ReadOnly values,
+            InterpolationType interpolationType
+            )
+        {
+            TargetNode = targetNode;
+            Times = times;
+            Values = values;
+            InterpolationType = interpolationType;
+        }
+    }
+}

@@ -122,7 +122,7 @@ namespace GLTFast
     /// Loads a glTF's content, converts it to Unity resources and is able to
     /// feed it to an <see cref="IInstantiator"/> for instantiation.
     /// </summary>
-    public abstract class GltfImportBase : IGltfReadable, IGltfBuffers, IDisposable
+    public abstract class GltfImportBase : IGltfReadable, IGltfBuffers, IGltfAccessors, IDisposable
     {
         /// <summary>
         /// Default value for a C# Job's innerloopBatchCount parameter.
@@ -1650,7 +1650,9 @@ namespace GLTFast
                     return loader.IsAbleToLoad(texture, out imageIndex);
                 }
 
-                m_Addons?.ForEachTryGet<ITextureImageLoader, TextureBase, int>(
+                m_Addons
+                    ?.SubCollection<ITextureImageLoader>()
+                    ?.ForEachTryGet<TextureBase, int>(
                     Root.Textures,
                     OverridesImage,
                     (addon, textureIndex, imageIndex) =>
@@ -2395,7 +2397,7 @@ namespace GLTFast
                 success = await CreateAllMeshAssignments(cancellationToken);
             }
 
-#if UNITY_ANIMATION
+#if UNITY_ANIMATION || GLTFAST_ANIMATION
             if (Root.HasAnimation) {
                 if (m_Settings.NodeNameMethod != NameImportMethod.OriginalUnique) {
                     Logger?.Info(LogCode.NamingOverride);
@@ -2424,7 +2426,7 @@ namespace GLTFast
                 }
             }
 
-#if UNITY_ANIMATION
+#if UNITY_ANIMATION || GLTFAST_ANIMATION
             if (Root.HasAnimation && m_Settings.AnimationMethod != AnimationMethod.None)
             {
                 CreateAnimationClips(parentIndex);
@@ -2435,20 +2437,38 @@ namespace GLTFast
             return success;
         }
 
-#if UNITY_ANIMATION
+#if UNITY_ANIMATION || GLTFAST_ANIMATION
         void CreateAnimationClips(int[] parentIndex)
         {
-            m_AnimationClips = new AnimationClip[Root.Animations.Count];
+            var animationAddons = m_Addons?.SubCollection<IAnimationLoader>();
+            if (animationAddons == null)
+            {
+#if UNITY_ANIMATION
+                m_AnimationClips = new AnimationClip[Root.Animations.Count];
+#else
+                // Animation module disabled and no animation addon found, nothing to do here.
+                return;
+#endif
+            }
+
             for (var i = 0; i < Root.Animations.Count; i++) {
                 var animation = Root.Animations[i];
-                m_AnimationClips[i] = new AnimationClip
-                {
-                    name = animation.name ?? $"Clip_{i}",
+                var clipName = animation.name ?? $"Clip_{i}";
+#if UNITY_ANIMATION
+                if(m_AnimationClips != null) {
+                    m_AnimationClips[i] = new AnimationClip
+                    {
+                        name = clipName,
 
-                    // Legacy Animation requirement
-                    legacy = m_Settings.AnimationMethod == AnimationMethod.Legacy,
-                    wrapMode = WrapMode.Loop
-                };
+                        // Legacy Animation requirement
+                        legacy = m_Settings.AnimationMethod == AnimationMethod.Legacy,
+                        wrapMode = WrapMode.Loop
+                    };
+                }
+#endif
+
+                var clipIndex = i;
+                animationAddons?.ForEach(loader => loader.AddClip(clipIndex, clipName));
 
                 for (var j = 0; j < animation.Channels.Count; j++) {
                     var channel = animation.Channels[j];
@@ -2467,62 +2487,201 @@ namespace GLTFast
                         continue;
                     }
 
-                    var path = AnimationUtils.CreateAnimationPath(channel.Target.node,m_NodeNames,parentIndex);
-                    var times = (NativeArray<float>) m_AccessorData[sampler.input];
-                    var outputData = m_AccessorData[sampler.output];
+                    var targetNode = channel.Target.node;
+                    var nodeHierarchyInfo = new NodeHierarchyInfo(m_NodeNames, parentIndex);
+                    var times = GetAccessorData<float>(sampler.input);
+                    if (!times.IsCreated)
+                    {
+                        Logger?.Error(LogCode.AccessorAccessFailed, sampler.input.ToString());
+                        continue;
+                    }
                     var interpolationType = sampler.GetInterpolationType();
 
                     switch (channel.Target.GetPath()) {
                         case AnimationChannelBase.Path.Translation: {
-                            var values = CastOrCreateTypedBuffer<float3>(outputData, times.Length, interpolationType);
-                            AnimationUtils.AddTranslationCurves(m_AnimationClips[i], path, times, values, interpolationType);
+                            var values = GetAccessorData<float3>(sampler.output);
+                            if (!values.IsCreated)
+                            {
+                                Logger?.Error(LogCode.AccessorAccessFailed, sampler.output.ToString());
+                                continue;
+                            }
+                            if (animationAddons != null)
+                            {
+                                animationAddons.ForEach(loader => loader.AddTranslationCurves(
+                                    clipIndex,
+                                    targetNode,
+                                    nodeHierarchyInfo,
+                                    times,
+                                    values,
+                                    interpolationType
+                                ));
+                            }
+#if UNITY_ANIMATION
+                            else
+                            {
+                                AnimationModuleUtils.AddTranslationCurves(
+                                    m_AnimationClips[i],
+                                    targetNode,
+                                    null,
+                                    nodeHierarchyInfo,
+                                    times,
+                                    values,
+                                    interpolationType
+                                );
+                            }
+#endif // UNITY_ANIMATION
                             break;
                         }
-                        case AnimationChannelBase.Path.Rotation: {
-                            var values = CastOrCreateTypedBuffer<quaternion>(outputData, times.Length, interpolationType);
-                            AnimationUtils.AddRotationCurves(m_AnimationClips[i], path, times, values, interpolationType);
+                        case AnimationChannelBase.Path.Rotation:
+                        {
+                            var values = GetAccessorData<quaternion>(sampler.output);
+                            if (!values.IsCreated)
+                            {
+                                Logger?.Error(LogCode.AccessorAccessFailed, sampler.output.ToString());
+                                continue;
+                            }
+                            if (animationAddons != null)
+                            {
+                                animationAddons?.ForEach(loader => loader.AddRotationCurves(
+                                    clipIndex,
+                                    targetNode,
+                                    nodeHierarchyInfo,
+                                    times,
+                                    values,
+                                    interpolationType
+                                ));
+                            }
+#if UNITY_ANIMATION
+                            else
+                            {
+                                AnimationModuleUtils.AddRotationCurves(
+                                    m_AnimationClips[i],
+                                    targetNode,
+                                    null,
+                                    nodeHierarchyInfo,
+                                    times,
+                                    values,
+                                    interpolationType
+                                );
+                            }
+#endif // UNITY_ANIMATION
                             break;
                         }
                         case AnimationChannelBase.Path.Scale: {
-                            var values = CastOrCreateTypedBuffer<float3>(outputData, times.Length, interpolationType);
-                            AnimationUtils.AddScaleCurves(m_AnimationClips[i], path, times, values, interpolationType);
+                            var values = GetAccessorData<float3>(sampler.output);
+                            if (!values.IsCreated)
+                            {
+                                Logger?.Error(LogCode.AccessorAccessFailed, sampler.output.ToString());
+                                continue;
+                            }
+                            if (animationAddons != null)
+                            {
+                                animationAddons?.ForEach(loader => loader.AddScaleCurves(
+                                    clipIndex,
+                                    targetNode,
+                                    nodeHierarchyInfo,
+                                    times,
+                                    values,
+                                    interpolationType
+                                ));
+                            }
+#if UNITY_ANIMATION
+                            else
+                            {
+                                AnimationModuleUtils.AddScaleCurves(
+                                    m_AnimationClips[i],
+                                    targetNode,
+                                    null,
+                                    nodeHierarchyInfo,
+                                    times,
+                                    values,
+                                    interpolationType
+                                    );
+                            }
+#endif // UNITY_ANIMATION
                             break;
                         }
                         case AnimationChannelBase.Path.Weights: {
-                            var values = CastOrCreateTypedBuffer<float>(outputData, times.Length, interpolationType);
                             var node = Root.Nodes[channel.Target.node];
                             if (node.mesh < 0 || node.mesh >= Root.Meshes.Count) {
                                 break;
                             }
                             var mesh = Root.Meshes[node.mesh];
-                            AnimationUtils.AddMorphTargetWeightCurves(
-                                m_AnimationClips[i],
-                                path,
-                                times,
-                                values,
-                                interpolationType,
-                                mesh.Extras?.targetNames
-                            );
-
-                            // HACK BEGIN:
-                            // Since meshes with multiple primitives that are not using
-                            // identical vertex buffers are split up into separate Unity
-                            // Meshes. Because of this, we have to duplicate the animation
-                            // curves, so that all primitives are animated.
-                            // TODO: Refactor primitive sub-meshing and remove this hack
-                            // https://github.com/atteneder/glTFast/issues/153
-                            var meshName = string.IsNullOrEmpty(mesh.name) ? k_PrimitiveName : mesh.name;
-                            var meshCount = m_MeshAssignments.GetLength(node.mesh);
-                            for (var k = 1; k < meshCount; k++) {
-                                var primitiveName = $"{meshName}_{k}";
-                                AnimationUtils.AddMorphTargetWeightCurves(
+                            var values = GetAccessorData<float>(sampler.output);
+                            if (!values.IsCreated)
+                            {
+                                Logger?.Error(LogCode.AccessorAccessFailed, sampler.output.ToString());
+                                continue;
+                            }
+                            if (animationAddons != null)
+                            {
+                                animationAddons?.ForEach(loader => loader.AddMorphTargetWeightCurves(
+                                    clipIndex,
+                                    targetNode,
+                                    0,
+                                    null,
+                                    nodeHierarchyInfo,
+                                    times,
+                                    values,
+                                    interpolationType,
+                                    mesh.Extras?.targetNames
+                                ));
+                            }
+#if UNITY_ANIMATION
+                            else
+                            {
+                                AnimationModuleUtils.AddMorphTargetWeightCurves(
                                     m_AnimationClips[i],
-                                    $"{path}/{primitiveName}",
+                                    targetNode,
+                                    null,
+                                    nodeHierarchyInfo,
                                     times,
                                     values,
                                     interpolationType,
                                     mesh.Extras?.targetNames
                                 );
+                            }
+#endif // UNITY_ANIMATION
+
+                            // HACK BEGIN:
+                            // Meshes with multiple primitives that are not using identical vertex buffer layouts
+                            // are split up into separate Unity Meshes. Because of this, we have to duplicate the
+                            // animation curves, so that all primitives are animated.
+                            // TODO: Refactor primitive sub-meshing and remove this hack
+                            // https://github.com/atteneder/glTFast/issues/153
+                            var meshPrefix = string.IsNullOrEmpty(mesh.name) ? k_PrimitiveName : mesh.name;
+                            var meshCount = m_MeshAssignments.GetLength(node.mesh);
+                            for (var meshNumeration = 1; meshNumeration < meshCount; meshNumeration++) {
+                                var meshName = $"{meshPrefix}_{meshNumeration}";
+                                if (animationAddons != null)
+                                {
+                                    animationAddons?.ForEach(loader => loader.AddMorphTargetWeightCurves(
+                                        clipIndex,
+                                        targetNode,
+                                        meshNumeration,
+                                        meshName,
+                                        nodeHierarchyInfo,
+                                        times,
+                                        values,
+                                        interpolationType,
+                                        mesh.Extras?.targetNames
+                                    ));
+                                }
+#if UNITY_ANIMATION
+                                else
+                                {
+                                    AnimationModuleUtils.AddMorphTargetWeightCurves(
+                                        m_AnimationClips[i],
+                                        targetNode,
+                                        meshName,
+                                        nodeHierarchyInfo,
+                                        times,
+                                        values,
+                                        interpolationType,
+                                        mesh.Extras?.targetNames
+                                    );
+                                }
+#endif // UNITY_ANIMATION
                             }
                             // HACK END
                             break;
@@ -2538,28 +2697,6 @@ namespace GLTFast
                     }
                 }
             }
-        }
-
-        /// <summary>
-        /// Casts <paramref name="input"/> to the given type, or if unavailable allocates a temp buffer filled with 0-value data.
-        /// </summary>
-        /// <param name="input">Will be filled with 0-value data if unavailable.</param>
-        /// <param name="expectedLength">The expected length of the temp buffer.</param>
-        /// <param name="interpolationType">The <see cref="InterpolationType"/> of the expected data which might change
-        /// the resulting length of the output if the input was unavailable.</param>
-        /// <typeparam name="T">The expected type of the buffer.</typeparam>
-        /// <returns>A <see cref="NativeArray{T}"/>.</returns>
-        static NativeArray<T> CastOrCreateTypedBuffer<T>(IDisposable input, int expectedLength, InterpolationType interpolationType) where T : unmanaged
-        {
-            if (input is null)
-            {
-                // InterpolationType.CubicSpline has 3 values per key (in-tangent, out-tangent and value).
-                var unknownOutputLength = expectedLength * (interpolationType == InterpolationType.CubicSpline ? 3 : 1);
-                return new NativeArray<T>(unknownOutputLength, Allocator.Temp);
-            }
-
-            Assert.IsTrue(input is NativeArray<T>);
-            return (NativeArray<T>)input;
         }
 
 #endif // UNITY_ANIMATION
@@ -3074,7 +3211,10 @@ namespace GLTFast
 
             instantiator.BeginScene(scene.name, scene.nodes);
 #if UNITY_ANIMATION
-            instantiator.AddAnimation(m_AnimationClips);
+            if (m_AnimationClips != null)
+            {
+                instantiator.AddAnimation(m_AnimationClips);
+            }
 #endif
 
             if (scene.nodes != null)
@@ -3987,5 +4127,19 @@ namespace GLTFast
             s_MeshComparer = new ();
         }
 #endif // UNITY_EDITOR
+
+
+        /// <inheritdoc/>
+        public NativeArray<T>.ReadOnly GetAccessorData<T>(int accessorIndex) where T : unmanaged
+        {
+            if (accessorIndex < 0 || Root?.Accessors == null || accessorIndex >= Root.Accessors.Count)
+            {
+                return default;
+            }
+            var data = m_AccessorData[accessorIndex] is NativeArray<T>
+                ? (NativeArray<T>)m_AccessorData[accessorIndex]
+                : default;
+            return data.AsReadOnly();
+        }
     }
 }

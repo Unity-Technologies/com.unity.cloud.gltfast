@@ -7,8 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- (Add-Ons) [IAnimationLoader](xref:GLTFast.IAnimationLoader) for importing glTF animations to custom animation systems.
+- [IGltfAccessors](xref:GLTFast.IGltfAccessors) provides read-only access to typed glTF accessor data.
+- [INodeHierarchyInfo](xref:GLTFast.INodeHierarchyInfo) provides glTF node hierarchy information.
 
 ### Changed
+- GameObjectSceneInstance's [AddCamera](xref:GLTFast.GameObjectSceneInstance.AddCamera), [AddLight](xref:GLTFast.GameObjectSceneInstance.AddLight) and [SetLegacyAnimation](xref:GLTFast.GameObjectSceneInstance.SetLegacyAnimation) are now public, so custom [IInstantiators](xref:GLTFast.IInstantiator) can utilize it.
+- Refactored [ImportAddonInstanceCollection](xref:GLTFast.Addons.ImportAddonInstanceCollection) to derive directly from `List`/[QueryableList](xref:GLTFast.Addons.QueryableList).
 
 ### Fixed
 
