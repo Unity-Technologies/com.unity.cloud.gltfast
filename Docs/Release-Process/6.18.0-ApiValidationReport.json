@@ -50,8 +50,6 @@
         {
             "assemblyName": "glTFast",
             "additions": [
-                "MemberAdded ( -> GLTFast.Extension GLTFast.Extension::TextureWebP)",
-                "MemberAdded ( -> System.String GLTFast.ExtensionName::TextureWebP)",
                 "MemberAdded ( -> System.Void GLTFast.GameObjectInstantiator::AddAnimation(UnityEngine.AnimationClip[]))",
                 "MemberAdded ( -> UnityEngine.Animation GLTFast.GameObjectSceneInstance::LegacyAnimation())",
                 "MemberAdded ( -> System.Nullable`1<UnityEngine.Playables.Playable> GLTFast.GameObjectSceneInstance::Playable())",
@@ -62,13 +60,6 @@
                 "MemberAdded ( -> TAnimation[] GLTFast.Schema.RootBase`15::animations)",
                 "MemberAdded ( -> System.Collections.Generic.IReadOnlyList`1<GLTFast.Schema.AnimationBase> GLTFast.Schema.RootBase::Animations())",
                 "MemberAdded ( -> System.Boolean GLTFast.Schema.RootBase::HasAnimation())",
-                "MemberAdded ( -> GLTFast.Logging.LogCode GLTFast.Logging.LogCode::ImageFormatUnsupported)",
-                "MemberAdded ( -> GLTFast.Logging.LogCode GLTFast.Logging.LogCode::VertexCountInvalid)",
-                "TypeAddedChange ( -> GLTFast.IDefaultImageFormatLoader)",
-                "TypeAddedChange ( -> GLTFast.ImageFormat)",
-                "TypeAddedChange ( -> GLTFast.ImageFormatDetection)",
-                "TypeAddedChange ( -> GLTFast.ImageResult)",
-                "TypeAddedChange ( -> GLTFast.ITextureImageLoader)",
                 "TypeAddedChange ( -> GLTFast.Schema.AnimationChannel)",
                 "TypeAddedChange ( -> GLTFast.Schema.AnimationChannelBase`1)",
                 "TypeAddedChange ( -> GLTFast.Schema.AnimationChannelBase)",
@@ -78,7 +69,8 @@
                 "TypeAddedChange ( -> GLTFast.Schema.AnimationBase`2)",
                 "TypeAddedChange ( -> GLTFast.Schema.InterpolationType)",
                 "TypeAddedChange ( -> GLTFast.Loading.CustomHeaderTextureDownload)",
-                "TypeAddedChange ( -> GLTFast.Loading.AwaitableTextureDownload)"
+                "TypeAddedChange ( -> GLTFast.Loading.AwaitableTextureDownload)",
+                "TypeAddedChange ( -> GLTFast.Addons.IPostJsonDeserialization)"
             ],
             "breakingChanges": [
                 "TypeHierarchyChanged (GLTFast.Schema.Animation -> GLTFast.Schema.Animation)",
@@ -87,6 +79,6 @@
         }
     ],
     "breakingChanges": 2,
-    "additions": 68,
+    "additions": 60,
     "removedAssemblyCount": 0
 }
