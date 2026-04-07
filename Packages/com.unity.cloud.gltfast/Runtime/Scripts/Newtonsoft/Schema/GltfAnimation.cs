@@ -12,7 +12,7 @@ using UnityEngine.Scripting;
 
 namespace GLTFast.Newtonsoft.Schema
 {
-    public class Animation : AnimationBase<AnimationChannel,AnimationSampler>, IJsonObject
+    public class Animation : AnimationBase<AnimationChannel, AnimationSampler>, IJsonObject
     {
         public UnclassifiedData extras;
         public UnclassifiedData extensions;
@@ -21,7 +21,7 @@ namespace GLTFast.Newtonsoft.Schema
         IDictionary<string, JToken> m_JsonExtensionData;
 
         [Preserve]
-        public Animation() {}
+        public Animation() { }
 
         public bool TryGetValue<T>(string key, out T value)
         {

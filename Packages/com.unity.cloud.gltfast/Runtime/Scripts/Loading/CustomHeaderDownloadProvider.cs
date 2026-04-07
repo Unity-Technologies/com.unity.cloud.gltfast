@@ -73,7 +73,7 @@ namespace GLTFast.Loading
         {
 #pragma warning restore CS1998
 #if UNITY_WEBREQUEST_TEXTURE
-            var req = new CustomHeaderTextureDownload(url,nonReadable,RegisterHttpHeaders);
+            var req = new CustomHeaderTextureDownload(url, nonReadable, RegisterHttpHeaders);
             await req.WaitAsync();
             return req;
 #else
@@ -116,7 +116,8 @@ namespace GLTFast.Loading
     /// <summary>
     /// Texture download that allows modifying the HTTP request before it's sent
     /// </summary>
-    public class CustomHeaderTextureDownload : AwaitableTextureDownload {
+    public class CustomHeaderTextureDownload : AwaitableTextureDownload
+    {
 
         /// <summary>
         /// Constructs an <see cref="ITextureDownload"/> with a modifier
@@ -124,8 +125,9 @@ namespace GLTFast.Loading
         /// <param name="url">URI to request</param>
         /// <param name="nonReadable">If true, resulting texture is not readable (uses less memory)</param>
         /// <param name="editor">Callback that modifies the UnityWebRequest before it's sent</param>
-        public CustomHeaderTextureDownload(Uri url, bool nonReadable, Action<UnityWebRequest> editor) {
-            m_Request = CreateRequest(url,nonReadable);
+        public CustomHeaderTextureDownload(Uri url, bool nonReadable, Action<UnityWebRequest> editor)
+        {
+            m_Request = CreateRequest(url, nonReadable);
             editor(m_Request);
             m_AsyncOperation = m_Request.SendWebRequest();
         }

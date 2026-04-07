@@ -53,11 +53,11 @@ namespace GLTFast.Tests
 
             if (!File.Exists(FlatHierarchyPath))
                 await CreateGltfFlatHierarchy(FlatHierarchyPath, 10_000, GltfFormat.Json);
-            if(!File.Exists(FlatHierarchyBinaryPath))
+            if (!File.Exists(FlatHierarchyBinaryPath))
                 await CreateGltfFlatHierarchy(FlatHierarchyBinaryPath, 10_000, GltfFormat.Binary);
-            if(!File.Exists(BigCylinderPath))
+            if (!File.Exists(BigCylinderPath))
                 await CreateGltfBigCylinderMesh(BigCylinderPath, 1_000_000, GltfFormat.Json);
-            if(!File.Exists(BigCylinderBinaryPath))
+            if (!File.Exists(BigCylinderBinaryPath))
                 await CreateGltfBigCylinderMesh(BigCylinderBinaryPath, 1_000_000, GltfFormat.Binary);
             AssetDatabase.Refresh();
         }

@@ -3,12 +3,12 @@
 
 using System;
 using GLTFast.Vertex;
-using UnityEngine;
+using Unity.Burst;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
-using Unity.Burst;
 using Unity.Jobs;
 using Unity.Mathematics;
+using UnityEngine;
 using static Unity.Mathematics.math;
 
 namespace GLTFast.Jobs

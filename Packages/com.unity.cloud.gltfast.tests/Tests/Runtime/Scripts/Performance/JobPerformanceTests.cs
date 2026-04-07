@@ -4,8 +4,8 @@
 using System;
 using GLTFast.Schema;
 using NUnit.Framework;
-using Unity.Collections.LowLevel.Unsafe;
 using Unity.Collections;
+using Unity.Collections.LowLevel.Unsafe;
 using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.PerformanceTesting;

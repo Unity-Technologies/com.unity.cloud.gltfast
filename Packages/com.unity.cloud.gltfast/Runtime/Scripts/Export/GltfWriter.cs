@@ -398,12 +398,16 @@ namespace GLTFast.Export
 #if UNITY_IMAGECONVERSION
             CertifyNotDisposed();
             int imageId;
-            if (m_ImageExports != null) {
+            if (m_ImageExports != null)
+            {
                 imageId = m_ImageExports.IndexOf(imageExport);
-                if (imageId >= 0) {
+                if (imageId >= 0)
+                {
                     return imageId;
                 }
-            } else {
+            }
+            else
+            {
                 m_ImageExports = new List<ImageExportBase>();
                 m_Images = new List<Image>();
             }
@@ -413,7 +417,8 @@ namespace GLTFast.Export
             // TODO: Create sampler, if required
             // TODO: KTX encoding
 
-            var image = new Image {
+            var image = new Image
+            {
                 name = imageExport.FileName,
                 mimeType = imageExport.MimeType
             };
@@ -436,13 +441,15 @@ namespace GLTFast.Export
             CertifyNotDisposed();
             m_Textures = m_Textures ?? new List<Texture>();
 
-            var texture = new Texture {
+            var texture = new Texture
+            {
                 source = imageId,
                 sampler = samplerId
             };
 
             var index = m_Textures.FindIndex(i => TextureComparer.Equals(i, texture));
-            if (index >= 0) {
+            if (index >= 0)
+            {
                 return index;
             }
 
@@ -552,7 +559,8 @@ namespace GLTFast.Export
         {
 
 #if DEBUG
-            if (m_State != State.ContentAdded) {
+            if (m_State != State.ContentAdded)
+            {
                 Debug.LogWarning("Exporting empty glTF");
             }
 #endif
@@ -736,7 +744,8 @@ namespace GLTFast.Export
 #if DEBUG
             var sb = new StringBuilder("glTF summary: ");
             sb.AppendFormat("{0} bytes JSON + {1} bytes buffer", jsonLength, bufferLength);
-            if (m_Gltf != null) {
+            if (m_Gltf != null)
+            {
                 sb.AppendFormat(", {0} nodes", m_Gltf.Nodes?.Count ?? 0);
                 sb.AppendFormat(" ,{0} meshes", m_Gltf.meshes?.Length ?? 0);
                 sb.AppendFormat(" ,{0} materials", m_Gltf.Materials?.Count ?? 0);
@@ -1196,8 +1205,7 @@ namespace GLTFast.Export
                 {
                     topology = subMeshTopology;
                 }
-                else
-                if (topology.Value != subMeshTopology)
+                else if (topology.Value != subMeshTopology)
                 {
                     m_Logger?.Error(LogCode.TopologyUnsupported, "mixed");
                     return;
@@ -1610,25 +1618,27 @@ namespace GLTFast.Export
 
             var results = await DracoEncoder.EncodeMesh(
                 unityMesh,
-                (QuantizationSettings) m_Settings.DracoSettings,
-                (SpeedSettings) m_Settings.DracoSettings
+                (QuantizationSettings)m_Settings.DracoSettings,
+                (SpeedSettings)m_Settings.DracoSettings
             );
 
             if (results == null) return;
 
             mesh.primitives = new MeshPrimitive[results.Length];
-            for (var submesh = 0; submesh < results.Length; submesh++) {
+            for (var submesh = 0; submesh < results.Length; submesh++)
+            {
                 var encodeResult = results[submesh];
                 var bufferViewId = WriteBufferViewToBuffer(encodeResult.data, BufferViewTarget.None);
 
                 var attributes = new Attributes();
                 var dracoAttributes = new Attributes();
 
-                foreach ( var vertexAttributeTuple in encodeResult.vertexAttributes)
+                foreach (var vertexAttributeTuple in encodeResult.vertexAttributes)
                 {
                     var vertexAttribute = vertexAttributeTuple.Key;
                     var attribute = vertexAttributeTuple.Value;
-                    var accessor = new Accessor {
+                    var accessor = new Accessor
+                    {
                         componentType = vertexAttribute == VertexAttribute.BlendIndices
                             ? GltfComponentType.UnsignedShort
                             : GltfComponentType.Float,
@@ -1676,9 +1686,12 @@ namespace GLTFast.Export
 
                 var indicesId = AddAccessor(indexAccessor);
 
-                mesh.primitives[submesh] = new MeshPrimitive {
-                    extensions = new MeshPrimitiveExtensions {
-                        KHR_draco_mesh_compression = new MeshPrimitiveDracoExtension {
+                mesh.primitives[submesh] = new MeshPrimitive
+                {
+                    extensions = new MeshPrimitiveExtensions
+                    {
+                        KHR_draco_mesh_compression = new MeshPrimitiveDracoExtension
+                        {
                             bufferView = bufferViewId,
                             attributes = dracoAttributes
                         }
@@ -1828,7 +1841,8 @@ namespace GLTFast.Export
                             "Image file conflicts",
                             "Some image files at the destination will be overwritten",
                             "Overwrite", "Cancel");
-                        if (!overwrite) {
+                        if (!overwrite)
+                        {
                             return false;
                         }
 #else

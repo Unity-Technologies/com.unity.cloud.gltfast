@@ -15,8 +15,10 @@ using KtxUnity;
 using Unity.Collections;
 using UnityEngine;
 
-namespace GLTFast {
-    static class KtxImageLoader {
+namespace GLTFast
+{
+    static class KtxImageLoader
+    {
 
         public static async Task<ImageResult> LoadAsync(
             ImportContext context,
@@ -29,7 +31,8 @@ namespace GLTFast {
         {
             var ktx = new KtxTexture();
             var errorCode = ktx.Open(data);
-            if (errorCode != ErrorCode.Success) {
+            if (errorCode != ErrorCode.Success)
+            {
                 context.Logger?.Error(LogCode.EmbedImageLoadFailed);
                 ktx.Dispose();
                 return default;

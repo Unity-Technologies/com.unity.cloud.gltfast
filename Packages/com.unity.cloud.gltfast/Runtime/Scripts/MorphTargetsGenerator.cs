@@ -3,6 +3,7 @@
 
 using System;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using GLTFast.Schema;
 using Unity.Collections;
 using Unity.Jobs;
@@ -10,7 +11,6 @@ using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Profiling;
 using Mesh = UnityEngine.Mesh;
-using System.Threading.Tasks;
 
 namespace GLTFast
 {

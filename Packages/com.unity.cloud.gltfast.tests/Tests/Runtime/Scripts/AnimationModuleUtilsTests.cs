@@ -185,7 +185,7 @@ namespace GLTFast.Tests
         {
             var go = new GameObject("Target");
             var smr = go.AddComponent<SkinnedMeshRenderer>();
-            var mesh = new Mesh{ name = "AnimationModuleUtilsTestMesh" };
+            var mesh = new Mesh { name = "AnimationModuleUtilsTestMesh" };
             var vertices = new[] { Vector3.zero, Vector3.right, Vector3.up };
             mesh.vertices = vertices;
             mesh.triangles = new[] { 0, 1, 2 };

@@ -9,8 +9,8 @@ using GLTFast.Logging;
 namespace GLTFast.Documentation.Examples
 {
 
-    using GLTFast;
     using System;
+    using GLTFast;
     using UnityEngine;
 
     class LoadGltfFromMemory : MonoBehaviour

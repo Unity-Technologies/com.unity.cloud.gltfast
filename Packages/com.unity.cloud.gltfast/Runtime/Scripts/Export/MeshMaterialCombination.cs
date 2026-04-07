@@ -61,8 +61,10 @@ namespace GLTFast.Export
 #if NET_STANDARD
             var hash = new HashCode();
             hash.Add(m_MeshId);
-            if (m_MaterialIds != null) {
-                foreach (var id in m_MaterialIds) {
+            if (m_MaterialIds != null)
+            {
+                foreach (var id in m_MaterialIds)
+                {
                     hash.Add(id);
                 }
             }

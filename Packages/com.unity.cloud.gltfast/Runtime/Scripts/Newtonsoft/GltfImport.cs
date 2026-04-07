@@ -25,7 +25,7 @@ namespace GLTFast.Newtonsoft
             IDeferAgent deferAgent = null,
             IMaterialGenerator materialGenerator = null,
             ICodeLogger logger = null
-        ) : base(downloadProvider,deferAgent,materialGenerator, logger) { }
+        ) : base(downloadProvider, deferAgent, materialGenerator, logger) { }
 
         protected override RootBase ParseJson(string json)
         {

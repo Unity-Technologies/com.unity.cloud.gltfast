@@ -31,7 +31,8 @@ namespace GLTFast.Schema
 
         InterpolationType m_Interpolation;
 
-        public InterpolationType GetInterpolationType() {
+        public InterpolationType GetInterpolationType()
+        {
             if (m_Interpolation != InterpolationType.Unknown)
             {
                 return m_Interpolation;

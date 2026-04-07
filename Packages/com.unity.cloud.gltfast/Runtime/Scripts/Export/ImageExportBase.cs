@@ -82,9 +82,12 @@ namespace GLTFast.Export
             Texture2D exportTexture;
             var tmpTexture = false;
 
-            if (texture.isReadable && blitMaterial==null) {
+            if (texture.isReadable && blitMaterial == null)
+            {
                 exportTexture = texture;
-            } else {
+            }
+            else
+            {
                 var destRenderTexture = RenderTexture.GetTemporary(
                     texture.width,
                     texture.height,
@@ -94,9 +97,12 @@ namespace GLTFast.Export
                     1,
                     RenderTextureMemoryless.Depth
                 );
-                if (blitMaterial == null) {
+                if (blitMaterial == null)
+                {
                     Graphics.Blit(texture, destRenderTexture);
-                } else {
+                }
+                else
+                {
                     Graphics.Blit(texture, destRenderTexture, blitMaterial);
                 }
                 exportTexture = new Texture2D(
@@ -106,7 +112,7 @@ namespace GLTFast.Export
                     !hasAlpha && SystemInfo.IsFormatSupported(GraphicsFormat.R8G8B8_UNorm, GraphicsFormatUsage.Sample) ?  GraphicsFormat.R8G8B8_UNorm : GraphicsFormat.R8G8B8A8_UNorm,
                     TextureCreationFlags.DontInitializePixels | TextureCreationFlags.DontUploadUponCreate
 #else
-                    !hasAlpha && SystemInfo.IsFormatSupported(GraphicsFormat.R8G8B8_UNorm, FormatUsage.Sample) ?  GraphicsFormat.R8G8B8_UNorm : GraphicsFormat.R8G8B8A8_UNorm,
+                    !hasAlpha && SystemInfo.IsFormatSupported(GraphicsFormat.R8G8B8_UNorm, FormatUsage.Sample) ? GraphicsFormat.R8G8B8_UNorm : GraphicsFormat.R8G8B8A8_UNorm,
                     TextureCreationFlags.DontInitializePixels | TextureCreationFlags.DontUploadUponCreate
 #endif
                 );
@@ -120,7 +126,8 @@ namespace GLTFast.Export
                 ? exportTexture.EncodeToPNG()
                 : exportTexture.EncodeToJPG(jpgQuality);
 
-            if (tmpTexture) {
+            if (tmpTexture)
+            {
                 // Release temporary texture
 #if UNITY_EDITOR
                 Object.DestroyImmediate(exportTexture);

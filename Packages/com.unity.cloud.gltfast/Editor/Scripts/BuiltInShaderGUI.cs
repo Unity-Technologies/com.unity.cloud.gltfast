@@ -4,8 +4,8 @@
 using Unity.Mathematics;
 using UnityEditor;
 using UnityEngine;
-using static GLTFast.Materials.MaterialGenerator;
 using static GLTFast.Materials.BuiltInMaterialGenerator;
+using static GLTFast.Materials.MaterialGenerator;
 
 namespace GLTFast.Editor
 {

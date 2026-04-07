@@ -216,15 +216,19 @@ namespace GLTFast.Editor
 
 #if UNITY_ANIMATION
                 var clips = m_Gltf.GetAnimationClips();
-                if (clips != null) {
-                    foreach (var animationClip in clips) {
-                        if (animationClip == null) {
+                if (clips != null)
+                {
+                    foreach (var animationClip in clips)
+                    {
+                        if (animationClip == null)
+                        {
                             continue;
                         }
-                        if (importSettings.AnimationMethod == AnimationMethod.Mecanim) {
+                        if (importSettings.AnimationMethod == AnimationMethod.Mecanim)
+                        {
                             var settings = AnimationUtility.GetAnimationClipSettings(animationClip);
                             settings.loopTime = true;
-                            AnimationUtility.SetAnimationClipSettings (animationClip, settings);
+                            AnimationUtility.SetAnimationClipSettings(animationClip, settings);
                         }
                         AddObjectToAsset(ctx, $"animations/{animationClip.name}", animationClip);
                     }
@@ -332,9 +336,11 @@ namespace GLTFast.Editor
             var hasAnimation = false;
 #if UNITY_ANIMATION
             if (importSettings.AnimationMethod != AnimationMethod.None
-                && (instantiationSettings.Mask & ComponentType.Animation) != 0) {
+                && (instantiationSettings.Mask & ComponentType.Animation) != 0)
+            {
                 var animationClips = m_Gltf.GetAnimationClips();
-                if (animationClips != null && animationClips.Length > 0) {
+                if (animationClips != null && animationClips.Length > 0)
+                {
                     hasAnimation = true;
                 }
             }

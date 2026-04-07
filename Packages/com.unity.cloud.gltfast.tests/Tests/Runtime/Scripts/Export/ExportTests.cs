@@ -138,7 +138,7 @@ namespace GLTFast.Tests.Export
                 }
             }
 
-            Array.Resize(ref scenes, scenes.Length+1);
+            Array.Resize(ref scenes, scenes.Length + 1);
             scenes[scenes.Length - 1] = new EditorBuildSettingsScene(sceneGuid, true);
             EditorBuildSettings.scenes = scenes;
         }
@@ -148,8 +148,8 @@ namespace GLTFast.Tests.Export
             var names = GetRootObjectNamesFromScene(sceneName);
             var assetPath = GetObjectListAssetPath(sceneName);
             var streamingAssetsPath = Path.Combine(Application.streamingAssetsPath, $"{sceneName}.txt");
-            File.WriteAllLines(assetPath,names);
-            File.WriteAllLines(streamingAssetsPath,names);
+            File.WriteAllLines(assetPath, names);
+            File.WriteAllLines(streamingAssetsPath, names);
         }
 
         static void CopyObjectListToStreamingAssets(string sceneName)
@@ -159,11 +159,11 @@ namespace GLTFast.Tests.Export
             var streamingAssetsPath = Path.Combine(Application.streamingAssetsPath, $"{sceneName}.txt");
             if (File.Exists(streamingAssetsPath))
             {
-                FileUtil.ReplaceFile(assetPath,streamingAssetsPath);
+                FileUtil.ReplaceFile(assetPath, streamingAssetsPath);
             }
             else
             {
-                FileUtil.CopyFileOrDirectory(assetPath,streamingAssetsPath);
+                FileUtil.CopyFileOrDirectory(assetPath, streamingAssetsPath);
             }
         }
 
@@ -179,8 +179,10 @@ namespace GLTFast.Tests.Export
             var scene = EditorSceneManager.OpenScene(scenePath);
             var rootObjects = scene.GetRootGameObjects();
             var names = new List<string>();
-            for (var i = 0; i < rootObjects.Length; i++) {
-                if (rootObjects[i].hideFlags != HideFlags.None) {
+            for (var i = 0; i < rootObjects.Length; i++)
+            {
+                if (rootObjects[i].hideFlags != HideFlags.None)
+                {
                     continue;
                 }
                 names.Add(rootObjects[i].name);
@@ -734,7 +736,8 @@ namespace GLTFast.Tests.Export
             //       to removed async/non-async dichotomy
             var assetPath = $"{pathPrefix}{rpSubfolder}/{testName}.txt";
             var targetJsonAsset = AssetDatabase.LoadAssetAtPath<TextAsset>(assetPath);
-            if (targetJsonAsset == null) {
+            if (targetJsonAsset == null)
+            {
                 assetPath = $"{pathPrefix}/{testName}.txt";
                 targetJsonAsset = AssetDatabase.LoadAssetAtPath<TextAsset>(assetPath);
             }

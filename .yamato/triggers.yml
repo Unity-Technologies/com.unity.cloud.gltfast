@@ -9,7 +9,6 @@ pr_trigger:
       NOT pull_request.push.changes.all match "**/*.md") OR
       pull_request.comment eq "pr"
   dependencies:
-    - .yamato/dotnet-format.yml#code_format_dotnet-format
     - .yamato/package-test.yml#tests_pr
     - .yamato/project-test.yml#tests_pr
     - .yamato/project-test.yml#run_pr

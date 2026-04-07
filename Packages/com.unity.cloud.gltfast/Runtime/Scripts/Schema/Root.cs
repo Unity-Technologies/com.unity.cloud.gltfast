@@ -338,9 +338,11 @@ namespace GLTFast.Schema
             }
 
 #if UNITY_ANIMATION || GLTFAST_ANIMATION
-            if (Animations!=null) {
+            if (Animations != null)
+            {
                 writer.AddArray("animations");
-                foreach( var animation in Animations) {
+                foreach (var animation in Animations)
+                {
                     animation.GltfSerialize(writer);
                 }
                 writer.CloseArray();
@@ -512,11 +514,16 @@ namespace GLTFast.Schema
                 }
             }
 #if DRACO_IS_INSTALLED
-            if(!check && Meshes!=null) {
-                foreach (var mesh in Meshes) {
-                    if (mesh.Primitives != null) {
-                        foreach (var primitive in mesh.Primitives) {
-                            if (primitive.Extensions?.KHR_draco_mesh_compression != null) {
+            if (!check && Meshes != null)
+            {
+                foreach (var mesh in Meshes)
+                {
+                    if (mesh.Primitives != null)
+                    {
+                        foreach (var primitive in mesh.Primitives)
+                        {
+                            if (primitive.Extensions?.KHR_draco_mesh_compression != null)
+                            {
                                 check = true;
                                 break;
                             }
@@ -601,7 +608,8 @@ namespace GLTFast.Schema
                         if (primitive.Extensions == null) continue;
                         var fake = fakeRoot.meshes[i].primitives[j];
 #if DRACO_IS_INSTALLED
-                        if (fake.extensions.KHR_draco_mesh_compression == null) {
+                        if (fake.extensions.KHR_draco_mesh_compression == null)
+                        {
                             primitive.Extensions.KHR_draco_mesh_compression = null;
                         }
 #endif

@@ -207,7 +207,7 @@ namespace GLTFast
                                 result = output
                             };
 #if UNITY_COLLECTIONS
-                                jobHandle = job.ScheduleBatch(output.Length,GltfImport.DefaultBatchCount);
+                            jobHandle = job.ScheduleBatch(output.Length, GltfImport.DefaultBatchCount);
 #else
                             jobHandle = job.Schedule(output.Length, GltfImport.DefaultBatchCount);
 #endif
@@ -223,7 +223,7 @@ namespace GLTFast
                             result = output
                         };
 #if UNITY_COLLECTIONS
-                            jobHandle = job.ScheduleBatch(output.Length,GltfImport.DefaultBatchCount);
+                        jobHandle = job.ScheduleBatch(output.Length, GltfImport.DefaultBatchCount);
 #else
                         jobHandle = job.Schedule(output.Length, GltfImport.DefaultBatchCount);
 #endif

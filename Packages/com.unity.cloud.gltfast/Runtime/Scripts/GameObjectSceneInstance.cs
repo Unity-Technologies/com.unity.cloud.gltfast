@@ -83,7 +83,8 @@ namespace GLTFast
         /// </summary>
         /// <param name="animation">Animation component.</param>
         /// <seealso cref="GameObjectInstantiator"/>
-        public void SetLegacyAnimation(Animation animation) {
+        public void SetLegacyAnimation(Animation animation)
+        {
             LegacyAnimation = animation;
         }
 #endif

@@ -69,8 +69,8 @@ namespace GLTFast.Export
                     s_GltfShaderGraphMaterialExport ??= new TGltfShaderGraphExport();
                     materialExport = s_GltfShaderGraphMaterialExport;
                 }
+                return materialExport.ConvertMaterial(uMaterial, out material, gltf, logger);
             }
-            else
 #endif
             if (!MetaMaterialExportBuiltIn.TryFindMatchingGltfMaterialExport(name, out materialExport))
             {

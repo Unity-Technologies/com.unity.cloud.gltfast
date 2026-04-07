@@ -1,4 +1,6 @@
 # see http://editorconfig.org/ for docs on this file
+#
+# !! keep EOL settings in sync with .gitattributes !!
 
 root = true
 
@@ -172,7 +174,7 @@ csharp_space_between_square_brackets = false
 # wrap options
 csharp_preserve_single_line_statements = true
 csharp_preserve_single_line_blocks = true
-max_line_length = off
+max_line_length = 120
 
 # using directives
 dotnet_sort_system_directives_first = true

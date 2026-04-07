@@ -210,24 +210,27 @@ namespace GLTFast.Export
         )
         {
 #if UNITY_IMAGECONVERSION
-            Assert.IsTrue(metalGlossTexture!=null || occlusionTexture!=null || smoothnessTexture!=null);
+            Assert.IsTrue(metalGlossTexture != null || occlusionTexture != null || smoothnessTexture != null);
             var blitMaterial = GetMetalGlossBlitMaterial();
 
             var width = int.MinValue;
             var height = int.MinValue;
 
-            if (metalGlossTexture != null) {
-                width = math.max( width, metalGlossTexture.width);
+            if (metalGlossTexture != null)
+            {
+                width = math.max(width, metalGlossTexture.width);
                 height = math.max(height, metalGlossTexture.height);
             }
 
-            if (occlusionTexture != null) {
-                width = math.max( width, occlusionTexture.width);
+            if (occlusionTexture != null)
+            {
+                width = math.max(width, occlusionTexture.width);
                 height = math.max(height, occlusionTexture.height);
             }
 
-            if (smoothnessTexture != null) {
-                width = math.max( width, smoothnessTexture.width);
+            if (smoothnessTexture != null)
+            {
+                width = math.max(width, smoothnessTexture.width);
                 height = math.max(height, smoothnessTexture.height);
             }
 
@@ -241,21 +244,25 @@ namespace GLTFast.Export
                 RenderTextureMemoryless.Depth
             );
 
-            if (metalGlossTexture == null) {
+            if (metalGlossTexture == null)
+            {
                 var rt = RenderTexture.active;
                 RenderTexture.active = destRenderTexture;
                 GL.Clear(true, true, Color.white);
                 RenderTexture.active = rt;
             }
-            else {
+            else
+            {
                 blitMaterial.SetFloat(smoothnessFactorProperty, smoothnessFactor);
                 Graphics.Blit(metalGlossTexture, destRenderTexture, blitMaterial);
             }
-            if (occlusionTexture != null) {
+            if (occlusionTexture != null)
+            {
                 blitMaterial = GetOcclusionBlitMaterial();
                 Graphics.Blit(occlusionTexture, destRenderTexture, blitMaterial);
             }
-            if (smoothnessTexture != null) {
+            if (smoothnessTexture != null)
+            {
                 blitMaterial = GetGlossBlitMaterial();
                 blitMaterial.SetFloat(smoothnessFactorProperty, smoothnessFactor);
                 Graphics.Blit(smoothnessTexture, destRenderTexture, blitMaterial);

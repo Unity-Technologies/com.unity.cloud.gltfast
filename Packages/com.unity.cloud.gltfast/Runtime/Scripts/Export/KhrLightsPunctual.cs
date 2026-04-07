@@ -34,7 +34,8 @@ namespace GLTFast.Export
 #if USING_HDRP
             HDAdditionalLightData lightHd = null;
 
-            if (renderPipeline == RenderPipeline.HighDefinition) {
+            if (renderPipeline == RenderPipeline.HighDefinition)
+            {
                 lightHd = uLight.gameObject.GetComponent<HDAdditionalLightData>();
 #if !UNITY_2023_2_OR_NEWER
                 lightType = lightHd != null ? lightHd.TryGetLightType() ?? lightType : lightType;
@@ -129,7 +130,8 @@ namespace GLTFast.Export
                                 break;
                         }
 #else
-                        switch (lightHd.type) {
+                        switch (lightHd.type)
+                        {
                             case HDLightType.Spot:
                             case HDLightType.Point:
                                 light.intensity = GetIntensity(LightUnit.Candela);

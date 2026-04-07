@@ -183,7 +183,8 @@ namespace GLTFast.Tests
         }
 
 #if UNITY_EDITOR
-        async Task OpenFilePanel() {
+        async Task OpenFilePanel()
+        {
 
             var file = EditorUtility.OpenFilePanel("Open glTF file", LastFilePath, "gltf,glb");
             if (string.IsNullOrEmpty(file))

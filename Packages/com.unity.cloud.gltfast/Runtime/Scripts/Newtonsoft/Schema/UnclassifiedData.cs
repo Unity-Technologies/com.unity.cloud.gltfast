@@ -22,7 +22,7 @@ namespace GLTFast.Newtonsoft.Schema
         IDictionary<string, JToken> m_JsonExtensionData;
 
         [Preserve]
-        public UnclassifiedData() {}
+        public UnclassifiedData() { }
 
         public bool TryGetValue<T>(string key, out T value)
         {

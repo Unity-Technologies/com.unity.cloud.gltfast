@@ -23,7 +23,8 @@ namespace GLTFast.Schema
     [Serializable]
     public abstract class AnimationChannelBase
     {
-        public enum Path {
+        public enum Path
+        {
             Unknown,
             Invalid,
             Translation,
@@ -44,7 +45,8 @@ namespace GLTFast.Schema
         /// </summary>
         public abstract AnimationChannelTarget Target { get; }
 
-        internal void GltfSerialize(JsonWriter writer) {
+        internal void GltfSerialize(JsonWriter writer)
+        {
             throw new NotImplementedException($"GltfSerialize missing on {GetType()}");
         }
     }

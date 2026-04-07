@@ -106,8 +106,10 @@ namespace GLTFast
 
 #if UNITY_EDITOR
             // If this is design-time import, fix and import all weights.
-            if(!UnityEditor.EditorApplication.isPlaying || skinWeights < 4) {
-                if (!UnityEditor.EditorApplication.isPlaying) {
+            if (!UnityEditor.EditorApplication.isPlaying || skinWeights < 4)
+            {
+                if (!UnityEditor.EditorApplication.isPlaying)
+                {
                     skinWeights = 4;
                 }
 #else
@@ -175,7 +177,7 @@ namespace GLTFast
                     jobTangentI.outputByteStride = outputByteStride;
                     jobTangentI.result = output;
 #if UNITY_COLLECTIONS
-                    jobHandle = jobTangentI.ScheduleBatch(count,GltfImport.DefaultBatchCount);
+                    jobHandle = jobTangentI.ScheduleBatch(count, GltfImport.DefaultBatchCount);
 #else
                     jobHandle = jobTangentI.Schedule(count, GltfImport.DefaultBatchCount);
 #endif
@@ -190,7 +192,7 @@ namespace GLTFast
                         result = output
                     };
 #if UNITY_COLLECTIONS
-                    jobHandle = job.ScheduleBatch(count,GltfImport.DefaultBatchCount);
+                    jobHandle = job.ScheduleBatch(count, GltfImport.DefaultBatchCount);
 #else
                     jobHandle = job.Schedule(count, GltfImport.DefaultBatchCount);
 #endif
@@ -206,7 +208,7 @@ namespace GLTFast
                         result = output
                     };
 #if UNITY_COLLECTIONS
-                    jobHandle = job.ScheduleBatch(count,GltfImport.DefaultBatchCount);
+                    jobHandle = job.ScheduleBatch(count, GltfImport.DefaultBatchCount);
 #else
                     jobHandle = job.Schedule(count, GltfImport.DefaultBatchCount);
 #endif

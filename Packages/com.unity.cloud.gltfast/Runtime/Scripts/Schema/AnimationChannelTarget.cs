@@ -8,7 +8,8 @@ using System;
 namespace GLTFast.Schema
 {
     [Serializable]
-    public class AnimationChannelTarget {
+    public class AnimationChannelTarget
+    {
         /// <summary>
         /// The index of the node to target.
         /// </summary>
@@ -23,7 +24,8 @@ namespace GLTFast.Schema
 
         AnimationChannel.Path m_Path;
 
-        public AnimationChannel.Path GetPath() {
+        public AnimationChannel.Path GetPath()
+        {
             if (m_Path != AnimationChannel.Path.Unknown)
             {
                 return m_Path;
@@ -39,7 +41,8 @@ namespace GLTFast.Schema
             return m_Path;
         }
 
-        internal void GltfSerialize(JsonWriter writer) {
+        internal void GltfSerialize(JsonWriter writer)
+        {
             throw new NotImplementedException($"GltfSerialize missing on {GetType()}");
         }
     }

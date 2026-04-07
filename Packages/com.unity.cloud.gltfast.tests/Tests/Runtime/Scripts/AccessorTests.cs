@@ -2,10 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
+using GLTFast.Schema;
 using NUnit.Framework;
 using UnityEngine;
-
-using GLTFast.Schema;
 
 namespace GLTFast.Tests
 {

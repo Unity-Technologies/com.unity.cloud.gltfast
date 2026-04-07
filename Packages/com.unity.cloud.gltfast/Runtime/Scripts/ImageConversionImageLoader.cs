@@ -23,8 +23,10 @@ using Unity.Collections.LowLevel.Unsafe;
 using Unity.Jobs;
 #endif
 
-namespace GLTFast {
-    static class ImageConversionImageLoader {
+namespace GLTFast
+{
+    static class ImageConversionImageLoader
+    {
 
         public static async Task<ImageResult> LoadAsync(
             ImportContext context,
@@ -33,14 +35,14 @@ namespace GLTFast {
             CancellationToken cancellationToken
         )
         {
-            using var download = await context.DownloadProvider.RequestTexture(uri,!readable);
+            using var download = await context.DownloadProvider.RequestTexture(uri, !readable);
             if (download == null)
             {
                 context.Logger?.Error(LogCode.TextureDownloadFailed, "?", uri.ToString());
                 return ImageResult.Null;
             }
 
-            if(cancellationToken.IsCancellationRequested)
+            if (cancellationToken.IsCancellationRequested)
                 return ImageResult.Null;
 
             if (download.Success)
@@ -71,18 +73,18 @@ namespace GLTFast {
             var gcHandle = GCHandle.Alloc(managedData, GCHandleType.Pinned);
             var job = CreateMemCopyJob(data, gcHandle);
             var jobHandle = job.Schedule();
-            while(!jobHandle.IsCompleted)
+            while (!jobHandle.IsCompleted)
             {
                 await Task.Yield();
             }
             jobHandle.Complete();
             gcHandle.Free();
-            if(cancellationToken.IsCancellationRequested)
+            if (cancellationToken.IsCancellationRequested)
                 return ImageResult.Null;
 #endif
             while (context.DeferAgent.ShouldDefer())
             {
-                if(cancellationToken.IsCancellationRequested)
+                if (cancellationToken.IsCancellationRequested)
                     return ImageResult.Null;
                 await Task.Yield();
             }
@@ -160,7 +162,8 @@ namespace GLTFast {
         {
 
 #if UNITY_EDITOR
-            if (IsEditorImport) {
+            if (IsEditorImport)
+            {
                 // Use the original texture at Editor (asset database) import
                 return false;
             }

@@ -11,10 +11,10 @@ using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Jobs;
 using Unity.Mathematics;
-using UnityEngine.Profiling;
-using UnityEngine.Rendering;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UnityEngine.Profiling;
+using UnityEngine.Rendering;
 using Mesh = UnityEngine.Mesh;
 
 namespace GLTFast

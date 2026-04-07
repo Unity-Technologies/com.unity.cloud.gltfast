@@ -4,7 +4,7 @@
 #if NEWTONSOFT_JSON
 namespace GLTFast.Documentation.Examples
 {
-#region CustomGltfImport
+    #region CustomGltfImport
     using System;
     using System.Threading.Tasks;
     using Addons;
@@ -28,7 +28,7 @@ namespace GLTFast.Documentation.Examples
             try
             {
                 ImportAddonRegistry.RegisterImportAddon(new MyAddon());
-                var gltfImport = new GltfImport(logger:new ConsoleLogger());
+                var gltfImport = new GltfImport(logger: new ConsoleLogger());
                 await gltfImport.Load(uri);
                 await gltfImport.InstantiateMainSceneAsync(transform);
             }
@@ -106,7 +106,7 @@ namespace GLTFast.Documentation.Examples
             }
         }
     }
-#endregion
+    #endregion
 
 }
 #endif

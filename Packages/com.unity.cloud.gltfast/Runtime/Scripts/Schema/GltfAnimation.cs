@@ -14,7 +14,7 @@ namespace GLTFast.Schema
 #if UNITY_ANIMATION || GLTFAST_ANIMATION
     /// <inheritdoc />
     [Serializable]
-    public class Animation : AnimationBase<AnimationChannel,AnimationSampler> { }
+    public class Animation : AnimationBase<AnimationChannel, AnimationSampler> { }
 
     /// <inheritdoc />
     /// <typeparam name="TChannel">Animation channel type</typeparam>
@@ -52,7 +52,8 @@ namespace GLTFast.Schema
         /// </summary>
         public abstract IReadOnlyList<AnimationSampler> Samplers { get; }
 
-        internal void GltfSerialize(JsonWriter writer) {
+        internal void GltfSerialize(JsonWriter writer)
+        {
             writer.AddObject();
             GltfSerializeName(writer);
             writer.Close();

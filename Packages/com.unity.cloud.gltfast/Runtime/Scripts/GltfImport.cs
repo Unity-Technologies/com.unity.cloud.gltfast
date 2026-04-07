@@ -331,7 +331,8 @@ namespace GLTFast
         public static void SetDefaultDeferAgent(IDeferAgent deferAgent)
         {
 #if DEBUG
-            if (s_DefaultDeferAgent!=null && s_DefaultDeferAgent != deferAgent) {
+            if (s_DefaultDeferAgent != null && s_DefaultDeferAgent != deferAgent)
+            {
                 Debug.LogWarning("GltfImport.defaultDeferAgent got overruled! Make sure there is only one default at any time", deferAgent as UnityEngine.Object);
             }
 #endif
@@ -919,7 +920,8 @@ namespace GLTFast
         public UnityEngine.Material GetDefaultMaterial()
         {
 #if UNITY_EDITOR
-            if (defaultMaterial == null) {
+            if (defaultMaterial == null)
+            {
                 m_MaterialGenerator.SetLogger(m_Context.Logger);
                 defaultMaterial = m_MaterialGenerator.GetDefaultMaterial(m_DefaultMaterialPointsSupport);
                 m_MaterialGenerator.SetLogger(null);
@@ -986,7 +988,8 @@ namespace GLTFast
         /// Returns all imported animation clips
         /// </summary>
         /// <returns>All imported animation clips</returns>
-        public AnimationClip[] GetAnimationClips() {
+        public AnimationClip[] GetAnimationClips()
+        {
             return m_AnimationClips;
         }
 #endif
@@ -1424,7 +1427,8 @@ namespace GLTFast
             cancellationToken.ThrowIfCancellationRequestedWithTracking();
 
 #if MESHOPT_IS_ENABLED
-            if (success) {
+            if (success)
+            {
                 MeshoptDecode();
             }
 #endif
@@ -1579,55 +1583,56 @@ namespace GLTFast
 
                 if (!supported)
                 {
-#if !DRACO_IS_ENABLED
-                    if (ext == ExtensionName.DracoMeshCompression)
-                    {
-                        Logger?.Log(
-                            required ? LogType.Error : LogType.Warning,
-                            LogCode.PackageMissing,
-                            "Draco for Unity",
-                            ext
-                            );
-                    }
-                    else
-#endif
-#if !MESHOPT
-                    if (ext == ExtensionName.MeshoptCompression)
-                    {
-                        Logger?.Log(
-                            required ? LogType.Error : LogType.Warning,
-                            LogCode.PackageMissing,
-                            "meshoptimizer decompression for Unity",
-                            ext
-                        );
-                    }
-                    else
-#endif
-#if !KTX_IS_ENABLED
-                    if (ext == ExtensionName.TextureBasisUniversal)
-                    {
-                        Logger?.Log(
-                            required ? LogType.Error : LogType.Warning,
-                            LogCode.PackageMissing,
-                            "KTX for Unity",
-                            ext
-                            );
-                    }
-                    else
-#endif
-                    if (required)
-                    {
-                        Logger?.Error(LogCode.ExtensionUnsupported, ext);
-                    }
-                    else
-                    {
-                        Logger?.Warning(LogCode.ExtensionUnsupported, ext);
-                    }
-
+                    ReportUnsupportedExtension(ext, required);
                     allExtensionsSupported = false;
                 }
             }
             return allExtensionsSupported;
+        }
+
+        void ReportUnsupportedExtension(string ext, bool required)
+        {
+#if !DRACO_IS_ENABLED
+            if (ext == ExtensionName.DracoMeshCompression)
+            {
+                Logger?.Log(
+                    required ? LogType.Error : LogType.Warning,
+                    LogCode.PackageMissing,
+                    "Draco for Unity",
+                    ext
+                    );
+                return;
+            }
+#endif
+#if !MESHOPT
+            if (ext == ExtensionName.MeshoptCompression)
+            {
+                Logger?.Log(
+                    required ? LogType.Error : LogType.Warning,
+                    LogCode.PackageMissing,
+                    "meshoptimizer decompression for Unity",
+                    ext
+                );
+                return;
+            }
+#endif
+#if !KTX_IS_ENABLED
+            if (ext == ExtensionName.TextureBasisUniversal)
+            {
+                Logger?.Log(
+                    required ? LogType.Error : LogType.Warning,
+                    LogCode.PackageMissing,
+                    "KTX for Unity",
+                    ext
+                    );
+                return;
+            }
+#endif
+            Logger?.Log(
+                required ? LogType.Error : LogType.Warning,
+                LogCode.ExtensionUnsupported,
+                ext
+                );
         }
 
         async Task<bool> LoadGltf(string json, CancellationToken cancellationToken)
@@ -2115,18 +2120,21 @@ namespace GLTFast
         {
             var bufferView = Root.BufferViews[bufferViewIndex];
 #if MESHOPT_IS_ENABLED
-            if (bufferView.Extensions?.EXT_meshopt_compression != null) {
+            if (bufferView.Extensions?.EXT_meshopt_compression != null)
+            {
                 byteStride = bufferView.Extensions.EXT_meshopt_compression.byteStride;
                 var entireBuffer = m_MeshoptBufferViews[bufferViewIndex];
-                if (offset == 0 && length <= 0) {
+                if (offset == 0 && length <= 0)
+                {
                     return new ReadOnlyNativeArray<byte>(entireBuffer);
                 }
                 Assert.IsTrue(offset >= 0);
-                if (length <= 0) {
+                if (length <= 0)
+                {
                     length = entireBuffer.Length - offset;
                 }
-                Assert.IsTrue(offset+length <= entireBuffer.Length);
-                return new ReadOnlyNativeArray<byte>(entireBuffer.GetSubArray(offset,length));
+                Assert.IsTrue(offset + length <= entireBuffer.Length);
+                return new ReadOnlyNativeArray<byte>(entireBuffer.GetSubArray(offset, length));
             }
 #endif
             byteStride = bufferView.byteStride;
@@ -2142,15 +2150,17 @@ namespace GLTFast
         {
             var bufferView = Root.BufferViews[bufferViewIndex];
 #if MESHOPT_IS_ENABLED
-            if (bufferView.Extensions?.EXT_meshopt_compression != null) {
+            if (bufferView.Extensions?.EXT_meshopt_compression != null)
+            {
                 var fullSlice = m_MeshoptBufferViews[bufferViewIndex];
-                if (offset == 0 && (count <= 0 || count * UnsafeUtility.SizeOf(typeof(T)) == fullSlice.Length)) {
+                if (offset == 0 && (count <= 0 || count * UnsafeUtility.SizeOf(typeof(T)) == fullSlice.Length))
+                {
                     return new ReadOnlyNativeArray<byte>(fullSlice).Reinterpret<T>();
                 }
                 Assert.IsTrue(offset >= 0);
                 Assert.IsTrue(count > 0);
                 Assert.IsTrue(offset + count * UnsafeUtility.SizeOf(typeof(T)) <= fullSlice.Length);
-                return new ReadOnlyNativeArray<byte>(fullSlice).GetSubArray(offset,count).Reinterpret<T>();
+                return new ReadOnlyNativeArray<byte>(fullSlice).GetSubArray(offset, count).Reinterpret<T>();
             }
 #endif
             return GetAccessorData<T>(bufferView, count, offset);
@@ -2164,7 +2174,8 @@ namespace GLTFast
         {
             var bufferView = Root.BufferViews[bufferViewIndex];
 #if MESHOPT_IS_ENABLED
-            if (bufferView.Extensions?.EXT_meshopt_compression != null) {
+            if (bufferView.Extensions?.EXT_meshopt_compression != null)
+            {
                 unsafe
                 {
                     var fullSlice = m_MeshoptBufferViews[bufferViewIndex];
@@ -2178,7 +2189,7 @@ namespace GLTFast
                         count,
                         bufferView.byteStride
 #if ENABLE_UNITY_COLLECTIONS_CHECKS
-                        ,ref safety
+                        , ref safety
 #endif
                         );
                 }
@@ -2270,14 +2281,19 @@ namespace GLTFast
         }
 
 #if MESHOPT_IS_ENABLED
-        void MeshoptDecode() {
-            if(Root.BufferViews!=null) {
+        void MeshoptDecode()
+        {
+            if (Root.BufferViews != null)
+            {
                 List<JobHandle> jobHandlesList = null;
-                for (var i = 0; i < Root.BufferViews.Count; i++) {
+                for (var i = 0; i < Root.BufferViews.Count; i++)
+                {
                     var bufferView = Root.BufferViews[i];
-                    if (bufferView.Extensions?.EXT_meshopt_compression != null) {
+                    if (bufferView.Extensions?.EXT_meshopt_compression != null)
+                    {
                         var meshopt = bufferView.Extensions.EXT_meshopt_compression;
-                        if (jobHandlesList == null) {
+                        if (jobHandlesList == null)
+                        {
                             m_MeshoptBufferViews = new Dictionary<int, NativeArray<byte>>();
                             jobHandlesList = new List<JobHandle>(Root.BufferViews.Count);
                             m_MeshoptReturnValues = new NativeArray<int>(Root.BufferViews.Count, Allocator.TempJob);
@@ -2288,7 +2304,7 @@ namespace GLTFast
                         var origBufferView = GetBufferView(meshopt);
 
                         var jobHandle = Decode.DecodeGltfBuffer(
-                            m_MeshoptReturnValues.GetSubArray(i,1),
+                            m_MeshoptReturnValues.GetSubArray(i, 1),
                             arr,
                             meshopt.count,
                             meshopt.byteStride,
@@ -2301,23 +2317,29 @@ namespace GLTFast
                     }
                 }
 
-                if (jobHandlesList != null) {
-                    using (var jobHandles = new NativeArray<JobHandle>(jobHandlesList.ToArray(), Allocator.Temp)) {
+                if (jobHandlesList != null)
+                {
+                    using (var jobHandles = new NativeArray<JobHandle>(jobHandlesList.ToArray(), Allocator.Temp))
+                    {
                         m_MeshoptJobHandle = JobHandle.CombineDependencies(jobHandles);
                     }
                 }
             }
         }
 
-        async Task<bool> WaitForMeshoptDecode() {
+        async Task<bool> WaitForMeshoptDecode()
+        {
             var success = true;
-            if (m_MeshoptBufferViews != null) {
-                while (!m_MeshoptJobHandle.IsCompleted) {
+            if (m_MeshoptBufferViews != null)
+            {
+                while (!m_MeshoptJobHandle.IsCompleted)
+                {
                     await Task.Yield();
                 }
                 m_MeshoptJobHandle.Complete();
 
-                foreach (var returnValue in m_MeshoptReturnValues) {
+                foreach (var returnValue in m_MeshoptReturnValues)
+                {
                     success &= returnValue == 0;
                 }
                 m_MeshoptReturnValues.Dispose();
@@ -2398,8 +2420,10 @@ namespace GLTFast
             }
 
 #if UNITY_ANIMATION || GLTFAST_ANIMATION
-            if (Root.HasAnimation) {
-                if (m_Settings.NodeNameMethod != NameImportMethod.OriginalUnique) {
+            if (Root.HasAnimation)
+            {
+                if (m_Settings.NodeNameMethod != NameImportMethod.OriginalUnique)
+                {
                     Logger?.Info(LogCode.NamingOverride);
                     m_Settings.NodeNameMethod = NameImportMethod.OriginalUnique;
                 }
@@ -2451,11 +2475,13 @@ namespace GLTFast
 #endif
             }
 
-            for (var i = 0; i < Root.Animations.Count; i++) {
+            for (var i = 0; i < Root.Animations.Count; i++)
+            {
                 var animation = Root.Animations[i];
                 var clipName = animation.name ?? $"Clip_{i}";
 #if UNITY_ANIMATION
-                if(m_AnimationClips != null) {
+                if (m_AnimationClips != null)
+                {
                     m_AnimationClips[i] = new AnimationClip
                     {
                         name = clipName,
@@ -2470,9 +2496,11 @@ namespace GLTFast
                 var clipIndex = i;
                 animationAddons?.ForEach(loader => loader.AddClip(clipIndex, clipName));
 
-                for (var j = 0; j < animation.Channels.Count; j++) {
+                for (var j = 0; j < animation.Channels.Count; j++)
+                {
                     var channel = animation.Channels[j];
-                    if (channel.sampler < 0 || channel.sampler >= animation.Samplers.Count) {
+                    if (channel.sampler < 0 || channel.sampler >= animation.Samplers.Count)
+                    {
                         Logger?.Error(LogCode.AnimationChannelSamplerInvalid, j.ToString());
                         continue;
                     }
@@ -2482,7 +2510,8 @@ namespace GLTFast
                         Logger?.Error(LogCode.AnimationChannelSamplerInvalid, j.ToString());
                         continue;
                     }
-                    if (channel.Target.node < 0 || channel.Target.node >= Root.Nodes.Count) {
+                    if (channel.Target.node < 0 || channel.Target.node >= Root.Nodes.Count)
+                    {
                         Logger?.Error(LogCode.AnimationChannelNodeInvalid, j.ToString());
                         continue;
                     }
@@ -2497,8 +2526,10 @@ namespace GLTFast
                     }
                     var interpolationType = sampler.GetInterpolationType();
 
-                    switch (channel.Target.GetPath()) {
-                        case AnimationChannelBase.Path.Translation: {
+                    switch (channel.Target.GetPath())
+                    {
+                        case AnimationChannelBase.Path.Translation:
+                        {
                             var values = GetAccessorData<float3>(sampler.output);
                             if (!values.IsCreated)
                             {
@@ -2567,7 +2598,8 @@ namespace GLTFast
 #endif // UNITY_ANIMATION
                             break;
                         }
-                        case AnimationChannelBase.Path.Scale: {
+                        case AnimationChannelBase.Path.Scale:
+                        {
                             var values = GetAccessorData<float3>(sampler.output);
                             if (!values.IsCreated)
                             {
@@ -2601,9 +2633,11 @@ namespace GLTFast
 #endif // UNITY_ANIMATION
                             break;
                         }
-                        case AnimationChannelBase.Path.Weights: {
+                        case AnimationChannelBase.Path.Weights:
+                        {
                             var node = Root.Nodes[channel.Target.node];
-                            if (node.mesh < 0 || node.mesh >= Root.Meshes.Count) {
+                            if (node.mesh < 0 || node.mesh >= Root.Meshes.Count)
+                            {
                                 break;
                             }
                             var mesh = Root.Meshes[node.mesh];
@@ -2651,7 +2685,8 @@ namespace GLTFast
                             // https://github.com/atteneder/glTFast/issues/153
                             var meshPrefix = string.IsNullOrEmpty(mesh.name) ? k_PrimitiveName : mesh.name;
                             var meshCount = m_MeshAssignments.GetLength(node.mesh);
-                            for (var meshNumeration = 1; meshNumeration < meshCount; meshNumeration++) {
+                            for (var meshNumeration = 1; meshNumeration < meshCount; meshNumeration++)
+                            {
                                 var meshName = $"{meshPrefix}_{meshNumeration}";
                                 if (animationAddons != null)
                                 {
@@ -2687,12 +2722,12 @@ namespace GLTFast
                             break;
                         }
                         case AnimationChannelBase.Path.Pointer:
-                            Logger?.Warning(LogCode.AnimationTargetPathUnsupported,channel.Target.GetPath().ToString());
+                            Logger?.Warning(LogCode.AnimationTargetPathUnsupported, channel.Target.GetPath().ToString());
                             break;
                         case AnimationChannelBase.Path.Unknown:
                         case AnimationChannelBase.Path.Invalid:
                         default:
-                            Logger?.Error(LogCode.AnimationTargetPathUnsupported,channel.Target.GetPath().ToString());
+                            Logger?.Error(LogCode.AnimationTargetPathUnsupported, channel.Target.GetPath().ToString());
                             break;
                     }
                 }
@@ -3020,13 +3055,16 @@ namespace GLTFast
             m_MaterialPointsSupport = null;
 
 #if MESHOPT_IS_ENABLED
-            if(m_MeshoptBufferViews!=null) {
-                foreach (var nativeBuffer in m_MeshoptBufferViews.Values) {
+            if (m_MeshoptBufferViews != null)
+            {
+                foreach (var nativeBuffer in m_MeshoptBufferViews.Values)
+                {
                     nativeBuffer.Dispose();
                 }
                 m_MeshoptBufferViews = null;
             }
-            if (m_MeshoptReturnValues.IsCreated) {
+            if (m_MeshoptReturnValues.IsCreated)
+            {
                 m_MeshoptReturnValues.Dispose();
             }
 #endif
@@ -3361,7 +3399,8 @@ namespace GLTFast
         static void SafeDestroy(UnityEngine.Object obj)
         {
 #if UNITY_EDITOR
-            if (!Application.isPlaying) {
+            if (!Application.isPlaying)
+            {
                 UnityEngine.Object.DestroyImmediate(obj);
             }
             else
@@ -3387,7 +3426,7 @@ namespace GLTFast
 #if DEBUG
             // Detect and report poor shared accessor usage. Since this adds performance overhead, it's done in debug
             // mode only.
-            var perPrimitiveSetIndices = new Dictionary<IReadOnlyList<MeshPrimitiveBase>,int[]>(
+            var perPrimitiveSetIndices = new Dictionary<IReadOnlyList<MeshPrimitiveBase>, int[]>(
                 comparer: new PrimitivesComparer());
 #endif
 
@@ -3550,24 +3589,27 @@ namespace GLTFast
             {
                 foreach (var animation in Root.Animations)
                 {
-                    foreach (var sampler in animation.Samplers) {
-                        SetAccessorUsage(sampler.input,AccessorUsage.AnimationTimes);
+                    foreach (var sampler in animation.Samplers)
+                    {
+                        SetAccessorUsage(sampler.input, AccessorUsage.AnimationTimes);
                     }
 
-                    foreach (var channel in animation.Channels) {
+                    foreach (var channel in animation.Channels)
+                    {
                         var accessorIndex = animation.Samplers[channel.sampler].output;
-                        switch (channel.Target.GetPath()) {
+                        switch (channel.Target.GetPath())
+                        {
                             case AnimationChannel.Path.Translation:
-                                SetAccessorUsage(accessorIndex,AccessorUsage.Translation);
+                                SetAccessorUsage(accessorIndex, AccessorUsage.Translation);
                                 break;
                             case AnimationChannel.Path.Rotation:
-                                SetAccessorUsage(accessorIndex,AccessorUsage.Rotation);
+                                SetAccessorUsage(accessorIndex, AccessorUsage.Rotation);
                                 break;
                             case AnimationChannel.Path.Scale:
-                                SetAccessorUsage(accessorIndex,AccessorUsage.Scale);
+                                SetAccessorUsage(accessorIndex, AccessorUsage.Scale);
                                 break;
                             case AnimationChannel.Path.Weights:
-                                SetAccessorUsage(accessorIndex,AccessorUsage.Weight);
+                                SetAccessorUsage(accessorIndex, AccessorUsage.Weight);
                                 break;
                         }
                     }
@@ -3621,13 +3663,15 @@ namespace GLTFast
                         break;
                     }
 #if UNITY_ANIMATION
-                    case GltfAccessorAttributeType.SCALAR when m_AccessorUsage[i]==AccessorUsage.AnimationTimes || m_AccessorUsage[i]==AccessorUsage.Weight:
+                    case GltfAccessorAttributeType.SCALAR when m_AccessorUsage[i] == AccessorUsage.AnimationTimes || m_AccessorUsage[i] == AccessorUsage.Weight:
                     {
                         GetScalarJob(i, out var times, out var jh);
-                        if (times.HasValue) {
+                        if (times.HasValue)
+                        {
                             m_AccessorData[i] = times.Value;
                         }
-                        if (jh.HasValue) {
+                        if (jh.HasValue)
+                        {
                             tmpList.Add(jh.Value);
                         }
                         break;
@@ -3654,7 +3698,7 @@ namespace GLTFast
             PrimitiveSingle primitiveSingle
         )
         {
-            return CheckVertexBufferUsage(perAttributeMeshCollection, new []{primitiveSingle.Primitive});
+            return CheckVertexBufferUsage(perAttributeMeshCollection, new[] { primitiveSingle.Primitive });
         }
 
         bool CheckVertexBufferUsage(
@@ -3670,7 +3714,7 @@ namespace GLTFast
             IReadOnlyList<MeshPrimitiveBase> primitives
             )
         {
-            if(perAttributeMeshCollection.TryGetValue(primitives, out var indicesAccessors))
+            if (perAttributeMeshCollection.TryGetValue(primitives, out var indicesAccessors))
             {
                 Assert.AreEqual(primitives.Count, indicesAccessors.Length);
                 var conflict = false;
@@ -3744,7 +3788,8 @@ namespace GLTFast
         void SetAccessorUsage(int index, AccessorUsage newUsage)
         {
 #if DEBUG
-            if(m_AccessorUsage[index]!=AccessorUsage.Unknown && newUsage!=m_AccessorUsage[index]) {
+            if (m_AccessorUsage[index] != AccessorUsage.Unknown && newUsage != m_AccessorUsage[index])
+            {
                 Logger?.Error(LogCode.AccessorInconsistentUsage, m_AccessorUsage[index].ToString(), newUsage.ToString());
             }
 #endif
@@ -3941,7 +3986,8 @@ namespace GLTFast
         }
 
 #if UNITY_ANIMATION
-        unsafe void GetScalarJob(int accessorIndex, out NativeArray<float>? scalars, out JobHandle? jobHandle) {
+        unsafe void GetScalarJob(int accessorIndex, out NativeArray<float>? scalars, out JobHandle? jobHandle)
+        {
             Profiler.BeginSample("GetScalarJob");
             scalars = null;
             jobHandle = null;
@@ -3954,11 +4000,13 @@ namespace GLTFast
                 );
 
             Assert.AreEqual(accessor.GetAttributeType(), GltfAccessorAttributeType.SCALAR);
-            if (accessor.IsSparse) {
-                Logger?.Error(LogCode.SparseAccessor,"scalars");
+            if (accessor.IsSparse)
+            {
+                Logger?.Error(LogCode.SparseAccessor, "scalars");
             }
 
-            if (accessor.componentType == GltfComponentType.Float) {
+            if (accessor.componentType == GltfComponentType.Float)
+            {
                 Profiler.BeginSample("CopyAnimationTimes");
                 var bufferTimes = accessorData
                     .Reinterpret<float>()
@@ -3975,50 +4023,62 @@ namespace GLTFast
                     jobHandle = job.Schedule();
                 }
                 Profiler.EndSample();
-            } else
-            if( accessor.normalized ) {
+            }
+            else if (accessor.normalized)
+            {
                 Profiler.BeginSample("Alloc");
-                scalars = new NativeArray<float>(accessor.count,Allocator.Persistent);
+                scalars = new NativeArray<float>(accessor.count, Allocator.Persistent);
                 Profiler.EndSample();
 
-                switch( accessor.componentType ) {
-                    case GltfComponentType.Byte: {
-                        var job = new ConvertScalarInt8ToFloatNormalizedJob {
+                switch (accessor.componentType)
+                {
+                    case GltfComponentType.Byte:
+                    {
+                        var job = new ConvertScalarInt8ToFloatNormalizedJob
+                        {
                             input = accessorData.Reinterpret<sbyte>().AsNativeArrayReadOnly(),
                             result = scalars.Value
                         };
-                        jobHandle = job.Schedule(accessor.count,DefaultBatchCount);
+                        jobHandle = job.Schedule(accessor.count, DefaultBatchCount);
                         break;
                     }
-                    case GltfComponentType.UnsignedByte: {
-                        var job = new ConvertScalarUInt8ToFloatNormalizedJob {
+                    case GltfComponentType.UnsignedByte:
+                    {
+                        var job = new ConvertScalarUInt8ToFloatNormalizedJob
+                        {
                             input = accessorData.Reinterpret<byte>().AsNativeArrayReadOnly(),
                             result = scalars.Value
                         };
-                        jobHandle = job.Schedule(accessor.count,DefaultBatchCount);
+                        jobHandle = job.Schedule(accessor.count, DefaultBatchCount);
                         break;
                     }
-                    case GltfComponentType.Short: {
-                        var job = new ConvertScalarInt16ToFloatNormalizedJob {
+                    case GltfComponentType.Short:
+                    {
+                        var job = new ConvertScalarInt16ToFloatNormalizedJob
+                        {
                             input = accessorData.Reinterpret<short>().AsNativeArrayReadOnly(),
                             result = scalars.Value
                         };
-                        jobHandle = job.Schedule(accessor.count,DefaultBatchCount);
+                        jobHandle = job.Schedule(accessor.count, DefaultBatchCount);
                         break;
                     }
-                    case GltfComponentType.UnsignedShort: {
-                        var job = new ConvertScalarUInt16ToFloatNormalizedJob {
+                    case GltfComponentType.UnsignedShort:
+                    {
+                        var job = new ConvertScalarUInt16ToFloatNormalizedJob
+                        {
                             input = accessorData.Reinterpret<ushort>().AsNativeArrayReadOnly(),
                             result = scalars.Value
                         };
-                        jobHandle = job.Schedule(accessor.count,DefaultBatchCount);
+                        jobHandle = job.Schedule(accessor.count, DefaultBatchCount);
                         break;
                     }
                     default:
                         Logger?.Error(LogCode.AnimationFormatInvalid, accessor.componentType.ToString());
                         break;
                 }
-            } else {
+            }
+            else
+            {
                 // Non-normalized
                 Logger?.Error(LogCode.AnimationFormatInvalid, accessor.componentType.ToString());
             }
@@ -4053,10 +4113,12 @@ namespace GLTFast
             var bufferView = Root.BufferViews[accessor.bufferView];
 #if MESHOPT_IS_ENABLED
             var meshopt = bufferView.Extensions?.EXT_meshopt_compression;
-            if (meshopt != null) {
+            if (meshopt != null)
+            {
                 byteStride = meshopt.byteStride;
                 data = (byte*)m_MeshoptBufferViews[accessor.bufferView].GetUnsafeReadOnlyPtr() + accessor.byteOffset;
-            } else
+            }
+            else
 #endif
             {
                 byteStride = bufferView.byteStride;
@@ -4081,7 +4143,8 @@ namespace GLTFast
             var bufferView = Root.BufferViews[(int)sparseIndices.bufferView];
 #if MESHOPT_IS_ENABLED
             var meshopt = bufferView.Extensions?.EXT_meshopt_compression;
-            if (meshopt != null) {
+            if (meshopt != null)
+            {
                 data = (byte*)m_MeshoptBufferViews[(int)sparseIndices.bufferView].GetUnsafeReadOnlyPtr() + sparseIndices.byteOffset;
             }
             else
@@ -4104,7 +4167,8 @@ namespace GLTFast
             var bufferView = Root.BufferViews[(int)sparseValues.bufferView];
 #if MESHOPT_IS_ENABLED
             var meshopt = bufferView.Extensions?.EXT_meshopt_compression;
-            if (meshopt != null) {
+            if (meshopt != null)
+            {
                 data = (byte*)m_MeshoptBufferViews[(int)sparseValues.bufferView].GetUnsafeReadOnlyPtr() + sparseValues.byteOffset;
             }
             else
@@ -4124,7 +4188,7 @@ namespace GLTFast
         {
             // Reset static state
             s_DefaultDeferAgent = null;
-            s_MeshComparer = new ();
+            s_MeshComparer = new();
         }
 #endif // UNITY_EDITOR
 

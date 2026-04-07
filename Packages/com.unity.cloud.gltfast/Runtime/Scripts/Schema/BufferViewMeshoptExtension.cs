@@ -8,7 +8,8 @@ using Meshoptimizer;
 namespace GLTFast.Schema
 {
     [Serializable]
-    public class BufferViewMeshoptExtension : IBufferView {
+    public class BufferViewMeshoptExtension : IBufferView
+    {
 
         /// <summary>
         /// The index of the buffer.
@@ -49,8 +50,10 @@ namespace GLTFast.Schema
         public int ByteLength => byteLength;
         public int ByteStride => byteStride;
 
-        public Mode GetMode() {
-            if (m_ModeEnum != Mode.Undefined) {
+        public Mode GetMode()
+        {
+            if (m_ModeEnum != Mode.Undefined)
+            {
                 return m_ModeEnum;
             }
 
@@ -65,8 +68,10 @@ namespace GLTFast.Schema
             return m_ModeEnum;
         }
 
-        public Filter GetFilter() {
-            if (m_FilterEnum != Filter.Undefined) {
+        public Filter GetFilter()
+        {
+            if (m_FilterEnum != Filter.Undefined)
+            {
                 return m_FilterEnum;
             }
 

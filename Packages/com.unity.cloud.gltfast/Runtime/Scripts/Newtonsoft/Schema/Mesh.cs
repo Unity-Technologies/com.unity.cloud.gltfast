@@ -12,7 +12,7 @@ using UnityEngine.Scripting;
 
 namespace GLTFast.Newtonsoft.Schema
 {
-    public class Mesh : MeshBase<MeshExtras,MeshPrimitive>, IJsonObject
+    public class Mesh : MeshBase<MeshExtras, MeshPrimitive>, IJsonObject
     {
         public UnclassifiedData extensions;
 
@@ -20,7 +20,7 @@ namespace GLTFast.Newtonsoft.Schema
         IDictionary<string, JToken> m_JsonExtensionData;
 
         [Preserve]
-        public Mesh() {}
+        public Mesh() { }
 
         public bool TryGetValue<T>(string key, out T value)
         {

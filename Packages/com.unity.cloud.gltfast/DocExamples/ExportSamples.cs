@@ -5,10 +5,10 @@ using System.Threading.Tasks;
 
 namespace GLTFast.Documentation.Examples
 {
-    using UnityEngine;
-    using GLTFast;
     using Export;
+    using GLTFast;
     using Logging;
+    using UnityEngine;
 
     class ExportSamples : MonoBehaviour
     {

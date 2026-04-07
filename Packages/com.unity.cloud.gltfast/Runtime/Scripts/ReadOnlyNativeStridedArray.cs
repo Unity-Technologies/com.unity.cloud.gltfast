@@ -24,15 +24,15 @@ namespace GLTFast
 
         internal ReadOnlyNativeStridedArray(void* buffer, int byteLength, int offset, int count, int byteStride
 #if ENABLE_UNITY_COLLECTIONS_CHECKS
-            ,ref AtomicSafetyHandle safety
+            , ref AtomicSafetyHandle safety
 #endif
             )
         {
 #if ENABLE_UNITY_COLLECTIONS_CHECKS
             if (offset < 0)
-                throw new ArgumentOutOfRangeException(nameof (offset), "offset must be >= 0");
-            if (offset + (count-1) * byteStride + sizeof(T) > byteLength)
-                throw new ArgumentOutOfRangeException(nameof (count), $"accessor range is outside the range of the native array 0-{(object)(byteLength - 1)}");
+                throw new ArgumentOutOfRangeException(nameof(offset), "offset must be >= 0");
+            if (offset + (count - 1) * byteStride + sizeof(T) > byteLength)
+                throw new ArgumentOutOfRangeException(nameof(count), $"accessor range is outside the range of the native array 0-{(object)(byteLength - 1)}");
 #endif
             m_Buffer = (byte*)buffer + offset;
             m_Count = count;

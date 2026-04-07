@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using NUnit.Framework;
-using UnityEngine;
 using Unity.Mathematics;
+using UnityEngine;
 using UnityEngine.Profiling;
 using UnityEngine.TestTools.Utils;
 

@@ -114,7 +114,8 @@ namespace GLTFast.Vertex
         public fixed uint joints[4];
 
 #if DEBUG
-        public override string ToString() {
+        public override string ToString()
+        {
             return $"{joints[0]}/{weights[0]}, {joints[1]}/{weights[1]}, {joints[2]}/{weights[2]}, {joints[3]}/{weights[3]}";
         }
 #endif

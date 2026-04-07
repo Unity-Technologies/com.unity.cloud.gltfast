@@ -12,7 +12,7 @@ using UnityEngine.Scripting;
 
 namespace GLTFast.Newtonsoft.Schema
 {
-    public class Camera : CameraBase<CameraOrthographic,CameraPerspective>, IJsonObject
+    public class Camera : CameraBase<CameraOrthographic, CameraPerspective>, IJsonObject
     {
         public UnclassifiedData extras;
         public UnclassifiedData extensions;
@@ -21,7 +21,7 @@ namespace GLTFast.Newtonsoft.Schema
         IDictionary<string, JToken> m_JsonExtensionData;
 
         [Preserve]
-        public Camera() {}
+        public Camera() { }
 
         public bool TryGetValue<T>(string key, out T value)
         {

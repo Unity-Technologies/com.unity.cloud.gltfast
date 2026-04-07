@@ -128,24 +128,30 @@ namespace GLTFast.Tests.Import
             File.WriteAllText(jsonPathAbsolute, ToJson());
         }
 
-        public void CopyToStreamingAssets(bool force = false) {
+        public void CopyToStreamingAssets(bool force = false)
+        {
             var srcPath = SourcePath;
-            if (string.IsNullOrEmpty(srcPath) || !Directory.Exists(srcPath)) {
+            if (string.IsNullOrEmpty(srcPath) || !Directory.Exists(srcPath))
+            {
                 Debug.LogError($"Invalid source path: \"{srcPath}\"");
                 return;
             }
 
             var dstPath = Path.Combine(Application.streamingAssetsPath, StreamingAssetsPath);
 
-            if (Directory.Exists(dstPath)) {
-                if (force) {
+            if (Directory.Exists(dstPath))
+            {
+                if (force)
+                {
                     Directory.Delete(dstPath);
                 }
-                else {
+                else
+                {
                     return;
                 }
             }
-            else {
+            else
+            {
                 var parent = Directory.GetParent(dstPath)?.FullName;
                 if (parent != null && !Directory.Exists(parent))
                 {
@@ -225,12 +231,12 @@ namespace GLTFast.Tests.Import
                     if (!await stream.ReadToArrayAsync(chunkHeader, 0, chunkHeader.Length, cancellationToken))
                         return null;
                     var chLength = BitConverter.ToUInt32(chunkHeader, 0);
-                    var chType = (ChunkFormat) BitConverter.ToUInt32(chunkHeader, 4);
+                    var chType = (ChunkFormat)BitConverter.ToUInt32(chunkHeader, 4);
 
-                    if(chType == ChunkFormat.Json)
+                    if (chType == ChunkFormat.Json)
                     {
                         var buffer = new byte[chLength];
-                        _ = await stream.ReadAsync(buffer,0,buffer.Length, cancellationToken);
+                        _ = await stream.ReadAsync(buffer, 0, buffer.Length, cancellationToken);
                         json = Encoding.UTF8.GetString(buffer);
                         break;
                     }

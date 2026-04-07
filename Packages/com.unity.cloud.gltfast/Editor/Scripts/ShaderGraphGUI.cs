@@ -18,16 +18,18 @@ namespace GLTFast.Editor
 
         public override void OnGUI(MaterialEditor materialEditor, MaterialProperty[] properties)
         {
-            if (materialEditor.target is Material material) {
+            if (materialEditor.target is Material material)
+            {
                 m_UVTransform = TextureRotationSlider(
                     material,
                     m_UVTransform,
                     Materials.MaterialProperty.BaseColorTextureScaleTransform,
                     Materials.MaterialProperty.BaseColorTextureRotation,
-                    label:"Base Color Tex Rotation"
+                    label: "Base Color Tex Rotation"
                     );
 
-                if (GUI.changed) {
+                if (GUI.changed)
+                {
                     EditorUtility.SetDirty(material);
                 }
             }

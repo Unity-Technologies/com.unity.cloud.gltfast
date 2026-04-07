@@ -20,7 +20,7 @@ namespace GLTFast.Newtonsoft.Schema
         IDictionary<string, JToken> m_JsonExtensionData;
 
         [Preserve]
-        public BufferView() {}
+        public BufferView() { }
 
         public bool TryGetValue<T>(string key, out T value)
         {

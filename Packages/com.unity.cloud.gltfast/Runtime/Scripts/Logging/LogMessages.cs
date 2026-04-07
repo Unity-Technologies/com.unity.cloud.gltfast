@@ -7,8 +7,8 @@
 
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 using System.Text;
+using UnityEngine;
 
 namespace GLTFast.Logging
 {

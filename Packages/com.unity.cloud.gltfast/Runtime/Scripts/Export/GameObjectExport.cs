@@ -264,15 +264,12 @@ namespace GLTFast.Export
                     }
                 }
             }
-            else
-            if (gameObject.TryGetComponent(out SkinnedMeshRenderer smr))
+            else if (gameObject.TryGetComponent(out SkinnedMeshRenderer smr)
+                     && (smr.enabled || m_Settings.DisabledComponents))
             {
-                if (smr.enabled || m_Settings.DisabledComponents)
-                {
-                    mesh = smr.sharedMesh;
-                    bones = smr.bones;
-                    smr.GetSharedMaterials(tempMaterials);
-                }
+                mesh = smr.sharedMesh;
+                bones = smr.bones;
+                smr.GetSharedMaterials(tempMaterials);
             }
 
             var materialIds = new int[tempMaterials.Count];
