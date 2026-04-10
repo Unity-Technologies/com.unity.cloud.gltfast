@@ -919,8 +919,6 @@ namespace GLTFast.Export
 
         async Task<bool> BakeMeshes(bool sync)
         {
-            Profiler.BeginSample("AcquireReadOnlyMeshData");
-
             if ((m_Settings.Compression & Compression.Draco) != 0)
             {
 #if DRACO_IS_INSTALLED
@@ -949,7 +947,6 @@ namespace GLTFast.Export
 
             var meshData = CollectMeshData(out var meshDataArray);
 
-            Profiler.EndSample();
             for (var meshId = 0; meshId < m_Meshes.Count; meshId++)
             {
                 Task task;
@@ -1067,8 +1064,6 @@ namespace GLTFast.Export
 
         async Task BakeMesh(int meshId, IMeshData meshData, bool sync)
         {
-            Profiler.BeginSample("BakeMesh 1");
-
             var mesh = m_Meshes[meshId];
             var uMesh = m_UnityMeshes[meshId];
             var vertexAttributeUsage = m_Settings.PreservedVertexAttributes | m_MeshVertexAttributeUsage[meshId];
@@ -1242,7 +1237,7 @@ namespace GLTFast.Export
                     indices = indexAccessorId,
                 };
             }
-            Profiler.EndSample(); // "BakeMesh 1"
+
             if (!topology.HasValue)
             {
                 m_Logger?.Error(LogCode.TopologyUnsupported, "unknown");
@@ -1331,7 +1326,6 @@ namespace GLTFast.Export
                         );
                         break;
                     case VertexAttribute.BlendIndices:
-                        Profiler.BeginSample("ConvertSkinningAttributesJob");
                         // indices are uint*4 in Unity, and ushort*4 in glTF
                         await ConvertSkinIndicesAttributes(
                             attrData,
@@ -1342,7 +1336,6 @@ namespace GLTFast.Export
                             outputStreams[attrData.descriptor.stream],
                             sync
                         );
-                        Profiler.EndSample();
                         break;
                     default:
                         await ConvertGenericAttribute(

@@ -31,6 +31,19 @@ namespace GLTFast.Addons
             return null;
         }
 
+        public bool Any<T>(Func<T, bool> predicate)
+        {
+            foreach (var instance in m_Addons)
+            {
+                if (instance is T target && predicate(target))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         public T First<T>(Func<T, bool> predicate)
         {
             foreach (var instance in m_Addons)

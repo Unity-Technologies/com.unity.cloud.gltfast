@@ -1233,6 +1233,15 @@ namespace GLTFast
                 }
 
                 var uri = UriHelper.GetUriString(image.uri, BaseUri);
+                if (!uri.IsAbsoluteUri && BaseUri == null)
+                {
+                    Logger?.Error(
+                        LogCode.TextureDownloadFailed,
+                        $"Couldn't resolve relative URI. Please provide a base URI.",
+                        uri.ToString());
+                    return null;
+                }
+
                 return await ImageImport.LoadDataAsync(m_Context, uri, cancellationToken);
             }
 
@@ -1462,6 +1471,13 @@ namespace GLTFast
             {
                 Debug.LogError("JsonParsingFailed");
                 Logger?.Error(LogCode.JsonParsingFailed);
+                return false;
+            }
+
+            if (m_Addons?
+                    .Any<IPostJsonDeserialization>(addon => !addon.PostJsonDeserialization())
+                ?? false)
+            {
                 return false;
             }
 
@@ -2348,9 +2364,11 @@ namespace GLTFast
                             m_NonFlippedYTextureIndices ??= new HashSet<int>(m_TextureLoadTasks.Count);
                             m_NonFlippedYTextureIndices.Add(textureLoadTask.Key);
                         }
-                        result.Texture.name = GetObjectName(Root.Textures[textureLoadTask.Key], textureLoadTask.Key);
+
+                        var textureIndex = textureLoadTask.Key;
+                        result.Texture.name = GetTextureName(textureIndex);
                         result.Texture.anisoLevel = m_Settings.AnisotropicFilterLevel;
-                        m_Textures[textureLoadTask.Key] = result.Texture;
+                        m_Textures[textureIndex] = result.Texture;
                         m_Resources.Add(result.Texture);
                     }
                 }
@@ -3184,9 +3202,20 @@ namespace GLTFast
             return result;
         }
 
-        static string GetObjectName(NamedObject img, int index)
+        string GetTextureName(int textureIndex)
         {
-            return string.IsNullOrEmpty(img.name) ? $"image_{index}" : img.name;
+            var texture = Root.Textures[textureIndex];
+
+            // For compatibility reasons textures are named after their glTF image.
+            // TODO: Change name to glTF texture name in the next major release.
+            var imageIndex = GetImageIndexFromTexture(texture, textureIndex);
+            var image = GetSourceImage(imageIndex);
+            if (image != null)
+            {
+                return string.IsNullOrEmpty(image.name) ? $"image_{imageIndex}" : image.name;
+            }
+
+            return string.IsNullOrEmpty(texture.name) ? $"texture_{textureIndex}" : texture.name;
         }
 
         static void SafeDestroy(UnityEngine.Object obj)

@@ -137,6 +137,7 @@ namespace GLTFast
                     }
                 }
             }
+            Profiler.EndSample();
 
             return mainBufferType;
         }
