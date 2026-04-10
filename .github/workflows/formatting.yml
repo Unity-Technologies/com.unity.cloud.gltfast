@@ -11,7 +11,7 @@ jobs:
         project: [glTFast-Test, glTFast-Test-BuiltIn, glTFast-Test-entities, glTFast-Test-HDRP, glTFast-Test-minimalistic]
     steps:
       - name: Setup .NET Core
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v5
         with:
           dotnet-version: '10.0.x'
 
