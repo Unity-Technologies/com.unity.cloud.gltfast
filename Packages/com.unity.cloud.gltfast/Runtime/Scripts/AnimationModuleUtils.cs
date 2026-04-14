@@ -4,7 +4,6 @@
 #if UNITY_ANIMATION
 
 using System;
-using System.Buffers;
 using GLTFast.Schema;
 using Unity.Collections;
 using Unity.Mathematics;
@@ -181,10 +180,10 @@ namespace GLTFast
         {
 #if UNITY_6000_2_OR_NEWER
             Profiler.BeginSample("AnimationUtils.AddRotationCurves");
-            var rentedX = ArrayPool<Keyframe>.Shared.Rent(times.Length);
-            var rentedY = ArrayPool<Keyframe>.Shared.Rent(times.Length);
-            var rentedZ = ArrayPool<Keyframe>.Shared.Rent(times.Length);
-            var rentedW = ArrayPool<Keyframe>.Shared.Rent(times.Length);
+            var rentedX = new NativeArray<Keyframe>(times.Length, Allocator.Temp, NativeArrayOptions.UninitializedMemory);
+            var rentedY = new NativeArray<Keyframe>(times.Length, Allocator.Temp, NativeArrayOptions.UninitializedMemory);
+            var rentedZ = new NativeArray<Keyframe>(times.Length, Allocator.Temp, NativeArrayOptions.UninitializedMemory);
+            var rentedW = new NativeArray<Keyframe>(times.Length, Allocator.Temp, NativeArrayOptions.UninitializedMemory);
             var count = 0;
 
 #if DEBUG
@@ -279,10 +278,10 @@ namespace GLTFast
                 var rotY = new AnimationCurve();
                 var rotZ = new AnimationCurve();
                 var rotW = new AnimationCurve();
-                rotX.SetKeys(new ReadOnlySpan<Keyframe>(rentedX, 0, count));
-                rotY.SetKeys(new ReadOnlySpan<Keyframe>(rentedY, 0, count));
-                rotZ.SetKeys(new ReadOnlySpan<Keyframe>(rentedZ, 0, count));
-                rotW.SetKeys(new ReadOnlySpan<Keyframe>(rentedW, 0, count));
+                rotX.SetKeys(rentedX);
+                rotY.SetKeys(rentedY);
+                rotZ.SetKeys(rentedZ);
+                rotW.SetKeys(rentedW);
 
                 clip.SetCurve(animationPath, typeof(Transform), "localRotation.x", rotX);
                 clip.SetCurve(animationPath, typeof(Transform), "localRotation.y", rotY);
@@ -290,10 +289,10 @@ namespace GLTFast
                 clip.SetCurve(animationPath, typeof(Transform), "localRotation.w", rotW);
             }
             finally {
-                ArrayPool<Keyframe>.Shared.Return(rentedX);
-                ArrayPool<Keyframe>.Shared.Return(rentedY);
-                ArrayPool<Keyframe>.Shared.Return(rentedZ);
-                ArrayPool<Keyframe>.Shared.Return(rentedW);
+                rentedX.Dispose();
+                rentedY.Dispose();
+                rentedZ.Dispose();
+                rentedW.Dispose();
             }
 
             Profiler.EndSample();
@@ -582,9 +581,9 @@ namespace GLTFast
         {
 #if UNITY_6000_2_OR_NEWER
             Profiler.BeginSample("AnimationUtils.AddVec3Curves");
-            var rentedX = ArrayPool<Keyframe>.Shared.Rent(times.Length);
-            var rentedY = ArrayPool<Keyframe>.Shared.Rent(times.Length);
-            var rentedZ = ArrayPool<Keyframe>.Shared.Rent(times.Length);
+            var rentedX = new NativeArray<Keyframe>(times.Length, Allocator.Temp, NativeArrayOptions.UninitializedMemory);
+            var rentedY = new NativeArray<Keyframe>(times.Length, Allocator.Temp, NativeArrayOptions.UninitializedMemory);
+            var rentedZ = new NativeArray<Keyframe>(times.Length, Allocator.Temp, NativeArrayOptions.UninitializedMemory);
             var count = 0;
 
 #if DEBUG
@@ -667,9 +666,9 @@ namespace GLTFast
                 var curveX = new AnimationCurve();
                 var curveY = new AnimationCurve();
                 var curveZ = new AnimationCurve();
-                curveX.SetKeys(new ReadOnlySpan<Keyframe>(rentedX, 0, count));
-                curveY.SetKeys(new ReadOnlySpan<Keyframe>(rentedY, 0, count));
-                curveZ.SetKeys(new ReadOnlySpan<Keyframe>(rentedZ, 0, count));
+                curveX.SetKeys(rentedX);
+                curveY.SetKeys(rentedY);
+                curveZ.SetKeys(rentedZ);
 
                 var propNames = k_Vec3PropertyNames[propertyIndex];
                 clip.SetCurve(animationPath, typeof(Transform), propNames[0], curveX);
@@ -677,9 +676,9 @@ namespace GLTFast
                 clip.SetCurve(animationPath, typeof(Transform), propNames[2], curveZ);
             }
             finally {
-                ArrayPool<Keyframe>.Shared.Return(rentedX);
-                ArrayPool<Keyframe>.Shared.Return(rentedY);
-                ArrayPool<Keyframe>.Shared.Return(rentedZ);
+                rentedX.Dispose();
+                rentedY.Dispose();
+                rentedZ.Dispose();
             }
 
             Profiler.EndSample();
