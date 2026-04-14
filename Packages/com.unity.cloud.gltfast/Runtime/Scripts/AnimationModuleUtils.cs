@@ -25,6 +25,45 @@ namespace GLTFast
             new[] { "localScale.x", "localScale.y", "localScale.z" },
         };
 
+        static NativeArray<Keyframe>[] s_KeyframeBuffers = new NativeArray<Keyframe>[4];
+
+        static void ReserveBuffers(int length, int dimensions)
+        {
+            Profiler.BeginSample("AnimationUtils.ReserveBuffers");
+            for (var dimension = 0; dimension < dimensions; dimension++)
+            {
+                if (!s_KeyframeBuffers[dimension].IsCreated)
+                {
+                    s_KeyframeBuffers[dimension] = new  NativeArray<Keyframe>(
+                        length,
+                        Allocator.Persistent,
+                        NativeArrayOptions.UninitializedMemory
+                        );
+                    continue;
+                }
+
+                if (s_KeyframeBuffers[dimension].Length < length)
+                {
+                    s_KeyframeBuffers[dimension].Dispose();
+                    s_KeyframeBuffers[dimension] = new  NativeArray<Keyframe>(
+                        length,
+                        Allocator.Temp,
+                        NativeArrayOptions.UninitializedMemory
+                        );
+                }
+            }
+            Profiler.EndSample();
+        }
+
+        public static void ResetBuffers()
+        {
+            for (var i = 0; i < s_KeyframeBuffers.Length; i++)
+            {
+                s_KeyframeBuffers[i].Dispose();
+                s_KeyframeBuffers[i] = default;
+            }
+        }
+
         internal static void AddTranslationCurves(
             AnimationClip clip,
             int targetNode,
@@ -180,10 +219,11 @@ namespace GLTFast
         {
 #if UNITY_6000_2_OR_NEWER
             Profiler.BeginSample("AnimationUtils.AddRotationCurves");
-            var rentedX = new NativeArray<Keyframe>(times.Length, Allocator.Temp, NativeArrayOptions.UninitializedMemory);
-            var rentedY = new NativeArray<Keyframe>(times.Length, Allocator.Temp, NativeArrayOptions.UninitializedMemory);
-            var rentedZ = new NativeArray<Keyframe>(times.Length, Allocator.Temp, NativeArrayOptions.UninitializedMemory);
-            var rentedW = new NativeArray<Keyframe>(times.Length, Allocator.Temp, NativeArrayOptions.UninitializedMemory);
+            ReserveBuffers(times.Length, 4);
+            var rentedX = s_KeyframeBuffers[0];
+            var rentedY = s_KeyframeBuffers[1];
+            var rentedZ = s_KeyframeBuffers[2];
+            var rentedW = s_KeyframeBuffers[3];
             var count = 0;
 
 #if DEBUG
@@ -278,10 +318,10 @@ namespace GLTFast
                 var rotY = new AnimationCurve();
                 var rotZ = new AnimationCurve();
                 var rotW = new AnimationCurve();
-                rotX.SetKeys(rentedX);
-                rotY.SetKeys(rentedY);
-                rotZ.SetKeys(rentedZ);
-                rotW.SetKeys(rentedW);
+                rotX.SetKeys(rentedX.AsReadOnlySpan()[..count]);
+                rotY.SetKeys(rentedY.AsReadOnlySpan()[..count]);
+                rotZ.SetKeys(rentedZ.AsReadOnlySpan()[..count]);
+                rotW.SetKeys(rentedW.AsReadOnlySpan()[..count]);
 
                 clip.SetCurve(animationPath, typeof(Transform), "localRotation.x", rotX);
                 clip.SetCurve(animationPath, typeof(Transform), "localRotation.y", rotY);
@@ -289,10 +329,10 @@ namespace GLTFast
                 clip.SetCurve(animationPath, typeof(Transform), "localRotation.w", rotW);
             }
             finally {
-                rentedX.Dispose();
-                rentedY.Dispose();
-                rentedZ.Dispose();
-                rentedW.Dispose();
+                // rentedX.Dispose();
+                // rentedY.Dispose();
+                // rentedZ.Dispose();
+                // rentedW.Dispose();
             }
 
             Profiler.EndSample();
@@ -581,9 +621,10 @@ namespace GLTFast
         {
 #if UNITY_6000_2_OR_NEWER
             Profiler.BeginSample("AnimationUtils.AddVec3Curves");
-            var rentedX = new NativeArray<Keyframe>(times.Length, Allocator.Temp, NativeArrayOptions.UninitializedMemory);
-            var rentedY = new NativeArray<Keyframe>(times.Length, Allocator.Temp, NativeArrayOptions.UninitializedMemory);
-            var rentedZ = new NativeArray<Keyframe>(times.Length, Allocator.Temp, NativeArrayOptions.UninitializedMemory);
+            ReserveBuffers(times.Length, 3);
+            var rentedX = s_KeyframeBuffers[0];
+            var rentedY = s_KeyframeBuffers[1];
+            var rentedZ = s_KeyframeBuffers[2];
             var count = 0;
 
 #if DEBUG
@@ -591,6 +632,7 @@ namespace GLTFast
 #endif
 
             try {
+                Profiler.BeginSample("AnimationUtils.AddVec3Curves.PopulateBuffers");
                 switch (interpolationType) {
                     case InterpolationType.Step: {
                         for (var i = 0; i < times.Length; i++) {
@@ -662,23 +704,28 @@ namespace GLTFast
                         break;
                     }
                 }
+                Profiler.EndSample();
 
                 var curveX = new AnimationCurve();
                 var curveY = new AnimationCurve();
                 var curveZ = new AnimationCurve();
-                curveX.SetKeys(rentedX);
-                curveY.SetKeys(rentedY);
-                curveZ.SetKeys(rentedZ);
+                Profiler.BeginSample("AnimationUtils.AddVec3Curves.SetKeys");
+                curveX.SetKeys(rentedX.AsReadOnlySpan()[..count]);
+                curveY.SetKeys(rentedY.AsReadOnlySpan()[..count]);
+                curveZ.SetKeys(rentedZ.AsReadOnlySpan()[..count]);
+                Profiler.EndSample();
 
+                Profiler.BeginSample("AnimationUtils.AddVec3Curves.SetCurve");
                 var propNames = k_Vec3PropertyNames[propertyIndex];
                 clip.SetCurve(animationPath, typeof(Transform), propNames[0], curveX);
                 clip.SetCurve(animationPath, typeof(Transform), propNames[1], curveY);
                 clip.SetCurve(animationPath, typeof(Transform), propNames[2], curveZ);
+                Profiler.EndSample();
             }
             finally {
-                rentedX.Dispose();
-                rentedY.Dispose();
-                rentedZ.Dispose();
+                // rentedX.Dispose();
+                // rentedY.Dispose();
+                // rentedZ.Dispose();
             }
 
             Profiler.EndSample();

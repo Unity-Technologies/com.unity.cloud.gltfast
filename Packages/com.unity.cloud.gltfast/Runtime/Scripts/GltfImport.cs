@@ -2732,6 +2732,7 @@ namespace GLTFast
                     }
                 }
             }
+            AnimationModuleUtils.ResetBuffers();
         }
 
 #endif // UNITY_ANIMATION
