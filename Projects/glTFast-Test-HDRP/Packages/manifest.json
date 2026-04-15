@@ -4,7 +4,7 @@
     "com.unity.cloud.gltfast": "file:./../../../Packages/com.unity.cloud.gltfast",
     "com.unity.cloud.gltfast.tests": "file:./../../../Packages/com.unity.cloud.gltfast.tests",
     "com.unity.cloud.ktx": "3.6.3",
-    "com.unity.ide.rider": "3.0.39",
+    "com.unity.ide.rider": "3.0.40",
     "com.unity.ide.visualstudio": "2.0.27",
     "com.unity.meshopt.decompress": "0.2.0-exp.1",
     "com.unity.render-pipelines.high-definition": "14.0.12",
