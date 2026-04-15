@@ -742,16 +742,20 @@ namespace GLTFast.Export
         void LogSummary(long jsonLength, long bufferLength)
         {
 #if DEBUG
-            var sb = new StringBuilder("glTF summary: ");
-            sb.AppendFormat("{0} bytes JSON + {1} bytes buffer", jsonLength, bufferLength);
-            if (m_Gltf != null)
+            if (m_Logger != null)
             {
-                sb.AppendFormat(", {0} nodes", m_Gltf.Nodes?.Count ?? 0);
-                sb.AppendFormat(" ,{0} meshes", m_Gltf.meshes?.Length ?? 0);
-                sb.AppendFormat(" ,{0} materials", m_Gltf.Materials?.Count ?? 0);
-                sb.AppendFormat(" ,{0} images", m_Gltf.Images?.Count ?? 0);
+                var sb = new StringBuilder("glTF summary: ");
+                sb.AppendFormat("{0} bytes JSON + {1} bytes buffer", jsonLength, bufferLength);
+                if (m_Gltf != null)
+                {
+                    sb
+                        .AppendFormat(", {0} nodes", m_Gltf.Nodes?.Count ?? 0)
+                        .AppendFormat(", {0} meshes", m_Gltf.Meshes?.Count ?? 0)
+                        .AppendFormat(", {0} materials", m_Gltf.Materials?.Count ?? 0)
+                        .AppendFormat(", {0} images", m_Gltf.Images?.Count ?? 0);
+                }
+                m_Logger.Info(sb.ToString());
             }
-            m_Logger?.Info(sb.ToString());
 #endif
         }
 

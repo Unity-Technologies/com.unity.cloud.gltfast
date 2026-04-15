@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Refactored [ImportAddonInstanceCollection](xref:GLTFast.Addons.ImportAddonInstanceCollection) to derive directly from `List`/[QueryableList](xref:GLTFast.Addons.QueryableList).
 
 ### Fixed
+- Improved comma placement in export summary (thanks anonymous for [#46](https://github.com/Unity-Technologies/com.unity.cloud.gltfast/pull/46)).
 
 ### Removed
 
