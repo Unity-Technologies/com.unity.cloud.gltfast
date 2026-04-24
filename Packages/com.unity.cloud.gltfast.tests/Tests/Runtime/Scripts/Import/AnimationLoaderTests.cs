@@ -12,6 +12,7 @@ using UnityEngine;
 
 namespace GLTFast.Tests.Import
 {
+    [Category("Import")]
     class AnimationLoaderTests
     {
         GltfTestCaseRunner m_Runner;
