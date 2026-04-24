@@ -25,43 +25,15 @@ namespace GLTFast
             new[] { "localScale.x", "localScale.y", "localScale.z" },
         };
 
-        static NativeArray<Keyframe>[] s_KeyframeBuffers = new NativeArray<Keyframe>[4];
-
-        static void ReserveBuffers(int length, int dimensions)
-        {
-            Profiler.BeginSample("AnimationUtils.ReserveBuffers");
-            for (var dimension = 0; dimension < dimensions; dimension++)
-            {
-                if (!s_KeyframeBuffers[dimension].IsCreated)
-                {
-                    s_KeyframeBuffers[dimension] = new  NativeArray<Keyframe>(
-                        length,
-                        Allocator.Persistent,
-                        NativeArrayOptions.UninitializedMemory
-                        );
-                    continue;
-                }
-
-                if (s_KeyframeBuffers[dimension].Length < length)
-                {
-                    s_KeyframeBuffers[dimension].Dispose();
-                    s_KeyframeBuffers[dimension] = new  NativeArray<Keyframe>(
-                        length,
-                        Allocator.Temp,
-                        NativeArrayOptions.UninitializedMemory
-                        );
-                }
-            }
-            Profiler.EndSample();
-        }
+#if UNITY_6000_2_OR_NEWER
+        static NativeArrayPool<Keyframe> s_KeyframesPool = new(4);
+#endif
 
         public static void ResetBuffers()
         {
-            for (var i = 0; i < s_KeyframeBuffers.Length; i++)
-            {
-                s_KeyframeBuffers[i].Dispose();
-                s_KeyframeBuffers[i] = default;
-            }
+#if UNITY_6000_2_OR_NEWER
+            s_KeyframesPool.Dispose();
+#endif
         }
 
         internal static void AddTranslationCurves(
@@ -219,11 +191,11 @@ namespace GLTFast
         {
 #if UNITY_6000_2_OR_NEWER
             Profiler.BeginSample("AnimationUtils.AddRotationCurves");
-            ReserveBuffers(times.Length, 4);
-            var rentedX = s_KeyframeBuffers[0];
-            var rentedY = s_KeyframeBuffers[1];
-            var rentedZ = s_KeyframeBuffers[2];
-            var rentedW = s_KeyframeBuffers[3];
+            s_KeyframesPool.ReserveBuffers(times.Length, 4);
+            var rentedX = s_KeyframesPool.GetBuffer(0);
+            var rentedY = s_KeyframesPool.GetBuffer(1);
+            var rentedZ = s_KeyframesPool.GetBuffer(2);
+            var rentedW = s_KeyframesPool.GetBuffer(3);
             var count = 0;
 
 #if DEBUG
@@ -621,10 +593,10 @@ namespace GLTFast
         {
 #if UNITY_6000_2_OR_NEWER
             Profiler.BeginSample("AnimationUtils.AddVec3Curves");
-            ReserveBuffers(times.Length, 3);
-            var rentedX = s_KeyframeBuffers[0];
-            var rentedY = s_KeyframeBuffers[1];
-            var rentedZ = s_KeyframeBuffers[2];
+            s_KeyframesPool.ReserveBuffers(times.Length, 3);
+            var rentedX = s_KeyframesPool.GetBuffer(0);
+            var rentedY = s_KeyframesPool.GetBuffer(1);
+            var rentedZ = s_KeyframesPool.GetBuffer(2);
             var count = 0;
 
 #if DEBUG
