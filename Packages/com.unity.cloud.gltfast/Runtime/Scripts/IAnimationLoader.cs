@@ -14,6 +14,12 @@ namespace GLTFast
     public interface IAnimationLoader
     {
         /// <summary>
+        /// Initializes loading all animation clips.
+        /// </summary>
+        /// <param name="clipCount">Total number of animation clips.</param>
+        void Init(int clipCount);
+
+        /// <summary>
         /// Initialize new animation clip with the given name and index.
         /// </summary>
         /// <param name="index">glTF animation clip index.</param>
@@ -104,5 +110,10 @@ namespace GLTFast
             InterpolationType interpolationType,
             string[] morphTargetNames = null
         );
+
+        /// <summary>
+        /// Called when all animation curves have been added and the loader can finalize the loading process.
+        /// </summary>
+        void Finish();
     }
 }

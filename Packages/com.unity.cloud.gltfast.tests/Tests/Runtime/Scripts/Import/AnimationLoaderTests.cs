@@ -50,10 +50,14 @@ namespace GLTFast.Tests.Import
         }
     }
 
-    class MyAnimationLoader : ImportAddonInstance, IAnimationLoader, IPostJsonDeserialization
+    class MyAnimationLoader : ImportAddonInstance, IAnimationLoader
     {
-        GltfImport m_Gltf;
         MyAnimationClip[] m_Clips;
+
+        public void Init(int clipCount)
+        {
+            m_Clips = new MyAnimationClip[clipCount];
+        }
 
         public void AddClip(int index, string name)
         {
@@ -122,28 +126,18 @@ namespace GLTFast.Tests.Import
             m_Clips[clipIndex].AddMorphTargetWeightCurve(targetNode, times, values, interpolationType);
         }
 
+        public void Finish() { }
+
         public override bool SupportsGltfExtension(string extensionName) => false;
 
         public override void Inject(GltfImportBase gltfImport)
         {
             gltfImport.AddImportAddonInstance(this);
-            m_Gltf = gltfImport as GltfImport;
         }
 
         public override void Inject(IInstantiator instantiator) { }
 
         public override void Dispose() { }
-
-        public bool PostJsonDeserialization()
-        {
-#if UNITY_ANIMATION || GLTFAST_ANIMATION
-            var root = m_Gltf?.GetSourceRoot();
-            Assert.NotNull(root?.animations);
-            Assert.AreEqual(1, root.animations.Length);
-            m_Clips = new MyAnimationClip[root.animations.Length];
-#endif
-            return true;
-        }
     }
 
     readonly struct MyAnimationClip
