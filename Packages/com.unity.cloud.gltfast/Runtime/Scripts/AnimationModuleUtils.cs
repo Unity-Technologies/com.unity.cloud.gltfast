@@ -192,10 +192,10 @@ namespace GLTFast
 #if UNITY_6000_2_OR_NEWER
             Profiler.BeginSample("AnimationUtils.AddRotationCurves");
             s_KeyframesPool.ReserveBuffers(times.Length, 4);
-            var rentedX = s_KeyframesPool.GetBuffer(0);
-            var rentedY = s_KeyframesPool.GetBuffer(1);
-            var rentedZ = s_KeyframesPool.GetBuffer(2);
-            var rentedW = s_KeyframesPool.GetBuffer(3);
+            var keyframesX = s_KeyframesPool.GetBuffer(0);
+            var keyframesY = s_KeyframesPool.GetBuffer(1);
+            var keyframesZ = s_KeyframesPool.GetBuffer(2);
+            var keyframesW = s_KeyframesPool.GetBuffer(3);
             var count = 0;
 
 #if DEBUG
@@ -208,10 +208,10 @@ namespace GLTFast
                         for (var i = 0; i < times.Length; i++) {
                             var time = times[i];
                             var value = values[i];
-                            rentedX[i] = new Keyframe(time, value.value.x, float.PositiveInfinity, 0);
-                            rentedY[i] = new Keyframe(time, value.value.y, float.PositiveInfinity, 0);
-                            rentedZ[i] = new Keyframe(time, value.value.z, float.PositiveInfinity, 0);
-                            rentedW[i] = new Keyframe(time, value.value.w, float.PositiveInfinity, 0);
+                            keyframesX[i] = new Keyframe(time, value.value.x, float.PositiveInfinity, 0);
+                            keyframesY[i] = new Keyframe(time, value.value.y, float.PositiveInfinity, 0);
+                            keyframesZ[i] = new Keyframe(time, value.value.z, float.PositiveInfinity, 0);
+                            keyframesW[i] = new Keyframe(time, value.value.w, float.PositiveInfinity, 0);
                         }
                         count = times.Length;
                         break;
@@ -222,10 +222,10 @@ namespace GLTFast
                             var inTangent = values[i * 3];
                             var value = values[i * 3 + 1];
                             var outTangent = values[i * 3 + 2];
-                            rentedX[i] = new Keyframe(time, value.value.x, inTangent.value.x, outTangent.value.x, .5f, .5f);
-                            rentedY[i] = new Keyframe(time, value.value.y, inTangent.value.y, outTangent.value.y, .5f, .5f);
-                            rentedZ[i] = new Keyframe(time, value.value.z, inTangent.value.z, outTangent.value.z, .5f, .5f);
-                            rentedW[i] = new Keyframe(time, value.value.w, inTangent.value.w, outTangent.value.w, .5f, .5f);
+                            keyframesX[i] = new Keyframe(time, value.value.x, inTangent.value.x, outTangent.value.x, .5f, .5f);
+                            keyframesY[i] = new Keyframe(time, value.value.y, inTangent.value.y, outTangent.value.y, .5f, .5f);
+                            keyframesZ[i] = new Keyframe(time, value.value.z, inTangent.value.z, outTangent.value.z, .5f, .5f);
+                            keyframesW[i] = new Keyframe(time, value.value.w, inTangent.value.w, outTangent.value.w, .5f, .5f);
                         }
                         count = times.Length;
                         break;
@@ -266,10 +266,10 @@ namespace GLTFast
                                 outTangent = dV / dT;
                             }
 
-                            rentedX[count] = new Keyframe(prevTime, prevValue.value.x, inTangent.value.x, outTangent.value.x);
-                            rentedY[count] = new Keyframe(prevTime, prevValue.value.y, inTangent.value.y, outTangent.value.y);
-                            rentedZ[count] = new Keyframe(prevTime, prevValue.value.z, inTangent.value.z, outTangent.value.z);
-                            rentedW[count] = new Keyframe(prevTime, prevValue.value.w, inTangent.value.w, outTangent.value.w);
+                            keyframesX[count] = new Keyframe(prevTime, prevValue.value.x, inTangent.value.x, outTangent.value.x);
+                            keyframesY[count] = new Keyframe(prevTime, prevValue.value.y, inTangent.value.y, outTangent.value.y);
+                            keyframesZ[count] = new Keyframe(prevTime, prevValue.value.z, inTangent.value.z, outTangent.value.z);
+                            keyframesW[count] = new Keyframe(prevTime, prevValue.value.w, inTangent.value.w, outTangent.value.w);
                             count++;
 
                             inTangent = outTangent;
@@ -277,10 +277,10 @@ namespace GLTFast
                             prevValue = value;
                         }
 
-                        rentedX[count] = new Keyframe(prevTime, prevValue.value.x, inTangent.value.x, 0);
-                        rentedY[count] = new Keyframe(prevTime, prevValue.value.y, inTangent.value.y, 0);
-                        rentedZ[count] = new Keyframe(prevTime, prevValue.value.z, inTangent.value.z, 0);
-                        rentedW[count] = new Keyframe(prevTime, prevValue.value.w, inTangent.value.w, 0);
+                        keyframesX[count] = new Keyframe(prevTime, prevValue.value.x, inTangent.value.x, 0);
+                        keyframesY[count] = new Keyframe(prevTime, prevValue.value.y, inTangent.value.y, 0);
+                        keyframesZ[count] = new Keyframe(prevTime, prevValue.value.z, inTangent.value.z, 0);
+                        keyframesW[count] = new Keyframe(prevTime, prevValue.value.w, inTangent.value.w, 0);
                         count++;
                         break;
                     }
@@ -290,10 +290,10 @@ namespace GLTFast
                 var rotY = new AnimationCurve();
                 var rotZ = new AnimationCurve();
                 var rotW = new AnimationCurve();
-                rotX.SetKeys(rentedX.AsReadOnlySpan()[..count]);
-                rotY.SetKeys(rentedY.AsReadOnlySpan()[..count]);
-                rotZ.SetKeys(rentedZ.AsReadOnlySpan()[..count]);
-                rotW.SetKeys(rentedW.AsReadOnlySpan()[..count]);
+                rotX.SetKeys(keyframesX.AsReadOnlySpan()[..count]);
+                rotY.SetKeys(keyframesY.AsReadOnlySpan()[..count]);
+                rotZ.SetKeys(keyframesZ.AsReadOnlySpan()[..count]);
+                rotW.SetKeys(keyframesW.AsReadOnlySpan()[..count]);
 
                 clip.SetCurve(animationPath, typeof(Transform), "localRotation.x", rotX);
                 clip.SetCurve(animationPath, typeof(Transform), "localRotation.y", rotY);
@@ -301,10 +301,10 @@ namespace GLTFast
                 clip.SetCurve(animationPath, typeof(Transform), "localRotation.w", rotW);
             }
             finally {
-                // rentedX.Dispose();
-                // rentedY.Dispose();
-                // rentedZ.Dispose();
-                // rentedW.Dispose();
+                // keyframesX.Dispose();
+                // keyframesY.Dispose();
+                // keyframesZ.Dispose();
+                // keyframesW.Dispose();
             }
 
             Profiler.EndSample();
@@ -594,9 +594,9 @@ namespace GLTFast
 #if UNITY_6000_2_OR_NEWER
             Profiler.BeginSample("AnimationUtils.AddVec3Curves");
             s_KeyframesPool.ReserveBuffers(times.Length, 3);
-            var rentedX = s_KeyframesPool.GetBuffer(0);
-            var rentedY = s_KeyframesPool.GetBuffer(1);
-            var rentedZ = s_KeyframesPool.GetBuffer(2);
+            var keyframesX = s_KeyframesPool.GetBuffer(0);
+            var keyframesY = s_KeyframesPool.GetBuffer(1);
+            var keyframesZ = s_KeyframesPool.GetBuffer(2);
             var count = 0;
 
 #if DEBUG
@@ -610,9 +610,9 @@ namespace GLTFast
                         for (var i = 0; i < times.Length; i++) {
                             var time = times[i];
                             var value = values[i];
-                            rentedX[i] = new Keyframe(time, value.x, float.PositiveInfinity, 0);
-                            rentedY[i] = new Keyframe(time, value.y, float.PositiveInfinity, 0);
-                            rentedZ[i] = new Keyframe(time, value.z, float.PositiveInfinity, 0);
+                            keyframesX[i] = new Keyframe(time, value.x, float.PositiveInfinity, 0);
+                            keyframesY[i] = new Keyframe(time, value.y, float.PositiveInfinity, 0);
+                            keyframesZ[i] = new Keyframe(time, value.z, float.PositiveInfinity, 0);
                         }
                         count = times.Length;
                         break;
@@ -623,9 +623,9 @@ namespace GLTFast
                             var inTangent = values[i * 3];
                             var value = values[i * 3 + 1];
                             var outTangent = values[i * 3 + 2];
-                            rentedX[i] = new Keyframe(time, value.x, inTangent.x, outTangent.x, .5f, .5f);
-                            rentedY[i] = new Keyframe(time, value.y, inTangent.y, outTangent.y, .5f, .5f);
-                            rentedZ[i] = new Keyframe(time, value.z, inTangent.z, outTangent.z, .5f, .5f);
+                            keyframesX[i] = new Keyframe(time, value.x, inTangent.x, outTangent.x, .5f, .5f);
+                            keyframesY[i] = new Keyframe(time, value.y, inTangent.y, outTangent.y, .5f, .5f);
+                            keyframesZ[i] = new Keyframe(time, value.z, inTangent.z, outTangent.z, .5f, .5f);
                         }
                         count = times.Length;
                         break;
@@ -659,9 +659,9 @@ namespace GLTFast
                                 outTangent = dV / dT;
                             }
 
-                            rentedX[count] = new Keyframe(prevTime, prevValue.x, inTangent.x, outTangent.x);
-                            rentedY[count] = new Keyframe(prevTime, prevValue.y, inTangent.y, outTangent.y);
-                            rentedZ[count] = new Keyframe(prevTime, prevValue.z, inTangent.z, outTangent.z);
+                            keyframesX[count] = new Keyframe(prevTime, prevValue.x, inTangent.x, outTangent.x);
+                            keyframesY[count] = new Keyframe(prevTime, prevValue.y, inTangent.y, outTangent.y);
+                            keyframesZ[count] = new Keyframe(prevTime, prevValue.z, inTangent.z, outTangent.z);
                             count++;
 
                             inTangent = outTangent;
@@ -669,9 +669,9 @@ namespace GLTFast
                             prevValue = value;
                         }
 
-                        rentedX[count] = new Keyframe(prevTime, prevValue.x, inTangent.x, 0);
-                        rentedY[count] = new Keyframe(prevTime, prevValue.y, inTangent.y, 0);
-                        rentedZ[count] = new Keyframe(prevTime, prevValue.z, inTangent.z, 0);
+                        keyframesX[count] = new Keyframe(prevTime, prevValue.x, inTangent.x, 0);
+                        keyframesY[count] = new Keyframe(prevTime, prevValue.y, inTangent.y, 0);
+                        keyframesZ[count] = new Keyframe(prevTime, prevValue.z, inTangent.z, 0);
                         count++;
                         break;
                     }
@@ -682,9 +682,9 @@ namespace GLTFast
                 var curveY = new AnimationCurve();
                 var curveZ = new AnimationCurve();
                 Profiler.BeginSample("AnimationUtils.AddVec3Curves.SetKeys");
-                curveX.SetKeys(rentedX.AsReadOnlySpan()[..count]);
-                curveY.SetKeys(rentedY.AsReadOnlySpan()[..count]);
-                curveZ.SetKeys(rentedZ.AsReadOnlySpan()[..count]);
+                curveX.SetKeys(keyframesX.AsReadOnlySpan()[..count]);
+                curveY.SetKeys(keyframesY.AsReadOnlySpan()[..count]);
+                curveZ.SetKeys(keyframesZ.AsReadOnlySpan()[..count]);
                 Profiler.EndSample();
 
                 Profiler.BeginSample("AnimationUtils.AddVec3Curves.SetCurve");
@@ -695,9 +695,9 @@ namespace GLTFast
                 Profiler.EndSample();
             }
             finally {
-                // rentedX.Dispose();
-                // rentedY.Dispose();
-                // rentedZ.Dispose();
+                // keyframesX.Dispose();
+                // keyframesY.Dispose();
+                // keyframesZ.Dispose();
             }
 
             Profiler.EndSample();
