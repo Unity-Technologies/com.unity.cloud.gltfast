@@ -15,7 +15,7 @@ namespace GLTFast
     /// Arrays are temporary and have to get disposed within the same frame.
     /// Do not use any one of those arrays concurrently!
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">Member type.</typeparam>
     sealed class NativeArrayPool<T> : IDisposable where T : struct
     {
         readonly NativeArray<T>[] m_Buffers;

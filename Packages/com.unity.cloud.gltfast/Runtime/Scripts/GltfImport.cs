@@ -2464,38 +2464,24 @@ namespace GLTFast
 #if UNITY_ANIMATION || GLTFAST_ANIMATION
         void CreateAnimationClips(int[] parentIndex)
         {
-            var animationAddons = m_Addons?.SubCollection<IAnimationLoader>();
+            var animationAddons = m_Addons?.First<IAnimationLoader>();
             if (animationAddons == null)
             {
 #if UNITY_ANIMATION
-                m_AnimationClips = new AnimationClip[Root.Animations.Count];
+                animationAddons = new AnimationModuleLoader(m_Settings.AnimationMethod == AnimationMethod.Legacy);
 #else
                 // Animation module disabled and no animation addon found, nothing to do here.
                 return;
 #endif
             }
 
-            animationAddons?.ForEach(loader => loader.Init(Root.Animations.Count));
+            animationAddons.Init(Root.Animations.Count);
             for (var i = 0; i < Root.Animations.Count; i++)
             {
                 var animation = Root.Animations[i];
                 var clipName = animation.name ?? $"Clip_{i}";
-#if UNITY_ANIMATION
-                if (m_AnimationClips != null)
-                {
-                    m_AnimationClips[i] = new AnimationClip
-                    {
-                        name = clipName,
 
-                        // Legacy Animation requirement
-                        legacy = m_Settings.AnimationMethod == AnimationMethod.Legacy,
-                        wrapMode = WrapMode.Loop
-                    };
-                }
-#endif
-
-                var clipIndex = i;
-                animationAddons?.ForEach(loader => loader.AddClip(clipIndex, clipName));
+                animationAddons.AddClip(i, clipName);
 
                 for (var j = 0; j < animation.Channels.Count; j++)
                 {
@@ -2537,31 +2523,14 @@ namespace GLTFast
                                 Logger?.Error(LogCode.AccessorAccessFailed, sampler.output.ToString());
                                 continue;
                             }
-                            if (animationAddons != null)
-                            {
-                                animationAddons.ForEach(loader => loader.AddTranslationCurves(
-                                    clipIndex,
-                                    targetNode,
-                                    nodeHierarchyInfo,
-                                    times,
-                                    values,
-                                    interpolationType
-                                ));
-                            }
-#if UNITY_ANIMATION
-                            else
-                            {
-                                AnimationModuleUtils.AddTranslationCurves(
-                                    m_AnimationClips[i],
-                                    targetNode,
-                                    null,
-                                    nodeHierarchyInfo,
-                                    times,
-                                    values,
-                                    interpolationType
-                                );
-                            }
-#endif // UNITY_ANIMATION
+                            animationAddons.AddTranslationCurves(
+                                i,
+                                targetNode,
+                                nodeHierarchyInfo,
+                                times,
+                                values,
+                                interpolationType
+                            );
                             break;
                         }
                         case AnimationChannelBase.Path.Rotation:
@@ -2572,31 +2541,14 @@ namespace GLTFast
                                 Logger?.Error(LogCode.AccessorAccessFailed, sampler.output.ToString());
                                 continue;
                             }
-                            if (animationAddons != null)
-                            {
-                                animationAddons?.ForEach(loader => loader.AddRotationCurves(
-                                    clipIndex,
-                                    targetNode,
-                                    nodeHierarchyInfo,
-                                    times,
-                                    values,
-                                    interpolationType
-                                ));
-                            }
-#if UNITY_ANIMATION
-                            else
-                            {
-                                AnimationModuleUtils.AddRotationCurves(
-                                    m_AnimationClips[i],
-                                    targetNode,
-                                    null,
-                                    nodeHierarchyInfo,
-                                    times,
-                                    values,
-                                    interpolationType
-                                );
-                            }
-#endif // UNITY_ANIMATION
+                            animationAddons.AddRotationCurves(
+                                i,
+                                targetNode,
+                                nodeHierarchyInfo,
+                                times,
+                                values,
+                                interpolationType
+                            );
                             break;
                         }
                         case AnimationChannelBase.Path.Scale:
@@ -2607,31 +2559,14 @@ namespace GLTFast
                                 Logger?.Error(LogCode.AccessorAccessFailed, sampler.output.ToString());
                                 continue;
                             }
-                            if (animationAddons != null)
-                            {
-                                animationAddons?.ForEach(loader => loader.AddScaleCurves(
-                                    clipIndex,
-                                    targetNode,
-                                    nodeHierarchyInfo,
-                                    times,
-                                    values,
-                                    interpolationType
-                                ));
-                            }
-#if UNITY_ANIMATION
-                            else
-                            {
-                                AnimationModuleUtils.AddScaleCurves(
-                                    m_AnimationClips[i],
-                                    targetNode,
-                                    null,
-                                    nodeHierarchyInfo,
-                                    times,
-                                    values,
-                                    interpolationType
-                                    );
-                            }
-#endif // UNITY_ANIMATION
+                            animationAddons.AddScaleCurves(
+                                i,
+                                targetNode,
+                                nodeHierarchyInfo,
+                                times,
+                                values,
+                                interpolationType
+                            );
                             break;
                         }
                         case AnimationChannelBase.Path.Weights:
@@ -2648,35 +2583,17 @@ namespace GLTFast
                                 Logger?.Error(LogCode.AccessorAccessFailed, sampler.output.ToString());
                                 continue;
                             }
-                            if (animationAddons != null)
-                            {
-                                animationAddons?.ForEach(loader => loader.AddMorphTargetWeightCurves(
-                                    clipIndex,
-                                    targetNode,
-                                    0,
-                                    null,
-                                    nodeHierarchyInfo,
-                                    times,
-                                    values,
-                                    interpolationType,
-                                    mesh.Extras?.targetNames
-                                ));
-                            }
-#if UNITY_ANIMATION
-                            else
-                            {
-                                AnimationModuleUtils.AddMorphTargetWeightCurves(
-                                    m_AnimationClips[i],
-                                    targetNode,
-                                    null,
-                                    nodeHierarchyInfo,
-                                    times,
-                                    values,
-                                    interpolationType,
-                                    mesh.Extras?.targetNames
-                                );
-                            }
-#endif // UNITY_ANIMATION
+                            animationAddons.AddMorphTargetWeightCurves(
+                                i,
+                                targetNode,
+                                0,
+                                null,
+                                nodeHierarchyInfo,
+                                times,
+                                values,
+                                interpolationType,
+                                mesh.Extras?.targetNames
+                            );
 
                             // HACK BEGIN:
                             // Meshes with multiple primitives that are not using identical vertex buffer layouts
@@ -2689,35 +2606,17 @@ namespace GLTFast
                             for (var meshNumeration = 1; meshNumeration < meshCount; meshNumeration++)
                             {
                                 var meshName = $"{meshPrefix}_{meshNumeration}";
-                                if (animationAddons != null)
-                                {
-                                    animationAddons?.ForEach(loader => loader.AddMorphTargetWeightCurves(
-                                        clipIndex,
-                                        targetNode,
-                                        meshNumeration,
-                                        meshName,
-                                        nodeHierarchyInfo,
-                                        times,
-                                        values,
-                                        interpolationType,
-                                        mesh.Extras?.targetNames
-                                    ));
-                                }
-#if UNITY_ANIMATION
-                                else
-                                {
-                                    AnimationModuleUtils.AddMorphTargetWeightCurves(
-                                        m_AnimationClips[i],
-                                        targetNode,
-                                        meshName,
-                                        nodeHierarchyInfo,
-                                        times,
-                                        values,
-                                        interpolationType,
-                                        mesh.Extras?.targetNames
-                                    );
-                                }
-#endif // UNITY_ANIMATION
+                                animationAddons.AddMorphTargetWeightCurves(
+                                    i,
+                                    targetNode,
+                                    meshNumeration,
+                                    meshName,
+                                    nodeHierarchyInfo,
+                                    times,
+                                    values,
+                                    interpolationType,
+                                    mesh.Extras?.targetNames
+                                );
                             }
                             // HACK END
                             break;
@@ -2733,8 +2632,11 @@ namespace GLTFast
                     }
                 }
             }
-            animationAddons?.ForEach(loader => loader.Finish());
-            AnimationModuleUtils.ResetBuffers();
+            animationAddons.Finish();
+            if (animationAddons is AnimationModuleLoader animationModuleLoader)
+            {
+                m_AnimationClips = animationModuleLoader.AnimationClips;
+            }
         }
 
 #endif // UNITY_ANIMATION

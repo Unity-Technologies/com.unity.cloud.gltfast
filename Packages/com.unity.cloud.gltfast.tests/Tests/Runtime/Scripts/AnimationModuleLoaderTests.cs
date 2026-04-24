@@ -10,7 +10,7 @@ using Mesh = UnityEngine.Mesh;
 
 namespace GLTFast.Tests
 {
-    class AnimationModuleUtilsTests
+    class AnimationModuleLoaderTests
     {
         [Test]
         public void AddRotationCurvesWithDefaultValuesLinear()
@@ -71,20 +71,15 @@ namespace GLTFast.Tests
 #if UNITY_ANIMATION
             using var times = new NativeArray<float>(new[] { 0f, 1f }, Allocator.Temp);
             NativeArray<quaternion>.ReadOnly values = default;
-
-            var clip = new AnimationClip { legacy = true };
             var hierarchy = new NodeHierarchyInfo(new[] { "Target" }, new[] { -1 });
 
-            AnimationModuleUtils.AddRotationCurves(
-                clip,
-                targetNode: 0,
-                subPath: null,
-                hierarchy,
-                times.AsReadOnly(),
-                values,
-                interpolationType
-            );
+            var anim = new AnimationModuleLoader(true);
+            anim.Init(1);
+            anim.AddClip(0, "TestClip");
+            anim.AddRotationCurves(0, 0, hierarchy, times.AsReadOnly(), values, interpolationType);
+            anim.Finish();
 
+            var clip = anim.AnimationClips[0];
             Assert.IsFalse(clip.empty, "Expected rotation curves to be registered on the clip.");
             Assert.AreEqual(1f, clip.length, 1e-6f, "Clip length should match the last key time.");
 
@@ -104,30 +99,16 @@ namespace GLTFast.Tests
 #if UNITY_ANIMATION
             using var times = new NativeArray<float>(new[] { 0f, 1f }, Allocator.Temp);
             NativeArray<float3>.ReadOnly values = default;
-
-            var clip = new AnimationClip { legacy = true };
             var hierarchy = new NodeHierarchyInfo(new[] { "Target" }, new[] { -1 });
 
-            AnimationModuleUtils.AddTranslationCurves(
-                clip,
-                targetNode: 0,
-                subPath: null,
-                hierarchy,
-                times.AsReadOnly(),
-                values,
-                interpolationType
-            );
+            var anim = new AnimationModuleLoader(true);
+            anim.Init(1);
+            anim.AddClip(0, "TestClip");
+            anim.AddTranslationCurves(0, 0, hierarchy, times.AsReadOnly(), values, interpolationType);
+            anim.AddScaleCurves(0, 0, hierarchy, times.AsReadOnly(), values, interpolationType);
+            anim.Finish();
 
-            AnimationModuleUtils.AddScaleCurves(
-                clip,
-                targetNode: 0,
-                subPath: null,
-                hierarchy,
-                times.AsReadOnly(),
-                values,
-                interpolationType
-            );
-
+            var clip = anim.AnimationClips[0];
             Assert.IsFalse(clip.empty, "Expected translation curves to be registered on the clip.");
             Assert.AreEqual(1f, clip.length, 1e-6f, "Clip length should match the last key time.");
 
@@ -153,20 +134,16 @@ namespace GLTFast.Tests
             using var times = new NativeArray<float>(new[] { 0f, 1f }, Allocator.Temp);
             NativeArray<float>.ReadOnly values = default;
 
-            var clip = new AnimationClip { legacy = true };
             var hierarchy = new NodeHierarchyInfo(new[] { "Target" }, new[] { -1 });
 
-            AnimationModuleUtils.AddMorphTargetWeightCurves(
-                clip,
-                targetNode: 0,
-                subPath: null,
-                hierarchy,
-                times.AsReadOnly(),
-                values,
-                interpolationType,
-                morphTargetNames
-            );
+            var anim = new AnimationModuleLoader(true);
+            anim.Init(1);
+            anim.AddClip(0, "TestClip");
+            anim.AddMorphTargetWeightCurves(
+                0, 0, 0, "Mesh", hierarchy, times.AsReadOnly(), values, interpolationType, morphTargetNames);
+            anim.Finish();
 
+            var clip = anim.AnimationClips[0];
             Assert.IsFalse(clip.empty, "Expected morph target weight curves to be registered on the clip.");
             Assert.AreEqual(1f, clip.length, 1e-6f, "Clip length should match the last key time.");
 

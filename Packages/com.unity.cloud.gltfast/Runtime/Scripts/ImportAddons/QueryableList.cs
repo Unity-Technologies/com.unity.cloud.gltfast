@@ -53,6 +53,19 @@ namespace GLTFast.Addons
             return false;
         }
 
+        public T First<T>()
+        {
+            foreach (var instance in this)
+            {
+                if (instance is T target)
+                {
+                    return target;
+                }
+            }
+
+            return default;
+        }
+
         public T First<T>(Func<T, bool> predicate)
         {
             foreach (var instance in this)
