@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - GameObjectSceneInstance's [AddCamera](xref:GLTFast.GameObjectSceneInstance.AddCamera), [AddLight](xref:GLTFast.GameObjectSceneInstance.AddLight) and [SetLegacyAnimation](xref:GLTFast.GameObjectSceneInstance.SetLegacyAnimation) are now public, so custom [IInstantiators](xref:GLTFast.IInstantiator) can utilize it.
 - Refactored [ImportAddonInstanceCollection](xref:GLTFast.Addons.ImportAddonInstanceCollection) to derive directly from `List`/[QueryableList](xref:GLTFast.Addons.QueryableList).
+- (Performance) Importing animation curves got much faster and requires less managed memory. Keyframes are prepared in native arrays and set en bloc via [SetKeys(ReadOnlySpan&lt;Keyframe&gt;)](xref:UnityEngine.AnimationCurve.SetKeys(System.ReadOnlySpan`1<UnityEngine.Keyframe>)) instead of being slowly added individually (thanks [jverral](https://github.com/jverral) for initiating this via [#44](https://github.com/Unity-Technologies/com.unity.cloud.gltfast/pull/44)).
+- (Performance) Reduced memory waste by using cached, static identifiers instead of inner-loop format strings for [AnimationClip.SetCurve](xref:UnityEngine.AnimationClip.SetCurve(System.String,System.Type,System.String,UnityEngine.AnimationCurve))'s `propertyName` parameter (thanks [jverral](https://github.com/jverral) for [#44](https://github.com/Unity-Technologies/com.unity.cloud.gltfast/pull/44)).
 
 ### Fixed
 - Improved comma placement in export summary (thanks anonymous for [#46](https://github.com/Unity-Technologies/com.unity.cloud.gltfast/pull/46)).
