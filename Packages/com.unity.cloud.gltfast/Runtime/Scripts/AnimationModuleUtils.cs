@@ -202,110 +202,102 @@ namespace GLTFast
             uint duplicates = 0;
 #endif
 
-            try {
-                switch (interpolationType) {
-                    case InterpolationType.Step: {
-                        for (var i = 0; i < times.Length; i++) {
-                            var time = times[i];
-                            var value = values[i];
-                            keyframesX[i] = new Keyframe(time, value.value.x, float.PositiveInfinity, 0);
-                            keyframesY[i] = new Keyframe(time, value.value.y, float.PositiveInfinity, 0);
-                            keyframesZ[i] = new Keyframe(time, value.value.z, float.PositiveInfinity, 0);
-                            keyframesW[i] = new Keyframe(time, value.value.w, float.PositiveInfinity, 0);
-                        }
-                        count = times.Length;
-                        break;
+            switch (interpolationType) {
+                case InterpolationType.Step: {
+                    for (var i = 0; i < times.Length; i++) {
+                        var time = times[i];
+                        var value = values[i];
+                        keyframesX[i] = new Keyframe(time, value.value.x, float.PositiveInfinity, 0);
+                        keyframesY[i] = new Keyframe(time, value.value.y, float.PositiveInfinity, 0);
+                        keyframesZ[i] = new Keyframe(time, value.value.z, float.PositiveInfinity, 0);
+                        keyframesW[i] = new Keyframe(time, value.value.w, float.PositiveInfinity, 0);
                     }
-                    case InterpolationType.CubicSpline: {
-                        for (var i = 0; i < times.Length; i++) {
-                            var time = times[i];
-                            var inTangent = values[i * 3];
-                            var value = values[i * 3 + 1];
-                            var outTangent = values[i * 3 + 2];
-                            keyframesX[i] = new Keyframe(time, value.value.x, inTangent.value.x, outTangent.value.x, .5f, .5f);
-                            keyframesY[i] = new Keyframe(time, value.value.y, inTangent.value.y, outTangent.value.y, .5f, .5f);
-                            keyframesZ[i] = new Keyframe(time, value.value.z, inTangent.value.z, outTangent.value.z, .5f, .5f);
-                            keyframesW[i] = new Keyframe(time, value.value.w, inTangent.value.w, outTangent.value.w, .5f, .5f);
-                        }
-                        count = times.Length;
-                        break;
-                    }
-                    default: { // LINEAR
-                        var prevTime = times[0];
-                        var prevValue = values[0];
-                        var inTangent = new quaternion(new float4(0f));
-
-                        Assert.AreEqual(times.Length, values.Length);
-                        for (var i = 1; i < times.Length; i++) {
-                            var time = times[i];
-                            var value = values[i];
-
-                            if (prevTime >= time) {
-                                // Time value is not increasing, so we ignore this keyframe
-                                // This happened on some Sketchfab files (see #298)
-#if DEBUG
-                                duplicates++;
-#endif
-                                continue;
-                            }
-
-                            // Ensure shortest path rotation ( see https://www.khronos.org/registry/glTF/specs/2.0/glTF-2.0.html#interpolation-slerp )
-                            if (math.dot(prevValue, value) < 0) {
-                                value.value = -value.value;
-                            }
-
-                            var dT = time - prevTime;
-                            var dV = value.value - prevValue.value;
-                            quaternion outTangent;
-                            if (dT < k_TimeEpsilon) {
-                                outTangent.value.x = (dV.x < 0f) ^ (dT < 0f) ? float.NegativeInfinity : float.PositiveInfinity;
-                                outTangent.value.y = (dV.y < 0f) ^ (dT < 0f) ? float.NegativeInfinity : float.PositiveInfinity;
-                                outTangent.value.z = (dV.z < 0f) ^ (dT < 0f) ? float.NegativeInfinity : float.PositiveInfinity;
-                                outTangent.value.w = (dV.w < 0f) ^ (dT < 0f) ? float.NegativeInfinity : float.PositiveInfinity;
-                            } else {
-                                outTangent = dV / dT;
-                            }
-
-                            keyframesX[count] = new Keyframe(prevTime, prevValue.value.x, inTangent.value.x, outTangent.value.x);
-                            keyframesY[count] = new Keyframe(prevTime, prevValue.value.y, inTangent.value.y, outTangent.value.y);
-                            keyframesZ[count] = new Keyframe(prevTime, prevValue.value.z, inTangent.value.z, outTangent.value.z);
-                            keyframesW[count] = new Keyframe(prevTime, prevValue.value.w, inTangent.value.w, outTangent.value.w);
-                            count++;
-
-                            inTangent = outTangent;
-                            prevTime = time;
-                            prevValue = value;
-                        }
-
-                        keyframesX[count] = new Keyframe(prevTime, prevValue.value.x, inTangent.value.x, 0);
-                        keyframesY[count] = new Keyframe(prevTime, prevValue.value.y, inTangent.value.y, 0);
-                        keyframesZ[count] = new Keyframe(prevTime, prevValue.value.z, inTangent.value.z, 0);
-                        keyframesW[count] = new Keyframe(prevTime, prevValue.value.w, inTangent.value.w, 0);
-                        count++;
-                        break;
-                    }
+                    count = times.Length;
+                    break;
                 }
+                case InterpolationType.CubicSpline: {
+                    for (var i = 0; i < times.Length; i++) {
+                        var time = times[i];
+                        var inTangent = values[i * 3];
+                        var value = values[i * 3 + 1];
+                        var outTangent = values[i * 3 + 2];
+                        keyframesX[i] = new Keyframe(time, value.value.x, inTangent.value.x, outTangent.value.x, .5f, .5f);
+                        keyframesY[i] = new Keyframe(time, value.value.y, inTangent.value.y, outTangent.value.y, .5f, .5f);
+                        keyframesZ[i] = new Keyframe(time, value.value.z, inTangent.value.z, outTangent.value.z, .5f, .5f);
+                        keyframesW[i] = new Keyframe(time, value.value.w, inTangent.value.w, outTangent.value.w, .5f, .5f);
+                    }
+                    count = times.Length;
+                    break;
+                }
+                default: { // LINEAR
+                    var prevTime = times[0];
+                    var prevValue = values[0];
+                    var inTangent = new quaternion(new float4(0f));
 
-                var rotX = new AnimationCurve();
-                var rotY = new AnimationCurve();
-                var rotZ = new AnimationCurve();
-                var rotW = new AnimationCurve();
-                rotX.SetKeys(keyframesX.AsReadOnlySpan()[..count]);
-                rotY.SetKeys(keyframesY.AsReadOnlySpan()[..count]);
-                rotZ.SetKeys(keyframesZ.AsReadOnlySpan()[..count]);
-                rotW.SetKeys(keyframesW.AsReadOnlySpan()[..count]);
+                    Assert.AreEqual(times.Length, values.Length);
+                    for (var i = 1; i < times.Length; i++) {
+                        var time = times[i];
+                        var value = values[i];
 
-                clip.SetCurve(animationPath, typeof(Transform), "localRotation.x", rotX);
-                clip.SetCurve(animationPath, typeof(Transform), "localRotation.y", rotY);
-                clip.SetCurve(animationPath, typeof(Transform), "localRotation.z", rotZ);
-                clip.SetCurve(animationPath, typeof(Transform), "localRotation.w", rotW);
+                        if (prevTime >= time) {
+                            // Time value is not increasing, so we ignore this keyframe
+                            // This happened on some Sketchfab files (see #298)
+#if DEBUG
+                            duplicates++;
+#endif
+                            continue;
+                        }
+
+                        // Ensure shortest path rotation ( see https://www.khronos.org/registry/glTF/specs/2.0/glTF-2.0.html#interpolation-slerp )
+                        if (math.dot(prevValue, value) < 0) {
+                            value.value = -value.value;
+                        }
+
+                        var dT = time - prevTime;
+                        var dV = value.value - prevValue.value;
+                        quaternion outTangent;
+                        if (dT < k_TimeEpsilon) {
+                            outTangent.value.x = (dV.x < 0f) ^ (dT < 0f) ? float.NegativeInfinity : float.PositiveInfinity;
+                            outTangent.value.y = (dV.y < 0f) ^ (dT < 0f) ? float.NegativeInfinity : float.PositiveInfinity;
+                            outTangent.value.z = (dV.z < 0f) ^ (dT < 0f) ? float.NegativeInfinity : float.PositiveInfinity;
+                            outTangent.value.w = (dV.w < 0f) ^ (dT < 0f) ? float.NegativeInfinity : float.PositiveInfinity;
+                        } else {
+                            outTangent = dV / dT;
+                        }
+
+                        keyframesX[count] = new Keyframe(prevTime, prevValue.value.x, inTangent.value.x, outTangent.value.x);
+                        keyframesY[count] = new Keyframe(prevTime, prevValue.value.y, inTangent.value.y, outTangent.value.y);
+                        keyframesZ[count] = new Keyframe(prevTime, prevValue.value.z, inTangent.value.z, outTangent.value.z);
+                        keyframesW[count] = new Keyframe(prevTime, prevValue.value.w, inTangent.value.w, outTangent.value.w);
+                        count++;
+
+                        inTangent = outTangent;
+                        prevTime = time;
+                        prevValue = value;
+                    }
+
+                    keyframesX[count] = new Keyframe(prevTime, prevValue.value.x, inTangent.value.x, 0);
+                    keyframesY[count] = new Keyframe(prevTime, prevValue.value.y, inTangent.value.y, 0);
+                    keyframesZ[count] = new Keyframe(prevTime, prevValue.value.z, inTangent.value.z, 0);
+                    keyframesW[count] = new Keyframe(prevTime, prevValue.value.w, inTangent.value.w, 0);
+                    count++;
+                    break;
+                }
             }
-            finally {
-                // keyframesX.Dispose();
-                // keyframesY.Dispose();
-                // keyframesZ.Dispose();
-                // keyframesW.Dispose();
-            }
+
+            var rotX = new AnimationCurve();
+            var rotY = new AnimationCurve();
+            var rotZ = new AnimationCurve();
+            var rotW = new AnimationCurve();
+            rotX.SetKeys(keyframesX.AsReadOnlySpan()[..count]);
+            rotY.SetKeys(keyframesY.AsReadOnlySpan()[..count]);
+            rotZ.SetKeys(keyframesZ.AsReadOnlySpan()[..count]);
+            rotW.SetKeys(keyframesW.AsReadOnlySpan()[..count]);
+
+            clip.SetCurve(animationPath, typeof(Transform), "localRotation.x", rotX);
+            clip.SetCurve(animationPath, typeof(Transform), "localRotation.y", rotY);
+            clip.SetCurve(animationPath, typeof(Transform), "localRotation.z", rotZ);
+            clip.SetCurve(animationPath, typeof(Transform), "localRotation.w", rotW);
 
             Profiler.EndSample();
 #if DEBUG
@@ -603,102 +595,91 @@ namespace GLTFast
             uint duplicates = 0;
 #endif
 
-            try {
-                Profiler.BeginSample("AnimationUtils.AddVec3Curves.PopulateBuffers");
-                switch (interpolationType) {
-                    case InterpolationType.Step: {
-                        for (var i = 0; i < times.Length; i++) {
-                            var time = times[i];
-                            var value = values[i];
-                            keyframesX[i] = new Keyframe(time, value.x, float.PositiveInfinity, 0);
-                            keyframesY[i] = new Keyframe(time, value.y, float.PositiveInfinity, 0);
-                            keyframesZ[i] = new Keyframe(time, value.z, float.PositiveInfinity, 0);
-                        }
-                        count = times.Length;
-                        break;
+            Profiler.BeginSample("AnimationUtils.AddVec3Curves.PopulateBuffers");
+            switch (interpolationType) {
+                case InterpolationType.Step: {
+                    for (var i = 0; i < times.Length; i++) {
+                        var time = times[i];
+                        var value = values[i];
+                        keyframesX[i] = new Keyframe(time, value.x, float.PositiveInfinity, 0);
+                        keyframesY[i] = new Keyframe(time, value.y, float.PositiveInfinity, 0);
+                        keyframesZ[i] = new Keyframe(time, value.z, float.PositiveInfinity, 0);
                     }
-                    case InterpolationType.CubicSpline: {
-                        for (var i = 0; i < times.Length; i++) {
-                            var time = times[i];
-                            var inTangent = values[i * 3];
-                            var value = values[i * 3 + 1];
-                            var outTangent = values[i * 3 + 2];
-                            keyframesX[i] = new Keyframe(time, value.x, inTangent.x, outTangent.x, .5f, .5f);
-                            keyframesY[i] = new Keyframe(time, value.y, inTangent.y, outTangent.y, .5f, .5f);
-                            keyframesZ[i] = new Keyframe(time, value.z, inTangent.z, outTangent.z, .5f, .5f);
-                        }
-                        count = times.Length;
-                        break;
-                    }
-                    default: { // LINEAR
-                        var prevTime = times[0];
-                        var prevValue = values[0];
-                        var inTangent = new float3(0f);
-
-                        for (var i = 1; i < times.Length; i++) {
-                            var time = times[i];
-                            var value = values[i];
-
-                            if (prevTime >= time) {
-                                // Time value is not increasing, so we ignore this keyframe
-                                // This happened on some Sketchfab files (see #298)
-#if DEBUG
-                                duplicates++;
-#endif
-                                continue;
-                            }
-
-                            var dT = time - prevTime;
-                            var dV = value - prevValue;
-                            float3 outTangent;
-                            if (dT < k_TimeEpsilon) {
-                                outTangent.x = (dV.x < 0f) ^ (dT < 0f) ? float.NegativeInfinity : float.PositiveInfinity;
-                                outTangent.y = (dV.y < 0f) ^ (dT < 0f) ? float.NegativeInfinity : float.PositiveInfinity;
-                                outTangent.z = (dV.z < 0f) ^ (dT < 0f) ? float.NegativeInfinity : float.PositiveInfinity;
-                            } else {
-                                outTangent = dV / dT;
-                            }
-
-                            keyframesX[count] = new Keyframe(prevTime, prevValue.x, inTangent.x, outTangent.x);
-                            keyframesY[count] = new Keyframe(prevTime, prevValue.y, inTangent.y, outTangent.y);
-                            keyframesZ[count] = new Keyframe(prevTime, prevValue.z, inTangent.z, outTangent.z);
-                            count++;
-
-                            inTangent = outTangent;
-                            prevTime = time;
-                            prevValue = value;
-                        }
-
-                        keyframesX[count] = new Keyframe(prevTime, prevValue.x, inTangent.x, 0);
-                        keyframesY[count] = new Keyframe(prevTime, prevValue.y, inTangent.y, 0);
-                        keyframesZ[count] = new Keyframe(prevTime, prevValue.z, inTangent.z, 0);
-                        count++;
-                        break;
-                    }
+                    count = times.Length;
+                    break;
                 }
-                Profiler.EndSample();
+                case InterpolationType.CubicSpline: {
+                    for (var i = 0; i < times.Length; i++) {
+                        var time = times[i];
+                        var inTangent = values[i * 3];
+                        var value = values[i * 3 + 1];
+                        var outTangent = values[i * 3 + 2];
+                        keyframesX[i] = new Keyframe(time, value.x, inTangent.x, outTangent.x, .5f, .5f);
+                        keyframesY[i] = new Keyframe(time, value.y, inTangent.y, outTangent.y, .5f, .5f);
+                        keyframesZ[i] = new Keyframe(time, value.z, inTangent.z, outTangent.z, .5f, .5f);
+                    }
+                    count = times.Length;
+                    break;
+                }
+                default: { // LINEAR
+                    var prevTime = times[0];
+                    var prevValue = values[0];
+                    var inTangent = new float3(0f);
 
-                var curveX = new AnimationCurve();
-                var curveY = new AnimationCurve();
-                var curveZ = new AnimationCurve();
-                Profiler.BeginSample("AnimationUtils.AddVec3Curves.SetKeys");
-                curveX.SetKeys(keyframesX.AsReadOnlySpan()[..count]);
-                curveY.SetKeys(keyframesY.AsReadOnlySpan()[..count]);
-                curveZ.SetKeys(keyframesZ.AsReadOnlySpan()[..count]);
-                Profiler.EndSample();
+                    for (var i = 1; i < times.Length; i++) {
+                        var time = times[i];
+                        var value = values[i];
 
-                Profiler.BeginSample("AnimationUtils.AddVec3Curves.SetCurve");
-                var propNames = k_Vec3PropertyNames[propertyIndex];
-                clip.SetCurve(animationPath, typeof(Transform), propNames[0], curveX);
-                clip.SetCurve(animationPath, typeof(Transform), propNames[1], curveY);
-                clip.SetCurve(animationPath, typeof(Transform), propNames[2], curveZ);
-                Profiler.EndSample();
+                        if (prevTime >= time) {
+                            // Time value is not increasing, so we ignore this keyframe
+                            // This happened on some Sketchfab files (see #298)
+#if DEBUG
+                            duplicates++;
+#endif
+                            continue;
+                        }
+
+                        var dT = time - prevTime;
+                        var dV = value - prevValue;
+                        float3 outTangent;
+                        if (dT < k_TimeEpsilon) {
+                            outTangent.x = (dV.x < 0f) ^ (dT < 0f) ? float.NegativeInfinity : float.PositiveInfinity;
+                            outTangent.y = (dV.y < 0f) ^ (dT < 0f) ? float.NegativeInfinity : float.PositiveInfinity;
+                            outTangent.z = (dV.z < 0f) ^ (dT < 0f) ? float.NegativeInfinity : float.PositiveInfinity;
+                        } else {
+                            outTangent = dV / dT;
+                        }
+
+                        keyframesX[count] = new Keyframe(prevTime, prevValue.x, inTangent.x, outTangent.x);
+                        keyframesY[count] = new Keyframe(prevTime, prevValue.y, inTangent.y, outTangent.y);
+                        keyframesZ[count] = new Keyframe(prevTime, prevValue.z, inTangent.z, outTangent.z);
+                        count++;
+
+                        inTangent = outTangent;
+                        prevTime = time;
+                        prevValue = value;
+                    }
+
+                    keyframesX[count] = new Keyframe(prevTime, prevValue.x, inTangent.x, 0);
+                    keyframesY[count] = new Keyframe(prevTime, prevValue.y, inTangent.y, 0);
+                    keyframesZ[count] = new Keyframe(prevTime, prevValue.z, inTangent.z, 0);
+                    count++;
+                    break;
+                }
             }
-            finally {
-                // keyframesX.Dispose();
-                // keyframesY.Dispose();
-                // keyframesZ.Dispose();
-            }
+            Profiler.EndSample();
+
+            var curveX = new AnimationCurve();
+            var curveY = new AnimationCurve();
+            var curveZ = new AnimationCurve();
+            curveX.SetKeys(keyframesX.AsReadOnlySpan()[..count]);
+            curveY.SetKeys(keyframesY.AsReadOnlySpan()[..count]);
+            curveZ.SetKeys(keyframesZ.AsReadOnlySpan()[..count]);
+
+            var propNames = k_Vec3PropertyNames[propertyIndex];
+            clip.SetCurve(animationPath, typeof(Transform), propNames[0], curveX);
+            clip.SetCurve(animationPath, typeof(Transform), propNames[1], curveY);
+            clip.SetCurve(animationPath, typeof(Transform), propNames[2], curveZ);
 
             Profiler.EndSample();
 #if DEBUG
