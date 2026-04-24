@@ -2475,6 +2475,7 @@ namespace GLTFast
 #endif
             }
 
+            animationAddons?.ForEach(loader => loader.Init(Root.Animations.Count));
             for (var i = 0; i < Root.Animations.Count; i++)
             {
                 var animation = Root.Animations[i];
@@ -2732,6 +2733,7 @@ namespace GLTFast
                     }
                 }
             }
+            animationAddons?.ForEach(loader => loader.Finish());
             AnimationModuleUtils.ResetBuffers();
         }
 
