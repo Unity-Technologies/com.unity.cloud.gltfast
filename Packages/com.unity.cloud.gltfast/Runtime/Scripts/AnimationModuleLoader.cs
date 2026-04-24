@@ -163,7 +163,7 @@ namespace GLTFast
             else
             {
                 AddVec3Curves(
-                    clip, animationPath, "localPosition.", times, interpolationType);
+                    clip, animationPath, k_TranslationPropertyIndex, times, interpolationType);
             }
         }
 
@@ -214,7 +214,7 @@ namespace GLTFast
             }
             else
             {
-                AddVec3Curves(clip, animationPath, "localScale.", times, interpolationType);
+                AddVec3Curves(clip, animationPath, k_ScalePropertyIndex, times, interpolationType);
             }
         }
 
@@ -649,7 +649,7 @@ namespace GLTFast
         static void AddVec3Curves(
             AnimationClip clip,
             string animationPath,
-            string propertyPrefix,
+            int propertyIndex,
             NativeArray<float>.ReadOnly times,
             InterpolationType interpolationType
             )
@@ -721,9 +721,10 @@ namespace GLTFast
                 }
             }
 
-            clip.SetCurve(animationPath, typeof(Transform), $"{propertyPrefix}x", curveX);
-            clip.SetCurve(animationPath, typeof(Transform), $"{propertyPrefix}y", curveY);
-            clip.SetCurve(animationPath, typeof(Transform), $"{propertyPrefix}z", curveZ);
+            var propNames = k_Vec3PropertyNames[propertyIndex];
+            clip.SetCurve(animationPath, typeof(Transform), propNames[0], curveX);
+            clip.SetCurve(animationPath, typeof(Transform), propNames[1], curveY);
+            clip.SetCurve(animationPath, typeof(Transform), propNames[2], curveZ);
             Profiler.EndSample();
 #if DEBUG
             if (duplicates > 0)
