@@ -25,6 +25,14 @@ namespace GLTFast
             new[] { "localScale.x", "localScale.y", "localScale.z" },
         };
 
+        static readonly string[] k_RotationPropertyNames =
+        {
+            "localRotation.x",
+            "localRotation.y",
+            "localRotation.z",
+            "localRotation.w",
+        };
+
 #if UNITY_6000_2_OR_NEWER
         static NativeArrayPool<Keyframe> s_KeyframesPool = new(4);
 #endif
@@ -167,10 +175,10 @@ namespace GLTFast
                 }
             }
 
-            clip.SetCurve(animationPath, typeof(Transform), "localRotation.x", rotX);
-            clip.SetCurve(animationPath, typeof(Transform), "localRotation.y", rotY);
-            clip.SetCurve(animationPath, typeof(Transform), "localRotation.z", rotZ);
-            clip.SetCurve(animationPath, typeof(Transform), "localRotation.w", rotW);
+            clip.SetCurve(animationPath, typeof(Transform), k_RotationPropertyNames[0], rotX);
+            clip.SetCurve(animationPath, typeof(Transform), k_RotationPropertyNames[1], rotY);
+            clip.SetCurve(animationPath, typeof(Transform), k_RotationPropertyNames[2], rotZ);
+            clip.SetCurve(animationPath, typeof(Transform), k_RotationPropertyNames[3], rotW);
             Profiler.EndSample();
 
 #if DEBUG
@@ -294,10 +302,10 @@ namespace GLTFast
             rotZ.SetKeys(keyframesZ.AsReadOnlySpan()[..count]);
             rotW.SetKeys(keyframesW.AsReadOnlySpan()[..count]);
 
-            clip.SetCurve(animationPath, typeof(Transform), "localRotation.x", rotX);
-            clip.SetCurve(animationPath, typeof(Transform), "localRotation.y", rotY);
-            clip.SetCurve(animationPath, typeof(Transform), "localRotation.z", rotZ);
-            clip.SetCurve(animationPath, typeof(Transform), "localRotation.w", rotW);
+            clip.SetCurve(animationPath, typeof(Transform), k_RotationPropertyNames[0], rotX);
+            clip.SetCurve(animationPath, typeof(Transform), k_RotationPropertyNames[1], rotY);
+            clip.SetCurve(animationPath, typeof(Transform), k_RotationPropertyNames[2], rotZ);
+            clip.SetCurve(animationPath, typeof(Transform), k_RotationPropertyNames[3], rotW);
 
             Profiler.EndSample();
 #if DEBUG
@@ -409,10 +417,10 @@ namespace GLTFast
                 }
             }
 
-            clip.SetCurve(animationPath, typeof(Transform), "localRotation.x", rotX);
-            clip.SetCurve(animationPath, typeof(Transform), "localRotation.y", rotY);
-            clip.SetCurve(animationPath, typeof(Transform), "localRotation.z", rotZ);
-            clip.SetCurve(animationPath, typeof(Transform), "localRotation.w", rotW);
+            clip.SetCurve(animationPath, typeof(Transform), k_RotationPropertyNames[0], rotX);
+            clip.SetCurve(animationPath, typeof(Transform), k_RotationPropertyNames[1], rotY);
+            clip.SetCurve(animationPath, typeof(Transform), k_RotationPropertyNames[2], rotZ);
+            clip.SetCurve(animationPath, typeof(Transform), k_RotationPropertyNames[3], rotW);
             Profiler.EndSample();
 
 #if DEBUG
