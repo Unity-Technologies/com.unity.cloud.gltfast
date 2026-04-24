@@ -19,6 +19,7 @@ namespace GLTFast
 
         const int k_TranslationPropertyIndex = 0;
         const int k_ScalePropertyIndex = 1;
+        const string k_BlendShapePropertyPrefix = "blendShape.";
 
         static readonly string[][] k_Vec3PropertyNames = {
             new[] { "localPosition.x", "localPosition.y", "localPosition.z" },
@@ -255,7 +256,7 @@ namespace GLTFast
                     AddScalarCurve(
                         clip,
                         animationPath,
-                        morphTargetName,
+                        string.Concat(k_BlendShapePropertyPrefix, morphTargetName),
                         i,
                         morphTargetCount,
                         times,
@@ -272,7 +273,7 @@ namespace GLTFast
                     AddScalarCurve(
                         clip,
                         animationPath,
-                        morphTargetName,
+                        string.Concat(k_BlendShapePropertyPrefix, morphTargetName),
                         times,
                         interpolationType
                     );
@@ -983,7 +984,7 @@ namespace GLTFast
         static void AddScalarCurve(
             AnimationClip clip,
             string animationPath,
-            string propertyPrefix,
+            string propertyName,
             NativeArray<float>.ReadOnly times,
             InterpolationType interpolationType
             )
@@ -1035,7 +1036,7 @@ namespace GLTFast
                 }
             }
 
-            clip.SetCurve(animationPath, typeof(SkinnedMeshRenderer), $"blendShape.{propertyPrefix}", curve);
+            clip.SetCurve(animationPath, typeof(SkinnedMeshRenderer), propertyName, curve);
             Profiler.EndSample();
 #if DEBUG
             if (duplicates > 0)
@@ -1048,7 +1049,7 @@ namespace GLTFast
         static void AddScalarCurve(
             AnimationClip clip,
             string animationPath,
-            string propertyPrefix,
+            string propertyName,
             int curveIndex,
             int valueStride,
             NativeArray<float>.ReadOnly times,
@@ -1136,7 +1137,7 @@ namespace GLTFast
                 }
             }
 
-            clip.SetCurve(animationPath, typeof(SkinnedMeshRenderer), $"blendShape.{propertyPrefix}", curve);
+            clip.SetCurve(animationPath, typeof(SkinnedMeshRenderer), propertyName, curve);
             Profiler.EndSample();
 #if DEBUG
             if (duplicates > 0)
