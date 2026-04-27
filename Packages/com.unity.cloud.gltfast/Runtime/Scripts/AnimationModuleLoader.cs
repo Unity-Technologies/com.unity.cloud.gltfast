@@ -135,7 +135,9 @@ namespace GLTFast
 
         public void Finish()
         {
+#if UNITY_6000_2_OR_NEWER
             m_KeyframesPool.Dispose();
+#endif
         }
 
         void AddTranslationCurves(
@@ -151,15 +153,13 @@ namespace GLTFast
             var animationPath = AnimationUtils.CreateAnimationPath(targetNode, nodeHierarchyInfo, subPath);
             if (values.IsCreated)
             {
+#if UNITY_6000_2_OR_NEWER
                 AddVec3Curves(
-                    clip,
-                    animationPath,
-                    k_TranslationPropertyIndex,
-                    times,
-                    values,
-                    interpolationType,
-                    m_KeyframesPool
-                    );
+                    clip, animationPath, k_TranslationPropertyIndex, times, values, interpolationType, m_KeyframesPool);
+#else
+                AddVec3Curves(
+                    clip, animationPath, k_TranslationPropertyIndex, times, values, interpolationType);
+#endif
             }
             else
             {
@@ -181,8 +181,11 @@ namespace GLTFast
             var animationPath = AnimationUtils.CreateAnimationPath(targetNode, nodeHierarchyInfo, subPath);
             if (values.IsCreated)
             {
-                AddQuaternionCurves(
-                    clip, animationPath, times, values, interpolationType, m_KeyframesPool);
+#if UNITY_6000_2_OR_NEWER
+                AddQuaternionCurves(clip, animationPath, times, values, interpolationType, m_KeyframesPool);
+#else
+                AddQuaternionCurves(clip, animationPath, times, values, interpolationType);
+#endif
             }
             else
             {
@@ -203,15 +206,13 @@ namespace GLTFast
             var animationPath = AnimationUtils.CreateAnimationPath(targetNode, nodeHierarchyInfo, subPath);
             if (values.IsCreated)
             {
+#if UNITY_6000_2_OR_NEWER
                 AddVec3Curves(
-                    clip,
-                    animationPath,
-                    k_ScalePropertyIndex,
-                    times,
-                    values,
-                    interpolationType,
-                    m_KeyframesPool
-                    );
+                    clip, animationPath, k_ScalePropertyIndex, times, values, interpolationType, m_KeyframesPool);
+#else
+                AddVec3Curves(
+                    clip, animationPath, k_ScalePropertyIndex, times, values, interpolationType);
+#endif
             }
             else
             {
@@ -526,7 +527,7 @@ namespace GLTFast
             string animationPath,
             NativeArray<float>.ReadOnly times,
             NativeArray<quaternion>.ReadOnly values,
-            InterpolationType interpolationType,
+            InterpolationType interpolationType
             )
         {
             Profiler.BeginSample("AnimationUtils.AddQuaternionCurves");
