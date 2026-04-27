@@ -63,7 +63,10 @@ namespace GLTFast
         {
             for (var i = 0; i < m_Buffers.Length; i++)
             {
-                m_Buffers[i].Dispose();
+                if (m_Buffers[i].IsCreated)
+                {
+                    m_Buffers[i].Dispose();
+                }
                 m_Buffers[i] = default;
             }
         }
