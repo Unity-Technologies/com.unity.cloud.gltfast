@@ -124,7 +124,7 @@ namespace GLTFast
             AddMorphTargetWeightCurves(
                 AnimationClips[clipIndex],
                 targetNode,
-                null,
+                meshName,
                 nodeHierarchyInfo,
                 times,
                 values,
