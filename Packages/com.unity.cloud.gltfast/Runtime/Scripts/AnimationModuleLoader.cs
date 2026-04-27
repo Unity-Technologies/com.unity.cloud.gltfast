@@ -5,10 +5,10 @@
 
 using System;
 using GLTFast.Schema;
-using NUnit.Framework;
 using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UnityEngine.Profiling;
 
 namespace GLTFast
