@@ -158,10 +158,10 @@ namespace GLTFast.Tests
             clip.SampleAnimation(parent, .5f);
             Assert.AreEqual(0f, mainRenderer.GetBlendShapeWeight(0), 1e-3f, "Expected default blend shape weight to be 0 when values are not provided.");
             Assert.AreEqual(0f, submeshRenderer.GetBlendShapeWeight(0), 1e-3f, "Expected default blend shape weight to be 0 when values are not provided.");
+            Object.Destroy(parent);
 #else
             Assert.Ignore("UNITY_ANIMATION is not defined; AnimationModuleUtils is not compiled.");
 #endif
-            Object.Destroy(parent);
         }
 
 #if UNITY_ANIMATION
