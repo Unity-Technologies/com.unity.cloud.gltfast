@@ -154,7 +154,7 @@ namespace GLTFast.Tests
             Assert.AreEqual(1f, clip2.length, 1e-6f, "Clip length should match the last key time.");
 
             var parent = new GameObject("Parent");
-            CreateSkinnedTargetWithBlendShape(parent.transform, "Shape0", out var  mainRenderer, out var submeshRenderer);
+            CreateSkinnedTargetWithBlendShape(parent.transform, "Shape0", out var mainRenderer, out var submeshRenderer);
             clip.SampleAnimation(parent, .5f);
             Assert.AreEqual(0f, mainRenderer.GetBlendShapeWeight(0), 1e-3f, "Expected default blend shape weight to be 0 when values are not provided.");
             Assert.AreEqual(0f, submeshRenderer.GetBlendShapeWeight(0), 1e-3f, "Expected default blend shape weight to be 0 when values are not provided.");
