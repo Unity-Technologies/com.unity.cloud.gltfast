@@ -85,7 +85,9 @@ runs:
       id: cache-project-restore
       uses: actions/cache/restore@v5
       with:
-        key: project-${{ inputs.project }}
+        key: project-${{ inputs.project }}-${{ hashFiles('Packages/com.unity.cloud.gltfast/package.json') }}
+        restore-keys: |
+          project-${{ inputs.project }}-
         path: |
           Projects/${{ inputs.project }}/Library
           Projects/${{ inputs.project }}/ProjectSettings/*.asset
@@ -299,15 +301,15 @@ runs:
       if: always() && steps.cache-unity-restore.outputs.cache-hit != 'true'
       uses: actions/cache/save@v5
       with:
-        key: unity-${{ inputs.unityVersion }}
+        key: ${{ steps.cache-unity-restore.outputs.cache-primary-key }}
         path: .Editor
 
     - name: Save project
       id: cache-project-save
-      if: always()
+      if: always() && steps.cache-project-restore.outputs.cache-hit != 'true'
       uses: actions/cache/save@v5
       with:
-        key: project-${{ inputs.project }}
+        key: ${{ steps.cache-project-restore.outputs.cache-primary-key }}
         path: |
           Projects/glTFast-Test*/Library
           Projects/glTFast-Test*/ProjectSettings/*.asset
