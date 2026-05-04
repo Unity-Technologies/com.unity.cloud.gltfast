@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - (Add-Ons) [IAnimationLoader](xref:GLTFast.IAnimationLoader) for importing glTF animations to custom animation systems.
 - [IGltfAccessors](xref:GLTFast.IGltfAccessors) provides read-only access to typed glTF accessor data.
 - [INodeHierarchyInfo](xref:GLTFast.INodeHierarchyInfo) provides glTF node hierarchy information.
+- (Test) Inspector materials variant selection for `OpenGltfDialog`.
 
 ### Changed
 - GameObjectSceneInstance's [AddCamera](xref:GLTFast.GameObjectSceneInstance.AddCamera), [AddLight](xref:GLTFast.GameObjectSceneInstance.AddLight) and [SetLegacyAnimation](xref:GLTFast.GameObjectSceneInstance.SetLegacyAnimation) are now public, so custom [IInstantiators](xref:GLTFast.IInstantiator) can utilize it.
@@ -17,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Improved comma placement in export summary (thanks anonymous for [#46](https://github.com/Unity-Technologies/com.unity.cloud.gltfast/pull/46)).
+- [Materials variants](xref:GLTFast.MaterialsVariantsComponent)' inspector shows correct variant when regaining focus (thanks [anonymous2585](https://github.com/anonymous2585) for [#48](https://github.com/Unity-Technologies/com.unity.cloud.gltfast/pull/48)).
 
 ### Removed
 

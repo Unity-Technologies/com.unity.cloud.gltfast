@@ -57,6 +57,8 @@ namespace GLTFast.Tests
         GameObjectSceneInstance m_SceneInstance;
 #endif
 
+        MaterialsVariantsComponent m_MaterialsVariantsComponent;
+
 #if UNITY_EDITOR
         const string k_LastFilePathKey = "GLTFast.Tests.OpenGltfDialog.LastFilePath";
 
@@ -156,6 +158,14 @@ namespace GLTFast.Tests
 #if UNITY_ANIMATION
                     m_SceneInstance?.LegacyAnimation?.Play();
 #endif
+
+                    var materialsVariantsControl = m_SceneInstance?.MaterialsVariantsControl;
+                    if (materialsVariantsControl != null)
+                    {
+                        m_MaterialsVariantsComponent ??= gameObject.AddComponent<MaterialsVariantsComponent>();
+                        m_MaterialsVariantsComponent.Control = materialsVariantsControl;
+                        m_MaterialsVariantsComponent.enabled = true;
+                    }
 #endif
                 }
                 else
@@ -178,6 +188,11 @@ namespace GLTFast.Tests
                 m_SceneRoot = Entity.Null;
             }
 #endif
+            if (m_MaterialsVariantsComponent is not null)
+            {
+                Destroy(m_MaterialsVariantsComponent);
+                m_MaterialsVariantsComponent = null;
+            }
             await Task.Yield();
             m_Gltf?.Dispose();
         }
