@@ -63,6 +63,13 @@ sysinfo.txt
 # CI Tools
 Tools/CI/bin
 
+# Graphify
+graphify-out/.graphify_*
+graphify-out/cache
+graphify-out/cost.json
+graphify-out/graph.html
+graphify-out/manifest.json
+
 # Claude Code
 .claude/worktrees
 .claude/settings.local.json
