@@ -280,6 +280,11 @@ MonoBehaviour:
     expectInstantiationFail: 0
     expectedLogCodes: 
     requiredExtensions: 
+  - relativeUri: SubMeshIndexFormats/glTF/SubMeshIndexFormats.gltf
+    expectLoadFail: 0
+    expectInstantiationFail: 0
+    expectedLogCodes: 
+    requiredExtensions: 
   - relativeUri: TextureVariants/glTF/TextureVariants.gltf
     expectLoadFail: 0
     expectInstantiationFail: 0
