@@ -64,4 +64,5 @@ sysinfo.txt
 Tools/CI/bin
 
 # Claude Code
+.claude/worktrees
 .claude/settings.local.json
