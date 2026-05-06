@@ -15,6 +15,7 @@ This monorepo's main components:
 - Never create `.meta` files directly. The Unity Editor will create them automatically
 - Prefer state return values over C# exceptions (that may not work in Web builds)
 - Once code modifications are complete, ensure correct code format (as depicted by `.editorconfig`) by running `dotnet format Projects/glTFast-Test/glTFast-Test.sln`
+- Follow the .NET Framework Design Guidelines
 
 ### Performance
 

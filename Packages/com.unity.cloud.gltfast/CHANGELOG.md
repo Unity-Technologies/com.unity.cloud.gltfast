@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [IGltfAccessors](xref:GLTFast.IGltfAccessors) provides read-only access to typed glTF accessor data.
 - [INodeHierarchyInfo](xref:GLTFast.INodeHierarchyInfo) provides glTF node hierarchy information.
 - (Test) Inspector materials variant selection for `OpenGltfDialog`.
+- Instructions/guidelines for coding agents (`AGENTS.md`/`CLAUDE.md`)
 
 ### Changed
 - GameObjectSceneInstance's [AddCamera](xref:GLTFast.GameObjectSceneInstance.AddCamera), [AddLight](xref:GLTFast.GameObjectSceneInstance.AddLight) and [SetLegacyAnimation](xref:GLTFast.GameObjectSceneInstance.SetLegacyAnimation) are now public, so custom [IInstantiators](xref:GLTFast.IInstantiator) can utilize it.
