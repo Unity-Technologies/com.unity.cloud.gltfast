@@ -13,24 +13,58 @@ For runtime import *Unity glTFast* uses custom shader graphs or shaders for rend
 Including all possible variants is the safest approach, but can make your build very big. There's another way to find the right subset, if you already know what files you'll expect:
 
 - Run your scene that loads all glTFs you expect in the editor.
-- Go to Edit->Project Settings->Graphics
-- At the bottom end you'll see the "Shader Preloading" section
+- Go to **Edit > Project Settings > Graphics**
+- At the bottom end you'll see the *Shader Preloading* section
 - Save the currently tracked shaders/variants to an asset
-- Take this ShaderVariantCollection asset and add it to the "Preloaded Shaders" list
+- Take this ShaderVariantCollection asset and add it to the *Preloaded Shaders* list
 
 An alternative way is to create placeholder materials for all feature combinations you expect and put them in a "Resource" folder in your project.
 
-Read the documentation about [`Shader.Find`](https://docs.unity3d.com/ScriptReference/Shader.Find.html) for details how to include shaders in builds. It's also recommended to learning more about [shader variants][shader-variants].
+Read the documentation about [Shader.Find](https://docs.unity3d.com/ScriptReference/Shader.Find.html) for details how to include shaders in builds. It's also recommended to learn more about [shader variants][shader-variants].
 
 Depending on the Unity version and render pipeline in use, different shader graphs or shaders will be used.
 
-- Shader graphs under `Runtime/Shader` for
-  - Universal render pipe 12 or newer
-  - High-Definition render pipe 10 or newer
-  - Built-in render pipe (experimental opt-in; see below)
-- Shader graphs in folder `Runtime/Shader/HDRP` for HDRP-specific material types
-- Shader graphs in folder `Runtime/Shader/Legacy` for older Universal / High-Definition render pipe versions
-- Shaders in folder `Runtime/Shader/Built-In` for the built-in render pipeline
+- Shader graphs in `Runtime/Shader` for
+  - [Universal Render Pipeline (URP)][URP]
+  - [High-Definition Render Pipeline (HDRP)][HDRP]
+  - [Built-In Render Pipeline (BiRP)][BiRP] (experimental opt-in; see below)
+- Shader graphs in folder `Runtime/Shader/URP` for [URP] specific material types (e.g. clearcoat)
+- Shader graphs in folder `Runtime/Shader/HDRP` for [HDRP] specific material types (e.g. StackLit)
+- Shaders in folder `Runtime/Shader/Built-In` for [BiRP]
+- Shared `Runtime/Shader/Includes` and `Runtime/Shader/SubGraphs` folders contain include files and shader subgraphs referenced by the shader graphs above; do not remove them when stripping unused content
+
+### Missing Shader Variants
+
+If a *glTFast* material renders correctly in Editor playmode, but does not in a player build, the cause is almost always one of two:
+
+1. **The shader asset itself is missing from the build.** *glTFast* logs an error of the form *"Shader "&hellip;" is missing. Make sure to include it in the build"* and material generation returns `null` for the affected mesh primitive. The renderer ends up without a material entirely (renders solid magenta). Add the shader to *Always Included Shaders* (**Edit > Project Settings > Graphics**) or reference it from a Resources folder so the build pipeline picks it up.
+2. **The shader is included, but the specific keyword variant requested at runtime was stripped from the build** by Unity's shader variant stripping. What the user actually sees as a result depends on the *Strict Shader Variant Matching* player setting (see below).
+
+### Strict Shader Variant Matching
+
+*Strict Shader Variant Matching* is a Unity engine setting. It is configured under **Edit > Project Settings > Player > Other Settings > Shader Settings** and only changes behavior in player builds.
+
+- **Disabled (default):** Unity silently substitutes the closest available variant when an exact match for the requested keyword combination is missing. Materials still render, but *glTFast* features driven by keywords &mdash; normal mapping, alpha clipping, UV transforms, secondary UV sets, occlusion, transmission, double-sided rendering, etc. &mdash; may quietly produce wrong results without any console warning.
+- **Enabled:** Unity refuses to substitute. The affected geometry renders with the **error (magenta) shader** and Unity logs an error naming the shader, subshader, pass and the requested keywords, making missing variants immediately visible.
+
+Because *glTFast*'s shaders combine many keywords, even small stripping mistakes can mask bugs that only surface for specific glTF assets.
+
+> [!TIP]
+> Enabling *Strict Shader Variant Matching* while validating builds is recommended &mdash; it converts silent visual regressions into clear console errors.
+
+### Shader Build Settings (Unity 6.3+)
+
+Unity 6.3 introduced [Shader Build Settings](https://docs.unity3d.com/6000.3/Documentation/Manual/shader-variant-stripping.html) under **Edit > Project Settings > Graphics > Shader Build Settings** (also configurable per build target through Build Profiles). It lets you list keyword sets and apply a *Type Override* of either:
+
+- `shader_feature` &mdash; strip variants of those keywords that are not statically reachable, or
+- `dynamic_branch` &mdash; collapse variants into a runtime branch.
+
+Both reduce variant count, build size, shader load time, and runtime memory usage.
+
+Shader Build Settings **complements** `ShaderVariantCollection` / *Preloaded Shaders* workflow rather than replacing it: *Preloaded Shaders* warm up variants at runtime, while Shader Build Settings controls which variants exist in the build at all.
+
+> [!CAUTION]
+> Aggressive stripping can remove *glTFast* variants that are only requested for specific glTF assets. Pair Shader Build Settings with *Strict Shader Variant Matching* (see above) so missing variants are caught during build validation instead of shipping as silent visual regressions.
 
 ### Shader Graphs and the Built-In Render Pipeline
 
@@ -85,10 +119,13 @@ add `GLTFAST_EDITOR_IMPORT_OFF` to the *Scripting Define Symbols* in the *Player
 
 *KTX&trade;* and the KTX logo are trademarks of the [The Khronos Group Inc][khronos].
 
+[BiRP]: https://docs.unity3d.com/6000.6/Documentation/Manual/built-in-render-pipeline.html
 [Collections]: https://docs.unity3d.com/Packages/com.unity.collections@1.5/manual/index.html
+[HDRP]: https://docs.unity3d.com/Packages/com.unity.render-pipelines.high-definition@latest/
 [IJobParallelForBatch]: https://docs.unity3d.com/Packages/com.unity.collections@1.5/api/Unity.Jobs.IJobParallelForBatch.html?q=IJobParallelForBatch
 [Khronos]: https://www.khronos.org
 [MRTK]: https://github.com/microsoft/MixedRealityToolkit-Unity
 [Polyspatial 1.3]: https://docs.unity3d.com/Packages/com.unity.polyspatial.visionos@1.3/manual/index.html
 [shader-variants]: https://docs.unity3d.com/Manual/shader-variants.html
+[URP]: https://docs.unity3d.com/6000.6/Documentation/Manual/urp/urp-introduction.html
 [Unity]: https://unity.com
