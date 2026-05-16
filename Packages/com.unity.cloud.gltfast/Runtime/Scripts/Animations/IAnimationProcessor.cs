@@ -1,27 +1,37 @@
 // SPDX-FileCopyrightText: 2026 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
+using System;
+using GLTFast.Addons;
 using GLTFast.Schema;
 using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
 
-namespace GLTFast
+namespace GLTFast.Animations
 {
     /// <summary>
-    /// Interface for loading animation data into an animation system.
+    /// Interface for processing animation clips.
+    /// The animation clip/curve data may be processed towards a specific animation system.
     /// </summary>
-    public interface IAnimationLoader
+    /// <remarks>
+    /// A processor instance is created by an <see cref="IAnimationProcessorFactory"/> for a single
+    /// import call (the conversion phase). Its lifetime ends when the conversion phase ends and
+    /// <see cref="IDisposable.Dispose"/> is invoked. <see cref="IDisposable.Dispose"/> is the
+    /// place to release scratch buffers and other temporary resources.
+    /// </remarks>
+    public interface IAnimationProcessor : IDisposable
     {
         /// <summary>
-        /// Initialize new animation clip with the given name and index.
+        /// Initialize a new animation clip with the given name and index.
+        /// Is called before any animation curves are added to the clip.
         /// </summary>
         /// <param name="index">glTF animation clip index.</param>
         /// <param name="name">glTF animation clip name.</param>
         void AddClip(int index, string name);
 
         /// <summary>
-        /// Adds a translation animation curve.
+        /// Adds a translation curve to an animation clip.
         /// </summary>
         /// <param name="clipIndex">glTF animation clip index.</param>
         /// <param name="targetNode">glTF index of the targeted node.</param>
@@ -40,7 +50,7 @@ namespace GLTFast
         );
 
         /// <summary>
-        /// Adds a rotation animation curve.
+        /// Adds a rotation curve to an animation clip.
         /// </summary>
         /// <param name="clipIndex">glTF animation clip index.</param>
         /// <param name="targetNode">glTF index of the targeted node.</param>
@@ -59,7 +69,7 @@ namespace GLTFast
         );
 
         /// <summary>
-        /// Adds a local scale animation curve.
+        /// Adds a local scale curve to an animation clip.
         /// </summary>
         /// <param name="clipIndex">glTF animation clip index.</param>
         /// <param name="targetNode">glTF index of the targeted node.</param>
@@ -78,7 +88,7 @@ namespace GLTFast
         );
 
         /// <summary>
-        /// Adds a morph target weight animation curve.
+        /// Adds a morph target weight curve to an animation clip.
         /// </summary>
         /// <param name="clipIndex">glTF animation clip index.</param>
         /// <param name="targetNode">glTF index of the targeted node.</param>
@@ -104,5 +114,15 @@ namespace GLTFast
             InterpolationType interpolationType,
             string[] morphTargetNames = null
         );
+
+        /// <summary>
+        /// Signals that the conversion phase has finished and all animation curves have been added.
+        /// Implementations may finalize their internal state and optionally return a factory that
+        /// produces appliers to attach the processed animation data to instantiated scenes.
+        /// </summary>
+        /// <returns>An <see cref="IDataInstanceApplierFactory"/> that creates instance appliers for
+        /// the processed animation data, or <see langword="null"/> if no per-instance application is
+        /// required.</returns>
+        IDataInstanceApplierFactory Complete() => null;
     }
 }

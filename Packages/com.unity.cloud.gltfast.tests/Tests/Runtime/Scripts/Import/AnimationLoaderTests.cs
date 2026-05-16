@@ -4,6 +4,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using GLTFast.Addons;
+using GLTFast.Animations;
 using GLTFast.Schema;
 using NUnit.Framework;
 using Unity.Collections;
@@ -12,6 +13,7 @@ using UnityEngine;
 
 namespace GLTFast.Tests.Import
 {
+    [Category("Import")]
     class AnimationLoaderTests
     {
         GltfTestCaseRunner m_Runner;
@@ -38,7 +40,7 @@ namespace GLTFast.Tests.Import
                     testCase,
                     preLoadCallback: gltf =>
             {
-                var animation = new MyAnimationLoader();
+                var animation = new MyAnimationAddon();
                 animation.Inject(gltf);
             })
                 );
@@ -49,10 +51,35 @@ namespace GLTFast.Tests.Import
         }
     }
 
-    class MyAnimationLoader : ImportAddonInstance, IAnimationLoader, IPostJsonDeserialization
+    class MyAnimationAddon : ImportAddonInstance, IAnimationProcessorFactory
     {
-        GltfImport m_Gltf;
-        MyAnimationClip[] m_Clips;
+        public IAnimationProcessor CreateAnimationProcessor(int clipCount) => new MyAnimationProcessor(clipCount);
+
+        public override bool SupportsGltfExtension(string extensionName) => false;
+
+        public override void Inject(GltfImportBase gltfImport)
+        {
+            gltfImport.AddImportAddonInstance(this);
+        }
+
+        public override void Inject(IInstantiator instantiator) { }
+
+        public override void Dispose() { }
+    }
+
+    sealed class MyAnimationProcessor : IAnimationProcessor
+    {
+        readonly MyAnimationClip[] m_Clips;
+
+        public MyAnimationProcessor(int clipCount)
+        {
+            m_Clips = new MyAnimationClip[clipCount];
+        }
+
+        public IDataInstanceApplierFactory Complete()
+        {
+            return new MyAnimationApplierFactory(m_Clips);
+        }
 
         public void AddClip(int index, string name)
         {
@@ -121,27 +148,39 @@ namespace GLTFast.Tests.Import
             m_Clips[clipIndex].AddMorphTargetWeightCurve(targetNode, times, values, interpolationType);
         }
 
-        public override bool SupportsGltfExtension(string extensionName) => false;
+        public void Dispose() { }
+    }
 
-        public override void Inject(GltfImportBase gltfImport)
+    sealed class MyAnimationApplierFactory : DataInstanceApplierFactory<MyAnimationClip[], GameObjectInstantiator>
+    {
+        public MyAnimationApplierFactory(MyAnimationClip[] animationClips)
+            : base(animationClips) { }
+
+        protected override IInstanceApplier CreateInstanceApplier(GameObjectInstantiator instantiator)
         {
-            gltfImport.AddImportAddonInstance(this);
-            m_Gltf = gltfImport as GltfImport;
+            return new MyAnimationApplier(instantiator, Data);
         }
 
-        public override void Inject(IInstantiator instantiator) { }
+        protected override void Dispose(bool disposing) { }
+    }
 
-        public override void Dispose() { }
+    sealed class MyAnimationApplier : IInstanceApplier
+    {
+        readonly GameObjectInstantiator m_Instantiator;
+        readonly MyAnimationClip[] m_AnimationClips;
 
-        public bool PostJsonDeserialization()
+        public MyAnimationApplier(GameObjectInstantiator instantiator, MyAnimationClip[] animationClips)
         {
-#if UNITY_ANIMATION || GLTFAST_ANIMATION
-            var root = m_Gltf?.GetSourceRoot();
-            Assert.NotNull(root?.animations);
-            Assert.AreEqual(1, root.animations.Length);
-            m_Clips = new MyAnimationClip[root.animations.Length];
-#endif
-            return true;
+            m_Instantiator = instantiator;
+            m_AnimationClips = animationClips;
+
+            m_Instantiator.EndSceneCompleted += OnEndScene;
+        }
+
+        public void OnEndScene()
+        {
+            m_Instantiator.EndSceneCompleted -= OnEndScene;
+            // Assign the m_AnimationClips to the scene instance here.
         }
     }
 
