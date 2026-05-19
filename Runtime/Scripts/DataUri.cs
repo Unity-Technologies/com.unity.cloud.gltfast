@@ -96,36 +96,6 @@ namespace GLTFast
             return result;
         }
 
-#if !UNITY_6000_0_OR_NEWER
-        public static async ValueTask<byte[]> DecodeDataUriToManagedArrayAsync(
-            string dataUri,
-            int startIndex,
-            int byteLength,
-            IDeferAgent deferAgent,
-            CancellationToken cancellationToken,
-            bool timeCritical = false
-            )
-        {
-            var predictedTime = dataUri.Length / (float)k_Base64DecodeSpeed;
-#if GLTFAST_THREADS
-            if (!timeCritical || deferAgent.ShouldDefer(predictedTime))
-            {
-                try
-                {
-                    return await Task.Run(() => DecodeDataUriToManagedArray(dataUri, startIndex, byteLength), cancellationToken);
-                }
-                catch (OperationCanceledException)
-                {
-                    cancellationToken.ThrowIfCancellationRequestedWithTracking();
-                }
-            }
-#endif
-            await deferAgent.BreakPoint(predictedTime);
-            var result = DecodeDataUriToManagedArray(dataUri, startIndex, byteLength);
-            return result;
-        }
-#endif // !UNITY_6000_0_OR_NEWER
-
         public static bool TryGetDataUriDescriptor(
             string dataUri,
             out ReadOnlySpan<char> mimeType,
@@ -172,21 +142,5 @@ namespace GLTFast
             Profiler.EndSample();
             return data;
         }
-
-#if !UNITY_6000_0_OR_NEWER
-        static byte[] DecodeDataUriToManagedArray(string dataUri, int startIndex, int dataLength)
-        {
-            Profiler.BeginSample("DecodeDataUriToManagedArray");
-            var data = new byte[dataLength];
-            if (!Convert.TryFromBase64Chars(dataUri.AsSpan(startIndex), data.AsSpan(), out var bytesWritten)
-                || bytesWritten != dataLength)
-            {
-                // Invalidate buffer to signal decoding failed.
-                data = null;
-            }
-            Profiler.EndSample();
-            return data;
-        }
-#endif // !UNITY_6000_0_OR_NEWER
     }
 }

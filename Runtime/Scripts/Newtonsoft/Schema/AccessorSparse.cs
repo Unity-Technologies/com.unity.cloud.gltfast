@@ -12,7 +12,7 @@ using UnityEngine.Scripting;
 
 namespace GLTFast.Newtonsoft.Schema
 {
-    public class AccessorSparse : AccessorSparseBase<AccessorSparseIndices,AccessorSparseValues>, IJsonObject
+    public class AccessorSparse : AccessorSparseBase<AccessorSparseIndices, AccessorSparseValues>, IJsonObject
     {
         public UnclassifiedData extras;
         public UnclassifiedData extensions;
@@ -21,7 +21,7 @@ namespace GLTFast.Newtonsoft.Schema
         IDictionary<string, JToken> m_JsonExtensionData;
 
         [Preserve]
-        public AccessorSparse() {}
+        public AccessorSparse() { }
 
         public bool TryGetValue<T>(string key, out T value)
         {

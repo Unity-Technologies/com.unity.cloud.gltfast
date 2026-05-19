@@ -1,9 +1,9 @@
 {
   "name": "com.atteneder.gltfast",
-  "version": "6.18.0",
+  "version": "6.19.0",
   "displayName": "glTFast",
   "description": "Use glTFast to import and export glTF 3D files efficiently at runtime or in the Editor",
-  "unity": "2022.3",
+  "unity": "6000.0",
   "keywords": [
     "mesh",
     "gltf",
@@ -23,9 +23,8 @@
   "dependencies": {
     "com.unity.modules.jsonserialize": "1.0.0",
     "com.unity.modules.unitywebrequest": "1.0.0",
-    "com.unity.mathematics": "1.2.6",
-    "com.unity.burst": "1.8.24",
-    "com.unity.collections": "1.2.4"
-  },
-  "unityRelease": "67f2"
+    "com.unity.mathematics": "1.3.3",
+    "com.unity.burst": "1.8.29",
+    "com.unity.collections": "2.6.6"
+  }
 }

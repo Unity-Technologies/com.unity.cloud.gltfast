@@ -181,8 +181,10 @@ namespace GLTFast.Logging
             var hash = new HashCode();
             hash.Add(Type);
             hash.Add(Code);
-            if (Messages != null) {
-                foreach (var id in Messages) {
+            if (Messages != null)
+            {
+                foreach (var id in Messages)
+                {
                     hash.Add(id);
                 }
             }

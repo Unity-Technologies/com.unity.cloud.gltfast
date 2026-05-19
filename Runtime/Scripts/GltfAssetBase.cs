@@ -6,8 +6,8 @@ using UnityEngine;
 
 namespace GLTFast
 {
-    using Logging;
     using Loading;
+    using Logging;
     using Materials;
 
     /// <summary>

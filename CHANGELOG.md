@@ -4,6 +4,40 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.19.0] - 2026-05-19
+
+### Added
+- (Add-Ons) Import glTF animations to custom animation systems.
+  - [IAnimationProcessor](xref:GLTFast.Animations.IAnimationProcessor) &mdash; animation clips conversion
+  - [IAnimationProcessorFactory](xref:GLTFast.Animations.IAnimationProcessorFactory) &mdash; add-ons need to implement this
+- (Add-Ons) Lifetime management of converted glTF data and application during scene instantiation. Is used for custom animation import only for now.
+  - [IDataInstanceApplierFactory](xref:GLTFast.Addons.IDataInstanceApplierFactory) &mdash; owns converted data and forwards it to scene instantiation
+    - [IDataCache](xref:GLTFast.Addons.IDataCache)
+    - [IInstanceApplierFactory](xref:GLTFast.Addons.IInstanceApplierFactory)
+  - [IInstanceApplier](xref:GLTFast.Addons.IInstanceApplier) &mdash; applies data on scene instance
+- [IGltfAccessors](xref:GLTFast.IGltfAccessors) provides read-only access to typed glTF accessor data.
+- [INodeHierarchyInfo](xref:GLTFast.INodeHierarchyInfo) provides glTF node hierarchy information.
+- (Test) Inspector materials variant selection for `OpenGltfDialog`.
+- Instructions/guidelines for coding agents (`AGENTS.md`/`CLAUDE.md`)
+
+### Changed
+- Increased minimum required Unity version to 6.0 LTS.
+- Bumped dependency versions
+  - com.unity.burst to 1.8.29
+  - com.unity.collections to 2.6.6
+  - com.unity.mathematics to 1.3.3
+- GameObjectSceneInstance's [AddCamera](xref:GLTFast.GameObjectSceneInstance.AddCamera), [AddLight](xref:GLTFast.GameObjectSceneInstance.AddLight) and [SetLegacyAnimation](xref:GLTFast.GameObjectSceneInstance.SetLegacyAnimation) are now public, so custom [IInstantiators](xref:GLTFast.IInstantiator) can utilize it.
+- Refactored [ImportAddonInstanceCollection](xref:GLTFast.Addons.ImportAddonInstanceCollection) to derive directly from `List`/[QueryableList](xref:GLTFast.Addons.QueryableList).
+- (Performance) Importing animation curves got much faster and requires less managed memory. Keyframes are prepared in native arrays and set en bloc via [SetKeys(ReadOnlySpan&lt;Keyframe&gt;)](xref:UnityEngine.AnimationCurve.SetKeys(System.ReadOnlySpan`1<UnityEngine.Keyframe>)) instead of being slowly added individually (thanks [jverral](https://github.com/jverral) for initiating this via [#44](https://github.com/Unity-Technologies/com.unity.cloud.gltfast/pull/44)).
+- (Performance) Reduced memory waste by using cached, static identifiers instead of inner-loop format strings for [AnimationClip.SetCurve](xref:UnityEngine.AnimationClip.SetCurve(System.String,System.Type,System.String,UnityEngine.AnimationCurve))'s `propertyName` parameter (thanks [jverral](https://github.com/jverral) for [#44](https://github.com/Unity-Technologies/com.unity.cloud.gltfast/pull/44)).
+- Enabled Render Graph in graphics settings by default on all projects (not using compatibility mode anymore).
+  - (Test) Compatibility mode is still enabled for Unity 6.0 tests.
+
+### Fixed
+- Improved comma placement in export summary (thanks anonymous for [#46](https://github.com/Unity-Technologies/com.unity.cloud.gltfast/pull/46)).
+- [Materials variants](xref:GLTFast.MaterialsVariantsComponent)' inspector shows correct variant when regaining focus (thanks [anonymous2585](https://github.com/anonymous2585) for [#48](https://github.com/Unity-Technologies/com.unity.cloud.gltfast/pull/48)).
+- (Import) Fixed merging of mesh primitives with shared vertex buffer, but different indices type.
+
 ## [6.18.0] - 2026-04-01
 
 ### Added

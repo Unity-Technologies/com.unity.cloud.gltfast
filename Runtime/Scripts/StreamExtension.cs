@@ -9,9 +9,8 @@
 using System;
 using System.IO;
 using System.Threading;
-using UnityEngine;
-
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace GLTFast
 {

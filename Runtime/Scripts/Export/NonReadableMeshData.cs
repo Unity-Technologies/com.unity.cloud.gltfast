@@ -1,14 +1,8 @@
 // SPDX-FileCopyrightText: 2024 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
-#if UNITY_2023_3_OR_NEWER
-#define ASYNC_MESH_DATA
-#endif
-
 using System;
-#if ASYNC_MESH_DATA
 using System.Threading.Tasks;
-#endif
 using Unity.Collections;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -41,24 +35,18 @@ namespace GLTFast.Export
         }
 
 
-#if ASYNC_MESH_DATA
         public async Task<NativeArray<TIndex>> GetIndexData(bool sync)
-#else
-        public NativeArray<TIndex> GetIndexData()
-#endif
         {
             if (!m_IndexData.IsCreated)
             {
                 using var indexBuffer = m_Mesh.GetIndexBuffer();
                 m_IndexData = new NativeArray<TIndex>(indexBuffer.count, Allocator.Persistent);
                 AsyncGPUReadbackRequest request;
-#if ASYNC_MESH_DATA
                 if (!sync)
                 {
                     request = await AsyncGPUReadback.RequestIntoNativeArrayAsync(ref m_IndexData, indexBuffer);
                 }
                 else
-#endif
                 {
                     request = AsyncGPUReadback.RequestIntoNativeArray(ref m_IndexData, indexBuffer);
                     request.WaitForCompletion();
@@ -69,11 +57,7 @@ namespace GLTFast.Export
             return m_IndexData;
         }
 
-#if ASYNC_MESH_DATA
         public async Task<NativeArray<byte>> GetVertexData(int stream, bool sync)
-#else
-        public NativeArray<byte> GetVertexData(int stream)
-#endif
         {
             Assert.IsTrue(stream >= 0 && stream < 4, "stream must in range 0 to 3");
             m_VertexData ??= new NativeArray<byte>[4];
@@ -82,13 +66,11 @@ namespace GLTFast.Export
                 using var vertexBuffer = m_Mesh.GetVertexBuffer(stream);
                 m_VertexData[stream] = new NativeArray<byte>(vertexBuffer.count * vertexBuffer.stride, Allocator.Persistent);
                 AsyncGPUReadbackRequest request;
-#if ASYNC_MESH_DATA
                 if (!sync)
                 {
                     request = await AsyncGPUReadback.RequestIntoNativeArrayAsync(ref m_VertexData[stream], vertexBuffer);
                 }
                 else
-#endif
                 {
                     request = AsyncGPUReadback.RequestIntoNativeArray(ref m_VertexData[stream], vertexBuffer);
                     request.WaitForCompletion();

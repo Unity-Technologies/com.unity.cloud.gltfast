@@ -200,8 +200,7 @@ namespace GLTFast.Materials
             {
                 material = GetPbrSpecularGlossinessMaterial(gltfMaterial.doubleSided);
             }
-            else
-            if (isUnlit)
+            else if (isUnlit)
             {
                 material = GetUnlitMaterial(gltfMaterial.doubleSided);
             }

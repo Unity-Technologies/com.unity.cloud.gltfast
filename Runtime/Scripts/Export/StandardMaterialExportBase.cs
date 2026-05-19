@@ -246,7 +246,8 @@ namespace GLTFast.Export
                     }
                 }
 #if UNITY_IMAGECONVERSION
-                else {
+                else
+                {
                     logger?.Error(LogCode.ExportImageFailed);
                 }
 #endif
@@ -300,8 +301,7 @@ namespace GLTFast.Export
             {
                 pbr.BaseColor = uMaterial.GetColor(BaseColorProperty).linear;
             }
-            else
-            if (uMaterial.HasProperty(ColorProperty))
+            else if (uMaterial.HasProperty(ColorProperty))
             {
                 pbr.BaseColor = uMaterial.GetColor(ColorProperty).linear;
             }

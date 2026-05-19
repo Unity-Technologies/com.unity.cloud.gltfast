@@ -18,20 +18,17 @@ namespace GLTFast.Editor
 
         public override VisualElement CreateInspectorGUI()
         {
-            if (m_VariantNames == null)
+            var control = (target as MaterialsVariantsComponent)?.Control;
+            if (control != null && m_VariantNames == null)
             {
-                var control = (target as MaterialsVariantsComponent)?.Control;
-                if (control != null)
+                var count = control.MaterialsVariantsCount;
+                m_VariantNames = new List<string>(count + 1)
                 {
-                    var count = control.MaterialsVariantsCount;
-                    m_VariantNames = new List<string>(count + 1)
-                    {
-                        "<no variant>"
-                    };
-                    for (var variantIndex = 0; variantIndex < count; variantIndex++)
-                    {
-                        m_VariantNames.Add(control.GetMaterialsVariantName(variantIndex));
-                    }
+                    "<no variant>"
+                };
+                for (var variantIndex = 0; variantIndex < count; variantIndex++)
+                {
+                    m_VariantNames.Add(control.GetMaterialsVariantName(variantIndex));
                 }
             }
             var myInspector = new VisualElement();
@@ -45,7 +42,7 @@ namespace GLTFast.Editor
             else
             {
                 m_Dropdown.choices = m_VariantNames;
-                m_Dropdown.index = 0;
+                m_Dropdown.index = control != null ? control.CurrentVariantIndex + 1 : 0;
                 m_Dropdown.RegisterValueChangedCallback(OnMaterialsVariantChanged);
                 myInspector.Add(m_Dropdown);
             }

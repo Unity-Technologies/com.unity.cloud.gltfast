@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2023 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
-#if UNITY_ANIMATION
+#if UNITY_ANIMATION || GLTFAST_ANIMATION
 
 using System;
 
@@ -23,7 +23,8 @@ namespace GLTFast.Schema
     [Serializable]
     public abstract class AnimationChannelBase
     {
-        public enum Path {
+        public enum Path
+        {
             Unknown,
             Invalid,
             Translation,
@@ -44,9 +45,10 @@ namespace GLTFast.Schema
         /// </summary>
         public abstract AnimationChannelTarget Target { get; }
 
-        internal void GltfSerialize(JsonWriter writer) {
+        internal void GltfSerialize(JsonWriter writer)
+        {
             throw new NotImplementedException($"GltfSerialize missing on {GetType()}");
         }
     }
 }
-#endif // UNITY_ANIMATION
+#endif // UNITY_ANIMATION || GLTFAST_ANIMATION

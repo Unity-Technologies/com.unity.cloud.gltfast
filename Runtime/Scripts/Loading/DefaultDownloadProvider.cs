@@ -40,7 +40,7 @@ namespace GLTFast.Loading
         {
 #pragma warning restore CS1998
 #if UNITY_WEBREQUEST_TEXTURE
-            var req = new AwaitableTextureDownload(url,nonReadable);
+            var req = new AwaitableTextureDownload(url, nonReadable);
             await req.WaitAsync();
             return req;
 #else
@@ -182,20 +182,22 @@ namespace GLTFast.Loading
     /// Default <see cref="ITextureDownload"/> implementation that loads
     /// texture URIs via <seealso cref="UnityWebRequest"/>.
     /// </summary>
-    public class AwaitableTextureDownload : AwaitableDownload, ITextureDownload {
+    public class AwaitableTextureDownload : AwaitableDownload, ITextureDownload
+    {
 
         /// <summary>
         /// Parameter-less constructor, required for inheritance.
         /// </summary>
-        protected AwaitableTextureDownload() {}
+        protected AwaitableTextureDownload() { }
 
         /// <summary>
         /// Default constructor.
         /// </summary>
         /// <param name="url">Texture URI to request</param>
         /// <param name="nonReadable">If true, resulting texture is not CPU readable (uses less memory)</param>
-        public AwaitableTextureDownload(Uri url, bool nonReadable) {
-            Init(url,nonReadable);
+        public AwaitableTextureDownload(Uri url, bool nonReadable)
+        {
+            Init(url, nonReadable);
         }
 
         /// <summary>
@@ -204,17 +206,19 @@ namespace GLTFast.Loading
         /// <param name="url">Texture URI to request</param>
         /// <param name="nonReadable">If true, resulting texture is not CPU readable (uses less memory)</param>
         /// <returns>UnityWebRequest used for sending the request</returns>
-        protected static UnityWebRequest CreateRequest(Uri url, bool nonReadable) {
-            return UnityWebRequestTexture.GetTexture(url,nonReadable);
+        protected static UnityWebRequest CreateRequest(Uri url, bool nonReadable)
+        {
+            return UnityWebRequestTexture.GetTexture(url, nonReadable);
         }
 
-        void Init(Uri url, bool nonReadable) {
-            m_Request = CreateRequest(url,nonReadable);
+        void Init(Uri url, bool nonReadable)
+        {
+            m_Request = CreateRequest(url, nonReadable);
             m_AsyncOperation = m_Request.SendWebRequest();
         }
 
         /// <inheritdoc />
-        public Texture2D Texture => (m_Request?.downloadHandler as  DownloadHandlerTexture )?.texture;
+        public Texture2D Texture => (m_Request?.downloadHandler as DownloadHandlerTexture)?.texture;
     }
 #endif
 }

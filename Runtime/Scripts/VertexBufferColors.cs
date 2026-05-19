@@ -206,11 +206,7 @@ namespace GLTFast
                                 inputByteStride = inputByteStride,
                                 result = output
                             };
-#if UNITY_COLLECTIONS
-                                jobHandle = job.ScheduleBatch(output.Length,GltfImport.DefaultBatchCount);
-#else
-                            jobHandle = job.Schedule(output.Length, GltfImport.DefaultBatchCount);
-#endif
+                            jobHandle = job.ScheduleBatch(output.Length, GltfImport.DefaultBatchCount);
                         }
                     }
                     break;
@@ -222,11 +218,7 @@ namespace GLTFast
                             inputByteStride = inputByteStride > 0 ? inputByteStride : 8,
                             result = output
                         };
-#if UNITY_COLLECTIONS
-                            jobHandle = job.ScheduleBatch(output.Length,GltfImport.DefaultBatchCount);
-#else
-                        jobHandle = job.Schedule(output.Length, GltfImport.DefaultBatchCount);
-#endif
+                        jobHandle = job.ScheduleBatch(output.Length, GltfImport.DefaultBatchCount);
                     }
                     break;
                     default:

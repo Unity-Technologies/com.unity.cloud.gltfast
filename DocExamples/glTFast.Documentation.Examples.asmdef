@@ -28,7 +28,7 @@
         },
         {
             "name": "com.unity.nuget.newtonsoft-json",
-            "expression": "3",
+            "expression": "",
             "define": "NEWTONSOFT_JSON"
         }
     ],

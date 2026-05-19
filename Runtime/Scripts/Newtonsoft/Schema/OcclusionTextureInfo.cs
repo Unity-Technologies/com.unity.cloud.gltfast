@@ -20,7 +20,7 @@ namespace GLTFast.Newtonsoft.Schema
         IDictionary<string, JToken> m_JsonExtensionData;
 
         [Preserve]
-        public OcclusionTextureInfo() {}
+        public OcclusionTextureInfo() { }
 
         public bool TryGetValue<T>(string key, out T value)
         {

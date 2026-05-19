@@ -13,18 +13,10 @@ using UnityEngine;
 using UnityEngine.Experimental.Rendering;
 using UnityEngine.Profiling;
 
-#if UNITY_6000_0_OR_NEWER
-using GLTFast.Loading;
-#else
-using System.Runtime.InteropServices;
-using GLTFast.Jobs;
-using GLTFast.Loading;
-using Unity.Collections.LowLevel.Unsafe;
-using Unity.Jobs;
-#endif
-
-namespace GLTFast {
-    static class ImageConversionImageLoader {
+namespace GLTFast
+{
+    static class ImageConversionImageLoader
+    {
 
         public static async Task<ImageResult> LoadAsync(
             ImportContext context,
@@ -33,14 +25,14 @@ namespace GLTFast {
             CancellationToken cancellationToken
         )
         {
-            using var download = await context.DownloadProvider.RequestTexture(uri,!readable);
+            using var download = await context.DownloadProvider.RequestTexture(uri, !readable);
             if (download == null)
             {
                 context.Logger?.Error(LogCode.TextureDownloadFailed, "?", uri.ToString());
                 return ImageResult.Null;
             }
 
-            if(cancellationToken.IsCancellationRequested)
+            if (cancellationToken.IsCancellationRequested)
                 return ImageResult.Null;
 
             if (download.Success)
@@ -66,23 +58,9 @@ namespace GLTFast {
             CancellationToken cancellationToken
         )
         {
-#if !UNITY_6000_0_OR_NEWER
-            var managedData = new byte[data.Length];
-            var gcHandle = GCHandle.Alloc(managedData, GCHandleType.Pinned);
-            var job = CreateMemCopyJob(data, gcHandle);
-            var jobHandle = job.Schedule();
-            while(!jobHandle.IsCompleted)
-            {
-                await Task.Yield();
-            }
-            jobHandle.Complete();
-            gcHandle.Free();
-            if(cancellationToken.IsCancellationRequested)
-                return ImageResult.Null;
-#endif
             while (context.DeferAgent.ShouldDefer())
             {
-                if(cancellationToken.IsCancellationRequested)
+                if (cancellationToken.IsCancellationRequested)
                     return ImageResult.Null;
                 await Task.Yield();
             }
@@ -94,14 +72,7 @@ namespace GLTFast {
                 settings.GenerateMipMaps,
                 settings.AnisotropicFilterLevel
                 );
-            texture.LoadImage(
-#if UNITY_6000_0_OR_NEWER
-                data.AsReadOnlySpan(),
-#else
-                managedData,
-#endif
-                !readable
-            );
+            texture.LoadImage(data.AsReadOnlySpan(), !readable);
             Profiler.EndSample();
             return new ImageResult(texture);
         }
@@ -130,23 +101,6 @@ namespace GLTFast {
             return txt;
         }
 
-#if !UNITY_6000_0_OR_NEWER
-        static unsafe MemCopyJob CreateMemCopyJob(
-            NativeArray<byte>.ReadOnly data,
-            GCHandle gcHandle
-        )
-        {
-            var job = new MemCopyJob
-            {
-                bufferSize = data.Length,
-                input = (byte*)data.GetUnsafeReadOnlyPtr(),
-                result = (void*)gcHandle.AddrOfPinnedObject()
-            };
-
-            return job;
-        }
-#endif // !UNITY_6000_0_OR_NEWER
-
         /// <summary>
         /// UnityWebRequestTexture always loads Jpegs/PNGs in sRGB color space
         /// without mipmaps. This method figures if this is not desired and the
@@ -160,7 +114,8 @@ namespace GLTFast {
         {
 
 #if UNITY_EDITOR
-            if (IsEditorImport) {
+            if (IsEditorImport)
+            {
                 // Use the original texture at Editor (asset database) import
                 return false;
             }

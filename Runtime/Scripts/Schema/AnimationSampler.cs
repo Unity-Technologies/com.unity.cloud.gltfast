@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2023 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
-#if UNITY_ANIMATION
+#if UNITY_ANIMATION || GLTFAST_ANIMATION
 
 using System;
 
@@ -31,7 +31,8 @@ namespace GLTFast.Schema
 
         InterpolationType m_Interpolation;
 
-        public InterpolationType GetInterpolationType() {
+        public InterpolationType GetInterpolationType()
+        {
             if (m_Interpolation != InterpolationType.Unknown)
             {
                 return m_Interpolation;
@@ -56,4 +57,4 @@ namespace GLTFast.Schema
         public int output;
     }
 }
-#endif // UNITY_ANIMATION
+#endif // UNITY_ANIMATION || GLTFAST_ANIMATION

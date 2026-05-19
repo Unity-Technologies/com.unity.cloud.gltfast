@@ -13,9 +13,11 @@ using UnityEngine.Rendering;
 using UnityEngine.Rendering.HighDefinition;
 using Material = UnityEngine.Material;
 
-namespace GLTFast.Materials {
+namespace GLTFast.Materials
+{
 
-    public class HighDefinitionRPMaterialGenerator : ShaderGraphMaterialGenerator {
+    public class HighDefinitionRPMaterialGenerator : ShaderGraphMaterialGenerator
+    {
 
         // ReSharper disable MemberCanBePrivate.Global
 
@@ -52,29 +54,32 @@ namespace GLTFast.Materials {
             return material;
         }
 
-        protected override void SetDoubleSided(Schema.MaterialBase gltfMaterial, Material material) {
-            base.SetDoubleSided(gltfMaterial,material);
+        protected override void SetDoubleSided(Schema.MaterialBase gltfMaterial, Material material)
+        {
+            base.SetDoubleSided(gltfMaterial, material);
 
             material.EnableKeyword(k_DoubleSidedOnKeyword);
             material.SetFloat(MaterialProperty.DoubleSidedEnable, 1);
 
             // UnityEditor.Rendering.HighDefinition.DoubleSidedNormalMode.Flip
             material.SetFloat(k_DoubleSidedNormalModePropId, 0);
-            material.SetVector(k_DoubleSidedConstantsPropId, new Vector4(-1,-1,-1,0));
+            material.SetVector(k_DoubleSidedConstantsPropId, new Vector4(-1, -1, -1, 0));
 
             material.SetFloat(MaterialProperty.CullMode, (int)CullMode.Off);
             material.SetFloat(CullModeForwardProperty, (int)CullMode.Off);
         }
 
-        protected override void SetAlphaModeMask(Schema.MaterialBase gltfMaterial, Material material) {
-            base.SetAlphaModeMask(gltfMaterial,material);
+        protected override void SetAlphaModeMask(Schema.MaterialBase gltfMaterial, Material material)
+        {
+            base.SetAlphaModeMask(gltfMaterial, material);
 
             material.SetFloat(MaterialProperty.AlphaCutoffEnable, 1);
             material.SetOverrideTag(MotionVectorTag, MotionVectorUser);
             material.SetShaderPassEnabled(MotionVectorsPass, false);
 
 
-            if (gltfMaterial.Extensions?.KHR_materials_unlit != null) {
+            if (gltfMaterial.Extensions?.KHR_materials_unlit != null)
+            {
                 material.EnableKeyword(SurfaceTypeTransparentKeyword);
                 material.EnableKeyword(DisableSsrTransparentKeyword);
                 material.EnableKeyword(EnableFogOnTransparentKeyword);
@@ -86,10 +91,10 @@ namespace GLTFast.Materials {
                 material.SetShaderPassEnabled(ShaderPassDepthOnlyPass, false);
 
                 material.SetFloat(AlphaDstBlendProperty, (int)BlendMode.OneMinusSrcAlpha);//10
-                material.SetOverrideTag(RenderTypeTag,TransparentRenderType);
-                material.SetShaderPassEnabled(DistortionVectorsPass,false);
+                material.SetOverrideTag(RenderTypeTag, TransparentRenderType);
+                material.SetShaderPassEnabled(DistortionVectorsPass, false);
                 material.SetFloat(MaterialProperty.DstBlend, (int)BlendMode.OneMinusSrcAlpha);//10
-                material.SetFloat(MaterialProperty.SrcBlend, (int) BlendMode.One);
+                material.SetFloat(MaterialProperty.SrcBlend, (int)BlendMode.One);
                 // material.SetFloat(k_RenderQueueType, 4);
                 // material.SetFloat(k_SurfaceType, 1);
                 material.SetFloat(k_ZTestDepthEqualForOpaque, (int)CompareFunction.LessEqual);
@@ -126,7 +131,8 @@ namespace GLTFast.Materials {
             return base.GetMetallicShader(features);
         }
 
-        protected override void SetShaderModeBlend(Schema.MaterialBase gltfMaterial, Material material) {
+        protected override void SetShaderModeBlend(Schema.MaterialBase gltfMaterial, Material material)
+        {
 
             material.DisableKeyword(AlphaTestOnKeyword);
             material.EnableKeyword(SurfaceTypeTransparentKeyword);
@@ -143,14 +149,14 @@ namespace GLTFast.Materials {
             material.SetShaderPassEnabled(ShaderPassDepthOnlyPass, false);
 
             material.SetFloat(MaterialProperty.AlphaCutoffEnable, 0);
-            material.SetFloat(k_RenderQueueType, (int)CustomPass.RenderQueueType.PreRefraction );// 4
-            material.SetFloat(MaterialProperty.SurfaceType, 1 );
+            material.SetFloat(k_RenderQueueType, (int)CustomPass.RenderQueueType.PreRefraction);// 4
+            material.SetFloat(MaterialProperty.SurfaceType, 1);
             material.SetFloat(MaterialProperty.ZWrite, 0);
             material.SetFloat(ZTestGBufferProperty, (int)CompareFunction.LessEqual); //4
             material.SetFloat(k_ZTestDepthEqualForOpaque, (int)CompareFunction.LessEqual); //4
             material.SetFloat(AlphaDstBlendProperty, (int)BlendMode.OneMinusSrcAlpha);//10
             material.SetFloat(MaterialProperty.DstBlend, (int)BlendMode.OneMinusSrcAlpha);//10
-            material.SetFloat(MaterialProperty.SrcBlend, (int) BlendMode.SrcAlpha);//5
+            material.SetFloat(MaterialProperty.SrcBlend, (int)BlendMode.SrcAlpha);//5
             material.SetFloat(MaterialProperty.EnableBlendModePreserveSpecularLighting, 0);
         }
     }

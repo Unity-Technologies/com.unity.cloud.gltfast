@@ -100,7 +100,7 @@ namespace GLTFast
                 count,
                 byteStride
 #if ENABLE_UNITY_COLLECTIONS_CHECKS
-                ,ref m_Safety
+                , ref m_Safety
 #endif
                 );
         }

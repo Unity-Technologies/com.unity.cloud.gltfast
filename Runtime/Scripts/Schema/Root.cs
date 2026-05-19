@@ -85,7 +85,7 @@ namespace GLTFast.Schema
         /// <inheritdoc cref="Accessors"/>
         public TAccessor[] accessors;
 
-#if UNITY_ANIMATION
+#if UNITY_ANIMATION || GLTFAST_ANIMATION
         /// <inheritdoc cref="Animations"/>
         public TAnimation[] animations;
 #endif
@@ -132,7 +132,7 @@ namespace GLTFast.Schema
         /// <inheritdoc />
         public override IReadOnlyList<AccessorBase> Accessors => accessors;
 
-#if UNITY_ANIMATION
+#if UNITY_ANIMATION || GLTFAST_ANIMATION
         /// <inheritdoc />
         public override IReadOnlyList<AnimationBase> Animations => animations;
 #endif
@@ -205,7 +205,7 @@ namespace GLTFast.Schema
         /// </summary>
         public abstract IReadOnlyList<AccessorBase> Accessors { get; }
 
-#if UNITY_ANIMATION
+#if UNITY_ANIMATION || GLTFAST_ANIMATION
         /// <summary>
         /// An array of keyframe animations.
         /// </summary>
@@ -286,9 +286,9 @@ namespace GLTFast.Schema
         /// </summary>
         internal abstract void UnsetExtensions();
 
-#if UNITY_ANIMATION
+#if UNITY_ANIMATION || GLTFAST_ANIMATION
         public bool HasAnimation => Animations != null && Animations.Count > 0;
-#endif // UNITY_ANIMATION
+#endif // UNITY_ANIMATION || GLTFAST_ANIMATION
 
         /// <summary>
         /// Looks up if a certain accessor points to interleaved data.
@@ -337,10 +337,12 @@ namespace GLTFast.Schema
                 writer.AddArrayProperty("extensionsUsed", extensionsUsed);
             }
 
-#if UNITY_ANIMATION
-            if (Animations!=null) {
+#if UNITY_ANIMATION || GLTFAST_ANIMATION
+            if (Animations != null)
+            {
                 writer.AddArray("animations");
-                foreach( var animation in Animations) {
+                foreach (var animation in Animations)
+                {
                     animation.GltfSerialize(writer);
                 }
                 writer.CloseArray();
@@ -512,11 +514,16 @@ namespace GLTFast.Schema
                 }
             }
 #if DRACO_IS_INSTALLED
-            if(!check && Meshes!=null) {
-                foreach (var mesh in Meshes) {
-                    if (mesh.Primitives != null) {
-                        foreach (var primitive in mesh.Primitives) {
-                            if (primitive.Extensions?.KHR_draco_mesh_compression != null) {
+            if (!check && Meshes != null)
+            {
+                foreach (var mesh in Meshes)
+                {
+                    if (mesh.Primitives != null)
+                    {
+                        foreach (var primitive in mesh.Primitives)
+                        {
+                            if (primitive.Extensions?.KHR_draco_mesh_compression != null)
+                            {
                                 check = true;
                                 break;
                             }
@@ -601,7 +608,8 @@ namespace GLTFast.Schema
                         if (primitive.Extensions == null) continue;
                         var fake = fakeRoot.meshes[i].primitives[j];
 #if DRACO_IS_INSTALLED
-                        if (fake.extensions.KHR_draco_mesh_compression == null) {
+                        if (fake.extensions.KHR_draco_mesh_compression == null)
+                        {
                             primitive.Extensions.KHR_draco_mesh_compression = null;
                         }
 #endif

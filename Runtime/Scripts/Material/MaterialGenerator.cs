@@ -9,8 +9,8 @@
 
 using System;
 using GLTFast.Schema;
-using UnityEngine;
 using Unity.Mathematics;
+using UnityEngine;
 using UnityEngine.Assertions;
 #if USING_URP
 using UnityEngine.Rendering;
@@ -239,7 +239,7 @@ namespace GLTFast.Materials
 #endif
 #if USING_URP
                 case RenderPipeline.Universal:
-                    var urpAsset = (UniversalRenderPipelineAsset) (QualitySettings.renderPipeline ? QualitySettings.renderPipeline : GraphicsSettings.defaultRenderPipeline);
+                    var urpAsset = (UniversalRenderPipelineAsset)(QualitySettings.renderPipeline ? QualitySettings.renderPipeline : GraphicsSettings.defaultRenderPipeline);
                     s_DefaultMaterialGenerator = new UniversalRPMaterialGenerator(urpAsset);
                     return s_DefaultMaterialGenerator;
 #endif
@@ -368,7 +368,7 @@ namespace GLTFast.Materials
                         return true;
                     }
 #if UNITY_IMAGECONVERSION
-                    Logger?.Error(LogCode.TextureLoadFailed,textureIndex.ToString());
+                    Logger?.Error(LogCode.TextureLoadFailed, textureIndex.ToString());
 #endif
                 }
                 else

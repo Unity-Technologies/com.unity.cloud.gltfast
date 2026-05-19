@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2023 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
-#if UNITY_ANIMATION
+#if UNITY_ANIMATION || GLTFAST_ANIMATION
 
 using System;
 using System.Collections.Generic;
@@ -11,10 +11,10 @@ using System.Collections.Generic;
 namespace GLTFast.Schema
 {
 
-#if UNITY_ANIMATION
+#if UNITY_ANIMATION || GLTFAST_ANIMATION
     /// <inheritdoc />
     [Serializable]
-    public class Animation : AnimationBase<AnimationChannel,AnimationSampler> { }
+    public class Animation : AnimationBase<AnimationChannel, AnimationSampler> { }
 
     /// <inheritdoc />
     /// <typeparam name="TChannel">Animation channel type</typeparam>
@@ -52,7 +52,8 @@ namespace GLTFast.Schema
         /// </summary>
         public abstract IReadOnlyList<AnimationSampler> Samplers { get; }
 
-        internal void GltfSerialize(JsonWriter writer) {
+        internal void GltfSerialize(JsonWriter writer)
+        {
             writer.AddObject();
             GltfSerializeName(writer);
             writer.Close();
@@ -69,5 +70,5 @@ namespace GLTFast.Schema
     /// </summary>
     /// <seealso href="https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html#reference-animation"/>
     public abstract class AnimationBase { }
-#endif // UNITY_ANIMATION
+#endif // UNITY_ANIMATION || GLTFAST_ANIMATION
 }

@@ -3,8 +3,8 @@
 
 using System;
 using System.Threading;
-using UnityEngine.Rendering;
 using System.Threading.Tasks;
+using UnityEngine.Rendering;
 
 namespace GLTFast
 {

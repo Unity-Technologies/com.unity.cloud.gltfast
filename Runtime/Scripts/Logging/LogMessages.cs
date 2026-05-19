@@ -7,8 +7,8 @@
 
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 using System.Text;
+using UnityEngine;
 
 namespace GLTFast.Logging
 {
@@ -265,6 +265,8 @@ namespace GLTFast.Logging
         ImageFormatUnsupported,
         /// <summary>Invalid vertex count</summary>
         VertexCountInvalid,
+        /// <summary>Could not provide data of an accessor.</summary>
+        AccessorAccessFailed,
     }
 
     /// <summary>
@@ -276,6 +278,7 @@ namespace GLTFast.Logging
         static readonly string k_LinkProjectSetupTextureSupport = $"See {GltfGlobals.GltfPackageName}/Documentation~/ProjectSetup.md#texture-support for details.";
 
         static readonly Dictionary<LogCode, string> k_FullMessages = new Dictionary<LogCode, string>() {
+            { LogCode.AccessorAccessFailed, "Could not provide data for accessor {0}" },
             { LogCode.AccessorAttributeTypeUnknown, "Unknown GLTFAccessorAttributeType" },
             { LogCode.AccessorInconsistentUsage, "Inconsistent accessor usage {0} != {1}" },
             { LogCode.AccessorsShared, @"glTF file uses certain vertex attributes/accessors across multiple meshes!

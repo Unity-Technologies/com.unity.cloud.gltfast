@@ -55,21 +55,19 @@ namespace GLTFast
         /// Adds a camera
         /// </summary>
         /// <param name="camera">Camera to be added</param>
-        internal void AddCamera(Camera camera)
+        public void AddCamera(Camera camera)
         {
-            if (m_Cameras == null)
-            {
-                m_Cameras = new List<Camera>();
-            }
+            m_Cameras ??= new List<Camera>();
             m_Cameras.Add(camera);
         }
 
-        internal void AddLight(Light light)
+        /// <summary>
+        /// Adds a light.
+        /// </summary>
+        /// <param name="light">Light to be added.</param>
+        public void AddLight(Light light)
         {
-            if (m_Lights == null)
-            {
-                m_Lights = new List<Light>();
-            }
+            m_Lights ??= new List<Light>();
             m_Lights.Add(light);
         }
 
@@ -79,7 +77,14 @@ namespace GLTFast
         }
 
 #if UNITY_ANIMATION
-        internal void SetLegacyAnimation(Animation animation) {
+        /// <summary>
+        /// Sets the <see cref="LegacyAnimation"/>.
+        /// Use this from your custom <see cref="IInstantiator"/> implementation.
+        /// </summary>
+        /// <param name="animation">Animation component.</param>
+        /// <seealso cref="GameObjectInstantiator"/>
+        public void SetLegacyAnimation(Animation animation)
+        {
             LegacyAnimation = animation;
         }
 #endif

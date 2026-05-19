@@ -72,7 +72,8 @@ namespace GLTFast.Export
             get
             {
 #if UNITY_EDITOR
-                if (ValidAssetPath) {
+                if (ValidAssetPath)
+                {
                     var nameWithoutExtension = Path.GetFileNameWithoutExtension(m_AssetPath);
                     return $"{nameWithoutExtension}.{FileExtension}";
                 }
@@ -154,7 +155,8 @@ namespace GLTFast.Export
         public override bool Write(string filePath, bool overwrite)
         {
 #if UNITY_EDITOR
-            if (ValidAssetPath && GetFormatFromExtension(m_AssetPath)==ImageFormat) {
+            if (ValidAssetPath && GetFormatFromExtension(m_AssetPath) == ImageFormat)
+            {
                 File.Copy(m_AssetPath, filePath, overwrite);
                 return true;
             }
@@ -171,7 +173,8 @@ namespace GLTFast.Export
         public override byte[] GetData()
         {
 #if UNITY_EDITOR
-            if (ValidAssetPath && GetFormatFromExtension(m_AssetPath)==ImageFormat) {
+            if (ValidAssetPath && GetFormatFromExtension(m_AssetPath) == ImageFormat)
+            {
                 return File.ReadAllBytes(m_AssetPath);
             }
 #endif
@@ -244,12 +247,15 @@ namespace GLTFast.Export
         }
 
 #if UNITY_EDITOR
-        static ImageFormat GetFormatFromExtension(string assetPath) {
-            if (assetPath.EndsWith(".png", StringComparison.OrdinalIgnoreCase)) {
+        static ImageFormat GetFormatFromExtension(string assetPath)
+        {
+            if (assetPath.EndsWith(".png", StringComparison.OrdinalIgnoreCase))
+            {
                 return ImageFormat.Png;
             }
             if (assetPath.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase) ||
-                assetPath.EndsWith(".jpeg", StringComparison.OrdinalIgnoreCase)) {
+                assetPath.EndsWith(".jpeg", StringComparison.OrdinalIgnoreCase))
+            {
                 return ImageFormat.Jpg;
             }
             return ImageFormat.Unknown;

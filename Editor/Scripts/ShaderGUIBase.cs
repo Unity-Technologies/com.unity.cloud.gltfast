@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
+using Unity.Mathematics;
 using UnityEditor;
 using UnityEngine;
-using Unity.Mathematics;
 using static GLTFast.Materials.MaterialGenerator;
 
 namespace GLTFast.Editor

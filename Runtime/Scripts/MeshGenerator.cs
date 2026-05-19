@@ -11,10 +11,10 @@ using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Jobs;
 using Unity.Mathematics;
-using UnityEngine.Profiling;
-using UnityEngine.Rendering;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UnityEngine.Profiling;
+using UnityEngine.Rendering;
 using Mesh = UnityEngine.Mesh;
 
 namespace GLTFast
@@ -31,6 +31,11 @@ namespace GLTFast
         MeshTopology m_Topology;
 
         int SubMeshCount => m_SubMeshAssignments?.Length ?? m_Primitives.Count;
+
+        MeshPrimitiveBase GetSubMesh(int index) =>
+            m_SubMeshAssignments == null
+                ? m_Primitives[index]
+                : m_SubMeshAssignments[index].Primitive;
 
         public MeshGenerator(
             IReadOnlyList<MeshPrimitiveBase> primitives,
@@ -113,8 +118,10 @@ namespace GLTFast
                 mainBufferType = MainBufferType.PosNorm;
 
             Profiler.BeginSample("LoadAccessorData.ScheduleVertexJob");
-            foreach (var primitive in IterateSubMeshes())
+
+            for (var i = 0; i < SubMeshCount; i++)
             {
+                var primitive = GetSubMesh(i);
                 if (primitive.mode == DrawMode.Triangles
                     || primitive.mode == DrawMode.TriangleFan
                     || primitive.mode == DrawMode.TriangleStrip)
@@ -199,8 +206,9 @@ namespace GLTFast
                 return null;
 
             var indexFormat = IndexFormat.UInt16;
-            foreach (var primitive in m_Primitives)
+            for (var i = 0; i < SubMeshCount; i++)
             {
+                var primitive = GetSubMesh(i);
                 if (primitive.indices >= 0)
                 {
                     var accessor = buffers.GetAccessor(primitive.indices);
@@ -224,8 +232,9 @@ namespace GLTFast
             m_Indices = new IndicesData(indexFormat, SubMeshCount);
 
             var tmpList = new List<JobHandle>(SubMeshCount);
-            foreach (var (subMeshIndex, primitive) in IterateSubMeshesIndexed())
+            for (var subMeshIndex = 0; subMeshIndex < SubMeshCount; subMeshIndex++)
             {
+                var primitive = GetSubMesh(subMeshIndex);
                 if (primitive.indices >= 0)
                 {
                     var flip = primitive.mode == DrawMode.Triangles;
@@ -534,40 +543,6 @@ namespace GLTFast
             Profiler.EndSample();
 
             return msh;
-        }
-
-        IEnumerable<(int index, MeshPrimitiveBase primitive)> IterateSubMeshesIndexed()
-        {
-            if (m_SubMeshAssignments == null)
-            {
-                for (var index = 0; index < m_Primitives.Count; index++)
-                {
-                    var primitive = m_Primitives[index];
-                    yield return (index, primitive);
-                }
-            }
-            else
-            {
-                for (var index = 0; index < m_SubMeshAssignments.Length; index++)
-                {
-                    var subMesh = m_SubMeshAssignments[index];
-                    yield return (index, subMesh.Primitive);
-                }
-            }
-        }
-
-        IEnumerable<MeshPrimitiveBase> IterateSubMeshes()
-        {
-            if (m_SubMeshAssignments == null)
-            {
-                foreach (var primitive in m_Primitives)
-                    yield return primitive;
-            }
-            else
-            {
-                foreach (var subMesh in m_SubMeshAssignments)
-                    yield return subMesh.Primitive;
-            }
         }
 
         protected override void Dispose(bool disposing)

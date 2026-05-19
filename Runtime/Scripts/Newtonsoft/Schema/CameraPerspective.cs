@@ -21,7 +21,7 @@ namespace GLTFast.Newtonsoft.Schema
         IDictionary<string, JToken> m_JsonExtensionData;
 
         [Preserve]
-        public CameraPerspective() {}
+        public CameraPerspective() { }
 
         public bool TryGetValue<T>(string key, out T value)
         {

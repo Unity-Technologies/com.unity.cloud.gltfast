@@ -19,8 +19,10 @@ using Unity.Entities.Graphics;
 using UnityEngine.Rendering;
 #endif
 
-namespace GLTFast {
-    public class EntityInstantiator : IInstantiator {
+namespace GLTFast
+{
+    public class EntityInstantiator : IInstantiator
+    {
 
         const float k_Epsilon = .00001f;
 
@@ -30,7 +32,7 @@ namespace GLTFast {
 
         protected Entity m_Parent;
 
-        protected Dictionary<uint,Entity> m_Nodes;
+        protected Dictionary<uint, Entity> m_Nodes;
 
         protected InstantiationSettings m_Settings;
 
@@ -57,7 +59,8 @@ namespace GLTFast {
         public void BeginScene(
             string name,
             uint[] nodeIndices
-        ) {
+        )
+        {
             Profiler.BeginSample("BeginScene");
             m_Entities = new List<Entity>();
             m_Nodes = new Dictionary<uint, Entity>();
@@ -78,14 +81,16 @@ namespace GLTFast {
                 || (m_Settings.SceneObjectCreation == SceneObjectCreation.WhenMultipleRootNodes
                     && nodeIndices is { Length: > 1 });
 
-            if (dedicatedSceneEntity) {
+            if (dedicatedSceneEntity)
+            {
                 var sceneEntity = m_EntityManager.CreateEntity(m_Parent == Entity.Null ? m_SceneArchetype : m_NodeArchetype);
                 m_EntityManager.SetComponentData(sceneEntity, LocalTransform.Identity);
                 m_EntityManager.SetComponentData(sceneEntity, new LocalToWorld { Value = float4x4.identity });
 #if UNITY_EDITOR
                 m_EntityManager.SetName(sceneEntity, name ?? "Scene");
 #endif
-                if (m_Parent != Entity.Null) {
+                if (m_Parent != Entity.Null)
+                {
                     m_EntityManager.SetComponentData(sceneEntity, new Parent { Value = m_Parent });
                 }
                 m_Entities.Add(sceneEntity);
@@ -95,8 +100,10 @@ namespace GLTFast {
 
 #if UNITY_ANIMATION
         /// <inheritdoc />
-        public void AddAnimation(AnimationClip[] animationClips) {
-            if ((m_Settings.Mask & ComponentType.Animation) != 0 && animationClips != null) {
+        public void AddAnimation(AnimationClip[] animationClips)
+        {
+            if ((m_Settings.Mask & ComponentType.Animation) != 0 && animationClips != null)
+            {
                 // TODO: Add animation support
             }
         }
@@ -154,7 +161,8 @@ namespace GLTFast {
             return node;
         }
 
-        public void SetNodeName(uint nodeIndex, string name) {
+        public void SetNodeName(uint nodeIndex, string name)
+        {
 #if UNITY_EDITOR
             m_EntityManager.SetName(m_Nodes[nodeIndex], name ?? $"Node-{nodeIndex}");
 #endif
@@ -169,8 +177,10 @@ namespace GLTFast {
             uint? rootJoint = null,
             float[] morphTargetWeights = null,
             int meshNumeration = 0
-        ) {
-            if ((m_Settings.Mask & ComponentType.Mesh) == 0) {
+        )
+        {
+            if ((m_Settings.Mask & ComponentType.Mesh) == 0)
+            {
                 return;
             }
             Profiler.BeginSample("AddPrimitive");
@@ -197,10 +207,13 @@ namespace GLTFast {
             for (ushort index = 0; index < meshResult.materialIndices.Length; index++)
             {
                 Entity node;
-                if (meshNumeration == 0 && index == 0) {
+                if (meshNumeration == 0 && index == 0)
+                {
                     // Use node entity for first sub-mesh of first mesh result.
                     node = m_Nodes[nodeIndex];
-                } else {
+                }
+                else
+                {
                     node = CreateNodeInternal(
                         new Parent { Value = m_Nodes[nodeIndex] },
                         float3.zero,
@@ -218,14 +231,7 @@ namespace GLTFast {
                     m_EntityManager,
                     renderMeshDescription,
                     renderMeshArray,
-                    MaterialMeshInfo.FromRenderMeshArrayIndices(
-                        index,
-                        0,
-#if !UNITY_ENTITIES_1_2_OR_NEWER
-                        (sbyte)
-#endif
-                        index
-                        )
+                    MaterialMeshInfo.FromRenderMeshArrayIndices(index, 0, index)
                     );
 
                 // Refine RenderBounds
@@ -250,8 +256,10 @@ namespace GLTFast {
             NativeArray<Quaternion>? rotations,
             NativeArray<Vector3>? scales,
             int meshNumeration = 0
-        ) {
-            if ((m_Settings.Mask & ComponentType.Mesh) == 0) {
+        )
+        {
+            if ((m_Settings.Mask & ComponentType.Mesh) == 0)
+            {
                 return;
             }
             Profiler.BeginSample("AddPrimitiveInstanced");
@@ -308,7 +316,8 @@ namespace GLTFast {
 
             for (ushort index = 0; index < meshResult.materialIndices.Length; index++)
             {
-                for (var i = 0; i < instanceCount; i++) {
+                for (var i = 0; i < instanceCount; i++)
+                {
 
                     var instance = index == 0 && i == 0 ? prototype : m_EntityManager.Instantiate(prototype);
                     m_Entities.Add(instance);
@@ -331,12 +340,7 @@ namespace GLTFast {
                         m_EntityManager,
                         renderMeshDescription,
                         renderMeshArray,
-                        MaterialMeshInfo.FromRenderMeshArrayIndices(index, 0,
-#if !UNITY_ENTITIES_1_2_OR_NEWER
-                            (sbyte)
-#endif
-                            index
-                        )
+                        MaterialMeshInfo.FromRenderMeshArrayIndices(index, 0, index)
                     );
                 }
             }
@@ -344,7 +348,8 @@ namespace GLTFast {
         }
 
         /// <inheritdoc />
-        public void AddCamera(uint nodeIndex, uint cameraIndex) {
+        public void AddCamera(uint nodeIndex, uint cameraIndex)
+        {
             // if ((m_Settings.mask & ComponentType.Camera) == 0) {
             //     return;
             // }
@@ -356,7 +361,8 @@ namespace GLTFast {
         public void AddLightPunctual(
             uint nodeIndex,
             uint lightIndex
-        ) {
+        )
+        {
             // if ((m_Settings.mask & ComponentType.Light) == 0) {
             //     return;
             // }
@@ -364,7 +370,8 @@ namespace GLTFast {
         }
 
         /// <inheritdoc />
-        public virtual void EndScene(uint[] rootNodeIndices) {
+        public virtual void EndScene(uint[] rootNodeIndices)
+        {
             Profiler.BeginSample("EndScene");
 
             if (m_Entities.Count > 0)

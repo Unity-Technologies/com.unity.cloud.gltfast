@@ -17,7 +17,8 @@ using Unity.Collections;
 using Unity.Mathematics;
 #endif
 
-namespace GLTFast {
+namespace GLTFast
+{
 
     /// <summary>
     /// Loads a glTF from a MonoBehaviour but instantiates Entities.
@@ -25,7 +26,8 @@ namespace GLTFast {
     /// TODO: To be replaced with a pure ECS concept
     /// </summary>
     [BurstCompile]
-    public class GltfEntityAsset : GltfAssetBase {
+    public class GltfEntityAsset : GltfAssetBase
+    {
 
         public string Url => url;
 
@@ -80,8 +82,10 @@ namespace GLTFast {
             ? Path.Combine(Application.streamingAssetsPath, url)
             : url;
 
-        protected virtual async void Start() {
-            if(loadOnStartup && !string.IsNullOrEmpty(url)) {
+        protected virtual async void Start()
+        {
+            if (loadOnStartup && !string.IsNullOrEmpty(url))
+            {
                 // Automatic load on startup
                 await Load(FullUrl);
             }
@@ -89,20 +93,24 @@ namespace GLTFast {
 
         public override async Task<bool> Load(
             string gltfUrl,
-            IDownloadProvider downloadProvider=null,
-            IDeferAgent deferAgent=null,
-            IMaterialGenerator materialGenerator=null,
+            IDownloadProvider downloadProvider = null,
+            IDeferAgent deferAgent = null,
+            IMaterialGenerator materialGenerator = null,
             ICodeLogger logger = null
         )
         {
             logger = logger ?? new ConsoleLogger();
             var success = await base.Load(gltfUrl, downloadProvider, deferAgent, materialGenerator, logger);
-            if(success) {
+            if (success)
+            {
                 if (deferAgent != null) await deferAgent.BreakPoint();
                 // Auto-Instantiate
-                if (sceneId>=0) {
-                    await InstantiateScene(sceneId,logger);
-                } else {
+                if (sceneId >= 0)
+                {
+                    await InstantiateScene(sceneId, logger);
+                }
+                else
+                {
                     await Instantiate(logger);
                 }
             }
@@ -123,19 +131,22 @@ namespace GLTFast {
                     Rotation = transformCached.rotation,
                     Scale = transformCached.localScale.x,
                 });
-            entityManager.SetComponentData(m_SceneRoot, new LocalToWorld{Value = float4x4.identity});
+            entityManager.SetComponentData(m_SceneRoot, new LocalToWorld { Value = float4x4.identity });
             return new EntityInstantiator(Importer, m_SceneRoot, logger, instantiationSettings);
         }
 
-        protected override void PostInstantiation(IInstantiator instantiator, bool success) {
+        protected override void PostInstantiation(IInstantiator instantiator, bool success)
+        {
             CurrentSceneId = success ? Importer.DefaultSceneIndex : null;
         }
 
         /// <summary>
         /// Removes previously instantiated scene(s)
         /// </summary>
-        public override void ClearScenes() {
-            if (m_SceneRoot != Entity.Null) {
+        public override void ClearScenes()
+        {
+            if (m_SceneRoot != Entity.Null)
+            {
                 var entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
                 EntityUtils.DestroyChildren(ref m_SceneRoot, ref entityManager);
                 entityManager.DestroyEntity(m_SceneRoot);

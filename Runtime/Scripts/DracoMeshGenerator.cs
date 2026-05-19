@@ -6,17 +6,18 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using UnityEngine;
-using Unity.Collections;
 using Draco;
 using GLTFast.Logging;
 using GLTFast.Schema;
+using Unity.Collections;
 using Unity.Jobs;
+using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Rendering;
 using Mesh = UnityEngine.Mesh;
 
-namespace GLTFast {
+namespace GLTFast
+{
 
     class DracoMeshGenerator : MeshGeneratorBase
     {
@@ -155,9 +156,10 @@ namespace GLTFast {
                 attributesArray[index] = dracoExt.attributes;
             }
 
-            var mesh = await StartDecode(bufferViews, attributesArray, bounds==null);
+            var mesh = await StartDecode(bufferViews, attributesArray, bounds == null);
 
-            if (mesh is null) {
+            if (mesh is null)
+            {
                 return null;
             }
 

@@ -20,7 +20,7 @@ namespace GLTFast.Newtonsoft.Schema
         IDictionary<string, JToken> m_JsonExtensionData;
 
         [Preserve]
-        public NormalTextureInfo() {}
+        public NormalTextureInfo() { }
 
         public bool TryGetValue<T>(string key, out T value)
         {

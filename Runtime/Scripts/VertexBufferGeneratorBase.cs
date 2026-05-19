@@ -95,14 +95,9 @@ namespace GLTFast
                     outputByteStride = outputByteStride,
                     result = output
                 };
-#if UNITY_COLLECTIONS
-                jobHandle = job.ScheduleBatch(accessor.count,GltfImport.DefaultBatchCount);
-#else
-                jobHandle = job.Schedule(accessor.count, GltfImport.DefaultBatchCount);
-#endif
+                jobHandle = job.ScheduleBatch(accessor.count, GltfImport.DefaultBatchCount);
             }
-            else
-            if (accessor.componentType == GltfComponentType.UnsignedShort)
+            else if (accessor.componentType == GltfComponentType.UnsignedShort)
             {
                 var input = buffers.GetStridedAccessorData<ushort3>(
                     accessor.bufferView,
@@ -117,11 +112,7 @@ namespace GLTFast
                         outputByteStride = outputByteStride,
                         result = output
                     };
-#if UNITY_COLLECTIONS
-                    jobHandle = job.ScheduleBatch(accessor.count,GltfImport.DefaultBatchCount);
-#else
-                    jobHandle = job.Schedule(accessor.count, GltfImport.DefaultBatchCount);
-#endif
+                    jobHandle = job.ScheduleBatch(accessor.count, GltfImport.DefaultBatchCount);
                 }
                 else
                 {
@@ -131,15 +122,10 @@ namespace GLTFast
                         outputByteStride = outputByteStride,
                         result = output
                     };
-#if UNITY_COLLECTIONS
-                    jobHandle = job.ScheduleBatch(accessor.count,GltfImport.DefaultBatchCount);
-#else
-                    jobHandle = job.Schedule(accessor.count, GltfImport.DefaultBatchCount);
-#endif
+                    jobHandle = job.ScheduleBatch(accessor.count, GltfImport.DefaultBatchCount);
                 }
             }
-            else
-            if (accessor.componentType == GltfComponentType.Short)
+            else if (accessor.componentType == GltfComponentType.Short)
             {
                 var input = buffers.GetStridedAccessorData<short3>(
                     accessor.bufferView,
@@ -157,11 +143,7 @@ namespace GLTFast
                             outputByteStride = outputByteStride,
                             result = output
                         };
-#if UNITY_COLLECTIONS
                         jobHandle = job.ScheduleBatch(accessor.count, GltfImport.DefaultBatchCount);
-#else
-                        jobHandle = job.Schedule(accessor.count, GltfImport.DefaultBatchCount);
-#endif
                     }
                     else
                     {
@@ -171,11 +153,7 @@ namespace GLTFast
                             outputByteStride = outputByteStride,
                             result = output
                         };
-#if UNITY_COLLECTIONS
                         jobHandle = job.ScheduleBatch(accessor.count, GltfImport.DefaultBatchCount);
-#else
-                        jobHandle = job.Schedule(accessor.count, GltfImport.DefaultBatchCount);
-#endif
                     }
                 }
                 else
@@ -186,15 +164,10 @@ namespace GLTFast
                         outputByteStride = outputByteStride,
                         result = output
                     };
-#if UNITY_COLLECTIONS
                     jobHandle = job.ScheduleBatch(accessor.count, GltfImport.DefaultBatchCount);
-#else
-                    jobHandle = job.Schedule(accessor.count, GltfImport.DefaultBatchCount);
-#endif
                 }
             }
-            else
-            if (accessor.componentType == GltfComponentType.Byte)
+            else if (accessor.componentType == GltfComponentType.Byte)
             {
                 var input = buffers.GetStridedAccessorData<sbyte3>(
                     accessor.bufferView,
@@ -211,11 +184,7 @@ namespace GLTFast
                             outputByteStride = outputByteStride,
                             result = output
                         };
-#if UNITY_COLLECTIONS
                         jobHandle = job.ScheduleBatch(accessor.count, GltfImport.DefaultBatchCount);
-#else
-                        jobHandle = job.Schedule(accessor.count, GltfImport.DefaultBatchCount);
-#endif
                     }
                     else
                     {
@@ -225,11 +194,7 @@ namespace GLTFast
                             outputByteStride = outputByteStride,
                             result = output
                         };
-#if UNITY_COLLECTIONS
                         jobHandle = job.ScheduleBatch(accessor.count, GltfImport.DefaultBatchCount);
-#else
-                        jobHandle = job.Schedule(accessor.count, GltfImport.DefaultBatchCount);
-#endif
                     }
                 }
                 else
@@ -241,15 +206,10 @@ namespace GLTFast
                         outputByteStride = outputByteStride,
                         result = output
                     };
-#if UNITY_COLLECTIONS
                     jobHandle = job.ScheduleBatch(accessor.count, GltfImport.DefaultBatchCount);
-#else
-                    jobHandle = job.Schedule(accessor.count, GltfImport.DefaultBatchCount);
-#endif
                 }
             }
-            else
-            if (accessor.componentType == GltfComponentType.UnsignedByte)
+            else if (accessor.componentType == GltfComponentType.UnsignedByte)
             {
                 var input = buffers.GetStridedAccessorData<byte3>(
                     accessor.bufferView,
@@ -265,11 +225,7 @@ namespace GLTFast
                         outputByteStride = outputByteStride,
                         result = output
                     };
-#if UNITY_COLLECTIONS
                     jobHandle = job.ScheduleBatch(accessor.count, GltfImport.DefaultBatchCount);
-#else
-                    jobHandle = job.Schedule(accessor.count, GltfImport.DefaultBatchCount);
-#endif
                 }
                 else
                 {
@@ -279,11 +235,7 @@ namespace GLTFast
                         outputByteStride = outputByteStride,
                         result = output
                     };
-#if UNITY_COLLECTIONS
                     jobHandle = job.ScheduleBatch(accessor.count, GltfImport.DefaultBatchCount);
-#else
-                    jobHandle = job.Schedule(accessor.count, GltfImport.DefaultBatchCount);
-#endif
                 }
             }
             else
@@ -318,11 +270,7 @@ namespace GLTFast
                         outputByteStride = outputByteStride,
                         result = output
                     };
-#if UNITY_COLLECTIONS
-                    jobHandle = jobTangent.ScheduleBatch(count,GltfImport.DefaultBatchCount);
-#else
-                    jobHandle = jobTangent.Schedule(count, GltfImport.DefaultBatchCount);
-#endif
+                    jobHandle = jobTangent.ScheduleBatch(count, GltfImport.DefaultBatchCount);
                     break;
                 }
                 case GltfComponentType.Short:
@@ -335,11 +283,7 @@ namespace GLTFast
                         outputByteStride = outputByteStride,
                         result = output
                     };
-#if UNITY_COLLECTIONS
-                    jobHandle = jobTangent.ScheduleBatch(count,GltfImport.DefaultBatchCount);
-#else
-                    jobHandle = jobTangent.Schedule(count, GltfImport.DefaultBatchCount);
-#endif
+                    jobHandle = jobTangent.ScheduleBatch(count, GltfImport.DefaultBatchCount);
                     break;
                 }
                 case GltfComponentType.Byte:
@@ -352,11 +296,7 @@ namespace GLTFast
                         outputByteStride = outputByteStride,
                         result = output
                     };
-#if UNITY_COLLECTIONS
-                    jobHandle = jobTangent.ScheduleBatch(count,GltfImport.DefaultBatchCount);
-#else
-                    jobHandle = jobTangent.Schedule(count, GltfImport.DefaultBatchCount);
-#endif
+                    jobHandle = jobTangent.ScheduleBatch(count, GltfImport.DefaultBatchCount);
                     break;
                 }
                 default:

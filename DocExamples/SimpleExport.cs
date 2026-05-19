@@ -4,8 +4,8 @@
 namespace GLTFast.Documentation.Examples
 {
     #region SimpleExport
-    using UnityEngine;
     using Export;
+    using UnityEngine;
 
     class SimpleExport : MonoBehaviour
     {
