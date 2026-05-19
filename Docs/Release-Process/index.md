@@ -111,10 +111,10 @@ Branch `main` serves as base for public contributions, so it has to be updated j
 
 ## Update the Public Repository
 
-1. Push the release tag created in [Publish Internally](#publish-internally) to the [public Git repository]([glTFastPublic]).
+1. Push the release tag created in [Publish Internally](#publish-internally) to the [public Git repository][glTFastPublic].
 1. Push branch `main` externally
     1. Temporarily un-protect the `main` branch by disabling the *Do not allow bypassing the above settings* settings in `main`'s branch protection rules.
-    1. Git push `main` to the [public Git repository]([glTFastPublic]).
+    1. Git push `main` to the [public Git repository][glTFastPublic].
     1. Revert the branch protection settings.
 
 [glTFast Package Works portal]: https://package-works.prd.cds.internal.unity3d.com/project?id=6135
