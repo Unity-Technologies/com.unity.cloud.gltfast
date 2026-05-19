@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
+### Changed
+
+### Fixed
+
+### Removed
+
+### Deprecated
+
+### Security
+
+## [6.19.0] - 2026-05-19
+
+### Added
 - (Add-Ons) Import glTF animations to custom animation systems.
   - [IAnimationProcessor](xref:GLTFast.Animations.IAnimationProcessor) &mdash; animation clips conversion
   - [IAnimationProcessorFactory](xref:GLTFast.Animations.IAnimationProcessorFactory) &mdash; add-ons need to implement this
@@ -37,12 +51,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improved comma placement in export summary (thanks anonymous for [#46](https://github.com/Unity-Technologies/com.unity.cloud.gltfast/pull/46)).
 - [Materials variants](xref:GLTFast.MaterialsVariantsComponent)' inspector shows correct variant when regaining focus (thanks [anonymous2585](https://github.com/anonymous2585) for [#48](https://github.com/Unity-Technologies/com.unity.cloud.gltfast/pull/48)).
 - (Import) Fixed merging of mesh primitives with shared vertex buffer, but different indices type.
-
-### Removed
-
-### Deprecated
-
-### Security
 
 ## [6.18.0] - 2026-04-01
 
