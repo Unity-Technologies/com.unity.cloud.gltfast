@@ -19,12 +19,12 @@
     "versionDefines": [
         {
             "name": "com.unity.entities.graphics",
-            "expression": "1.0.10",
+            "expression": "",
             "define": "UNITY_ENTITIES_GRAPHICS"
         },
         {
             "name": "com.unity.modules.animation",
-            "expression": "1.0.0",
+            "expression": "",
             "define": "UNITY_ANIMATION"
         }
     ],

@@ -61,13 +61,7 @@ namespace GLTFast.Tests.Performance.Jobs
                 outputByteStride = 12,
                 result = (float3*)m_Output.GetUnsafePtr()
             };
-            Measure.Method(() =>
-#if UNITY_COLLECTIONS
-                    job.RunBatch(m_Input.Length)
-#else
-                    job.Run(m_Input.Length)
-#endif
-                    )
+            Measure.Method(() => job.RunBatch(m_Input.Length))
                 .WarmupCount(1)
                 .DynamicMeasurementCount()
                 .Run();
@@ -104,13 +98,7 @@ namespace GLTFast.Tests.Performance.Jobs
                 result = (float3*)m_Output.GetUnsafePtr(),
                 outputByteStride = 12
             };
-            Measure.Method(() =>
-#if UNITY_COLLECTIONS
-                    job.RunBatch(m_Output.Length)
-#else
-                    job.Run(m_Output.Length)
-#endif
-                    )
+            Measure.Method(() => job.RunBatch(m_Output.Length))
                 .WarmupCount(1)
                 .DynamicMeasurementCount()
                 .Run();
@@ -129,13 +117,7 @@ namespace GLTFast.Tests.Performance.Jobs
                 result = (float3*)m_Output.GetUnsafePtr(),
                 outputByteStride = 12
             };
-            Measure.Method(() =>
-#if UNITY_COLLECTIONS
-                    job.RunBatch(m_Output.Length)
-#else
-                    job.Run(m_Output.Length)
-#endif
-                    )
+            Measure.Method(() => job.RunBatch(m_Output.Length))
                 .WarmupCount(1)
                 .DynamicMeasurementCount()
                 .Run();
@@ -154,13 +136,7 @@ namespace GLTFast.Tests.Performance.Jobs
                 result = (float3*)m_Output.GetUnsafePtr(),
                 outputByteStride = 12
             };
-            Measure.Method(() =>
-#if UNITY_COLLECTIONS
-                    job.RunBatch(m_Output.Length)
-#else
-                    job.Run(m_Output.Length)
-#endif
-                    )
+            Measure.Method(() => job.RunBatch(m_Output.Length))
                 .WarmupCount(1)
                 .DynamicMeasurementCount()
                 .Run();
@@ -179,13 +155,7 @@ namespace GLTFast.Tests.Performance.Jobs
                 result = (float3*)m_Output.GetUnsafePtr(),
                 outputByteStride = 12
             };
-            Measure.Method(() =>
-#if UNITY_COLLECTIONS
-                    job.RunBatch(m_Output.Length)
-#else
-                    job.Run(m_Output.Length)
-#endif
-                    )
+            Measure.Method(() => job.RunBatch(m_Output.Length))
                 .WarmupCount(1)
                 .DynamicMeasurementCount()
                 .Run();
@@ -204,13 +174,7 @@ namespace GLTFast.Tests.Performance.Jobs
                 result = (float3*)m_Output.GetUnsafePtr(),
                 outputByteStride = 12
             };
-            Measure.Method(() =>
-#if UNITY_COLLECTIONS
-                    job.RunBatch(m_Output.Length)
-#else
-                    job.Run(m_Output.Length)
-#endif
-                    )
+            Measure.Method(() => job.RunBatch(m_Output.Length))
                 .WarmupCount(1)
                 .DynamicMeasurementCount()
                 .Run();
@@ -229,13 +193,7 @@ namespace GLTFast.Tests.Performance.Jobs
                 result = (float3*)m_Output.GetUnsafePtr(),
                 outputByteStride = 12
             };
-            Measure.Method(() =>
-#if UNITY_COLLECTIONS
-                    job.RunBatch(m_Output.Length)
-#else
-                    job.Run(m_Output.Length)
-#endif
-                    )
+            Measure.Method(() => job.RunBatch(m_Output.Length))
                 .WarmupCount(1)
                 .DynamicMeasurementCount()
                 .Run();
@@ -254,13 +212,7 @@ namespace GLTFast.Tests.Performance.Jobs
                 result = (float3*)m_Output.GetUnsafePtr(),
                 outputByteStride = 12
             };
-            Measure.Method(() =>
-#if UNITY_COLLECTIONS
-                    job.RunBatch(m_Output.Length)
-#else
-                    job.Run(m_Output.Length)
-#endif
-                    )
+            Measure.Method(() => job.RunBatch(m_Output.Length))
                 .WarmupCount(1)
                 .DynamicMeasurementCount()
                 .Run();
@@ -279,13 +231,7 @@ namespace GLTFast.Tests.Performance.Jobs
                 result = (float3*)m_Output.GetUnsafePtr(),
                 outputByteStride = 12
             };
-            Measure.Method(() =>
-#if UNITY_COLLECTIONS
-                    job.RunBatch(m_Output.Length)
-#else
-                    job.Run(m_Output.Length)
-#endif
-                    )
+            Measure.Method(() => job.RunBatch(m_Output.Length))
                 .WarmupCount(1)
                 .DynamicMeasurementCount()
                 .Run();
@@ -304,13 +250,7 @@ namespace GLTFast.Tests.Performance.Jobs
                 result = (float3*)m_Output.GetUnsafePtr(),
                 outputByteStride = 12
             };
-            Measure.Method(() =>
-#if UNITY_COLLECTIONS
-                    job.RunBatch(m_Output.Length)
-#else
-                    job.Run(m_Output.Length)
-#endif
-                    )
+            Measure.Method(() => job.RunBatch(m_Output.Length))
                 .WarmupCount(1)
                 .DynamicMeasurementCount()
                 .Run();
@@ -329,13 +269,7 @@ namespace GLTFast.Tests.Performance.Jobs
                 result = (float3*)m_Output.GetUnsafePtr(),
                 outputByteStride = 12
             };
-            Measure.Method(() =>
-#if UNITY_COLLECTIONS
-                    job.RunBatch(m_Output.Length)
-#else
-                    job.Run(m_Output.Length)
-#endif
-                    )
+            Measure.Method(() => job.RunBatch(m_Output.Length))
                 .WarmupCount(1)
                 .DynamicMeasurementCount()
                 .Run();
@@ -517,13 +451,7 @@ namespace GLTFast.Tests.Performance.Jobs
                 result = (float2*)m_UVOutput.GetUnsafePtr(),
                 outputByteStride = 8
             };
-            Measure.Method(() =>
-#if UNITY_COLLECTIONS
-                    job.RunBatch(m_UVOutput.Length)
-#else
-                    job.Run(m_UVOutput.Length)
-#endif
-                    )
+            Measure.Method(() => job.RunBatch(m_UVOutput.Length))
                 .WarmupCount(1)
                 .DynamicMeasurementCount()
                 .Run();
@@ -561,13 +489,7 @@ namespace GLTFast.Tests.Performance.Jobs
                 result = (float2*)m_UVOutput.GetUnsafePtr(),
                 outputByteStride = 8
             };
-            Measure.Method(() =>
-#if UNITY_COLLECTIONS
-                    job.RunBatch(m_UVOutput.Length)
-#else
-                    job.Run(m_UVOutput.Length)
-#endif
-                    )
+            Measure.Method(() => job.RunBatch(m_UVOutput.Length))
                 .WarmupCount(1)
                 .DynamicMeasurementCount()
                 .Run();
@@ -605,13 +527,7 @@ namespace GLTFast.Tests.Performance.Jobs
                 result = (float2*)m_UVOutput.GetUnsafePtr(),
                 outputByteStride = 8
             };
-            Measure.Method(() =>
-#if UNITY_COLLECTIONS
-                    job.RunBatch(m_UVOutput.Length)
-#else
-                    job.Run(m_UVOutput.Length)
-#endif
-                    )
+            Measure.Method(() => job.RunBatch(m_UVOutput.Length))
                 .WarmupCount(1)
                 .DynamicMeasurementCount()
                 .Run();
@@ -630,13 +546,7 @@ namespace GLTFast.Tests.Performance.Jobs
                 result = (float2*)m_UVOutput.GetUnsafePtr(),
                 outputByteStride = 8
             };
-            Measure.Method(() =>
-#if UNITY_COLLECTIONS
-                    job.RunBatch(m_UVOutput.Length)
-#else
-                    job.Run(m_UVOutput.Length)
-#endif
-                  )
+            Measure.Method(() => job.RunBatch(m_UVOutput.Length))
                 .WarmupCount(1)
                 .DynamicMeasurementCount()
                 .Run();
@@ -655,13 +565,7 @@ namespace GLTFast.Tests.Performance.Jobs
                 result = (float2*)m_UVOutput.GetUnsafePtr(),
                 outputByteStride = 8
             };
-            Measure.Method(() =>
-#if UNITY_COLLECTIONS
-                    job.RunBatch(m_UVOutput.Length)
-#else
-                    job.Run(m_UVOutput.Length)
-#endif
-                    )
+            Measure.Method(() => job.RunBatch(m_UVOutput.Length))
                 .WarmupCount(1)
                 .DynamicMeasurementCount()
                 .Run();
@@ -680,13 +584,7 @@ namespace GLTFast.Tests.Performance.Jobs
                 result = (float2*)m_UVOutput.GetUnsafePtr(),
                 outputByteStride = 8
             };
-            Measure.Method(() =>
-#if UNITY_COLLECTIONS
-                    job.RunBatch(m_UVOutput.Length)
-#else
-                    job.Run(m_UVOutput.Length)
-#endif
-                    )
+            Measure.Method(() => job.RunBatch(m_UVOutput.Length))
                 .WarmupCount(1)
                 .DynamicMeasurementCount()
                 .Run();
@@ -705,13 +603,7 @@ namespace GLTFast.Tests.Performance.Jobs
                 result = (float2*)m_UVOutput.GetUnsafePtr(),
                 outputByteStride = 8
             };
-            Measure.Method(() =>
-#if UNITY_COLLECTIONS
-                    job.RunBatch(m_UVOutput.Length)
-#else
-                    job.Run(m_UVOutput.Length)
-#endif
-                    )
+            Measure.Method(() => job.RunBatch(m_UVOutput.Length))
                 .WarmupCount(1)
                 .DynamicMeasurementCount()
                 .Run();
@@ -821,13 +713,7 @@ namespace GLTFast.Tests.Performance.Jobs
                 result = (float4*)m_RotOutput.GetUnsafePtr(),
                 outputByteStride = 16
             };
-            Measure.Method(() =>
-#if UNITY_COLLECTIONS
-                    job.RunBatch(m_RotOutput.Length)
-#else
-                    job.Run(m_RotOutput.Length)
-#endif
-                    )
+            Measure.Method(() => job.RunBatch(m_RotOutput.Length))
                 .WarmupCount(1)
                 .DynamicMeasurementCount()
                 .Run();
@@ -846,13 +732,7 @@ namespace GLTFast.Tests.Performance.Jobs
                 result = (float4*)m_RotOutput.GetUnsafePtr(),
                 outputByteStride = 16
             };
-            Measure.Method(() =>
-#if UNITY_COLLECTIONS
-                    job.RunBatch(m_RotOutput.Length)
-#else
-                    job.Run(m_RotOutput.Length)
-#endif
-                    )
+            Measure.Method(() => job.RunBatch(m_RotOutput.Length))
                 .WarmupCount(1)
                 .DynamicMeasurementCount()
                 .Run();
@@ -874,13 +754,7 @@ namespace GLTFast.Tests.Performance.Jobs
                 result = (float4*)m_RotOutput.GetUnsafePtr(),
                 outputByteStride = 16
             };
-            Measure.Method(() =>
-#if UNITY_COLLECTIONS
-                    job.RunBatch(m_RotOutput.Length)
-#else
-                    job.Run(m_RotOutput.Length)
-#endif
-                    )
+            Measure.Method(() => job.RunBatch(m_RotOutput.Length))
                 .WarmupCount(1)
                 .DynamicMeasurementCount()
                 .Run();
@@ -899,13 +773,7 @@ namespace GLTFast.Tests.Performance.Jobs
                 result = (float4*)m_RotOutput.GetUnsafePtr(),
                 outputByteStride = 16
             };
-            Measure.Method(() =>
-#if UNITY_COLLECTIONS
-                    job.RunBatch(m_RotOutput.Length)
-#else
-                    job.Run(m_RotOutput.Length)
-#endif
-                    )
+            Measure.Method(() => job.RunBatch(m_RotOutput.Length))
                 .WarmupCount(1)
                 .DynamicMeasurementCount()
                 .Run();
@@ -1026,13 +894,7 @@ namespace GLTFast.Tests.Performance.Jobs
                 inputByteStride = 8,
                 result = m_ColorOutput
             };
-            Measure.Method(() =>
-#if UNITY_COLLECTIONS
-                    job.RunBatch(m_ColorOutput.Length)
-#else
-                    job.Run(m_ColorOutput.Length)
-#endif
-                    )
+            Measure.Method(() => job.RunBatch(m_ColorOutput.Length))
                 .WarmupCount(1)
                 .DynamicMeasurementCount()
                 .Run();
@@ -1050,13 +912,7 @@ namespace GLTFast.Tests.Performance.Jobs
                 inputByteStride = 16,
                 result = m_ColorOutput
             };
-            Measure.Method(() =>
-#if UNITY_COLLECTIONS
-                    job.RunBatch(m_ColorOutput.Length)
-#else
-                    job.Run(m_ColorOutput.Length)
-#endif
-                    )
+            Measure.Method(() => job.RunBatch(m_ColorOutput.Length))
                 .WarmupCount(1)
                 .DynamicMeasurementCount()
                 .Run();

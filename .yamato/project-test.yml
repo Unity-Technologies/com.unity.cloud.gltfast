@@ -85,14 +85,7 @@ test_{{ test_setup.project_setup }}_{{ platform_id }}_{{ editor }}:
 
     # Run Tests
     # TODO: upm-ci rocks UPM and other cache directories. Maybe we can speed things up this way as well.
-    # TODO: DISABLE_SUB_PACKAGE_LOAD is required for 2020 only. Eventually remove all occurrences.
     - >
-{% if agent.os == "win" -%}
-      set DISABLE_SUB_PACKAGE_LOAD=TRUE
-{% else -%}
-      export DISABLE_SUB_PACKAGE_LOAD=TRUE
-{% endif -%}
-
       UnifiedTestRunner
       --testproject=Projects/{{ test_setup.project }}
       --editor-location=.Editor
@@ -159,14 +152,7 @@ build_{{ test_setup.project_setup }}_{{ platform_id }}_{{ editor }}:
 
     # Run Tests
     # TODO: upm-ci rocks UPM and other cache directories. Maybe we can speed things up this way as well.
-    # TODO: DISABLE_SUB_PACKAGE_LOAD is required for 2020 only. Eventually remove all occurrences.
     - >
-{% if agent.os == "win" -%}
-      set DISABLE_SUB_PACKAGE_LOAD=TRUE
-{% else -%}
-      export DISABLE_SUB_PACKAGE_LOAD=TRUE
-{% endif -%}
-
       UnifiedTestRunner
       --testproject=Projects/{{ test_setup.project }}
       --editor-location=.Editor
@@ -243,14 +229,7 @@ run_{{ test_setup.project_setup }}_{{ platform_id }}_{{ editor }}:
 
     # Run Tests
     # TODO: upm-ci rocks UPM and other cache directories. Maybe we can speed things up this way as well.
-    # TODO: DISABLE_SUB_PACKAGE_LOAD is required for 2020 only. Eventually remove all occurrences.
     - >
-{% if agent.os == "win" -%}
-      set DISABLE_SUB_PACKAGE_LOAD=TRUE
-{% else -%}
-      export DISABLE_SUB_PACKAGE_LOAD=TRUE
-{% endif -%}
-
       UnifiedTestRunner
       --testproject=Projects/{{ test_setup.project }}
       --editor-location=.Editor

@@ -24,7 +24,13 @@ namespace GLTFast.Editor.Tests
 {
     public class PreprocessBuild : IPreprocessBuildWithReport
     {
-        public int callbackOrder => 0;
+        /// <summary>
+        /// One less than URP's URPPreprocessBuild, to make sure Render Compatibility Mode is set prior.
+        /// </summary>
+        /// <seealso cref="EnableLegacyRenderCompatibilityMode"/>
+        // TODO: Restore to `0` when dropping 6000.0 / removing EnableLegacyRenderCompatibilityMode.
+        public int callbackOrder => int.MinValue + 99;
+
 
         static string pkgPath => $"Packages/{GltfGlobals.GltfPackageName}";
 
@@ -33,7 +39,7 @@ namespace GLTFast.Editor.Tests
             if ((target.summary.options & BuildOptions.IncludeTestAssemblies) != 0)
             {
                 SyncTestAssets();
-                DisableRenderCompatibilityMode();
+                EnableLegacyRenderCompatibilityMode();
                 AddShaderVariantCollections();
                 ExportTests.CertifyStreamingAssetsFolder();
                 ExportTests.SetupTests();
@@ -137,11 +143,16 @@ namespace GLTFast.Editor.Tests
             obj.ApplyModifiedProperties();
         }
 
-        static void DisableRenderCompatibilityMode()
+        static void EnableLegacyRenderCompatibilityMode()
         {
-#if USING_URP && UNITY_6000_3_OR_NEWER && URP_COMPATIBILITY_MODE
-            // TODO: When support for Unity 2022 is removed, set enableRenderCompatibilityMode to false
-            // (use render graphs) statically in the project's graphics settings and remove this code.
+#if USING_URP && !UNITY_6000_3_OR_NEWER && URP_COMPATIBILITY_MODE
+            // The combination URP Render Graphs + project tests on Yamato + macOS + Unity 6.0 leads to floods of this
+            // error on the console, failing the tests:
+            //
+            // > BlitFinalToBackBuffer/Draw UIToolkit/uGUI Overlay: Attachment 0 was created with 2 samples but 1 samples were requested.
+            //
+            // Something MSAA related I couldn't fix. This turns off render graphs for Unity 6.0 macOS only.
+            // TODO: Remove RenderCompatibilityMode when support for Unity 6000.0 is removed.
             // Also remove the URP_COMPATIBILITY_MODE scripting define from all test projects,
             // which was required for this crutch to work.
             if (RenderPipelineUtils.RenderPipeline == RenderPipeline.Universal)
@@ -149,12 +160,12 @@ namespace GLTFast.Editor.Tests
                 var s = GraphicsSettings.GetRenderPipelineSettings<RenderGraphSettings>();
                 if (s != null)
                 {
-                    s.enableRenderCompatibilityMode = false;
+                    s.enableRenderCompatibilityMode = true;
                 }
                 else
                 {
                     Debug.LogError("Failed to get RenderGraphSettings from GraphicsSettings. " +
-                        "URP compatibility mode may not be disabled.");
+                        "URP compatibility mode may not enabled.");
                 }
             }
 #endif

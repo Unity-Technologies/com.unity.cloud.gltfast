@@ -1,10 +1,6 @@
 // SPDX-FileCopyrightText: 2023 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
-#if UNITY_2023_3_OR_NEWER
-#define ASYNC_MESH_DATA
-#endif
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -1268,13 +1264,7 @@ namespace GLTFast.Export
 
             for (var stream = 0; stream < streamCount; stream++)
             {
-                inputStreams[stream] =
-#if ASYNC_MESH_DATA
-                    await meshData.GetVertexData(stream, sync);
-#else
-                    meshData.GetVertexData(stream);
-#endif
-
+                inputStreams[stream] = await meshData.GetVertexData(stream, sync);
                 outputStreams[stream] = new NativeArray<byte>(outputStrides[stream] * vertexCount, Allocator.Persistent);
             }
 
@@ -1393,12 +1383,7 @@ namespace GLTFast.Export
             NativeArray<byte> indices;
             if (uMesh.indexFormat == IndexFormat.UInt16)
             {
-                using var indexData16 =
-#if ASYNC_MESH_DATA
-                    await ((IMeshData<ushort>)meshData).GetIndexData(sync);
-#else
-                    ((IMeshData<ushort>)meshData).GetIndexData();
-#endif
+                using var indexData16 = await ((IMeshData<ushort>)meshData).GetIndexData(sync);
 
                 NativeArray<ushort> destIndices;
                 JobHandle job = default;
@@ -1466,12 +1451,7 @@ namespace GLTFast.Export
             }
             else
             {
-                using var indexData32 =
-#if ASYNC_MESH_DATA
-                    await ((IMeshData<uint>)meshData).GetIndexData(sync);
-#else
-                    ((IMeshData<uint>)meshData).GetIndexData();
-#endif
+                using var indexData32 = await ((IMeshData<uint>)meshData).GetIndexData(sync);
                 NativeArray<uint> destIndices;
                 JobHandle job = default;
                 if (topology.Value == MeshTopology.Quads)
@@ -2509,10 +2489,6 @@ namespace GLTFast.Export
 
             if (!uMesh.isReadable)
             {
-#if DEBUG && !UNITY_6000_0_OR_NEWER
-                Debug.LogWarning($"Exporting non-readable meshes is not reliable in builds across platforms and " +
-                    $"graphics APIs! Consider making mesh \"{uMesh.name}\" readable.", uMesh);
-#endif
                 if ((m_Settings.Compression & Compression.Draco) != 0)
                 {
 #if UNITY_EDITOR

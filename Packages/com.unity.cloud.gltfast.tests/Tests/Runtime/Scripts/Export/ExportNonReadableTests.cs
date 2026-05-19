@@ -121,16 +121,10 @@ namespace GLTFast.Tests.Export
         {
             if (SystemInfo.graphicsDeviceType == GraphicsDeviceType.OpenGLCore
                 || SystemInfo.graphicsDeviceType == GraphicsDeviceType.OpenGLES3
-#if !UNITY_2023_1_OR_NEWER
-                || SystemInfo.graphicsDeviceType == GraphicsDeviceType.OpenGLES2
-#endif
                 )
             {
                 Assert.Ignore("Exporting non-readable meshes is unreliable on OpenGL/OpenGLES.");
             }
-#if !(UNITY_6000_0_OR_NEWER || UNITY_EDITOR)
-            Assert.Ignore("Exporting non-readable meshes is unreliable on Unity versions before 6.");
-#endif
         }
     }
 }

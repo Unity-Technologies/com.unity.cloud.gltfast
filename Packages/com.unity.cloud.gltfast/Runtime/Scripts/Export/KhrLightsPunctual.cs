@@ -37,9 +37,6 @@ namespace GLTFast.Export
             if (renderPipeline == RenderPipeline.HighDefinition)
             {
                 lightHd = uLight.gameObject.GetComponent<HDAdditionalLightData>();
-#if !UNITY_2023_2_OR_NEWER
-                lightType = lightHd != null ? lightHd.TryGetLightType() ?? lightType : lightType;
-#endif
             }
 #endif
 
@@ -86,7 +83,7 @@ namespace GLTFast.Export
             }
 
             light.LightColor = uLight.color.linear;
-            light.range = GetLightRange(uLight, lightType);
+            light.range = uLight.range;
 
             // Set Light intensity
             switch (renderPipeline)
@@ -106,80 +103,22 @@ namespace GLTFast.Export
                     }
                     else
                     {
-#if UNITY_2023_2_OR_NEWER
                         switch (lightType)
                         {
                             case LightType.Spot:
                             case LightType.Point:
-#if RENDER_PIPELINES_CORE_17_OR_NEWER
                                 light.intensity = LightUnitUtils.ConvertIntensity(uLight, uLight.intensity, uLight.lightUnit, LightUnit.Candela);
-#else
-                                light.intensity = GetIntensity(LightUnit.Candela);
-#endif
                                 break;
                             case LightType.Directional:
-#if RENDER_PIPELINES_CORE_17_OR_NEWER
                                 light.intensity = LightUnitUtils.ConvertIntensity(uLight, uLight.intensity, uLight.lightUnit, LightUnit.Lux);
-#else
-                                light.intensity = GetIntensity(LightUnit.Lux);
-#endif
                                 break;
                             case LightType.Rectangle:
                             default:
                                 light.intensity = uLight.intensity;
                                 break;
                         }
-#else
-                        switch (lightHd.type)
-                        {
-                            case HDLightType.Spot:
-                            case HDLightType.Point:
-                                light.intensity = GetIntensity(LightUnit.Candela);
-                                break;
-                            case HDLightType.Directional:
-                                light.intensity = GetIntensity(LightUnit.Lux);
-                                break;
-                            case HDLightType.Area:
-                            default:
-                                light.intensity = uLight.intensity;
-                                break;
-                        }
-#endif
                     }
-
                     break;
-
-#if !RENDER_PIPELINES_CORE_17_OR_NEWER
-                    float GetIntensity(LightUnit unit)
-                    {
-#if UNITY_2023_3_OR_NEWER
-                        if (uLight.lightUnit == unit)
-                        {
-                            return uLight.intensity;
-                        }
-
-                        // Workaround to get intensity in candela
-                        var oldUnit = uLight.lightUnit;
-                        uLight.lightUnit = unit;
-                        var result = uLight.intensity;
-                        uLight.lightUnit = oldUnit;
-                        return result;
-#else
-                        if (lightHd.lightUnit == unit)
-                        {
-                            return lightHd.intensity;
-                        }
-
-                        // Workaround to get intensity in candela
-                        var oldUnit = lightHd.lightUnit;
-                        lightHd.lightUnit = unit;
-                        var result = lightHd.intensity;
-                        lightHd.lightUnit = oldUnit;
-                        return result;
-#endif
-                    }
-#endif // !RENDER_PIPELINES_CORE_17_OR_NEWER
-
 #endif // USING_HDRP
                 default:
                     light.intensity = uLight.intensity;
@@ -187,48 +126,6 @@ namespace GLTFast.Export
             }
 
             return light;
-        }
-
-        /// <summary>
-        /// Retrieves the light's range.
-        /// In Unity 2023.1 and older `Light.range` would return what now is <see cref="Light.dilatedRange"/>, which is
-        /// the range extended by a certain area light size factor. This method removes that addition in that case to
-        /// get the original value that's shown in the inspector.
-        /// </summary>
-        /// <param name="light">Unity Light</param>
-        /// <param name="lightType">Actual light type (might differ from light.type in HDRP).</param>
-        /// <returns>The light's range.</returns>
-        static float GetLightRange(Light light, LightType lightType)
-        {
-#if UNITY_2023_2_OR_NEWER
-            return light.range;
-#else
-            var range = light.range;
-            switch (lightType)
-            {
-#if !USING_HDRP // And, of course, it behaves correctly in the particular case HDRP+Rectangle.
-                case LightType.Rectangle:
-#if UNITY_EDITOR
-                    var longestSide = light.areaSize.magnitude;
-#else
-                    // At runtime, assume default magnitude(vec2(1,1))
-                    var longestSide = 1.4142135624f;
-#endif
-                    range -= longestSide * .5f;
-                    break;
-#endif // !USING_HDRP
-                case LightType.Disc:
-#if UNITY_EDITOR
-                    var radius = light.areaSize.x;
-#else
-                    // At runtime, assume default
-                    const float radius = 1f;
-#endif
-                    range -= radius * .5f;
-                    break;
-            }
-            return range;
-#endif
         }
     }
 }

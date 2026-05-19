@@ -19,18 +19,13 @@
     "defineConstraints": [],
     "versionDefines": [
         {
-            "name": "com.unity.render-pipelines.core",
-            "expression": "17",
-            "define": "RENDER_PIPELINES_CORE_17_OR_NEWER"
-        },
-        {
             "name": "com.unity.render-pipelines.universal",
-            "expression": "7.3.1",
+            "expression": "",
             "define": "USING_URP"
         },
         {
             "name": "com.unity.render-pipelines.high-definition",
-            "expression": "7.3.1",
+            "expression": "",
             "define": "USING_HDRP"
         },
         {

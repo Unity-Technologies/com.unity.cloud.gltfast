@@ -126,16 +126,9 @@ namespace GLTFast
                     var lightUnit = lightSource.GetLightType() == LightPunctual.Type.Directional
                         ? LightUnit.Lux
                         : LightUnit.Candela;
-
-#if USING_HDRP_17_OR_NEWER
                     lightDestination.gameObject.AddComponent<HDAdditionalLightData>();
                     lightDestination.lightUnit = lightUnit;
                     lightDestination.intensity = lightSource.intensity;
-#else
-                    var lightHd = lightDestination.gameObject.AddComponent<HDAdditionalLightData>();
-                    lightHd.lightUnit = lightUnit;
-                    lightHd.intensity = lightSource.intensity;
-#endif
                     break;
 #endif
                 default:
@@ -158,14 +151,7 @@ namespace GLTFast
                     break;
 #if USING_HDRP
                 case RenderPipeline.HighDefinition:
-#if USING_HDRP_17_OR_NEWER
                     lightDestination.intensity = lightSource.intensity;
-#else
-                    if (lightSource.gameObject.TryGetComponent(out HDAdditionalLightData lightHd))
-                        lightDestination.intensity = lightHd.intensity;
-                    else
-                        lightDestination.intensity = 1;
-#endif
                     break;
 #endif
                 default:

@@ -31,7 +31,8 @@ public class GltfastSettings : AnnotatedSettingsBase
     {
         Wrench = new WrenchSettings(
             PackagesRootPaths,
-            PackageOptions
+            PackageOptions,
+            wrenchCsProjectPath: "Tools/CI/Gltfast.Cookbook.csproj"
         );
 
         var gltfast = Wrench.Packages["com.unity.cloud.gltfast"];

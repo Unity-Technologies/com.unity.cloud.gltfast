@@ -49,15 +49,7 @@ namespace GLTFast.Tests.Export
                 new float3(0, 13, 0),
                 math.inverse(float4x4.TRS(
                     new float3(0, 0, 7),
-                    quaternion.Euler(
-                        0,
-#if UNITY_MATH_1_3_OR_NEWER
-                        math.PIHALF,
-#else
-                        math.PI / 2f,
-#endif
-                        0
-                        ),
+                    quaternion.Euler(0, math.PIHALF, 0),
                     new float3(.1f))
                     )
             );

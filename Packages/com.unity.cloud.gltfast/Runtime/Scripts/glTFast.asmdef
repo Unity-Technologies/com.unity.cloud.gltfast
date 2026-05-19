@@ -5,7 +5,6 @@
         "Unity.Mathematics",
         "Unity.Burst",
         "Unity.Collections",
-        "Unity.Jobs",
         "Draco",
         "Ktx",
         "Unity.Meshopt.Decompress",
@@ -42,27 +41,22 @@
         },
         {
             "name": "com.unity.render-pipelines.universal",
-            "expression": "7.3.1",
+            "expression": "",
             "define": "USING_URP"
         },
         {
             "name": "com.unity.render-pipelines.high-definition",
-            "expression": "7.3.1",
+            "expression": "",
             "define": "USING_HDRP"
         },
         {
-            "name": "com.unity.render-pipelines.high-definition",
-            "expression": "17",
-            "define": "USING_HDRP_17_OR_NEWER"
-        },
-        {
             "name": "com.unity.modules.physics",
-            "expression": "1.0.0",
+            "expression": "",
             "define": "UNITY_PHYSICS"
         },
         {
             "name": "com.unity.modules.animation",
-            "expression": "1.0.0",
+            "expression": "",
             "define": "UNITY_ANIMATION"
         },
         {
@@ -74,11 +68,6 @@
             "name": "com.unity.modules.unitywebrequesttexture",
             "expression": "",
             "define": "UNITY_WEBREQUEST_TEXTURE"
-        },
-        {
-            "name": "com.unity.collections",
-            "expression": "1.4.0",
-            "define": "UNITY_COLLECTIONS"
         },
         {
             "name": "com.unity.meshopt.decompress",
@@ -97,13 +86,8 @@
         },
         {
             "name": "com.unity.nuget.newtonsoft-json",
-            "expression": "3",
+            "expression": "",
             "define": "NEWTONSOFT_JSON"
-        },
-        {
-            "name": "com.unity.mathematics",
-            "expression": "1.3",
-            "define": "UNITY_MATH_1_3_OR_NEWER"
         }
     ],
     "noEngineReferences": false

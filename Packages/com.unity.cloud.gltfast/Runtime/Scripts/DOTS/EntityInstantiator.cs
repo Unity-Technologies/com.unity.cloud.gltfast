@@ -231,14 +231,7 @@ namespace GLTFast
                     m_EntityManager,
                     renderMeshDescription,
                     renderMeshArray,
-                    MaterialMeshInfo.FromRenderMeshArrayIndices(
-                        index,
-                        0,
-#if !UNITY_ENTITIES_1_2_OR_NEWER
-                        (sbyte)
-#endif
-                        index
-                        )
+                    MaterialMeshInfo.FromRenderMeshArrayIndices(index, 0, index)
                     );
 
                 // Refine RenderBounds
@@ -347,12 +340,7 @@ namespace GLTFast
                         m_EntityManager,
                         renderMeshDescription,
                         renderMeshArray,
-                        MaterialMeshInfo.FromRenderMeshArrayIndices(index, 0,
-#if !UNITY_ENTITIES_1_2_OR_NEWER
-                            (sbyte)
-#endif
-                            index
-                        )
+                        MaterialMeshInfo.FromRenderMeshArrayIndices(index, 0, index)
                     );
                 }
             }

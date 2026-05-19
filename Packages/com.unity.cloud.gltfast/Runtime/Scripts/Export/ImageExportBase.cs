@@ -108,13 +108,10 @@ namespace GLTFast.Export
                 exportTexture = new Texture2D(
                     texture.width,
                     texture.height,
-#if UNITY_2023_2_OR_NEWER
-                    !hasAlpha && SystemInfo.IsFormatSupported(GraphicsFormat.R8G8B8_UNorm, GraphicsFormatUsage.Sample) ?  GraphicsFormat.R8G8B8_UNorm : GraphicsFormat.R8G8B8A8_UNorm,
+                    !hasAlpha && SystemInfo.IsFormatSupported(GraphicsFormat.R8G8B8_UNorm, GraphicsFormatUsage.Sample)
+                        ? GraphicsFormat.R8G8B8_UNorm
+                        : GraphicsFormat.R8G8B8A8_UNorm,
                     TextureCreationFlags.DontInitializePixels | TextureCreationFlags.DontUploadUponCreate
-#else
-                    !hasAlpha && SystemInfo.IsFormatSupported(GraphicsFormat.R8G8B8_UNorm, FormatUsage.Sample) ? GraphicsFormat.R8G8B8_UNorm : GraphicsFormat.R8G8B8A8_UNorm,
-                    TextureCreationFlags.DontInitializePixels | TextureCreationFlags.DontUploadUponCreate
-#endif
                 );
                 exportTexture.ReadPixels(new Rect(0, 0, destRenderTexture.width, destRenderTexture.height), 0, 0);
                 RenderTexture.ReleaseTemporary(destRenderTexture);

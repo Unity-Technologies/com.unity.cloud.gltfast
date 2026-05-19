@@ -34,4 +34,4 @@ jobs:
           gitBranch: ${{ github.event.pull_request.head.ref }}
           alsoFormatWhitespace: true
           # Don't use xLTS version to avoid license issues
-          unityVersion: "2022.3.62f3"
+          unityVersion: "6000.0.75f1"

@@ -2,13 +2,12 @@
   "name": "com.unity.cloud.gltfast.tests",
   "version": "0.0.0",
   "displayName": "Unity glTFast Tests",
-  "unity": "2022.3",
+  "unity": "6000.0",
   "dependencies": {
     "com.unity.nuget.newtonsoft-json": "3.2.1",
     "com.unity.modules.unitywebrequesttexture": "1.0.0",
     "com.unity.test-framework": "1.4.5",
     "com.unity.test-framework.performance": "3.0.3"
   },
-  "type": "tests",
-  "unityRelease": "67f2"
+  "type": "tests"
 }

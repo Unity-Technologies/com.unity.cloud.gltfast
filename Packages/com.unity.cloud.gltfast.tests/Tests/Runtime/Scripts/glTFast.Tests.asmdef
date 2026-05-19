@@ -94,18 +94,13 @@
         },
         {
             "name": "com.unity.entities.graphics",
-            "expression": "1.0.10",
+            "expression": "",
             "define": "UNITY_ENTITIES_GRAPHICS"
         },
         {
             "name": "com.unity.testframework.graphics",
             "expression": "",
             "define": "USING_GRAPHICS_TEST_FRAMEWORK"
-        },
-        {
-            "name": "com.unity.collections",
-            "expression": "1.4.0",
-            "define": "UNITY_COLLECTIONS"
         }
     ],
     "noEngineReferences": false

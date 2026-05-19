@@ -2,19 +2,13 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
-#if !UNITY_6000_0_OR_NEWER
-using System.Runtime.InteropServices;
-#endif // !UNITY_6000_0_OR_NEWER
 using System.Threading;
 using System.Threading.Tasks;
 using GLTFast.Addons;
+using Unity.Collections;
 using UnityEngine;
 using UnityEngine.Experimental.Rendering;
 using UnityEngine.Profiling;
-using Unity.Collections;
-#if !UNITY_6000_0_OR_NEWER
-using Unity.Collections.LowLevel.Unsafe;
-#endif // !UNITY_6000_0_OR_NEWER
 
 namespace GLTFast.Documentation.Examples
 {
@@ -50,20 +44,9 @@ namespace GLTFast.Documentation.Examples
             )
         {
 #if UNITY_IMAGECONVERSION
-#if !UNITY_6000_0_OR_NEWER
-            var managedData = NativeToManagedArray(data);
-#endif
-
             Profiler.BeginSample("LoadPNG");
             var texture = CreateEmptyTexture(linear, generateMipMaps);
-            var success = texture.LoadImage(
-#if UNITY_6000_0_OR_NEWER
-                data.AsReadOnlySpan(),
-#else
-                managedData,
-#endif
-                !readable
-            );
+            var success = texture.LoadImage(data.AsReadOnlySpan(), !readable);
             Profiler.EndSample();
             if (success)
             {
@@ -92,21 +75,5 @@ namespace GLTFast.Documentation.Examples
             );
             return txt;
         }
-
-#if !UNITY_6000_0_OR_NEWER
-        static unsafe byte[] NativeToManagedArray(NativeArray<byte>.ReadOnly data)
-        {
-            Profiler.BeginSample("NativeToManagedArray");
-            var managedData = new byte[data.Length];
-            var gcHandle = GCHandle.Alloc(managedData, GCHandleType.Pinned);
-            fixed (void* dst = &(managedData[0]))
-            {
-                UnsafeUtility.MemCpy(dst, data.GetUnsafeReadOnlyPtr(), data.Length);
-            }
-            gcHandle.Free();
-            Profiler.EndSample();
-            return managedData;
-        }
-#endif // !UNITY_6000_0_OR_NEWER
     }
 }
