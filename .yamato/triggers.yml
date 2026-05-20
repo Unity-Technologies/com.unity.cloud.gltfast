@@ -5,7 +5,7 @@ pr_trigger:
   name: PR Trigger
   triggers:
     expression: |
-      ((pull_request.target eq "main" OR pull_request.target eq "develop") AND
+      ((pull_request.target eq "main" OR pull_request.target eq "develop" OR pull_request.target eq "preview") AND
       NOT pull_request.push.changes.all match "**/*.md") OR
       pull_request.comment eq "pr"
   dependencies:
@@ -45,6 +45,6 @@ tests_all_weekly:
 post_merge_trigger:
   name: Post Merge Trigger
   triggers:
-    expression: push.branch eq "develop"
+    expression: push.branch eq "develop"  OR push.branch eq "preview"
   dependencies:
     - .yamato/project-test.yml#coverage_all
