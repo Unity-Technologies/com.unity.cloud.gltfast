@@ -1,6 +1,6 @@
 {
   "per_package": {
-    "com.unity.cloud.gltfast@6": {
+    "com.unity.cloud.gltfast@7": {
       "exempts": {
         "PVP-41-1": {
           "errors": [
