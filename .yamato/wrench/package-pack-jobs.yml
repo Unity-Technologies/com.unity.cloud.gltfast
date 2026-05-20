@@ -18,7 +18,6 @@ package_pack_-_cloud_gltfast:
     timeout: 20
     retries: 10
   - command: unity-config package add dependency com.unity.formats.gltf.validator@0.2.0-preview.1 --package-path Packages/com.unity.cloud.gltfast.tests
-  - command: cp .yamato/ValidationExceptions.json* Packages/com.unity.cloud.gltfast
   - command: upm-ci package pack --package-path Packages/com.unity.cloud.gltfast.tests
   - command: mv upm-ci~/packages/packages.json upm-ci~/packages/com.unity.cloud.gltfast.tests_packages.json
   - command: mkdir -p upm-ci~/temp/packages

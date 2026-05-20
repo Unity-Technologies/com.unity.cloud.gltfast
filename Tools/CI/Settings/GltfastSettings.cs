@@ -43,10 +43,6 @@ public class GltfastSettings : AnnotatedSettingsBase
                 "--package-path Packages/com.unity.cloud.gltfast.tests"
                 )
             );
-        gltfast.PackJobOptions.PrePackCommands.Add(
-            new Command("cp .yamato/ValidationExceptions.json* Packages/com.unity.cloud.gltfast"
-            )
-        );
 
         Wrench.PvpProfilesToCheck = new HashSet<string> { "supported" };
     }

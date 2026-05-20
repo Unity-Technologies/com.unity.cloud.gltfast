@@ -14,7 +14,6 @@
 1. Update the constant variable `GLTFast.Export.Constants.version`
    (in `Packages/com.unity.cloud.gltfast/Runtime/Scripts/Export/Constants.cs`)
    to the release version.
-1. Update package version in `.yamato/ValidationExceptions.json` (if any API validation exception is required)
 1. Push the branch and open a Pull Request targeting the previously created
    release branch. Add glTFast owners as approvers for this PR.
 1. On the [Yamato glTFast project], look for the `release/X.Y.Z-working` branch

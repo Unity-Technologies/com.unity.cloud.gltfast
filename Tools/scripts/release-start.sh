@@ -51,9 +51,3 @@ awk -v version="$VERSION" '
 mv "$TMP_FILE" "$CONSTANTS_FILE"
 
 echo "✓ Updated $CONSTANTS_FILE"
-
-# Update version in `ValidationExceptions.json`
-TMP_FILE=$(mktemp)
-jq --indent 4 ".ErrorExceptions[].PackageVersion=\"${VERSION}\"" .yamato/ValidationExceptions.json > "$TMP_FILE"
-mv "$TMP_FILE" .yamato/ValidationExceptions.json
-echo "✓ Updated .yamato/ValidationExceptions.json"

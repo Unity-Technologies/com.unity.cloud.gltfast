@@ -4,8 +4,7 @@
     "com.unity.cloud.gltfast": {
       "directory": "Packages/com.unity.cloud.gltfast/",
       "prePackCommands": [
-        "unity-config package add dependency com.unity.formats.gltf.validator@0.2.0-preview.1 --package-path Packages/com.unity.cloud.gltfast.tests",
-        "cp .yamato/ValidationExceptions.json* Packages/com.unity.cloud.gltfast"
+        "unity-config package add dependency com.unity.formats.gltf.validator@0.2.0-preview.1 --package-path Packages/com.unity.cloud.gltfast.tests"
       ],
       "preTestCommands": {
         "MacOs13": [],
