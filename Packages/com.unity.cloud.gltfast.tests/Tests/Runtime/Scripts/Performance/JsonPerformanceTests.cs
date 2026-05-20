@@ -4,9 +4,9 @@
 using System;
 using System.IO;
 using GLTFast.Schema;
-using Newtonsoft.Json;
 using NUnit.Framework;
 using Unity.Collections;
+using Unity.Gltfast.Text.Json;
 using Unity.PerformanceTesting;
 using UnityEngine;
 using UnityEngine.Profiling;
@@ -54,11 +54,10 @@ namespace GLTFast.Tests.Performance
         [Test, Performance]
         public void Empty()
         {
-            var jsonParser = new GltfJsonUtilityParserWrapper();
             RunTest(
                 s_GltfJsonEmpty.AsReadOnly(),
                 "Empty.JsonUtility",
-                jsonParser.ParseJson
+                DeserializeWrapper
             );
         }
 
@@ -67,8 +66,8 @@ namespace GLTFast.Tests.Performance
         {
             RunTest(
                 s_GltfJsonEmpty.AsReadOnly(),
-                "Empty.NewtonsoftJson",
-                JsonConvertWrapper
+                "Empty.Extended",
+                DeserializeWrapper
             );
         }
 
@@ -78,11 +77,10 @@ namespace GLTFast.Tests.Performance
 #if !RUN_PERFORMANCE_TESTS
             Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
 #endif
-            var jsonParser = new GltfJsonUtilityParserWrapper();
             RunTest(
                 m_GltfJsonFlatHierarchy.AsReadOnly(),
                 "FlatHierarchy.JsonUtility",
-                jsonParser.ParseJson
+                DeserializeWrapper
             );
         }
 
@@ -92,11 +90,7 @@ namespace GLTFast.Tests.Performance
 #if !RUN_PERFORMANCE_TESTS
             Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
 #endif
-            var jsonParser = new GltfJsonUtilityParser();
-            Profiler.BeginSample("UTF-Conversion");
-            var json = System.Text.Encoding.UTF8.GetString(m_GltfJsonFlatHierarchy);
-            Profiler.EndSample();
-            var gltf = jsonParser.ParseJson(json);
+            var gltf = DeserializeWrapper(m_GltfJsonFlatHierarchy.AsReadOnly());
             CheckFlatHierarchy(gltf);
         }
 
@@ -108,8 +102,8 @@ namespace GLTFast.Tests.Performance
 #endif
             RunTest(
                 m_GltfJsonFlatHierarchy.AsReadOnly(),
-                "FlatHierarchy.NewtonsoftJson",
-                JsonConvertWrapper
+                "FlatHierarchy.Extended",
+                DeserializeWrapper
             );
         }
 
@@ -119,10 +113,7 @@ namespace GLTFast.Tests.Performance
 #if !RUN_PERFORMANCE_TESTS
             Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
 #endif
-            Profiler.BeginSample("UTF-Conversion");
-            var jsonString = System.Text.Encoding.UTF8.GetString(m_GltfJsonFlatHierarchy);
-            Profiler.EndSample();
-            var gltf = JsonConvert.DeserializeObject<Newtonsoft.Schema.Root>(jsonString);
+            var gltf = DeserializeWrapper(m_GltfJsonFlatHierarchy.AsReadOnly());
             CheckFlatHierarchy(gltf);
         }
 
@@ -144,25 +135,12 @@ namespace GLTFast.Tests.Performance
             Assert.AreEqual(9999, gltf.Scenes[0].nodes[9999]);
         }
 
-        class GltfJsonUtilityParserWrapper
+        internal static Root DeserializeWrapper(NativeArray<byte>.ReadOnly json)
         {
-            GltfJsonUtilityParser m_Parser = new();
-
-            public RootBase ParseJson(NativeArray<byte>.ReadOnly json)
-            {
-                Profiler.BeginSample("UTF-Conversion");
-                var jsonString = System.Text.Encoding.UTF8.GetString(json);
-                Profiler.EndSample();
-                return m_Parser.ParseJson(jsonString);
-            }
-        }
-
-        static Newtonsoft.Schema.Root JsonConvertWrapper(NativeArray<byte>.ReadOnly json)
-        {
-            Profiler.BeginSample("UTF-Conversion");
-            var jsonString = System.Text.Encoding.UTF8.GetString(json);
+            Profiler.BeginSample("JsonPerformanceTests.DeserializeWrapper");
+            var result = JsonSerializer.Deserialize(json.AsReadOnlySpan(), GltfRootSourceGenerator.Default.Root);
             Profiler.EndSample();
-            return JsonConvert.DeserializeObject<Newtonsoft.Schema.Root>(jsonString);
+            return result;
         }
 
         static void RunTest<T>(
@@ -178,6 +156,23 @@ namespace GLTFast.Tests.Performance
                     jsonParser(gltfJson);
                     Profiler.EndSample();
                 }).GC();
+            measure.Run();
+        }
+
+        internal static void RunTest<T>(
+            NativeArray<byte>.ReadOnly gltfJson,
+            string profilingMarker,
+            Func<NativeArray<byte>.ReadOnly, T> jsonParser,
+            Action<T> resultCallback
+        ) where T : RootBase
+        {
+            var profilerMarkerName = $"JsonPerf.{profilingMarker}";
+            var measure = Measure.Method(() =>
+            {
+                Profiler.BeginSample(profilerMarkerName);
+                resultCallback(jsonParser(gltfJson));
+                Profiler.EndSample();
+            }).GC();
             measure.Run();
         }
     }

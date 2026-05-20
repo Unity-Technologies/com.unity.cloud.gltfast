@@ -2,6 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
+using System.Collections.Generic;
+using Unity.Gltfast.Text.Json;
+using Unity.Gltfast.Text.Json.Serialization;
 
 namespace GLTFast.Schema
 {
@@ -43,21 +46,14 @@ namespace GLTFast.Schema
 
         /// <inheritdoc />
         public override MeshPrimitiveExtensions Extensions => extensions;
-
-        /// <inheritdoc />
-        internal override void UnsetExtensions()
-        {
-            extensions = null;
-        }
     }
 
     /// <summary>
     /// Geometry to be rendered with the given material.
     /// </summary>
     [Serializable]
-    public abstract class MeshPrimitiveBase : ICloneable, IMaterialsVariantsSlot
+    public abstract class MeshPrimitiveBase : ICloneable, IMaterialsVariantsSlot, IGltfObject
     {
-
         /// <summary>
         /// A dictionary object, where each key corresponds to mesh attribute semantic
         /// and each value is the index of the accessor containing attribute's data.
@@ -98,6 +94,18 @@ namespace GLTFast.Schema
         /// <inheritdoc cref="MeshPrimitiveExtensions"/>
         public abstract MeshPrimitiveExtensions Extensions { get; }
 
+        /// <inheritdoc cref="Root.extras"/>
+        public UnclassifiedData extras;
+
+        /// <summary>JSON properties without a matching member.</summary>
+        [JsonExtensionData, JsonInclude] internal Dictionary<string, JsonElement> ExtensionsData { get; set; }
+
+        /// <inheritdoc/>
+        public bool TryGetValue<T>(string key, out T value)
+        {
+            return ExtensionsData.TryGetValue(key, out value);
+        }
+
         /// <inheritdoc />
         public int GetMaterialIndex(int variantIndex)
         {
@@ -108,11 +116,6 @@ namespace GLTFast.Schema
             }
             return material;
         }
-
-        /// <summary>`
-        /// Sets <see cref="Extensions"/> to null.
-        /// </summary>
-        internal abstract void UnsetExtensions();
 
 #if DRACO_IS_INSTALLED
         public bool IsDracoCompressed => Extensions != null && Extensions.KHR_draco_mesh_compression != null;
@@ -355,7 +358,7 @@ namespace GLTFast.Schema
     /// Mesh primitive extensions
     /// </summary>
     [Serializable]
-    public class MeshPrimitiveExtensions
+    public class MeshPrimitiveExtensions : IGltfObject
     {
 #if DRACO_IS_INSTALLED
         // ReSharper disable once InconsistentNaming
@@ -365,6 +368,18 @@ namespace GLTFast.Schema
         /// <inheritdoc cref="MaterialsVariantsMeshPrimitiveExtension"/>
         // ReSharper disable once InconsistentNaming
         public MaterialsVariantsMeshPrimitiveExtension KHR_materials_variants;
+
+        /// <inheritdoc cref="Root.extras"/>
+        public UnclassifiedData extras;
+
+        /// <summary>JSON properties without a matching member.</summary>
+        [JsonExtensionData, JsonInclude] internal Dictionary<string, JsonElement> ExtensionsData { get; set; }
+
+        /// <inheritdoc/>
+        public bool TryGetValue<T>(string key, out T value)
+        {
+            return ExtensionsData.TryGetValue(key, out value);
+        }
 
         internal void GltfSerialize(JsonWriter writer)
         {

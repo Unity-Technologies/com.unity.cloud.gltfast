@@ -4,8 +4,8 @@
 using System;
 using System.IO;
 using GLTFast.Schema;
-using Newtonsoft.Json.Linq;
 using NUnit.Framework;
+using Unity.Gltfast.Text.Json;
 using UnityEngine;
 using UnityEngine.TestTools.Utils;
 
@@ -285,8 +285,8 @@ namespace GLTFast.Tests.JsonParsing
             var result = reader.ReadToEnd();
             writer.Close();
 
-            var jObject = JObject.Parse(result);
-            Assert.NotNull(jObject);
+            var jsonDocument = JsonDocument.Parse(result);
+            Assert.NotNull(jsonDocument);
 
             return result;
         }

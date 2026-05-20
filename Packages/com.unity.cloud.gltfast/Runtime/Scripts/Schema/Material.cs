@@ -2,6 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
+using System.Collections.Generic;
+using Unity.Gltfast.Text.Json;
+using Unity.Gltfast.Text.Json.Serialization;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -59,12 +62,6 @@ namespace GLTFast.Schema
         public override MaterialExtensions Extensions => extensions;
 
         /// <inheritdoc />
-        internal override void UnsetExtensions()
-        {
-            extensions = null;
-        }
-
-        /// <inheritdoc />
         public override PbrMetallicRoughnessBase PbrMetallicRoughness => pbrMetallicRoughness;
 
         /// <inheritdoc />
@@ -81,7 +78,7 @@ namespace GLTFast.Schema
     /// The material appearance of a primitive.
     /// </summary>
     [Serializable]
-    public abstract class MaterialBase : NamedObject
+    public abstract class MaterialBase : NamedObject, IGltfObject
     {
 
         /// <summary>
@@ -115,11 +112,6 @@ namespace GLTFast.Schema
         /// Material extensions.
         /// </summary>
         public abstract MaterialExtensions Extensions { get; }
-
-        /// <summary>
-        /// Sets <see cref="Extensions"/> to null.
-        /// </summary>
-        internal abstract void UnsetExtensions();
 
         /// <summary>
         /// A set of parameter values that are used to define the metallic-roughness
@@ -159,6 +151,7 @@ namespace GLTFast.Schema
         /// </summary>
         // Field is public for unified serialization only. Warn via Obsolete attribute.
         [Obsolete("Use Emissive for access.")]
+        [JsonConverter(typeof(Float3ArrayConverter))]
         public float[] emissiveFactor = { 0, 0, 0 };
 
         /// <summary>
@@ -237,6 +230,18 @@ namespace GLTFast.Schema
         /// lighting equation is evaluated.
         /// </summary>
         public bool doubleSided;
+
+        /// <inheritdoc cref="Root.extras"/>
+        public UnclassifiedData extras;
+
+        /// <summary>JSON properties without a matching member.</summary>
+        [JsonExtensionData, JsonInclude] internal Dictionary<string, JsonElement> ExtensionsData { get; set; }
+
+        /// <inheritdoc/>
+        public bool TryGetValue<T>(string key, out T value)
+        {
+            return ExtensionsData.TryGetValue(key, out value);
+        }
 
         /// <summary>
         /// True if the material requires the mesh to have normals.

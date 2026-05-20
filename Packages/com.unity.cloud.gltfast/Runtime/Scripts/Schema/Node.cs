@@ -1,6 +1,11 @@
 // SPDX-FileCopyrightText: 2023 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
+using System;
+using System.Collections.Generic;
+using Unity.Gltfast.Text.Json;
+using Unity.Gltfast.Text.Json.Serialization;
+
 namespace GLTFast.Schema
 {
     /// <inheritdoc />
@@ -18,12 +23,6 @@ namespace GLTFast.Schema
 
         /// <inheritdoc />
         public override NodeExtensions Extensions => extensions;
-
-        /// <inheritdoc />
-        internal override void UnsetExtensions()
-        {
-            extensions = null;
-        }
     }
 
     /// <summary>
@@ -31,9 +30,8 @@ namespace GLTFast.Schema
     /// its content.
     /// </summary>
     [System.Serializable]
-    public abstract class NodeBase : NamedObject
+    public abstract class NodeBase : NamedObject, IGltfObject
     {
-
         /// <summary>
         /// The indices of this node's children.
         /// </summary>
@@ -47,22 +45,26 @@ namespace GLTFast.Schema
         /// <summary>
         /// A floating-point 4x4 transformation matrix stored in column-major order.
         /// </summary>
+        [JsonConverter(typeof(Float16ArrayConverter))]
         public float[] matrix;
 
         /// <summary>
         /// The node's unit quaternion rotation in the order (x, y, z, w),
         /// where w is the scalar.
         /// </summary>
+        [JsonConverter(typeof(Float4ArrayConverter))]
         public float[] rotation;
 
         /// <summary>
         /// The node's non-uniform scale.
         /// </summary>
+        [JsonConverter(typeof(Float3ArrayConverter))]
         public float[] scale;
 
         /// <summary>
         /// The node's translation.
         /// </summary>
+        [JsonConverter(typeof(Float3ArrayConverter))]
         public float[] translation;
 
         /// <summary>
@@ -85,9 +87,19 @@ namespace GLTFast.Schema
         public abstract NodeExtensions Extensions { get; }
 
         /// <summary>
-        /// Sets <see cref="Extensions"/> to null.
+        /// Application-specific data.
         /// </summary>
-        internal abstract void UnsetExtensions();
+        /// <seealso href="https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html#reference-extras"/>
+        public UnclassifiedData extras { get; set; }
+
+        /// <summary>JSON properties without a matching member.</summary>
+        [JsonExtensionData, JsonInclude] internal Dictionary<string, JsonElement> ExtensionsData { get; set; }
+
+        /// <inheritdoc/>
+        public bool TryGetValue<T>(string key, out T value)
+        {
+            return ExtensionsData.TryGetValue(key, out value);
+        }
 
         internal void GltfSerialize(JsonWriter writer)
         {
@@ -147,42 +159,16 @@ namespace GLTFast.Schema
             writer.Close();
         }
 
-        /// <summary>
-        /// Cleans up invalid parsing artifacts created by <see cref="GltfJsonUtilityParser"/>.
-        /// If you inherit a custom Node class (for use with
-        /// <see cref="GltfImport.LoadWithCustomSchema&lt;T&gt;(string,ImportSettings,System.Threading.CancellationToken)"/>
-        /// ) you can override this method to perform sanity checks on the deserialized, custom properties.
-        /// </summary>
-        public virtual void JsonUtilityCleanup()
-        {
-            var e = Extensions;
-            if (e != null)
-            {
-                // Check if GPU instancing extension is valid
-                if (e.EXT_mesh_gpu_instancing?.attributes == null)
-                {
-                    e.EXT_mesh_gpu_instancing = null;
-                }
-                // Check if Lights extension is valid
-                if ((e.KHR_lights_punctual?.light ?? -1) < 0)
-                {
-                    e.KHR_lights_punctual = null;
-                }
-                // Unset `extension` if none of them was valid
-                if (e.EXT_mesh_gpu_instancing == null &&
-                    e.KHR_lights_punctual == null)
-                {
-                    UnsetExtensions();
-                }
-            }
-        }
+        /// <inheritdoc cref="Root.JsonUtilityCleanup"/>
+        [Obsolete("Has become obsolete after the transition from JsonUtility to System.Text.Json.")]
+        public virtual void JsonUtilityCleanup() { }
     }
 
     /// <summary>
     /// Node extensions
     /// </summary>
     [System.Serializable]
-    public class NodeExtensions
+    public class NodeExtensions : IGltfObject
     {
         // Names are identical to glTF specified properties, that's why
         // inconsistent names are ignored.
@@ -196,6 +182,15 @@ namespace GLTFast.Schema
         // Whenever an extension is added, the JsonParser
         // (specifically step four of JsonParser.ParseJson)
         // needs to be updated!
+
+        /// <summary>JSON properties without a matching member.</summary>
+        [JsonExtensionData, JsonInclude] internal Dictionary<string, JsonElement> ExtensionsData { get; set; }
+
+        /// <inheritdoc/>
+        public bool TryGetValue<T>(string key, out T value)
+        {
+            return ExtensionsData.TryGetValue(key, out value);
+        }
 
         // ReSharper restore InconsistentNaming
         internal void GltfSerialize(JsonWriter writer)

@@ -4,11 +4,14 @@
 #if UNITY_ANIMATION || GLTFAST_ANIMATION
 
 using System;
+using System.Collections.Generic;
+using Unity.Gltfast.Text.Json;
+using Unity.Gltfast.Text.Json.Serialization;
 
 namespace GLTFast.Schema
 {
     [Serializable]
-    public class AnimationChannelTarget
+    public class AnimationChannelTarget : IGltfObject
     {
         /// <summary>
         /// The index of the node to target.
@@ -24,8 +27,22 @@ namespace GLTFast.Schema
 
         AnimationChannel.Path m_Path;
 
-        public AnimationChannel.Path GetPath()
+        /// <inheritdoc cref="Asset.extensions"/>
+        public UnclassifiedData extensions;
+
+        /// <inheritdoc cref="Root.extras"/>
+        public UnclassifiedData extras;
+
+        /// <summary>JSON properties without a matching member.</summary>
+        [JsonExtensionData, JsonInclude] internal Dictionary<string, JsonElement> ExtensionsData { get; set; }
+
+        /// <inheritdoc/>
+        public bool TryGetValue<T>(string key, out T value)
         {
+            return ExtensionsData.TryGetValue(key, out value);
+        }
+
+        public AnimationChannel.Path GetPath() {
             if (m_Path != AnimationChannel.Path.Unknown)
             {
                 return m_Path;

@@ -4,7 +4,9 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Runtime.CompilerServices;
+using Unity.Gltfast.Text.Json;
+using Unity.Gltfast.Text.Json.Serialization;
+
 using UnityEngine.Assertions;
 using UnityEngine.Profiling;
 
@@ -174,12 +176,6 @@ namespace GLTFast.Schema
         public override RootExtensions Extensions => extensions;
 
         /// <inheritdoc />
-        internal override void UnsetExtensions()
-        {
-            extensions = null;
-        }
-
-        /// <inheritdoc />
         public override IReadOnlyList<MeshBase> Meshes => meshes;
     }
 
@@ -188,7 +184,7 @@ namespace GLTFast.Schema
     /// </summary>
     /// <seealso href="https://www.khronos.org/registry/glTF/specs/2.0/glTF-2.0.html#reference-gltf"/>
     [Serializable]
-    public abstract class RootBase
+    public abstract class RootBase : IGltfObject
     {
         /// <summary>
         /// Names of glTF extensions used somewhere in this asset.
@@ -281,10 +277,18 @@ namespace GLTFast.Schema
         /// <inheritdoc cref="RootExtensions"/>
         public abstract RootExtensions Extensions { get; }
 
-        /// <summary>
-        /// Sets <see cref="Extensions"/> to null.
-        /// </summary>
-        internal abstract void UnsetExtensions();
+        /// <summary>Application-specific data.</summary>
+        /// <seealso href="https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html#reference-extras"/>
+        public UnclassifiedData extras { get; set; }
+
+        /// <summary>JSON properties without a matching member.</summary>
+        [JsonExtensionData, JsonInclude] internal Dictionary<string, JsonElement> ExtensionsData { get; set; }
+
+        /// <inheritdoc/>
+        public bool TryGetValue<T>(string key, out T value)
+        {
+            return ExtensionsData.TryGetValue(key, out value);
+        }
 
 #if UNITY_ANIMATION || GLTFAST_ANIMATION
         public bool HasAnimation => Animations != null && Animations.Count > 0;
@@ -467,191 +471,10 @@ namespace GLTFast.Schema
         }
 
         /// <summary>
-        /// Detects if a secondary null-check is necessary.
+        /// Has been used to clean up invalid parsing artifacts created by JsonUtility.
         /// </summary>
-        /// <returns>True if a secondary parse against the FakeSchema is required. False otherwise</returns>
-        internal bool JsonUtilitySecondParseRequired()
-        {
-            Profiler.BeginSample("JsonUtilitySecondParseRequired");
-            var check = false;
-            if (Materials != null)
-            {
-                foreach (var mat in Materials)
-                {
-                    // mat.extension is always set (not null), because JsonUtility constructs a default
-                    // if any of mat.extension's members is not null, it is because there was
-                    // a legit extensions node in JSON => we have to check which ones
-                    if (mat.Extensions.KHR_materials_unlit != null)
-                    {
-                        check = true;
-                    }
-                    else
-                    {
-                        // otherwise dump the wrongfully constructed MaterialExtension
-                        mat.UnsetExtensions();
-                    }
-                }
-            }
-            if (Accessors != null)
-            {
-                foreach (var accessor in Accessors)
-                {
-                    if (accessor.Sparse.Indices == null || accessor.Sparse.Values == null)
-                    {
-                        // If indices and values members are null, `sparse` is likely
-                        // an auto-instance by the JsonUtility and not present in JSON.
-                        // Therefore we remove it:
-                        accessor.UnsetSparse();
-                    }
-#if GLTFAST_SAFE
-                    else {
-                        // This is very likely a valid sparse accessor.
-                        // However, an empty sparse property ( "sparse": {} ) would break
-                        // glTFast, so better do a thorough follow-up check
-                        check = true;
-                    }
-#endif // GLTFAST_SAFE
-                }
-            }
-#if DRACO_IS_INSTALLED
-            if (!check && Meshes != null)
-            {
-                foreach (var mesh in Meshes)
-                {
-                    if (mesh.Primitives != null)
-                    {
-                        foreach (var primitive in mesh.Primitives)
-                        {
-                            if (primitive.Extensions?.KHR_draco_mesh_compression != null)
-                            {
-                                check = true;
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-#endif
-            Profiler.EndSample();
-            return check;
-        }
-
-        internal void JsonUtilityCleanupAgainstSecondParse(FakeSchema.Root fakeRoot)
-        {
-            Profiler.BeginSample("JsonUtilityCleanup");
-
-            if (Materials != null)
-            {
-                for (var i = 0; i < Materials.Count; i++)
-                {
-                    var mat = Materials[i];
-                    if (mat.Extensions == null) continue;
-                    Assert.AreEqual(mat.name, fakeRoot.materials[i].name);
-                    var fake = fakeRoot.materials[i].extensions;
-                    if (fake.KHR_materials_unlit == null)
-                    {
-                        mat.Extensions.KHR_materials_unlit = null;
-                    }
-
-                    if (fake.KHR_materials_pbrSpecularGlossiness == null)
-                    {
-                        mat.Extensions.KHR_materials_pbrSpecularGlossiness = null;
-                    }
-
-                    if (fake.KHR_materials_transmission == null)
-                    {
-                        mat.Extensions.KHR_materials_transmission = null;
-                    }
-
-                    if (fake.KHR_materials_clearcoat == null)
-                    {
-                        mat.Extensions.KHR_materials_clearcoat = null;
-                    }
-
-                    if (fake.KHR_materials_sheen == null)
-                    {
-                        mat.Extensions.KHR_materials_sheen = null;
-                    }
-
-                    if (fake.KHR_materials_ior == null)
-                    {
-                        mat.Extensions.KHR_materials_ior = null;
-                    }
-
-                    if (fake.KHR_materials_specular == null)
-                    {
-                        mat.Extensions.KHR_materials_specular = null;
-                    }
-                }
-            }
-
-#if GLTFAST_SAFE
-            if (Accessors != null) {
-                for (var i = 0; i < Accessors.Count; i++) {
-                    var sparse = fakeRoot.accessors[i].sparse;
-                    if (sparse?.indices == null || sparse.values == null) {
-                        Accessors[i].UnsetSparse();
-                    }
-                }
-            }
-#endif
-
-            if (Meshes != null)
-            {
-                for (var i = 0; i < Meshes.Count; i++)
-                {
-                    var mesh = Meshes[i];
-                    Assert.AreEqual(mesh.name, fakeRoot.meshes[i].name);
-                    for (var j = 0; j < mesh.Primitives.Count; j++)
-                    {
-                        var primitive = mesh.Primitives[j];
-                        if (primitive.Extensions == null) continue;
-                        var fake = fakeRoot.meshes[i].primitives[j];
-#if DRACO_IS_INSTALLED
-                        if (fake.extensions.KHR_draco_mesh_compression == null)
-                        {
-                            primitive.Extensions.KHR_draco_mesh_compression = null;
-                        }
-#endif
-                        if (fake.extensions.KHR_materials_variants == null)
-                        {
-                            primitive.Extensions.KHR_materials_variants = null;
-                        }
-                    }
-                }
-            }
-            Profiler.EndSample();
-        }
-
-        /// <summary>
-        /// Cleans up invalid parsing artifacts created by <see cref="GltfJsonUtilityParser"/>.
-        /// If you inherit a custom Root class (for use with
-        /// <see cref="GltfImport.LoadWithCustomSchema&lt;T&gt;(string,ImportSettings,System.Threading.CancellationToken)"/>
-        /// ) you can override this method to perform sanity checks on the deserialized, custom properties.
-        /// </summary>
-        public virtual void JsonUtilityCleanup()
-        {
-            if (Nodes != null)
-            {
-                foreach (var t in Nodes)
-                {
-                    t.JsonUtilityCleanup();
-                }
-            }
-
-            if (Extensions != null && !Extensions.JsonUtilityCleanup())
-            {
-                UnsetExtensions();
-            }
-
-            if (Textures != null)
-            {
-                foreach (var texture in Textures)
-                {
-                    texture.JsonUtilityCleanup();
-                }
-            }
-        }
+        [Obsolete("Has become obsolete after the transition from JsonUtility to System.Text.Json.")]
+        public virtual void JsonUtilityCleanup() { }
 
         /// <summary>
         /// Number of materials variants.

@@ -12,7 +12,7 @@ test_{{ platform.name }}_{{ editor }}:
     image: {{ agent.image }}
     flavor: {{ agent.flavor}}
   variables:
-    PVP_PROFILE: "supported .yamato/dev-exemptions.json"
+    PVP_PROFILE: "supported rme .yamato/dev-exemptions.json"
   commands:
     - unity-downloader-cli --fast --wait -u {{ editor }} -c editor
 

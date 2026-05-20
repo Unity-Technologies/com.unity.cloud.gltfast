@@ -1,17 +1,15 @@
 // SPDX-FileCopyrightText: 2023 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
-#if NEWTONSOFT_JSON
 namespace GLTFast.Documentation.Examples
 {
     #region CustomGltfImport
     using System;
     using System.Threading.Tasks;
-    using Addons;
     using GLTFast;
+    using GLTFast.Addons;
     using GLTFast.Logging;
     using UnityEngine;
-    using GltfImport = GLTFast.Newtonsoft.GltfImport;
 
     class CustomGltfImport : MonoBehaviour
     {
@@ -48,12 +46,12 @@ namespace GLTFast.Documentation.Examples
 
             public override void Inject(GltfImportBase gltfImport)
             {
-                var newtonsoftGltfImport = gltfImport as GltfImport;
-                if (newtonsoftGltfImport == null)
+                var import = gltfImport as GltfImport;
+                if (import == null)
                     return;
 
-                m_GltfImport = newtonsoftGltfImport;
-                newtonsoftGltfImport.AddImportAddonInstance(this);
+                m_GltfImport = import;
+                import.AddImportAddonInstance(this);
             }
 
             public override void Inject(IInstantiator instantiator)
@@ -92,7 +90,7 @@ namespace GLTFast.Documentation.Examples
             // De-serialize glTF JSON
             var gltf = m_GltfImport.GetSourceRoot();
 
-            var node = gltf.Nodes[(int)nodeIndex] as GLTFast.Newtonsoft.Schema.Node;
+            var node = gltf.Nodes[(int)nodeIndex];
             var extras = node?.extras;
 
             if (extras == null)
@@ -109,4 +107,3 @@ namespace GLTFast.Documentation.Examples
     #endregion
 
 }
-#endif

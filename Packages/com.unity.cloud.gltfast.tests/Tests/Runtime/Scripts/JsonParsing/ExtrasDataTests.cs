@@ -5,9 +5,8 @@ using System;
 using NUnit.Framework;
 using UnityEngine;
 
-#if NEWTONSOFT_JSON
-using Newtonsoft.Json;
-#endif
+using GLTFast.Schema;
+using Unity.Gltfast.Text.Json;
 
 namespace GLTFast.Tests.JsonParsing
 {
@@ -156,22 +155,17 @@ namespace GLTFast.Tests.JsonParsing
         [Test]
         public void ExtrasDataTest()
         {
-#if !NEWTONSOFT_JSON
-            Assert.Ignore("Requires Newtonsoft JSON package to be installed.");
-#else
-            var gltf = JsonConvert.DeserializeObject<Newtonsoft.Schema.Root>(k_ExtrasDataJson);
+            var gltf = JsonSerializer.Deserialize(k_ExtrasDataJson, GltfRootSourceGenerator.Default.Root);
 
             Assert.NotNull(gltf);
             Assert.NotNull(gltf.nodes);
             Assert.GreaterOrEqual(gltf.nodes.Length, 1);
             Assert.NotNull(gltf.nodes[0]);
 
-            AssertResultNewtonsoftJson(gltf);
-#endif
+            AssertResultExtendedJson(gltf);
         }
 
-#if NEWTONSOFT_JSON
-        static void AssertResultNewtonsoftJson(GLTFast.Newtonsoft.Schema.Root gltf)
+        static void AssertResultExtendedJson(Root gltf)
         {
             Assert.NotNull(gltf);
             var e = gltf.nodes[0].extras;
@@ -215,6 +209,5 @@ namespace GLTFast.Tests.JsonParsing
             Assert.AreEqual(1.0f, colorValues[2]);
             Assert.AreEqual(1.0f, colorValues[3]);
         }
-#endif
     }
 }

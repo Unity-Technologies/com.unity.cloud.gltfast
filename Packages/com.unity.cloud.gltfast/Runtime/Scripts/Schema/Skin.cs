@@ -1,6 +1,10 @@
 // SPDX-FileCopyrightText: 2023 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
+using System.Collections.Generic;
+using Unity.Gltfast.Text.Json;
+using Unity.Gltfast.Text.Json.Serialization;
+
 namespace GLTFast.Schema
 {
 
@@ -8,9 +12,8 @@ namespace GLTFast.Schema
     /// Joints and matrices defining a skinned mesh.
     /// </summary>
     [System.Serializable]
-    public class Skin : NamedObject
+    public class Skin : NamedObject, IGltfObject
     {
-
         /// <summary>
         /// The index of the accessor containing the
         /// floating-point 4x4 inverse-bind matrices.
@@ -26,6 +29,21 @@ namespace GLTFast.Schema
         /// Indices of skeleton nodes, used as joints in this skin.
         /// </summary>
         public uint[] joints;
+
+        /// <inheritdoc cref="Asset.extensions"/>
+        public UnclassifiedData extensions;
+
+        /// <inheritdoc cref="Root.extras"/>
+        public UnclassifiedData extras;
+
+        /// <summary>JSON properties without a matching member.</summary>
+        [JsonExtensionData, JsonInclude] internal Dictionary<string, JsonElement> ExtensionsData { get; set; }
+
+        /// <inheritdoc/>
+        public bool TryGetValue<T>(string key, out T value)
+        {
+            return ExtensionsData.TryGetValue(key, out value);
+        }
 
         internal void GltfSerialize(JsonWriter writer)
         {

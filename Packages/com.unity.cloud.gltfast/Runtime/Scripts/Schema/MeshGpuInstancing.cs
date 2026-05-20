@@ -14,7 +14,6 @@ namespace GLTFast.Schema
     [System.Serializable]
     public class MeshGpuInstancing
     {
-
         /// <summary>
         /// Per-instance attributes collection
         /// </summary>

@@ -13,7 +13,6 @@
         "glTFast",
         "glTFast.dots",
         "glTFast.Export",
-        "glTFast.Newtonsoft",
         "glTFast.Documentation.Examples",
         "Unity.Meshopt.Decompress",
         "UnityEngine.TestTools.Graphics",
@@ -25,7 +24,7 @@
     "overrideReferences": true,
     "precompiledReferences": [
         "nunit.framework.dll",
-        "Newtonsoft.Json.dll"
+        "Unity.Gltfast.Text.Json.dll"
     ],
     "autoReferenced": false,
     "defineConstraints": [
@@ -46,11 +45,6 @@
             "name": "com.unity.meshopt.decompress",
             "expression": "0.2.0-exp.1",
             "define": "MESHOPT_IS_RECENT"
-        },
-        {
-            "name": "com.unity.nuget.newtonsoft-json",
-            "expression": "",
-            "define": "NEWTONSOFT_JSON"
         },
         {
             "name": "com.unity.modules.animation",

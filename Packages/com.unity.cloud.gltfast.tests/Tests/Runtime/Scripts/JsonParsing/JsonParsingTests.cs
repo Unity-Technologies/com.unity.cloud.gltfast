@@ -4,6 +4,7 @@
 using System;
 using GLTFast.Schema;
 using NUnit.Framework;
+using Unity.Gltfast.Text.Json;
 using UnityEngine;
 
 namespace GLTFast.Tests.JsonParsing
@@ -116,7 +117,7 @@ namespace GLTFast.Tests.JsonParsing
             ""byteOffset"" : 0
           }
         }
-        }, {
+    }, {
         ""bufferView"" : 1,
         ""byteOffset"" : 0,
         ""componentType"" : 5126,
@@ -273,50 +274,49 @@ namespace GLTFast.Tests.JsonParsing
         [Test]
         public void MaterialExtensions()
         {
-            ParseWithJsonUtility(k_MaterialExtensionGltf, AssertMaterialExtensionResult);
+            Parse(k_MaterialExtensionGltf, AssertMaterialExtensionResult);
         }
 
         [Test]
         public void SparseAccessors()
         {
-            ParseWithJsonUtility(k_SparseAccessorsGltf, AssertSparseAccessorsResult);
+            Parse(k_SparseAccessorsGltf, AssertSparseAccessorsResult);
         }
 
         [Test]
         public void MeshTargetNames()
         {
-            ParseWithJsonUtility(k_MeshTargetNamesGltf, AssertMeshTargetNamesResult);
+            Parse(k_MeshTargetNamesGltf, AssertMeshTargetNamesResult);
         }
 
         [Test]
         public void MinMagFilter()
         {
-            ParseWithJsonUtility(k_MinMagFilter, AssertMinMagFilterResult);
+            Parse(k_MinMagFilter, AssertMinMagFilterResult);
         }
 
         [Test]
         public void UnknownNodeExtension()
         {
-            ParseWithJsonUtility(k_UnknownNodeExtension, AssertUnknownNodeExtensionResult);
+            Parse(k_UnknownNodeExtension, AssertUnknownNodeExtensionResultStrict);
         }
 
         [Test]
         public void UnknownTextureExtension()
         {
-            ParseWithJsonUtility(k_UnknownTextureExtension, AssertUnknownTextureExtensionResult);
+            Parse(k_UnknownTextureExtension, AssertUnknownTextureExtensionResultStrict);
         }
 
         [Test]
         public void ParseGarbage()
         {
-            ParseWithJsonUtility("", Assert.IsNull);
-            ParseWithJsonUtility("garbage", Assert.IsNull);
+            Assert.Throws<JsonException>(() => Parse("", Assert.IsNull));
+            Assert.Throws<JsonException>(() => Parse("garbage", Assert.IsNull));
         }
 
-        static void ParseWithJsonUtility(string gltf, Action<RootBase> validationCallback)
+        static void Parse(string gltf, Action<RootBase> validationCallback)
         {
-            var jsonParser = new GltfJsonUtilityParser();
-            var root = jsonParser.ParseJson(gltf);
+            var root = JsonSerializer.Deserialize(gltf, GltfRootSourceGenerator.Default.Root);
             validationCallback(root);
         }
 
@@ -462,13 +462,11 @@ namespace GLTFast.Tests.JsonParsing
             Assert.AreEqual(3, sparse.Sparse.Values.bufferView);
             Assert.AreEqual(0, sparse.Sparse.Values.byteOffset);
 
-#if GLTFAST_SAFE
             var invalid = gltf.Accessors[2];
             Assert.NotNull(invalid);
-            Assert.IsNull(invalid.Sparse);
-#else
-            Debug.LogWarning("Invalid Sparse Accessors will break glTFast");
-#endif
+            Assert.NotNull(invalid.Sparse);
+            Assert.IsNull(invalid.Sparse.Indices);
+            Assert.IsNull(invalid.Sparse.Values);
         }
 
         static void AssertMeshTargetNamesResult(RootBase gltf)
@@ -573,6 +571,22 @@ namespace GLTFast.Tests.JsonParsing
             else
             {
                 Assert.NotNull(node2.Extensions);
+                if (node2.Extensions.ExtensionsData.TryGetValue(
+                        "MOZ_hubs_components",
+                        out var mozExtensionData)
+                    )
+                {
+                    // // TODO: Finalize checking that extension data. Include schema class either here or make it
+                    // // available generally.
+                    // var mozExtension = mozExtensionData.Deserialize(
+                    //     MozillaHubsComponentsSourceGenerator.Default.MozillaHubsComponents
+                    // );
+                    // Assert.NotNull(mozExtension);
+                }
+                else
+                {
+                    Assert.Fail("Couldn't find extension MOZ_hubs_components");
+                }
             }
 
             var node3 = gltf.Nodes[3];

@@ -1,6 +1,10 @@
 // SPDX-FileCopyrightText: 2023 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
+using System.Collections.Generic;
+using Unity.Gltfast.Text.Json;
+using Unity.Gltfast.Text.Json.Serialization;
+
 namespace GLTFast.Schema
 {
 
@@ -9,7 +13,7 @@ namespace GLTFast.Schema
     /// </summary>
     /// <seealso cref="AccessorSparse"/>
     [System.Serializable]
-    public class AccessorSparseValues
+    public class AccessorSparseValues : IGltfObject
     {
         /// <summary>
         /// The index of the bufferView with sparse values.
@@ -21,6 +25,21 @@ namespace GLTFast.Schema
         /// The offset relative to the start of the bufferView in bytes. Must be aligned.
         /// </summary>
         public int byteOffset;
+
+        /// <inheritdoc cref="Asset.extensions"/>
+        public UnclassifiedData extensions;
+
+        /// <inheritdoc cref="Root.extras"/>
+        public UnclassifiedData extras;
+
+        /// <summary>JSON properties without a matching member.</summary>
+        [JsonExtensionData, JsonInclude] internal Dictionary<string, JsonElement> ExtensionsData { get; set; }
+
+        /// <inheritdoc/>
+        public bool TryGetValue<T>(string key, out T value)
+        {
+            return ExtensionsData.TryGetValue(key, out value);
+        }
 
         internal void GltfSerialize(JsonWriter writer)
         {

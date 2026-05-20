@@ -2,6 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
+using System.Collections.Generic;
+using Unity.Gltfast.Text.Json;
+using Unity.Gltfast.Text.Json.Serialization;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -36,9 +39,8 @@ namespace GLTFast.Schema
     /// material model from Physically-Based Rendering (PBR) methodology.
     /// </summary>
     [Serializable]
-    public abstract class PbrMetallicRoughnessBase
+    public abstract class PbrMetallicRoughnessBase : IGltfObject
     {
-
         /// <summary>
         /// The RGBA components of the base color of the material.
         /// The fourth component (A) is the opacity of the material.
@@ -90,6 +92,21 @@ namespace GLTFast.Schema
         /// This value is linear.
         /// </summary>
         public float roughnessFactor = 1;
+
+        /// <inheritdoc cref="Asset.extensions"/>
+        public UnclassifiedData extensions;
+
+        /// <inheritdoc cref="Root.extras"/>
+        public UnclassifiedData extras;
+
+        /// <summary>JSON properties without a matching member.</summary>
+        [JsonExtensionData, JsonInclude] internal Dictionary<string, JsonElement> ExtensionsData { get; set; }
+
+        /// <inheritdoc/>
+        public bool TryGetValue<T>(string key, out T value)
+        {
+            return ExtensionsData.TryGetValue(key, out value);
+        }
 
         /// <summary>
         /// The metallic-roughness texture has two components.

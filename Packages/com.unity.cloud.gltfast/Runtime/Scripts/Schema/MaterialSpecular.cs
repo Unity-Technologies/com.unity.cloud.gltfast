@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
+using Unity.Gltfast.Text.Json.Serialization;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -28,6 +29,7 @@ namespace GLTFast.Schema
         /// <summary>
         /// The F0 color of the specular reflection (linear RGB).
         /// </summary>
+        [JsonConverter(typeof(Float3ArrayConverter))]
         public float[] specularColorFactor = { 1, 1, 1 };
 
         /// <inheritdoc cref="specularColorFactor"/>

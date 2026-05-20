@@ -33,9 +33,10 @@ namespace GLTFast.Schema
         }
 
         /// <inheritdoc cref="RootExtensions.JsonUtilityCleanup"/>
+        [Obsolete("Has become obsolete after the transition from JsonUtility to System.Text.Json.")]
         public bool JsonUtilityCleanup()
         {
-            return lights != null;
+            return true;
         }
     }
 }

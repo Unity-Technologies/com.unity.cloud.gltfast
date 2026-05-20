@@ -1,6 +1,11 @@
 // SPDX-FileCopyrightText: 2023 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
+using System;
+using System.Collections.Generic;
+using Unity.Gltfast.Text.Json;
+using Unity.Gltfast.Text.Json.Serialization;
+
 namespace GLTFast.Schema
 {
 
@@ -8,7 +13,7 @@ namespace GLTFast.Schema
     /// glTF root extensions
     /// </summary>
     [System.Serializable]
-    public class RootExtensions
+    public class RootExtensions : IGltfObject
     {
 
         /// <inheritdoc cref="LightsPunctual"/>
@@ -18,6 +23,17 @@ namespace GLTFast.Schema
         /// <inheritdoc cref="MaterialsVariantsRootExtension"/>
         // ReSharper disable once InconsistentNaming
         public MaterialsVariantsRootExtension KHR_materials_variants;
+
+        /// <summary>
+        /// JSON properties without a matching member.
+        /// </summary>
+        [JsonExtensionData, JsonInclude] internal Dictionary<string, JsonElement> ExtensionsData { get; set; }
+
+        /// <inheritdoc/>
+        public bool TryGetValue<T>(string key, out T value)
+        {
+            return ExtensionsData.TryGetValue(key, out value);
+        }
 
         internal void GltfSerialize(JsonWriter writer)
         {
@@ -36,23 +52,13 @@ namespace GLTFast.Schema
         }
 
         /// <summary>
-        /// Cleans up invalid parsing artifacts created by <see cref="GltfJsonUtilityParser"/>.
+        /// Has been used to clean up invalid parsing artifacts created by JsonUtility.
         /// </summary>
-        /// <returns>True if element itself still holds value. False if it can be safely removed.</returns>
+        /// <returns>True if the element itself still holds value. False if it can be safely removed.</returns>
+        [Obsolete("Has become obsolete after the transition from JsonUtility to System.Text.Json.")]
         public virtual bool JsonUtilityCleanup()
         {
-            if (KHR_lights_punctual != null && !KHR_lights_punctual.JsonUtilityCleanup())
-            {
-                KHR_lights_punctual = null;
-            }
-
-            if (KHR_materials_variants != null && !KHR_materials_variants.JsonUtilityCleanup())
-            {
-                KHR_materials_variants = null;
-            }
-
-            return KHR_lights_punctual != null
-                || KHR_materials_variants != null;
+            return true;
         }
     }
 }

@@ -2,6 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
+using System.Collections.Generic;
+using Unity.Gltfast.Text.Json;
+using Unity.Gltfast.Text.Json.Serialization;
 
 namespace GLTFast.Schema
 {
@@ -20,21 +23,14 @@ namespace GLTFast.Schema
 
         /// <inheritdoc />
         public override TextureExtensions Extensions => extensions;
-
-        /// <inheritdoc />
-        internal override void UnsetExtensions()
-        {
-            extensions = null;
-        }
     }
 
     /// <summary>
     /// A texture is defined by an image and a sampler.
     /// </summary>
     [Serializable]
-    public abstract class TextureBase : NamedObject
+    public abstract class TextureBase : NamedObject, IGltfObject
     {
-
         /// <summary>
         /// The index of the sampler used by this texture.
         /// </summary>
@@ -47,6 +43,18 @@ namespace GLTFast.Schema
 
         /// <inheritdoc cref="TextureExtensions"/>
         public abstract TextureExtensions Extensions { get; }
+
+        /// <inheritdoc cref="Root.extras"/>
+        public UnclassifiedData extras;
+
+        /// <summary>JSON properties without a matching member.</summary>
+        [JsonExtensionData, JsonInclude] internal Dictionary<string, JsonElement> ExtensionsData { get; set; }
+
+        /// <inheritdoc/>
+        public bool TryGetValue<T>(string key, out T value)
+        {
+            return ExtensionsData.TryGetValue(key, out value);
+        }
 
         /// <summary>
         /// Retrieves the final image index.
@@ -110,28 +118,6 @@ namespace GLTFast.Schema
         {
             // ReSharper disable once BaseObjectGetHashCodeCallInGetHashCode
             return base.GetHashCode();
-        }
-
-        /// <summary>
-        /// Sets <see cref="Extensions"/> to null.
-        /// </summary>
-        internal abstract void UnsetExtensions();
-
-        /// <summary>
-        /// Cleans up invalid parsing artifacts created by <see cref="GltfJsonUtilityParser"/>.
-        /// </summary>
-        internal void JsonUtilityCleanup()
-        {
-            var e = Extensions;
-            if (e != null)
-            {
-                // Check if Basis Universal extension is valid
-                if ((e.KHR_texture_basisu?.source ?? -1) < 0)
-                {
-                    e.KHR_texture_basisu = null;
-                    UnsetExtensions();
-                }
-            }
         }
     }
 }

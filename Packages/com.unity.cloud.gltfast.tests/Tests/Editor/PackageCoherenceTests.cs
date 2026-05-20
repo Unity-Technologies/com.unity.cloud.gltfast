@@ -1,9 +1,11 @@
 // SPDX-FileCopyrightText: 2024 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
+using System;
 using System.IO;
 using System.Text.RegularExpressions;
 using NUnit.Framework;
+using Unity.Gltfast.Text.Json;
 using UnityEngine;
 using UnityEngine.TestTools;
 
@@ -11,11 +13,12 @@ namespace GLTFast.Editor.Tests
 {
     class PackageCoherenceTests
     {
+        [Serializable]
         struct Package
         {
-            public string version;
-            public string unity;
-            public string unityRelease;
+            public string version { get; set; }
+            public string unity { get; set; }
+            public string unityRelease { get; set; }
 
             public string MinimumRequiredVersion =>
                 string.IsNullOrEmpty(unityRelease)
@@ -29,7 +32,7 @@ namespace GLTFast.Editor.Tests
         public void OneTimeSetUp()
         {
             var json = File.ReadAllText($"Packages/{GltfGlobals.GltfPackageName}/package.json");
-            s_Package = JsonUtility.FromJson<Package>(json);
+            s_Package = JsonSerializer.Deserialize<Package>(json);
         }
 
         [Test]

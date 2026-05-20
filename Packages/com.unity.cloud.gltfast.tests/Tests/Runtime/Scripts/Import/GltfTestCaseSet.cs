@@ -17,6 +17,8 @@ using System.Text;
 using System.Threading.Tasks;
 #if UNITY_EDITOR
 using System.Threading;
+using GLTFast.Schema;
+using Unity.Gltfast.Text.Json;
 using UnityEditor;
 #endif
 using UnityEngine;
@@ -262,7 +264,7 @@ namespace GLTFast.Tests.Import
             if (json == null)
                 return null;
 
-            var gltf = new GltfJsonUtilityParser().ParseJson(json);
+            var gltf = JsonSerializer.Deserialize(json, GltfRootSourceGenerator.Default.Root);
 
             if (gltf.extensionsRequired != null)
             {

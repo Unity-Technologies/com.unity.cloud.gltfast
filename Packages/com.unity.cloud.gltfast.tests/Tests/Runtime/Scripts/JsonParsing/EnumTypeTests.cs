@@ -2,14 +2,12 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
-#if NEWTONSOFT_JSON
-using Newtonsoft.Json;
-#endif
 using GLTFast.Schema;
 #if MESHOPT_IS_RECENT
 using Meshoptimizer;
 #endif
 using NUnit.Framework;
+using Unity.Gltfast.Text.Json;
 using UnityEngine;
 using Camera = GLTFast.Schema.Camera;
 using Material = GLTFast.Schema.Material;
@@ -21,19 +19,11 @@ namespace GLTFast.Tests.JsonParsing
     class EnumTypeTests
     {
         Root m_Gltf;
-#if NEWTONSOFT_JSON
-        Newtonsoft.Schema.Root m_GltfNewtonsoft;
-#endif
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            var jsonUtilityParser = new GltfJsonUtilityParser();
-            m_Gltf = (Root)jsonUtilityParser.ParseJson(k_EnumTypesJson);
-
-#if NEWTONSOFT_JSON
-            m_GltfNewtonsoft = JsonConvert.DeserializeObject<Newtonsoft.Schema.Root>(k_EnumTypesJson);
-#endif
+            m_Gltf = JsonSerializer.Deserialize(k_EnumTypesJson, GltfRootSourceGenerator.Default.Root);
         }
 
         [Test]
@@ -43,13 +33,9 @@ namespace GLTFast.Tests.JsonParsing
         }
 
         [Test]
-        public void AccessorNewtonsoft()
+        public void AccessorExtended()
         {
-#if NEWTONSOFT_JSON
-            CheckResultAccessor(m_GltfNewtonsoft);
-#else
-            Assert.Ignore("Requires Newtonsoft JSON package to be installed.");
-#endif
+            CheckResultAccessor(m_Gltf);
         }
 
         [Test]
@@ -63,12 +49,12 @@ namespace GLTFast.Tests.JsonParsing
         }
 
         [Test]
-        public void AnimationNewtonsoft()
+        public void AnimationExtended()
         {
-#if NEWTONSOFT_JSON && UNITY_ANIMATION
-            CheckResultAnimation(m_GltfNewtonsoft);
+#if UNITY_ANIMATION
+            CheckResultAnimation(m_Gltf);
 #else
-            Assert.Ignore("Requires Newtonsoft JSON package to be installed.");
+            Assert.Ignore("Requires Animation module to be enabled.");
 #endif
         }
 
@@ -79,13 +65,9 @@ namespace GLTFast.Tests.JsonParsing
         }
 
         [Test]
-        public void CameraNewtonsoft()
+        public void CameraExtended()
         {
-#if NEWTONSOFT_JSON
-            CheckResultCamera(m_GltfNewtonsoft);
-#else
-            Assert.Ignore("Requires Newtonsoft JSON package to be installed.");
-#endif
+            CheckResultCamera(m_Gltf);
         }
 
         [Test]
@@ -99,16 +81,12 @@ namespace GLTFast.Tests.JsonParsing
         }
 
         [Test]
-        public void MeshoptNewtonsoft()
+        public void MeshoptExtended()
         {
-#if NEWTONSOFT_JSON
 #if MESHOPT_IS_RECENT
-            CheckResultMeshopt(m_GltfNewtonsoft);
+            CheckResultMeshopt(m_Gltf);
 #else
             Assert.Ignore("Requires meshoptimizer decompression for Unity package to be installed.");
-#endif
-#else
-            Assert.Ignore("Requires Newtonsoft JSON package to be installed.");
 #endif
         }
 
@@ -119,13 +97,9 @@ namespace GLTFast.Tests.JsonParsing
         }
 
         [Test]
-        public void RootExtensionsNewtonsoft()
+        public void RootExtensionsExtended()
         {
-#if NEWTONSOFT_JSON
-            CheckResultRootExtensions(m_GltfNewtonsoft);
-#else
-            Assert.Ignore("Requires Newtonsoft JSON package to be installed.");
-#endif
+            CheckResultRootExtensions(m_Gltf);
         }
 
         [Test]
@@ -135,13 +109,9 @@ namespace GLTFast.Tests.JsonParsing
         }
 
         [Test]
-        public void MaterialsNewtonsoft()
+        public void MaterialsExtended()
         {
-#if NEWTONSOFT_JSON
-            CheckResultMaterials(m_GltfNewtonsoft);
-#else
-            Assert.Ignore("Requires Newtonsoft JSON package to be installed.");
-#endif
+            CheckResultMaterials(m_Gltf);
         }
 
         [Test]
@@ -151,13 +121,9 @@ namespace GLTFast.Tests.JsonParsing
         }
 
         [Test]
-        public void SamplersNewtonsoft()
+        public void SamplersExtended()
         {
-#if NEWTONSOFT_JSON
-            CheckResultSamplers(m_GltfNewtonsoft);
-#else
-            Assert.Ignore("Requires Newtonsoft JSON package to be installed.");
-#endif
+            CheckResultSamplers(m_Gltf);
         }
 
         [Test]

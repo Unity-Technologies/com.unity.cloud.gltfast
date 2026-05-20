@@ -2,9 +2,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
+using Unity.Gltfast.Text.Json.Serialization;
 
-#if NEWTONSOFT_JSON
-#endif
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -37,6 +36,7 @@ namespace GLTFast.Schema
         /// </summary>
         // Field is public for unified serialization only. Warn via Obsolete attribute.
         [Obsolete("Use LightColor for access.")]
+        [JsonConverter(typeof(Float3ArrayConverter))]
         public float[] color = { 1, 1, 1 };
 
         /// <summary>

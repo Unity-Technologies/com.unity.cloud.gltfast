@@ -4,6 +4,9 @@
 #if UNITY_ANIMATION || GLTFAST_ANIMATION
 
 using System;
+using System.Collections.Generic;
+using Unity.Gltfast.Text.Json;
+using Unity.Gltfast.Text.Json.Serialization;
 
 namespace GLTFast.Schema
 {
@@ -21,7 +24,7 @@ namespace GLTFast.Schema
     }
 
     [Serializable]
-    public abstract class AnimationChannelBase
+    public abstract class AnimationChannelBase : IGltfObject
     {
         public enum Path
         {
@@ -39,6 +42,21 @@ namespace GLTFast.Schema
         /// target, e.g., a node's translation, rotation, or scale (TRS).
         /// </summary>
         public int sampler;
+
+        /// <inheritdoc cref="Asset.extensions"/>
+        public UnclassifiedData extensions;
+
+        /// <inheritdoc cref="Root.extras"/>
+        public UnclassifiedData extras;
+
+        /// <summary>JSON properties without a matching member.</summary>
+        [JsonExtensionData, JsonInclude] internal Dictionary<string, JsonElement> ExtensionsData { get; set; }
+
+        /// <inheritdoc/>
+        public bool TryGetValue<T>(string key, out T value)
+        {
+            return ExtensionsData.TryGetValue(key, out value);
+        }
 
         /// <summary>
         /// The index of the node and TRS property to target.

@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: 2023 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
+using Unity.Gltfast.Text.Json.Serialization;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -21,6 +22,7 @@ namespace GLTFast.Schema
         /// <summary>
         /// The sheen color red, green and blue components in linear space.
         /// </summary>
+        [JsonConverter(typeof(Float3ArrayConverter))]
         public float[] sheenColorFactor = { 1, 1, 1 };
 
         /// <summary>

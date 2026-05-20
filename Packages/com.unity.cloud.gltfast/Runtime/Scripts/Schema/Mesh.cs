@@ -3,6 +3,8 @@
 
 using System;
 using System.Collections.Generic;
+using Unity.Gltfast.Text.Json;
+using Unity.Gltfast.Text.Json.Serialization;
 
 namespace GLTFast.Schema
 {
@@ -54,7 +56,7 @@ namespace GLTFast.Schema
     /// a node that references it.
     /// </summary>
     [Serializable]
-    public abstract class MeshBase : NamedObject
+    public abstract class MeshBase : NamedObject, IGltfObject
     {
         /// <summary>
         /// An array of primitives, each defining geometry to be rendered with
@@ -67,8 +69,20 @@ namespace GLTFast.Schema
         /// </summary>
         public float[] weights;
 
+        /// <inheritdoc cref="Asset.extensions"/>
+        public UnclassifiedData extensions;
+
         /// <inheritdoc cref="MeshExtras"/>
         public abstract MeshExtras Extras { get; }
+
+        /// <summary>JSON properties without a matching member.</summary>
+        [JsonExtensionData, JsonInclude] internal Dictionary<string, JsonElement> ExtensionsData { get; set; }
+
+        /// <inheritdoc/>
+        public bool TryGetValue<T>(string key, out T value)
+        {
+            return ExtensionsData.TryGetValue(key, out value);
+        }
 
         internal void GltfSerialize(JsonWriter writer)
         {
@@ -103,13 +117,21 @@ namespace GLTFast.Schema
     /// Application-specific data for meshes
     /// </summary>
     [Serializable]
-    public class MeshExtras
+    public class MeshExtras : IGltfObject
     {
-
         /// <summary>
         /// Morph targets' names
         /// </summary>
         public string[] targetNames;
+
+        /// <summary>JSON properties without a matching member.</summary>
+        [JsonExtensionData, JsonInclude] internal Dictionary<string, JsonElement> ExtensionsData { get; set; }
+
+        /// <inheritdoc/>
+        public bool TryGetValue<T>(string key, out T value)
+        {
+            return ExtensionsData.TryGetValue(key, out value);
+        }
 
         internal void GltfSerialize(JsonWriter writer)
         {

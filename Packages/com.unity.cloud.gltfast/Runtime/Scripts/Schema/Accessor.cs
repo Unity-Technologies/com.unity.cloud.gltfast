@@ -2,6 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
+using System.Collections.Generic;
+using Unity.Gltfast.Text.Json;
+using Unity.Gltfast.Text.Json.Serialization;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -40,7 +43,7 @@ namespace GLTFast.Schema
     /// accessor in the glTF 2.0 specification</a>.
     /// </summary>
     [Serializable]
-    public abstract class AccessorBase : NamedObject
+    public abstract class AccessorBase : NamedObject, IGltfObject
     {
         /// <summary>
         /// The index of the bufferView.
@@ -85,6 +88,21 @@ namespace GLTFast.Schema
         // Field is public for unified serialization only. Warn via Obsolete attribute.
         [Obsolete("Use GetAttributeType and SetAttributeType for access.")]
         public string type;
+
+        /// <inheritdoc cref="Root.extras"/>
+        public UnclassifiedData extras;
+
+        /// <inheritdoc cref="Asset.extensions"/>
+        public UnclassifiedData extensions;
+
+        /// <summary>JSON properties without a matching member.</summary>
+        [JsonExtensionData, JsonInclude] internal Dictionary<string, JsonElement> ExtensionsData { get; set; }
+
+        /// <inheritdoc/>
+        public bool TryGetValue<T>(string key, out T value)
+        {
+            return ExtensionsData.TryGetValue(key, out value);
+        }
 
         [NonSerialized]
         GltfAccessorAttributeType m_TypeEnum = GltfAccessorAttributeType.Undefined;

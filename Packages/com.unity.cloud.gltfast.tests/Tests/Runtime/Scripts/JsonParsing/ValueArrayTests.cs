@@ -4,10 +4,8 @@
 using System;
 using System.Collections.Generic;
 using GLTFast.Schema;
-#if NEWTONSOFT_JSON
-using Newtonsoft.Json;
-#endif
 using NUnit.Framework;
+using Unity.Gltfast.Text.Json;
 using UnityEngine;
 
 namespace GLTFast.Tests.JsonParsing
@@ -17,19 +15,11 @@ namespace GLTFast.Tests.JsonParsing
     class ValueArrayTests
     {
         Root m_Gltf;
-#if NEWTONSOFT_JSON
-        GLTFast.Newtonsoft.Schema.Root m_GltfNewtonsoft;
-#endif
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            var jsonUtilityParser = new GltfJsonUtilityParser();
-            m_Gltf = (Root)jsonUtilityParser.ParseJson(k_ValueArraysJson);
-
-#if NEWTONSOFT_JSON
-            m_GltfNewtonsoft = JsonConvert.DeserializeObject<GLTFast.Newtonsoft.Schema.Root>(k_ValueArraysJson);
-#endif
+            m_Gltf = JsonSerializer.Deserialize(k_ValueArraysJson, GltfRootSourceGenerator.Default.Root);
         }
 
         [Test]
@@ -39,13 +29,9 @@ namespace GLTFast.Tests.JsonParsing
         }
 
         [Test]
-        public void AccessorNewtonsoft()
+        public void AccessorExtended()
         {
-#if NEWTONSOFT_JSON
-            CheckResultAccessor(m_GltfNewtonsoft);
-#else
-            Assert.Ignore("Requires Newtonsoft JSON package to be installed.");
-#endif
+            CheckResultAccessor(m_Gltf);
         }
 
         [Test]
@@ -55,13 +41,9 @@ namespace GLTFast.Tests.JsonParsing
         }
 
         [Test]
-        public void LightPunctualColorNewtonsoft()
+        public void LightPunctualColorExtended()
         {
-#if NEWTONSOFT_JSON
-            CheckResultLightPunctualColor(m_GltfNewtonsoft);
-#else
-            Assert.Ignore("Requires Newtonsoft JSON package to be installed.");
-#endif
+            CheckResultLightPunctualColor(m_Gltf);
         }
 
         [Test]
@@ -71,13 +53,9 @@ namespace GLTFast.Tests.JsonParsing
         }
 
         [Test]
-        public void MaterialValuesNewtonsoft()
+        public void MaterialValuesExtended()
         {
-#if NEWTONSOFT_JSON
-            CheckResultMaterialValues(m_GltfNewtonsoft);
-#else
-            Assert.Ignore("Requires Newtonsoft JSON package to be installed.");
-#endif
+            CheckResultMaterialValues(m_Gltf);
         }
 
         [Test]
@@ -87,13 +65,9 @@ namespace GLTFast.Tests.JsonParsing
         }
 
         [Test]
-        public void MeshWeightsNewtonsoft()
+        public void MeshWeightsExtended()
         {
-#if NEWTONSOFT_JSON
-            CheckResultMeshWeights(m_GltfNewtonsoft);
-#else
-            Assert.Ignore("Requires Newtonsoft JSON package to be installed.");
-#endif
+            CheckResultMeshWeights(m_Gltf);
         }
 
         [Test]
@@ -103,13 +77,9 @@ namespace GLTFast.Tests.JsonParsing
         }
 
         [Test]
-        public void NodeValuesNewtonsoft()
+        public void NodeValuesExtended()
         {
-#if NEWTONSOFT_JSON
-            CheckResultNodeValues(m_GltfNewtonsoft);
-#else
-            Assert.Ignore("Requires Newtonsoft JSON package to be installed.");
-#endif
+            CheckResultNodeValues(m_Gltf);
         }
 
         static void CheckResultAccessor(RootBase gltf)

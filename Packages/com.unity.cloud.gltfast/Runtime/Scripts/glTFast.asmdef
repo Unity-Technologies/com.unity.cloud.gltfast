@@ -14,8 +14,12 @@
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": true,
-    "overrideReferences": false,
-    "precompiledReferences": [],
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "Unity.Gltfast.Text.Json.dll",
+        "Unity.Gltfast.Text.Encodings.Web.dll",
+        "Unity.Gltfast.Unsafe.dll"
+    ],
     "autoReferenced": true,
     "defineConstraints": [],
     "versionDefines": [
@@ -83,11 +87,6 @@
             "name": "com.unity.shadergraph",
             "expression": "",
             "define": "UNITY_SHADER_GRAPH"
-        },
-        {
-            "name": "com.unity.nuget.newtonsoft-json",
-            "expression": "",
-            "define": "NEWTONSOFT_JSON"
         }
     ],
     "noEngineReferences": false

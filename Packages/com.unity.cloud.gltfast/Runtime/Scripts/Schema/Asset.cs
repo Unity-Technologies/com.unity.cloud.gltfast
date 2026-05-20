@@ -1,6 +1,10 @@
 // SPDX-FileCopyrightText: 2023 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
+using System.Collections.Generic;
+using Unity.Gltfast.Text.Json;
+using Unity.Gltfast.Text.Json.Serialization;
+
 namespace GLTFast.Schema
 {
 
@@ -8,7 +12,7 @@ namespace GLTFast.Schema
     /// Metadata about the glTF asset.
     /// </summary>
     [System.Serializable]
-    public class Asset : NamedObject
+    public class Asset : NamedObject, IGltfObject
     {
         /// <summary>
         /// A copyright message suitable for display to credit the content creator.
@@ -29,6 +33,22 @@ namespace GLTFast.Schema
         /// The minimum glTF version that this asset targets.
         /// </summary>
         public string minVersion;
+
+        /// <summary>JSON object with extension-specific objects.</summary>
+        /// <seealso href="https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html#reference-extension"/>
+        public UnclassifiedData extensions;
+
+        /// <inheritdoc cref="Root.extras"/>
+        public UnclassifiedData extras;
+
+        /// <summary>JSON properties without a matching member.</summary>
+        [JsonExtensionData, JsonInclude] internal Dictionary<string, JsonElement> ExtensionsData { get; set; }
+
+        /// <inheritdoc/>
+        public bool TryGetValue<T>(string key, out T value)
+        {
+            return ExtensionsData.TryGetValue(key, out value);
+        }
 
         internal void GltfSerialize(JsonWriter writer)
         {

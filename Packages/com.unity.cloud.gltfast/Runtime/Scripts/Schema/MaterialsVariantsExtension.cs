@@ -19,9 +19,10 @@ namespace GLTFast.Schema
         public List<MaterialsVariant> variants;
 
         /// <inheritdoc cref="RootExtensions.JsonUtilityCleanup"/>
+        [Obsolete("Has become obsolete after the transition from JsonUtility to System.Text.Json.")]
         public bool JsonUtilityCleanup()
         {
-            return variants != null;
+            return true;
         }
 
         internal void GltfSerialize(JsonWriter writer)

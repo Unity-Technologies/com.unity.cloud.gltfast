@@ -1,6 +1,9 @@
 // SPDX-FileCopyrightText: 2023 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
+using System.Collections.Generic;
+using Unity.Gltfast.Text.Json;
+using Unity.Gltfast.Text.Json.Serialization;
 using UnityEngine.Serialization;
 
 namespace GLTFast.Schema
@@ -33,7 +36,7 @@ namespace GLTFast.Schema
     /// Reference to a texture.
     /// </summary>
     [System.Serializable]
-    public abstract class TextureInfoBase
+    public abstract class TextureInfoBase : IGltfObject
     {
 
         /// <summary>
@@ -50,6 +53,18 @@ namespace GLTFast.Schema
 
         /// <inheritdoc cref="TextureInfoExtensions"/>
         public abstract TextureInfoExtensions Extensions { get; }
+
+        /// <inheritdoc cref="Root.extras"/>
+        public UnclassifiedData extras;
+
+        /// <summary>JSON properties without a matching member.</summary>
+        [JsonExtensionData, JsonInclude] internal Dictionary<string, JsonElement> ExtensionsData { get; set; }
+
+        /// <inheritdoc/>
+        public bool TryGetValue<T>(string key, out T value)
+        {
+            return ExtensionsData.TryGetValue(key, out value);
+        }
 
         /// <summary>
         /// Applies a texture transform by initializing <see cref="Extensions" /> (if required) and setting its

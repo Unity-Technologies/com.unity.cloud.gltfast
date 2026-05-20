@@ -4,11 +4,14 @@
 #if UNITY_ANIMATION || GLTFAST_ANIMATION
 
 using System;
+using System.Collections.Generic;
+using Unity.Gltfast.Text.Json;
+using Unity.Gltfast.Text.Json.Serialization;
 
 namespace GLTFast.Schema
 {
     [Serializable]
-    public class AnimationSampler
+    public class AnimationSampler : IGltfObject
     {
         /// <summary>
         /// The index of an accessor containing keyframe input values, e.G., time.
@@ -55,6 +58,21 @@ namespace GLTFast.Schema
         /// output accessor's componentType must be `FLOAT`.
         /// </summary>
         public int output;
+
+        /// <inheritdoc cref="Asset.extensions"/>
+        public UnclassifiedData extensions;
+
+        /// <inheritdoc cref="Root.extras"/>
+        public UnclassifiedData extras;
+
+        /// <summary>JSON properties without a matching member.</summary>
+        [JsonExtensionData, JsonInclude] internal Dictionary<string, JsonElement> ExtensionsData { get; set; }
+
+        /// <inheritdoc/>
+        public bool TryGetValue<T>(string key, out T value)
+        {
+            return ExtensionsData.TryGetValue(key, out value);
+        }
     }
 }
 #endif // UNITY_ANIMATION || GLTFAST_ANIMATION

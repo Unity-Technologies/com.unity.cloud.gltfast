@@ -163,7 +163,7 @@ Not investigated yet:
 
 ### Custom extras and extensions
 
-Optional `extras` and `extensions` object properties are supported. glTFast uses Newtonsoft JSON parser to access these additional properties.
+Optional `extras` and `extensions` object properties are supported.
 
 See [glTFast Add-on API](UseCaseCustomExtras.md) for an example to import the `extras` property in a gltf asset.
 

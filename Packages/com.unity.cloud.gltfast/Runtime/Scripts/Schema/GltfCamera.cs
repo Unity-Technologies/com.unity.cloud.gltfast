@@ -2,6 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
+using System.Collections.Generic;
+using Unity.Gltfast.Text.Json;
+using Unity.Gltfast.Text.Json.Serialization;
 using UnityEngine;
 
 namespace GLTFast.Schema
@@ -36,9 +39,8 @@ namespace GLTFast.Schema
     /// A camera’s projection
     /// </summary>
     [Serializable]
-    public abstract class CameraBase : NamedObject
+    public abstract class CameraBase : NamedObject, IGltfObject
     {
-
         /// <summary>
         /// Camera projection type
         /// </summary>
@@ -104,6 +106,21 @@ namespace GLTFast.Schema
         /// <inheritdoc cref="CameraOrthographic"/>
         public abstract CameraPerspective Perspective { get; }
 
+        /// <inheritdoc cref="Asset.extensions"/>
+        public UnclassifiedData extensions;
+
+        /// <inheritdoc cref="Root.extras"/>
+        public UnclassifiedData extras;
+
+        /// <summary>JSON properties without a matching member.</summary>
+        [JsonExtensionData, JsonInclude] internal Dictionary<string, JsonElement> ExtensionsData { get; set; }
+
+        /// <inheritdoc/>
+        public bool TryGetValue<T>(string key, out T value)
+        {
+            return ExtensionsData.TryGetValue(key, out value);
+        }
+
         internal void GltfSerialize(JsonWriter writer)
         {
             writer.AddObject();
@@ -127,9 +144,8 @@ namespace GLTFast.Schema
     /// An orthographic camera containing properties to create an orthographic projection matrix.
     /// </summary>
     [Serializable]
-    public class CameraOrthographic
+    public class CameraOrthographic : IGltfObject
     {
-
         /// <summary>
         /// The floating-point horizontal magnification of the view. Must not be zero.
         /// </summary>
@@ -155,6 +171,21 @@ namespace GLTFast.Schema
         // ReSharper disable once IdentifierTypo
         public float znear;
 
+        /// <inheritdoc cref="Asset.extensions"/>
+        public UnclassifiedData extensions;
+
+        /// <inheritdoc cref="Root.extras"/>
+        public UnclassifiedData extras;
+
+        /// <summary>JSON properties without a matching member.</summary>
+        [JsonExtensionData, JsonInclude] internal Dictionary<string, JsonElement> ExtensionsData { get; set; }
+
+        /// <inheritdoc/>
+        public bool TryGetValue<T>(string key, out T value)
+        {
+            return ExtensionsData.TryGetValue(key, out value);
+        }
+
         internal void GltfSerialize(JsonWriter writer)
         {
             writer.AddObject();
@@ -172,7 +203,7 @@ namespace GLTFast.Schema
     /// A perspective camera containing properties to create a perspective projection matrix.
     /// </summary>
     [Serializable]
-    public class CameraPerspective
+    public class CameraPerspective : IGltfObject
     {
 
         /// <summary>
@@ -197,6 +228,21 @@ namespace GLTFast.Schema
         /// </summary>
         // ReSharper disable once IdentifierTypo
         public float znear;
+
+        /// <inheritdoc cref="Asset.extensions"/>
+        public UnclassifiedData extensions;
+
+        /// <inheritdoc cref="Root.extras"/>
+        public UnclassifiedData extras;
+
+        /// <summary>JSON properties without a matching member.</summary>
+        [JsonExtensionData, JsonInclude] internal Dictionary<string, JsonElement> ExtensionsData { get; set; }
+
+        /// <inheritdoc/>
+        public bool TryGetValue<T>(string key, out T value)
+        {
+            return ExtensionsData.TryGetValue(key, out value);
+        }
 
         internal void GltfSerialize(JsonWriter writer)
         {

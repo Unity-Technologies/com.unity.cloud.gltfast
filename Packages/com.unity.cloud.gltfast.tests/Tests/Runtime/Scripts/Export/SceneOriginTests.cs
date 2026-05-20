@@ -8,6 +8,7 @@ using GLTFast.Export;
 using GLTFast.Logging;
 using GLTFast.Schema;
 using NUnit.Framework;
+using Unity.Gltfast.Text.Json;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.TestTools;
@@ -89,8 +90,10 @@ namespace GLTFast.Tests.Export
             Assert.IsTrue(success);
             LoggerTest.AssertLogger(logger);
 
-            var jsonParser = new GltfJsonUtilityParser();
-            var gltf = jsonParser.ParseJson(await File.ReadAllTextAsync(path));
+            var gltf = JsonSerializer.Deserialize(
+                await File.ReadAllTextAsync(path),
+                GltfRootSourceGenerator.Default.Root
+                );
 
             Assert.IsNotNull(gltf?.Nodes);
             Assert.AreEqual(1, gltf.Nodes.Count);

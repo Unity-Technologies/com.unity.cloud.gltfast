@@ -5,7 +5,8 @@
 
 using System;
 using System.Collections.Generic;
-
+using Unity.Gltfast.Text.Json;
+using Unity.Gltfast.Text.Json.Serialization;
 #endif
 
 namespace GLTFast.Schema
@@ -37,7 +38,7 @@ namespace GLTFast.Schema
     /// </summary>
     /// <seealso href="https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html#reference-animation"/>
     [Serializable]
-    public abstract class AnimationBase : NamedObject
+    public abstract class AnimationBase : NamedObject, IGltfObject
     {
         /// <summary>
         /// An array of channels, each of which targets an animation's sampler at a
@@ -52,8 +53,22 @@ namespace GLTFast.Schema
         /// </summary>
         public abstract IReadOnlyList<AnimationSampler> Samplers { get; }
 
-        internal void GltfSerialize(JsonWriter writer)
+        /// <inheritdoc cref="Asset.extensions"/>
+        public UnclassifiedData extensions;
+
+        /// <inheritdoc cref="Root.extras"/>
+        public UnclassifiedData extras;
+
+        /// <summary>JSON properties without a matching member.</summary>
+        [JsonExtensionData, JsonInclude] internal Dictionary<string, JsonElement> ExtensionsData { get; set; }
+
+        /// <inheritdoc/>
+        public bool TryGetValue<T>(string key, out T value)
         {
+            return ExtensionsData.TryGetValue(key, out value);
+        }
+
+        internal void GltfSerialize(JsonWriter writer) {
             writer.AddObject();
             GltfSerializeName(writer);
             writer.Close();

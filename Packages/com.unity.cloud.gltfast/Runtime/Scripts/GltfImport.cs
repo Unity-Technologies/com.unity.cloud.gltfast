@@ -59,12 +59,9 @@ namespace GLTFast
     /// <summary>
     /// Loads a glTF's content, converts it to Unity resources and is able to
     /// feed it to an <see cref="IInstantiator"/> for instantiation.
-    /// Uses the efficient and fast JsonUtility/<see cref="GltfJsonUtilityParser"/> for JSON parsing.
     /// </summary>
     public class GltfImport : GltfImportBase<Root>
     {
-        static GltfJsonUtilityParser s_Parser;
-
         /// <inheritdoc cref="GltfImportBase(IDownloadProvider,IDeferAgent,IMaterialGenerator,ICodeLogger)"/>
         public GltfImport(
             IDownloadProvider downloadProvider = null,
@@ -74,20 +71,14 @@ namespace GLTFast
         ) : base(downloadProvider, deferAgent, materialGenerator, logger) { }
 
         /// <inheritdoc />
+        [Obsolete("Slow operation! Use the static GltfImportBase.ParseJson that accepts a UTF-8 encoded" +
+            " NativeArray<byte>.ReadOnly glTF JSON directly instead.")]
         protected override RootBase ParseJson(string json)
         {
-            s_Parser ??= new GltfJsonUtilityParser();
-            return s_Parser.ParseJson(json);
+            var jsonUTF8 = Encoding.UTF8.GetBytes(json);
+            using var jsonNative = new ManagedNativeArray<byte, byte>(jsonUTF8);
+            return ParseJson(jsonNative.nativeArray.AsReadOnly());
         }
-
-#if UNITY_EDITOR
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        static void ResetStaticsOnLoad()
-        {
-            // Reset static state
-            s_Parser = null;
-        }
-#endif
     }
 
     /// <inheritdoc cref="GltfImportBase"/>
@@ -651,8 +642,10 @@ namespace GLTFast
             {
                 m_Settings = importSettings ?? new ImportSettings();
                 BaseUri = UriHelper.GetBaseUri(uri);
+                var jsonUTF8 = Encoding.UTF8.GetBytes(json);
+                using var jsonNative = new ReadOnlyNativeArrayFromManagedArray<byte>(jsonUTF8);
                 success =
-                    await LoadGltf(json, cancellationToken)
+                    await LoadGltf(jsonNative.Array.AsNativeArrayReadOnly(), cancellationToken)
                     && await LoadContent(cancellationToken)
                     && await Prepare(cancellationToken);
             }
@@ -1328,31 +1321,24 @@ namespace GLTFast
                 {
                     var gltfBinary = download.IsBinary ?? UriHelper.IsGltfBinary(url);
 
-                    if (gltfBinary ?? false)
+                    m_VolatileDisposables ??= new List<IDisposable>();
+                    NativeArray<byte>.ReadOnly data;
+                    if (download is INativeDownload nativeDownload)
                     {
-                        m_VolatileDisposables ??= new List<IDisposable>();
-                        NativeArray<byte>.ReadOnly data;
-                        if (download is INativeDownload nativeDownload)
-                        {
-                            data = nativeDownload.NativeData;
-                        }
-                        else
-                        {
-                            var managedNativeArray = new ReadOnlyNativeArrayFromManagedArray<byte>(download.Data);
-                            m_VolatileDisposables.Add(managedNativeArray);
-                            data = managedNativeArray.Array.AsNativeArrayReadOnly();
-                        }
-
-                        m_VolatileDisposables.Add(download);
-                        success = await LoadGltfBinaryBuffer(data, cancellationToken);
+                        data = nativeDownload.NativeData;
                     }
                     else
                     {
-                        var text = download.Text;
-                        download.Dispose();
-                        download = null;
-                        success = await LoadGltf(text, cancellationToken);
+                        var managedNativeArray = new ReadOnlyNativeArrayFromManagedArray<byte>(download.Data);
+                        m_VolatileDisposables.Add(managedNativeArray);
+                        data = managedNativeArray.Array.AsNativeArrayReadOnly();
                     }
+
+                    m_VolatileDisposables.Add(download);
+
+                    success = gltfBinary ?? false
+                        ? await LoadGltfBinaryBuffer(data, cancellationToken)
+                        : await LoadGltf(data, cancellationToken);
 
                     success = success
                         && await LoadContent(cancellationToken)
@@ -1438,17 +1424,54 @@ namespace GLTFast
         }
 
         /// <summary>
-        /// De-serializes a glTF JSON string and returns the glTF root schema object.
+        /// De-serializes a UTF-8 encoded glTF JSON string and returns the glTF root object.
+        /// </summary>
+        /// <param name="json">glTF JSON (UTF-8 encoded)</param>
+        /// <returns>De-serialized glTF root object.</returns>
+        protected static RootBase ParseJson(ReadOnlySpan<byte> json)
+        {
+            return Unity.Gltfast.Text.Json.JsonSerializer.Deserialize(json, GltfRootSourceGenerator.Default.Root);
+        }
+
+        /// <summary>
+        /// De-serializes a glTF JSON string and returns the glTF root object.
         /// </summary>
         /// <param name="json">glTF JSON</param>
         /// <returns>De-serialized glTF root object.</returns>
+        [Obsolete("Slow operation! Use the static GltfImportBase.ParseJson that accepts UTF-8 encoded" +
+            " ReadOnlySpan<byte> glTF JSON directly instead.")]
         protected abstract RootBase ParseJson(string json);
 
-        async Task<bool> ParseJsonAndLoadBuffers(string json, CancellationToken cancellationToken)
+        /// <summary>
+        /// De-serializes a UTF-8 encoded glTF JSON string and returns the glTF root object.
+        /// </summary>
+        /// <param name="json">glTF JSON (UTF-8 encoded)</param>
+        /// <returns>De-serialized glTF root object.</returns>
+        [Obsolete("Use ParseJson that accepts ReadOnlySpan<byte> instead.")]
+        protected static RootBase ParseJson(NativeArray<byte>.ReadOnly json)
+        {
+            return ParseJson(json.AsReadOnlySpan());
+        }
+
+        async Task<bool> ParseJsonAndLoadBuffers(
+            NativeArray<byte>.ReadOnly json,
+            CancellationToken cancellationToken,
+            int offset = 0,
+            int length = -1
+            )
         {
             cancellationToken.ThrowIfCancellationRequestedWithTracking();
 
-            var predictedTime = json.Length / (float)k_JsonParseSpeed;
+            if (length < 0)
+            {
+                length = json.Length - offset;
+            }
+            Assert.IsTrue(
+                offset >= 0 && length >= 0 && offset + length <= json.Length,
+                "Invalid offset and length parameters for JSON parsing."
+                );
+
+            var predictedTime = length / (float)k_JsonParseSpeed;
 #if GLTFAST_THREADS && !MEASURE_TIMINGS
             if (DeferAgent.ShouldDefer(predictedTime))
             {
@@ -1456,7 +1479,10 @@ namespace GLTFast
                 // => parse in a thread
                 try
                 {
-                    Root = await Task.Run(() => ParseJson(json), cancellationToken);
+                    Root = await Task.Run(
+                        () => ParseJson(json.AsReadOnlySpan().Slice(offset, length)),
+                        cancellationToken
+                        );
                 }
                 catch (OperationCanceledException)
                 {
@@ -1467,7 +1493,7 @@ namespace GLTFast
 #endif
             {
                 // Parse immediately on main thread
-                Root = ParseJson(json);
+                Root = ParseJson(json.AsReadOnlySpan().Slice(offset, length));
 
                 // Loading subsequent buffers and images has to start asap.
                 // That's why parsing JSON right away is *very* important.
@@ -1637,7 +1663,7 @@ namespace GLTFast
                 );
         }
 
-        async Task<bool> LoadGltf(string json, CancellationToken cancellationToken)
+        async Task<bool> LoadGltf(NativeArray<byte>.ReadOnly json, CancellationToken cancellationToken)
         {
             var success = await ParseJsonAndLoadBuffers(json, cancellationToken);
             if (success)
@@ -2075,13 +2101,12 @@ namespace GLTFast
                 {
                     Assert.IsNull(Root);
 
-                    Profiler.BeginSample("GetJSON");
-                    var bytesStream = bytes.ToUnmanagedMemoryStream((uint)index, chLength);
-                    var reader = new StreamReader(bytesStream);
-                    var json = await reader.ReadToEndAsync();
-                    Profiler.EndSample();
-
-                    var success = await ParseJsonAndLoadBuffers(json, cancellationToken);
+                    var success = await ParseJsonAndLoadBuffers(
+                        bytes,
+                        cancellationToken,
+                        index,
+                        (int)chLength
+                        );
 
                     if (!success)
                     {

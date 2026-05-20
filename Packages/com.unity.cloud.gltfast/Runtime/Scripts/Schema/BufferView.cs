@@ -2,6 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
+using System.Collections.Generic;
+using Unity.Gltfast.Text.Json;
+using Unity.Gltfast.Text.Json.Serialization;
 
 namespace GLTFast.Schema
 {
@@ -38,7 +41,7 @@ namespace GLTFast.Schema
 
     /// <inheritdoc cref="IBufferView"/>
     [Serializable]
-    public abstract class BufferViewBase : NamedObject, IBufferView
+    public abstract class BufferViewBase : NamedObject, IBufferView, IGltfObject
     {
         /// <summary>
         /// The index of the buffer.
@@ -67,6 +70,18 @@ namespace GLTFast.Schema
         /// When this is not provided, the bufferView contains animation or skin data.
         /// </summary>
         public int target;
+
+        /// <inheritdoc cref="Root.extras"/>
+        public UnclassifiedData extras;
+
+        /// <summary>JSON properties without a matching member.</summary>
+        [JsonExtensionData, JsonInclude] internal Dictionary<string, JsonElement> ExtensionsData { get; set; }
+
+        /// <inheritdoc/>
+        public bool TryGetValue<T>(string key, out T value)
+        {
+            return ExtensionsData.TryGetValue(key, out value);
+        }
 
         /// <inheritdoc cref="IBufferView.Buffer"/>
         public int Buffer => buffer;

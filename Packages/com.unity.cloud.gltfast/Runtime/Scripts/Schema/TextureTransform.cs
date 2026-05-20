@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: 2023 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
+using Unity.Gltfast.Text.Json.Serialization;
 using Unity.Mathematics;
 
 namespace GLTFast.Schema
@@ -14,6 +15,7 @@ namespace GLTFast.Schema
         /// <summary>
         /// The offset of the UV coordinate origin as a factor of the texture dimensions.
         /// </summary>
+        [JsonConverter(typeof(Float2ArrayConverter))]
         public float[] offset = { 0, 0 };
 
         /// <summary>
@@ -24,6 +26,7 @@ namespace GLTFast.Schema
         /// <summary>
         /// The scale factor applied to the components of the UV coordinates.
         /// </summary>
+        [JsonConverter(typeof(Float2ArrayConverter))]
         public float[] scale = { 1, 1 };
 
         /// <summary>

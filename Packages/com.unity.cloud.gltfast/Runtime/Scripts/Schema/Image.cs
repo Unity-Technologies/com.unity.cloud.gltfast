@@ -1,6 +1,10 @@
 // SPDX-FileCopyrightText: 2023 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
+using System.Collections.Generic;
+using Unity.Gltfast.Text.Json;
+using Unity.Gltfast.Text.Json.Serialization;
+
 namespace GLTFast.Schema
 {
 
@@ -8,7 +12,7 @@ namespace GLTFast.Schema
     /// Image data used to create a texture.
     /// </summary>
     [System.Serializable]
-    public class Image : NamedObject
+    public class Image : NamedObject, IGltfObject
     {
         /// <summary>
         /// The uri of the image.  Relative paths are relative to the .gltf file.
@@ -27,6 +31,21 @@ namespace GLTFast.Schema
         /// Use this instead of the image's uri property.
         /// </summary>
         public int bufferView = -1;
+
+        /// <inheritdoc cref="Asset.extensions"/>
+        public UnclassifiedData extensions;
+
+        /// <inheritdoc cref="Root.extras"/>
+        public UnclassifiedData extras;
+
+        /// <summary>JSON properties without a matching member.</summary>
+        [JsonExtensionData, JsonInclude] internal Dictionary<string, JsonElement> ExtensionsData { get; set; }
+
+        /// <inheritdoc/>
+        public bool TryGetValue<T>(string key, out T value)
+        {
+            return ExtensionsData.TryGetValue(key, out value);
+        }
 
         internal void GltfSerialize(JsonWriter writer)
         {

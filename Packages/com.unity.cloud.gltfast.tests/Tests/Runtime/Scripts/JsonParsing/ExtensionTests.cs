@@ -4,10 +4,8 @@
 using System;
 
 using GLTFast.Schema;
-#if NEWTONSOFT_JSON
-using Newtonsoft.Json;
-#endif
 using NUnit.Framework;
+using Unity.Gltfast.Text.Json;
 using UnityEngine;
 
 namespace GLTFast.Tests.JsonParsing
@@ -114,9 +112,6 @@ $@"
         [Test]
         public void KnownExtensionOnly()
         {
-#if !NEWTONSOFT_JSON
-            Assert.Ignore("Requires Newtonsoft JSON package to be installed.");
-#else
             const string json = @"
             {
                 ""extensions"": {
@@ -129,7 +124,7 @@ $@"
                 }
             }";
 
-            var gltf = JsonConvert.DeserializeObject<Newtonsoft.Schema.Root>(json);
+            var gltf = JsonSerializer.Deserialize(json, GltfRootSourceGenerator.Default.Root);
             Assert.NotNull(gltf);
             Assert.NotNull(gltf.extensions);
             Assert.NotNull(gltf.extensions.KHR_lights_punctual);
@@ -138,15 +133,11 @@ $@"
             Assert.AreEqual(LightPunctual.Type.Directional, gltf.extensions.KHR_lights_punctual.lights[0].GetLightType());
             Assert.IsFalse(gltf.extensions.TryGetValue<MyExtension>("CUSTOM_my_extension", out var ext));
             Assert.IsNull(ext);
-#endif
         }
 
         [Test]
         public void CustomExtensionOnly()
         {
-#if !NEWTONSOFT_JSON
-            Assert.Ignore("Requires Newtonsoft JSON package to be installed.");
-#else
             var json = $@"
             {{
                 ""extensions"": {{
@@ -154,20 +145,18 @@ $@"
                 }}
             }}";
 
-            var gltf = JsonConvert.DeserializeObject<Newtonsoft.Schema.Root>(json);
+            var gltf = JsonSerializer.Deserialize(json, GltfRootSourceGenerator.Default.Root);
             Assert.NotNull(gltf);
             Assert.NotNull(gltf.extensions);
             Assert.IsNull(gltf.extensions.KHR_lights_punctual);
             Assert.IsTrue(gltf.extensions.TryGetValue<MyExtension>("CUSTOM_my_extension", out var ext));
             CertifyCustomExtensions(gltf.extensions);
-#endif
         }
 
         [Test]
-        public void CustomExtensionJsonUtility()
+        public void CustomExtension()
         {
-            var jsonParser = new GltfJsonUtilityParser();
-            var gltf = jsonParser.ParseJson(k_CustomExtensionJson);
+            var gltf = JsonSerializer.Deserialize(k_CustomExtensionJson, GltfRootSourceGenerator.Default.Root);
             Assert.NotNull(gltf);
             Assert.NotNull(gltf.Extensions);
             Assert.NotNull(gltf.Extensions.KHR_lights_punctual);
@@ -177,12 +166,9 @@ $@"
         }
 
         [Test]
-        public void CustomExtensionNewtonsoft()
+        public void CustomExtensionExtras()
         {
-#if !NEWTONSOFT_JSON
-            Assert.Ignore("Requires Newtonsoft JSON package to be installed.");
-#else
-            var gltf = JsonConvert.DeserializeObject<Newtonsoft.Schema.Root>(k_CustomExtensionJson);
+            var gltf = JsonSerializer.Deserialize(k_CustomExtensionJson, GltfRootSourceGenerator.Default.Root);
             Assert.NotNull(gltf);
             Assert.NotNull(gltf.extensions);
             Assert.NotNull(gltf.extensions.KHR_lights_punctual);
@@ -191,15 +177,11 @@ $@"
             Assert.AreEqual(LightPunctual.Type.Directional, gltf.extensions.KHR_lights_punctual.lights[0].GetLightType());
             Assert.IsTrue(gltf.extensions.TryGetValue<MyExtension>("CUSTOM_my_extension", out var ext));
             CertifyCustomExtensions(gltf.extensions);
-#endif
         }
 
         [Test]
         public void CustomExtensionEverywhere()
         {
-#if !NEWTONSOFT_JSON
-            Assert.Ignore("Requires Newtonsoft JSON package to be installed.");
-#else
             var json = $@"
 {{
     ""accessors"": [{{
@@ -294,28 +276,28 @@ $@"
             ""baseColorTexture"": {{
                 ""customProperty"": 5000,
                 ""extras"": {{""myKey"": ""myValue""}},
-                ""extensions"": {{""CUSTOM_my_extension"": {k_CustomContent}}},
+                ""extensions"": {{""CUSTOM_my_extension"": {k_CustomContent}}}
             }},
             ""metallicRoughnessTexture"": {{
                 ""customProperty"": 5001,
                 ""extras"": {{""myKey"": ""myValue""}},
-                ""extensions"": {{""CUSTOM_my_extension"": {k_CustomContent}}},
+                ""extensions"": {{""CUSTOM_my_extension"": {k_CustomContent}}}
             }}
         }},
         ""emissiveTexture"": {{
             ""customProperty"": 501,
             ""extras"": {{""myKey"": ""myValue""}},
-            ""extensions"": {{""CUSTOM_my_extension"": {k_CustomContent}}},
+            ""extensions"": {{""CUSTOM_my_extension"": {k_CustomContent}}}
         }},
         ""normalTexture"": {{
             ""customProperty"": 502,
             ""extras"": {{""myKey"": ""myValue""}},
-            ""extensions"": {{""CUSTOM_my_extension"": {k_CustomContent}}},
+            ""extensions"": {{""CUSTOM_my_extension"": {k_CustomContent}}}
         }},
         ""occlusionTexture"": {{
             ""customProperty"": 503,
             ""extras"": {{""myKey"": ""myValue""}},
-            ""extensions"": {{""CUSTOM_my_extension"": {k_CustomContent}}},
+            ""extensions"": {{""CUSTOM_my_extension"": {k_CustomContent}}}
         }}
     }}],
     ""meshes"": [{{
@@ -356,7 +338,7 @@ $@"
     }}]
 }}";
 
-            var gltf = JsonConvert.DeserializeObject<Newtonsoft.Schema.Root>(json);
+            var gltf = JsonSerializer.Deserialize(json, GltfRootSourceGenerator.Default.Root);
 
             CertifyCustomData(gltf, 48);
             CertifyCustomExtensions(gltf.extensions);
@@ -479,18 +461,16 @@ $@"
             CertifyCustomData(gltf.textures[0], 56);
             CertifyCustomExtensions(gltf.textures[0].extensions);
             CertifyCustomExtras(gltf.textures[0].extras);
-#endif
         }
 
-#if NEWTONSOFT_JSON
-        static void CertifyCustomData(GLTFast.Newtonsoft.Schema.IJsonObject gltf, int expected)
+        static void CertifyCustomData(IGltfObject gltf, int expected)
         {
             Assert.NotNull(gltf);
             Assert.IsTrue(gltf.TryGetValue("customProperty", out int prop));
             Assert.AreEqual(expected, prop);
         }
 
-        static void CertifyCustomExtensions(GLTFast.Newtonsoft.Schema.IJsonObject extensions)
+        static void CertifyCustomExtensions(IGltfObject extensions)
         {
             Assert.NotNull(extensions);
             Assert.IsFalse(extensions.TryGetValue<MyExtension>("NO_MATCH", out _));
@@ -526,7 +506,7 @@ $@"
             }
         }
 
-        static void CertifyCustomExtras(GLTFast.Newtonsoft.Schema.IJsonObject extras)
+        static void CertifyCustomExtras(IGltfObject extras)
         {
             Assert.NotNull(extras);
             Assert.IsFalse(extras.TryGetValue("NoMatch", out int _));
@@ -534,15 +514,13 @@ $@"
             Assert.AreEqual("myValue", value);
 
             // incorrect destination type int (actually is a string)
-            Assert.Throws<FormatException>(
+            Assert.Throws<JsonException>(
                 () => extras.TryGetValue("myKey", out int intValue));
         }
-#endif
 
         [Test]
         public void CustomExtensionNowhere()
         {
-#if NEWTONSOFT_JSON
             const string json = @"
 {
     ""accessors"": [{}],
@@ -563,7 +541,7 @@ $@"
 }
             ";
 
-            var gltf = JsonConvert.DeserializeObject<Newtonsoft.Schema.Root>(json);
+            var gltf = JsonSerializer.Deserialize(json, GltfRootSourceGenerator.Default.Root);
 
             Assert.NotNull(gltf);
             Assert.IsNull(gltf.extras);
@@ -612,9 +590,6 @@ $@"
 
             Assert.IsNull(gltf.textures[0].extras);
             Assert.IsNull(gltf.textures[0].Extensions);
-#else
-            Assert.Ignore("Requires Newtonsoft JSON package to be installed.");
-#endif
         }
     }
 }

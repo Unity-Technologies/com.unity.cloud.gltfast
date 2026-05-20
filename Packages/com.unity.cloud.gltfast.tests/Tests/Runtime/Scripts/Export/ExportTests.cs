@@ -13,14 +13,11 @@ using System;
 using System.Collections;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 using GLTFast.Export;
 using GLTFast.Logging;
-using Newtonsoft.Json.Linq;
 using NUnit.Framework;
-using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
@@ -53,10 +50,6 @@ namespace GLTFast.Tests.Export
         const string k_SceneNameUniversal = "ExportSceneUniversal";
 
         const string k_ScenesPath = "/Tests/Runtime/Export/Scenes/";
-
-        const string k_ColorPropertyPattern = @"\.(?<property>\w*[cC]olor\w*)(\[\d+\])?$";
-        static readonly Regex k_ColorPropertyRegex = new Regex(k_ColorPropertyPattern, RegexOptions.CultureInvariant, TimeSpan.FromSeconds(1));
-
 
 #if UNITY_EDITOR
 
@@ -746,10 +739,7 @@ namespace GLTFast.Tests.Export
             var targetJson = await LoadGltfJsonReference(testName, rpSubfolder);
 #endif
 
-            CompareGltfJsonTokenRecursively(
-                JToken.Parse(targetJson),
-                JToken.Parse(File.ReadAllText(resultPath))
-                );
+            GltfJsonComparer.Compare(targetJson, File.ReadAllText(resultPath));
         }
 
 #if !LOAD_REFERENCE_SYNC
@@ -783,84 +773,6 @@ namespace GLTFast.Tests.Export
             }
         }
 #endif
-
-        static void CompareGltfJsonTokenRecursively(JToken tokenA, JToken tokenB)
-        {
-
-            foreach (var (a, b) in tokenA.Zip(tokenB, Tuple.Create))
-            {
-                Assert.AreEqual(a.Path, b.Path, $"Path mismatch ({a.Path} != {b.Path}");
-                // Assert.AreEqual(a.Type,b.Type, $"Type mismatch at {a.Path} ({a.Type} != {b.Type}");
-                if (a.Type != b.Type)
-                {
-                    if (
-                        (a.Type == JTokenType.Float && b.Type != JTokenType.Integer)
-                        || (a.Type == JTokenType.Integer && b.Type != JTokenType.Float)
-                    )
-                    {
-                        throw new AssertionException($"Type mismatch at {a.Path} ({a.Type} != {b.Type}");
-                    }
-                }
-                if (a is JValue && b is JValue)
-                {
-                    switch (a.Type)
-                    {
-                        case JTokenType.Float:
-                            var expected = a.Value<double>();
-                            var actual = b.Value<double>();
-                            var isColor = k_ColorPropertyRegex.Match(a.Path).Success;
-                            // Colors usually undergo a gamma to linear conversion, hence a bit more tolerance.
-                            var tolerance = isColor ? 6E-06f : 6E-08f;
-                            Assert.That(actual, Is.EqualTo(expected).Within(tolerance), $"Value mismatch at {a.Path}.");
-                            break;
-                        case JTokenType.Integer:
-                            Assert.AreEqual(a.Value<int>(), b.Value<int>(), $"Value mismatch at {a.Path}.");
-                            break;
-                        case JTokenType.String:
-                            Assert.AreEqual(a.Value<string>(), b.Value<string>(), $"Value mismatch at {a.Path}.");
-                            break;
-                        case JTokenType.Boolean:
-                            Assert.AreEqual(a.Value<bool>(), b.Value<bool>(), $"Value mismatch at {a.Path}.");
-                            break;
-                        default:
-                            Assert.AreEqual(a, b, $"Value mismatch at {a.Path}.");
-                            break;
-                    }
-                }
-
-                // asset.generator usually contains differing Unity and glTFast versions, so we ignore its value
-                if (a.Path == "asset.generator") continue;
-
-                CompareGltfJsonTokenRecursively(a, b);
-            }
-
-            if (tokenA is JObject objA && tokenB is JObject objB)
-            {
-                if (objA.Count > objB.Count)
-                {
-                    AssertMissingProperties(objA, objB, true);
-                }
-                else if (objA.Count < objB.Count)
-                {
-                    AssertMissingProperties(objB, objA, false);
-                }
-            }
-
-            void AssertMissingProperties(JObject largerObject, JObject smallerObject, bool expected)
-            {
-                var i = 0;
-                foreach (var pair in largerObject)
-                {
-                    if (i < smallerObject.Count)
-                    {
-                        i++;
-                        continue;
-                    }
-
-                    throw new AssertionException($"{(expected ? "Missing" : "Unexpected")} property \"{pair.Key}\" at {largerObject.Path}.");
-                }
-            }
-        }
 
         static async Task ExportSceneAll(bool binary, bool toStream = false)
         {

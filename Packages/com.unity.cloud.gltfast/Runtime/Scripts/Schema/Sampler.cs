@@ -2,6 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
+using System.Collections.Generic;
+using Unity.Gltfast.Text.Json;
+using Unity.Gltfast.Text.Json.Serialization;
 using UnityEngine;
 
 namespace GLTFast.Schema
@@ -10,9 +13,8 @@ namespace GLTFast.Schema
     /// Texture sampler properties for filtering and wrapping modes.
     /// </summary>
     [Serializable]
-    public class Sampler : NamedObject
+    public class Sampler : NamedObject, IGltfObject
     {
-
         /// <summary>
         /// Magnification filter mode.
         /// </summary>
@@ -82,6 +84,21 @@ namespace GLTFast.Schema
         /// t wrapping mode.  All valid values correspond to WebGL enums.
         /// </summary>
         public WrapMode wrapT = WrapMode.Repeat;
+
+        /// <inheritdoc cref="Asset.extensions"/>
+        public UnclassifiedData extensions;
+
+        /// <inheritdoc cref="Root.extras"/>
+        public UnclassifiedData extras;
+
+        /// <summary>JSON properties without a matching member.</summary>
+        [JsonExtensionData, JsonInclude] internal Dictionary<string, JsonElement> ExtensionsData { get; set; }
+
+        /// <inheritdoc/>
+        public bool TryGetValue<T>(string key, out T value)
+        {
+            return ExtensionsData.TryGetValue(key, out value);
+        }
 
         /// <summary>
         /// Unity filter mode, derived from glTF's
