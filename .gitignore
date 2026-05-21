@@ -69,6 +69,8 @@ graphify-out/cache
 graphify-out/cost.json
 graphify-out/graph.html
 graphify-out/manifest.json
+# Graphify cache in sub-folders
+**/graphify-out/cache
 
 # Claude Code
 .claude/worktrees
