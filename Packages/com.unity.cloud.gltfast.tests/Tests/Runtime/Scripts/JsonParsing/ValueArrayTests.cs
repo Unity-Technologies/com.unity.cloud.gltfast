@@ -5,7 +5,11 @@ using System;
 using System.Collections.Generic;
 using GLTFast.Schema;
 using NUnit.Framework;
+#if UNITY_6000_5_OR_NEWER
+using System.Text.Json;
+#else
 using Unity.Gltfast.Text.Json;
+#endif
 using UnityEngine;
 
 namespace GLTFast.Tests.JsonParsing

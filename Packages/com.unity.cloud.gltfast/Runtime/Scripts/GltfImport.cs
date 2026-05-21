@@ -32,6 +32,12 @@ using System.Threading.Tasks;
 using System.Threading;
 using System;
 using System.Text;
+
+#if UNITY_6000_5_OR_NEWER
+using System.Text.Json;
+#else
+using Unity.Gltfast.Text.Json;
+#endif
 using GLTFast.Addons;
 using GLTFast.Animations;
 using GLTFast.Jobs;
@@ -1430,7 +1436,7 @@ namespace GLTFast
         /// <returns>De-serialized glTF root object.</returns>
         protected static RootBase ParseJson(ReadOnlySpan<byte> json)
         {
-            return Unity.Gltfast.Text.Json.JsonSerializer.Deserialize(json, GltfRootSourceGenerator.Default.Root);
+            return JsonSerializer.Deserialize(json, GltfRootSourceGenerator.Default.Root);
         }
 
         /// <summary>

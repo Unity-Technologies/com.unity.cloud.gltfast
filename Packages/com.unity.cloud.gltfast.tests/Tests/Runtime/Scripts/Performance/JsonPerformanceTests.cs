@@ -6,7 +6,11 @@ using System.IO;
 using GLTFast.Schema;
 using NUnit.Framework;
 using Unity.Collections;
+#if UNITY_6000_5_OR_NEWER
+using System.Text.Json;
+#else
 using Unity.Gltfast.Text.Json;
+#endif
 using Unity.PerformanceTesting;
 using UnityEngine;
 using UnityEngine.Profiling;

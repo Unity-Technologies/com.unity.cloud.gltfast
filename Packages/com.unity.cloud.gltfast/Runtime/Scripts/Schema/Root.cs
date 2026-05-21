@@ -4,8 +4,13 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+#if UNITY_6000_5_OR_NEWER
+using System.Text.Json;
+using System.Text.Json.Serialization;
+#else
 using Unity.Gltfast.Text.Json;
 using Unity.Gltfast.Text.Json.Serialization;
+#endif
 
 using UnityEngine.Assertions;
 using UnityEngine.Profiling;

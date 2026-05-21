@@ -1,5 +1,9 @@
 using System;
+#if UNITY_6000_5_OR_NEWER
+using System.Text.Json.Serialization;
+#else
 using Unity.Gltfast.Text.Json.Serialization;
+#endif
 using UnityEngine;
 
 namespace GLTFast.Schema

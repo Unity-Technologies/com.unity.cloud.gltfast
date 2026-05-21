@@ -7,7 +7,11 @@ using GLTFast.Schema;
 using Meshoptimizer;
 #endif
 using NUnit.Framework;
+#if UNITY_6000_5_OR_NEWER
+using System.Text.Json;
+#else
 using Unity.Gltfast.Text.Json;
+#endif
 using UnityEngine;
 using Camera = GLTFast.Schema.Camera;
 using Material = GLTFast.Schema.Material;

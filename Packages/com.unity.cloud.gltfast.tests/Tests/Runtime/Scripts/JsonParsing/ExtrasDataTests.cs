@@ -6,7 +6,11 @@ using NUnit.Framework;
 using UnityEngine;
 
 using GLTFast.Schema;
+#if UNITY_6000_5_OR_NEWER
+using System.Text.Json;
+#else
 using Unity.Gltfast.Text.Json;
+#endif
 
 namespace GLTFast.Tests.JsonParsing
 {
