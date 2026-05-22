@@ -15,7 +15,7 @@ namespace GLTFast
         /// </summary>
         /// <param name="root">glTF Root object</param>
         /// <returns>True if the skeleton property on any skin is not set, false otherwise.</returns>
-        internal static bool IsASkeletonMissing(this RootBase root)
+        internal static bool IsASkeletonMissing(this Root root)
         {
             if (root.Skins != null)
             {

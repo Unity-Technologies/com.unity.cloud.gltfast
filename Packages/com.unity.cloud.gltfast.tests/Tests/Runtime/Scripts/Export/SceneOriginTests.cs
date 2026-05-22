@@ -72,7 +72,7 @@ namespace GLTFast.Tests.Export
                 Is.EqualTo(new double3(10, 10, 10)).Using(s_Vector3Comparer));
         }
 
-        static async Task<NodeBase> ExportScene(
+        static async Task<Node> ExportScene(
             float3 parentPosition,
             float3 nodePosition,
             double4x4? sceneOrigin = null

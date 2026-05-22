@@ -28,26 +28,16 @@ namespace GLTFast.Schema
         ElementArrayBuffer = 34963,
     }
 
-    /// <inheritdoc/>
-    [Serializable]
-    public class BufferView : BufferViewBase<BufferViewExtensions> { }
-
-    /// <inheritdoc/>
-    [Serializable]
-    public class BufferViewBase<TExtensions> : BufferViewBase
-    where TExtensions : BufferViewExtensions
-    {
-        /// <inheritdoc cref="Extensions"/>
-        public TExtensions extensions;
-
-        /// <inheritdoc cref="BufferViewBase.Extensions"/>
-        public override BufferViewExtensions Extensions => extensions;
-    }
-
     /// <inheritdoc cref="IBufferView"/>
     [Serializable]
-    public abstract class BufferViewBase : NamedObject, IBufferView, IGltfObject
+    public class BufferView : NamedObject, IBufferView, IGltfObject
     {
+        /// <inheritdoc cref="Extensions"/>
+        public BufferViewExtensions extensions;
+
+        /// <inheritdoc cref="BufferViewExtensions"/>
+        public BufferViewExtensions Extensions => extensions;
+
         /// <summary>
         /// The index of the buffer.
         /// </summary>
@@ -119,8 +109,5 @@ namespace GLTFast.Schema
             }
             writer.Close();
         }
-
-        /// <inheritdoc cref="BufferViewExtensions"/>
-        public abstract BufferViewExtensions Extensions { get; }
     }
 }

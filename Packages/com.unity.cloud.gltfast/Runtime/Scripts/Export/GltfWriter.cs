@@ -1672,7 +1672,7 @@ namespace GLTFast.Export
 
                 mesh.primitives[submesh] = new MeshPrimitive
                 {
-                    extensions = new MeshPrimitiveExtensions
+                    Extensions = new MeshPrimitiveExtensions
                     {
                         KHR_draco_mesh_compression = new MeshPrimitiveDracoExtension
                         {

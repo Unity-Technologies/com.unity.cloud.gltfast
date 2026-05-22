@@ -2,10 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
-using GLTFast.Schema;
 
 namespace GLTFast.Newtonsoft.Schema
 {
     [Obsolete("Use GLTFast.Schema.PbrMetallicRoughness instead.")]
-    public class PbrMetallicRoughness : PbrMetallicRoughnessBase<TextureInfo>, IJsonObject { }
+    public class PbrMetallicRoughness : GLTFast.Schema.PbrMetallicRoughness, IJsonObject { }
 }

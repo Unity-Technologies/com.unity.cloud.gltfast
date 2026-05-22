@@ -44,7 +44,7 @@ namespace GLTFast.Documentation.Examples
 
             public override void Dispose() { }
 
-            public override void Inject(GltfImportBase gltfImport)
+            public override void Inject(GltfImport gltfImport)
             {
                 var import = gltfImport as GltfImport;
                 if (import == null)
@@ -88,7 +88,7 @@ namespace GLTFast.Documentation.Examples
         void OnNodeCreated(uint nodeIndex, GameObject gameObject)
         {
             // De-serialize glTF JSON
-            var gltf = m_GltfImport.GetSourceRoot();
+            var gltf = m_GltfImport.Root;
 
             var node = gltf.Nodes[(int)nodeIndex];
             var extras = node?.extras;

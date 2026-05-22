@@ -12,6 +12,7 @@ using GLTFast.Schema;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Assertions;
+using Material = GLTFast.Schema.Material;
 #if USING_URP
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
@@ -308,7 +309,7 @@ namespace GLTFast.Materials
 
         /// <inheritdoc />
         public abstract UnityEngine.Material GenerateMaterial(
-            MaterialBase gltfMaterial,
+            Material gltfMaterial,
             IGltfReadable gltf,
             bool pointsSupport = false
             );
@@ -331,7 +332,7 @@ namespace GLTFast.Materials
         /// <param name="uvChannelPropertyId">UV channel selection property</param>
         /// <returns>True if texture assignment was successful, false otherwise.</returns>
         protected bool TrySetTexture(
-            TextureInfoBase textureInfo,
+            TextureInfo textureInfo,
             UnityEngine.Material material,
             IGltfReadable gltf,
             int texturePropertyId,
@@ -384,7 +385,7 @@ namespace GLTFast.Materials
         // }
 
         void TrySetTextureTransform(
-            TextureInfoBase textureInfo,
+            TextureInfo textureInfo,
             UnityEngine.Material material,
             int texturePropertyId,
             int scaleTransformPropertyId = -1,

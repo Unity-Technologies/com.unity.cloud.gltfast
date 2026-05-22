@@ -109,7 +109,7 @@ namespace GLTFast.Tests
             var result = new MeshPrimitive
             {
                 material = seed == 0 ? -1 : seed,
-                extensions = new MeshPrimitiveExtensions
+                Extensions = new MeshPrimitiveExtensions
                 {
                     KHR_materials_variants = new MaterialsVariantsMeshPrimitiveExtension
                     {
@@ -120,7 +120,7 @@ namespace GLTFast.Tests
 
             for (var variant = 0; variant < variantsCount + 2; variant += 3)
             {
-                result.extensions.KHR_materials_variants.mappings.Add(
+                result.Extensions.KHR_materials_variants.mappings.Add(
                     new MaterialVariantsMapping { material = seed + (variant + 3) / 3 * 100, variants = new[] { variant, variant + 1 } }
                     );
             }

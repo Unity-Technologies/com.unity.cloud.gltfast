@@ -18,11 +18,12 @@ using UnityEngine;
 using UnityEngine.Rendering;
 
 using Material = UnityEngine.Material;
+using GltfMaterial = GLTFast.Schema.Material;
 
 namespace GLTFast.Materials
 {
 
-    using AlphaMode = MaterialBase.AlphaMode;
+    using AlphaMode = GLTFast.Schema.Material.AlphaMode;
 
     public class ShaderGraphMaterialGenerator : MaterialGenerator
     {
@@ -203,7 +204,7 @@ namespace GLTFast.Materials
 
         /// <inheritdoc />
         public override Material GenerateMaterial(
-            MaterialBase gltfMaterial,
+            GltfMaterial gltfMaterial,
             IGltfReadable gltf,
             bool pointsSupport = false
             )
@@ -496,7 +497,7 @@ namespace GLTFast.Materials
             return mat;
         }
 
-        Material GetUnlitMaterial(MaterialBase gltfMaterial)
+        Material GetUnlitMaterial(GltfMaterial gltfMaterial)
         {
             Shader shader = GetUnlitShader(gltfMaterial);
             if (shader == null)
@@ -540,7 +541,7 @@ namespace GLTFast.Materials
         }
 
         // ReSharper disable once UnusedParameter.Local
-        Shader GetUnlitShader(MaterialBase gltfMaterial)
+        Shader GetUnlitShader(GltfMaterial gltfMaterial)
         {
             if (!s_UnlitShaderQueried)
             {
@@ -597,12 +598,12 @@ namespace GLTFast.Materials
 #endif
         }
 
-        protected virtual void SetDoubleSided(MaterialBase gltfMaterial, Material material)
+        protected virtual void SetDoubleSided(GltfMaterial gltfMaterial, Material material)
         {
             material.doubleSidedGI = true;
         }
 
-        protected virtual void SetAlphaModeMask(MaterialBase gltfMaterial, Material material)
+        protected virtual void SetAlphaModeMask(GltfMaterial gltfMaterial, Material material)
         {
             material.SetFloat(MaterialProperty.AlphaCutoff, gltfMaterial.alphaCutoff);
             material.EnableKeyword(AlphaTestOnKeyword);
@@ -610,9 +611,9 @@ namespace GLTFast.Materials
             material.SetFloat(ZTestGBufferProperty, (int)CompareFunction.Equal); //3
         }
 
-        protected virtual void SetShaderModeOpaque(MaterialBase gltfMaterial, Material material) { }
-        protected virtual void SetShaderModeBlend(MaterialBase gltfMaterial, Material material) { }
-        protected virtual void SetShaderModePremultiply(MaterialBase gltfMaterial, Material material) { }
+        protected virtual void SetShaderModeOpaque(GltfMaterial gltfMaterial, Material material) { }
+        protected virtual void SetShaderModeBlend(GltfMaterial gltfMaterial, Material material) { }
+        protected virtual void SetShaderModePremultiply(GltfMaterial gltfMaterial, Material material) { }
 
         protected virtual RenderQueue? ApplyTransmission(
             ref Color baseColorLinear,
@@ -638,7 +639,7 @@ namespace GLTFast.Materials
             return renderQueue;
         }
 
-        protected MetallicShaderFeatures GetMetallicShaderFeatures(MaterialBase gltfMaterial)
+        protected MetallicShaderFeatures GetMetallicShaderFeatures(GltfMaterial gltfMaterial)
         {
 
             var feature = MetallicShaderFeatures.Default;
@@ -673,7 +674,7 @@ namespace GLTFast.Materials
             return feature;
         }
 
-        protected virtual ShaderMode? ApplyTransmissionShaderFeatures(MaterialBase gltfMaterial)
+        protected virtual ShaderMode? ApplyTransmissionShaderFeatures(GltfMaterial gltfMaterial)
         {
             // Makeshift approximation
             Color baseColorLinear = Color.white;
@@ -685,7 +686,7 @@ namespace GLTFast.Materials
             return sm;
         }
 
-        static SpecularShaderFeatures GetSpecularShaderFeatures(MaterialBase gltfMaterial)
+        static SpecularShaderFeatures GetSpecularShaderFeatures(GltfMaterial gltfMaterial)
         {
 
             var feature = SpecularShaderFeatures.Default;

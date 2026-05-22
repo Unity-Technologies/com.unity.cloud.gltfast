@@ -16,75 +16,54 @@ using UnityEngine.Serialization;
 
 namespace GLTFast.Schema
 {
-    /// <inheritdoc />
-    [Serializable]
-    public class Material : MaterialBase<
-        MaterialExtensions,
-        NormalTextureInfo,
-        OcclusionTextureInfo,
-        PbrMetallicRoughness,
-        TextureInfo,
-        TextureInfoExtensions
-    >
-    { }
-
-    /// <inheritdoc />
-    /// <typeparam name="TExtensions">Material extensions type</typeparam>
-    /// <typeparam name="TNormalTextureInfo">normalTextureInfo type</typeparam>
-    /// <typeparam name="TOcclusionTextureInfo">occlusionTextureInfo type</typeparam>
-    /// <typeparam name="TPbrMetallicRoughness">PBR Metallic Roughness type</typeparam>
-    /// <typeparam name="TTextureInfo">textureInfo type</typeparam>
-    /// <typeparam name="TTextureInfoExtensions">textureInfo extensions type</typeparam>
-    [Serializable]
-    public abstract class MaterialBase<
-        TExtensions,
-        TNormalTextureInfo,
-        TOcclusionTextureInfo,
-        TPbrMetallicRoughness,
-        TTextureInfo,
-        TTextureInfoExtensions
-        > : MaterialBase
-    where TExtensions : MaterialExtensions
-    where TNormalTextureInfo : NormalTextureInfoBase
-    where TOcclusionTextureInfo : OcclusionTextureInfoBase
-    where TPbrMetallicRoughness : PbrMetallicRoughnessBase
-    where TTextureInfo : TextureInfoBase
-    where TTextureInfoExtensions : TextureInfoExtensions
-    {
-
-        /// <inheritdoc cref="EmissiveTexture"/>
-        public TTextureInfo emissiveTexture;
-        /// <inheritdoc cref="Extensions"/>
-        public TExtensions extensions;
-        /// <inheritdoc cref="NormalTexture"/>
-        public TNormalTextureInfo normalTexture;
-        /// <inheritdoc cref="OcclusionTexture"/>
-        public TOcclusionTextureInfo occlusionTexture;
-        /// <inheritdoc cref="PbrMetallicRoughness"/>
-        public TPbrMetallicRoughness pbrMetallicRoughness;
-
-        /// <inheritdoc />
-        public override MaterialExtensions Extensions => extensions;
-
-        /// <inheritdoc />
-        public override PbrMetallicRoughnessBase PbrMetallicRoughness => pbrMetallicRoughness;
-
-        /// <inheritdoc />
-        public override NormalTextureInfoBase NormalTexture => normalTexture;
-
-        /// <inheritdoc />
-        public override OcclusionTextureInfoBase OcclusionTexture => occlusionTexture;
-
-        /// <inheritdoc />
-        public override TextureInfoBase EmissiveTexture => emissiveTexture;
-    }
-
     /// <summary>
     /// The material appearance of a primitive.
     /// </summary>
     [Serializable]
-    public abstract class MaterialBase : NamedObject, IGltfObject
+    public class Material : NamedObject, IGltfObject
     {
+        /// <inheritdoc cref="EmissiveTexture"/>
+        public TextureInfo emissiveTexture;
+        /// <inheritdoc cref="Extensions"/>
+        public MaterialExtensions extensions;
+        /// <inheritdoc cref="NormalTexture"/>
+        public NormalTextureInfo normalTexture;
+        /// <inheritdoc cref="OcclusionTexture"/>
+        public OcclusionTextureInfo occlusionTexture;
+        /// <inheritdoc cref="PbrMetallicRoughness"/>
+        public PbrMetallicRoughness pbrMetallicRoughness;
+
+        /// <summary>
+        /// Material extensions.
+        /// </summary>
+        public MaterialExtensions Extensions => extensions;
+
+        /// <summary>
+        /// A set of parameter values that are used to define the metallic-roughness
+        /// material model from Physically-Based Rendering (PBR) methodology.
+        /// </summary>
+        public PbrMetallicRoughness PbrMetallicRoughness => pbrMetallicRoughness;
+
+        /// <summary>
+        /// A tangent space normal map. Each texel represents the XYZ components of a
+        /// normal vector in tangent space.
+        /// </summary>
+        public NormalTextureInfo NormalTexture => normalTexture;
+
+        /// <summary>
+        /// The occlusion map is a greyscale texture, with white indicating areas that
+        /// should receive full indirect lighting and black indicating no indirect
+        /// lighting.
+        /// </summary>
+        public OcclusionTextureInfo OcclusionTexture => occlusionTexture;
+
+        /// <summary>
+        /// The emissive map controls the color and intensity of the light being emitted
+        /// by the material. This texture contains RGB components in sRGB color space.
+        /// If a fourth component (A) is present, it is ignored.
+        /// </summary>
+        public TextureInfo EmissiveTexture => emissiveTexture;
+
 
         /// <summary>
         /// The material’s alpha rendering mode enumeration specifying the
@@ -112,42 +91,6 @@ namespace GLTFast.Schema
             /// </summary>
             Blend
         }
-
-        /// <summary>
-        /// Material extensions.
-        /// </summary>
-        public abstract MaterialExtensions Extensions { get; }
-
-        /// <summary>
-        /// A set of parameter values that are used to define the metallic-roughness
-        /// material model from Physically-Based Rendering (PBR) methodology.
-        /// </summary>
-        public abstract PbrMetallicRoughnessBase PbrMetallicRoughness { get; }
-
-        // /// <summary>
-        // /// A set of parameter values used to light flat-shaded materials
-        // /// </summary>
-        // public MaterialCommonConstant CommonConstant;
-
-        /// <summary>
-        /// A tangent space normal map. Each texel represents the XYZ components of a
-        /// normal vector in tangent space.
-        /// </summary>
-        public abstract NormalTextureInfoBase NormalTexture { get; }
-
-        /// <summary>
-        /// The occlusion map is a greyscale texture, with white indicating areas that
-        /// should receive full indirect lighting and black indicating no indirect
-        /// lighting.
-        /// </summary>
-        public abstract OcclusionTextureInfoBase OcclusionTexture { get; }
-
-        /// <summary>
-        /// The emissive map controls the color and intensity of the light being emitted
-        /// by the material. This texture contains RGB components in sRGB color space.
-        /// If a fourth component (A) is present, it is ignored.
-        /// </summary>
-        public abstract TextureInfoBase EmissiveTexture { get; }
 
         /// <summary>
         /// The RGB components of the emissive color of the material.

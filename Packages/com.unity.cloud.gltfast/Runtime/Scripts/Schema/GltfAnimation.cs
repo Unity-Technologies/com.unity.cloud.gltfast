@@ -18,45 +18,31 @@ namespace GLTFast.Schema
 {
 
 #if UNITY_ANIMATION || GLTFAST_ANIMATION
-    /// <inheritdoc />
-    [Serializable]
-    public class Animation : AnimationBase<AnimationChannel, AnimationSampler> { }
-
-    /// <inheritdoc />
-    /// <typeparam name="TChannel">Animation channel type</typeparam>
-    /// <typeparam name="TSampler">Animation sampler type</typeparam>
-    [Serializable]
-    public abstract class AnimationBase<TChannel, TSampler> : AnimationBase
-        where TChannel : AnimationChannelBase
-        where TSampler : AnimationSampler
-    {
-        public TChannel[] channels;
-        public TSampler[] samplers;
-
-        public override IReadOnlyList<AnimationChannelBase> Channels => channels;
-
-        public override IReadOnlyList<AnimationSampler> Samplers => samplers;
-    }
-
     /// <summary>
     /// A keyframe animation.
     /// </summary>
     /// <seealso href="https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html#reference-animation"/>
     [Serializable]
-    public abstract class AnimationBase : NamedObject, IGltfObject
+    public class Animation : NamedObject, IGltfObject
     {
+        /// <inheritdoc cref="Channels"/>
+        public AnimationChannel[] channels;
+
+        /// <inheritdoc cref="Samplers"/>
+        public AnimationSampler[] samplers;
+
         /// <summary>
         /// An array of channels, each of which targets an animation's sampler at a
         /// node's property. Different channels of the same animation can't have equal
         /// targets.
         /// </summary>
-        public abstract IReadOnlyList<AnimationChannelBase> Channels { get; }
+        public IReadOnlyList<AnimationChannel> Channels => channels;
 
         /// <summary>
         /// An array of samplers that combines input and output accessors with an
         /// interpolation algorithm to define a keyframe graph (but not its target).
         /// </summary>
-        public abstract IReadOnlyList<AnimationSampler> Samplers { get; }
+        public IReadOnlyList<AnimationSampler> Samplers => samplers;
 
         /// <inheritdoc cref="Asset.extensions"/>
         public UnclassifiedData extensions;
@@ -73,7 +59,8 @@ namespace GLTFast.Schema
             return ExtensionsData.TryGetValue(key, out value);
         }
 
-        internal void GltfSerialize(JsonWriter writer) {
+        internal void GltfSerialize(JsonWriter writer)
+        {
             writer.AddObject();
             GltfSerializeName(writer);
             writer.Close();
@@ -81,14 +68,11 @@ namespace GLTFast.Schema
         }
     }
 #else
-    // Empty placeholder classes used in generic type definitions
-    /// <inheritdoc />
-    public class Animation : AnimationBase { }
-
+    // Empty placeholder class used when animation is not enabled.
     /// <summary>
     /// A keyframe animation.
     /// </summary>
     /// <seealso href="https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html#reference-animation"/>
-    public abstract class AnimationBase { }
+    public class Animation { }
 #endif // UNITY_ANIMATION || GLTFAST_ANIMATION
 }

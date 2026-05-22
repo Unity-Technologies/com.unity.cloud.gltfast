@@ -47,7 +47,8 @@ namespace GLTFast.Schema
             return ExtensionsData.TryGetValue(key, out value);
         }
 
-        public AnimationChannel.Path GetPath() {
+        public AnimationChannel.Path GetPath()
+        {
             if (m_Path != AnimationChannel.Path.Unknown)
             {
                 return m_Path;

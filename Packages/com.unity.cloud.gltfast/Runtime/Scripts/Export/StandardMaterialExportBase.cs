@@ -181,10 +181,10 @@ namespace GLTFast.Export
                 };
                 if (mainTex != null)
                 {
-                    material.pbrMetallicRoughness.baseColorTexture = ExportTextureInfo(mainTex, gltf);
-                    if (material.pbrMetallicRoughness.baseColorTexture != null)
+                    material.pbrMetallicRoughness.BaseColorTexture = ExportTextureInfo(mainTex, gltf);
+                    if (material.pbrMetallicRoughness.BaseColorTexture != null)
                     {
-                        ExportTextureTransform(material.pbrMetallicRoughness.baseColorTexture, uMaterial, mainTexProperty, gltf);
+                        ExportTextureTransform(material.pbrMetallicRoughness.BaseColorTexture, uMaterial, mainTexProperty, gltf);
                     }
                 }
                 if (uMaterial.HasProperty(k_TintColor))
@@ -329,7 +329,7 @@ namespace GLTFast.Export
                 {
                     if (mainTex is Texture2D)
                     {
-                        pbr.baseColorTexture = ExportTextureInfo(
+                        pbr.BaseColorTexture = ExportTextureInfo(
                             mainTex,
                             gltf,
                             // Force RGB for the baseColor, so that the alpha (which is smoothness)
@@ -370,21 +370,21 @@ namespace GLTFast.Export
                     // smoothness channel * smoothnessFactor will be baked into ORM texture.
                     pbr.roughnessFactor = 1f;
                 }
-                pbr.metallicRoughnessTexture ??= new TextureInfo();
+                pbr.MetallicRoughnessTexture ??= new TextureInfo();
                 if (HasMetallicGlossMap(uMaterial))
                 {
                     pbr.metallicFactor = 1.0f;
                 }
-                ExportTextureTransform(pbr.metallicRoughnessTexture, uMaterial, k_MetallicGlossMap, gltf);
+                ExportTextureTransform(pbr.MetallicRoughnessTexture, uMaterial, k_MetallicGlossMap, gltf);
             }
 
             if (smoothnessSourceAlbedoAlpha && uMaterial.GetTexture(mainTexProperty) is Texture2D smoothnessTex)
             {
                 // smoothnessFactor will be baked into ORM texture
                 pbr.roughnessFactor = 1f;
-                pbr.metallicRoughnessTexture ??= new TextureInfo();
+                pbr.MetallicRoughnessTexture ??= new TextureInfo();
                 smoothnessTexture = smoothnessTex;
-                ExportTextureTransform(pbr.metallicRoughnessTexture, uMaterial, mainTexProperty, gltf);
+                ExportTextureTransform(pbr.MetallicRoughnessTexture, uMaterial, mainTexProperty, gltf);
                 hasSmoothnessTexture = true;
             }
 

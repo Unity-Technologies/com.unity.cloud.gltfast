@@ -2,10 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
-using GLTFast.Schema;
 
 namespace GLTFast.Newtonsoft.Schema
 {
     [Obsolete("Use GLTFast.Schema.Mesh instead.")]
-    public class Mesh : MeshBase<MeshExtras, MeshPrimitive>, IJsonObject { }
+    public class Mesh : GLTFast.Schema.Mesh, IJsonObject { }
 }

@@ -11,7 +11,7 @@ namespace GLTFast
     using Schema;
 
     /// <summary>
-    /// Extension methods for <see cref="NodeBase"/>
+    /// Extension methods for <see cref="Node"/>
     /// </summary>
     public static class NodeExtension
     {
@@ -24,7 +24,7 @@ namespace GLTFast
         /// <param name="rotation">Node's rotation</param>
         /// <param name="scale">Node's scale</param>
         public static void GetTransform(
-            this NodeBase node,
+            this Node node,
             out double3 position,
             out double4 rotation,
             out double3 scale

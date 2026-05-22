@@ -72,7 +72,7 @@ namespace GLTFast
         /// <returns></returns>
         public static unsafe JobHandle? GetVector3Job(
             IGltfBuffers buffers,
-            AccessorBase accessor,
+            Accessor accessor,
             float3* output,
             int outputByteStride,
             bool normalized = false,
@@ -326,7 +326,7 @@ namespace GLTFast
             {
                 indexBuffer = (ushort*)indexBuffer,
                 indexConverter = CachedFunction.GetIndexConverter(indexType),
-                inputByteStride = 3 * AccessorBase.GetComponentTypeSize(valueType),
+                inputByteStride = 3 * Accessor.GetComponentTypeSize(valueType),
                 input = valueBuffer,
                 valueConverter = CachedFunction.GetPositionConverter(valueType, normalized),
                 outputByteStride = outputByteStride,

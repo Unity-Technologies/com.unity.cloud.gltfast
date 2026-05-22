@@ -39,7 +39,7 @@ namespace GLTFast.Tests.Export
                         {
                             new MeshPrimitive
                             {
-                                extensions = new MeshPrimitiveExtensions
+                                Extensions = new MeshPrimitiveExtensions
                                 {
                                     KHR_materials_variants = new MaterialsVariantsMeshPrimitiveExtension
                                     {

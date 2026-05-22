@@ -2,10 +2,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
-using NUnit.Framework;
-using UnityEngine;
-
 using GLTFast.Schema;
+using NUnit.Framework;
 #if UNITY_6000_5_OR_NEWER
 using System.Text.Json;
 #else

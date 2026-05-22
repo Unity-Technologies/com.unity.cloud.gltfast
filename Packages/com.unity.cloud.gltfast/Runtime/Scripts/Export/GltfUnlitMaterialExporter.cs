@@ -61,7 +61,7 @@ namespace GLTFast.Export
                     };
 
                     material.pbrMetallicRoughness ??= new PbrMetallicRoughness();
-                    material.pbrMetallicRoughness.baseColorTexture = textureInfo;
+                    material.pbrMetallicRoughness.BaseColorTexture = textureInfo;
 
                     if (GltfMaterialExporter.TryCreateTextureTransform(
                             gltf,
@@ -71,7 +71,7 @@ namespace GLTFast.Export
                             out var textureTransform
                         ))
                     {
-                        material.pbrMetallicRoughness.baseColorTexture.extensions = new TextureInfoExtensions
+                        material.pbrMetallicRoughness.BaseColorTexture.Extensions = new TextureInfoExtensions
                         {
                             KHR_texture_transform = textureTransform
                         };

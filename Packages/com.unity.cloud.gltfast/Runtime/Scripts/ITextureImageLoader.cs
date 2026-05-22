@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using GLTFast.Schema;
 using Unity.Collections;
 using UnityEngine;
+using Texture = GLTFast.Schema.Texture;
 
 namespace GLTFast
 {
@@ -42,7 +43,7 @@ namespace GLTFast
         /// <param name="texture">glTF texture.</param>
         /// <param name="imageIndex">Corresponding, potentially updated glTF image index.</param>
         /// <returns>True if the texture image loader supports loading that texture, false otherwise.</returns>
-        bool IsAbleToLoad(TextureBase texture, out int imageIndex);
+        bool IsAbleToLoad(Texture texture, out int imageIndex);
 
         /// <summary>
         /// Implement this to support content-based image format detection.

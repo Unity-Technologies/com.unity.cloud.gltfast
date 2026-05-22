@@ -135,7 +135,7 @@ namespace GLTFast.Tests
             });
         }
 
-        static async Task RunTest(Func<GltfImportBase, Task<bool>> loadFunction)
+        static async Task RunTest(Func<GltfImport, Task<bool>> loadFunction)
         {
 #if !UNITY_ENTITIES_GRAPHICS
             var go = new GameObject();

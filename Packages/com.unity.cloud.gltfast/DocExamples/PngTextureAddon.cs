@@ -16,7 +16,7 @@ namespace GLTFast.Documentation.Examples
 
     class PngTextureAddonInstance : ImageLoaderAddonInstance, IDefaultImageFormatLoader
     {
-        public override void Inject(GltfImportBase gltfImport)
+        public override void Inject(GltfImport gltfImport)
         {
             gltfImport.AddImportAddonInstance(this);
         }

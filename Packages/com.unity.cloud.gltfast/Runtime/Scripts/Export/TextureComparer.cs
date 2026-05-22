@@ -4,6 +4,7 @@
 using System;
 using GLTFast.Schema;
 using UnityEngine;
+using Texture = GLTFast.Schema.Texture;
 
 namespace GLTFast.Export
 {
@@ -15,7 +16,7 @@ namespace GLTFast.Export
         /// <param name="x">First texture.</param>
         /// <param name="y">Second texture.</param>
         /// <returns>True if textures have identical source and sampler, false otherwise.</returns>
-        public static bool Equals(TextureBase x, TextureBase y)
+        public static bool Equals(Texture x, Texture y)
         {
             if (ReferenceEquals(x, y)) return true;
             if (x is null) return false;

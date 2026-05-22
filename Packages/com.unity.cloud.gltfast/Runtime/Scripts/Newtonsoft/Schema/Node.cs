@@ -2,10 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
-using GLTFast.Schema;
 
 namespace GLTFast.Newtonsoft.Schema
 {
     [Obsolete("Use GLTFast.Schema.Node instead.")]
-    public class Node : NodeBase<NodeExtensions>, IJsonObject { }
+    public class Node : GLTFast.Schema.Node, IJsonObject { }
 }

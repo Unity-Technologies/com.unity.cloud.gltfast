@@ -5,30 +5,24 @@ using System;
 using GLTFast.Schema;
 using Unity.Collections;
 using UnityEngine;
+using Camera = GLTFast.Schema.Camera;
 using Material = UnityEngine.Material;
+using Mesh = GLTFast.Schema.Mesh;
+using Texture = GLTFast.Schema.Texture;
 
 namespace GLTFast
 {
-
-    /// <inheritdoc />
-    /// <typeparam name="TRoot">glTF root (de-serialized glTF JSON) class type</typeparam>
-    public interface IGltfReadable<out TRoot> : IGltfReadable
-        where TRoot : RootBase
-    {
-        /// <summary>
-        /// Get source root (de-serialized glTF JSON).
-        /// This is intended for read-only access. Changes might corrupt data
-        /// and break subsequent scene instantiation.
-        /// </summary>
-        /// <returns>De-serialized glTF root object</returns>
-        TRoot GetSourceRoot();
-    }
-
     /// <summary>
     /// Provides read-only access to a glTF (schema and imported Unity resources)
     /// </summary>
     public interface IGltfReadable : IMaterialProvider
     {
+        /// <summary>
+        /// De-serialized glTF JSON object.
+        /// This is intended for read-only access. Changes might corrupt data
+        /// and break subsequent scene instantiation.
+        /// </summary>
+        Root Root { get; }
 
         /// <summary>
         /// Number of materials
@@ -94,21 +88,21 @@ namespace GLTFast
         /// </summary>
         /// <param name="index">glTF camera index</param>
         /// <returns>De-serialized glTF camera</returns>
-        CameraBase GetSourceCamera(uint index);
+        Camera GetSourceCamera(uint index);
 
         /// <summary>
         /// Get source (de-serialized glTF) material
         /// </summary>
         /// <param name="index">glTF material index</param>
         /// <returns>De-serialized glTF material</returns>
-        MaterialBase GetSourceMaterial(int index = 0);
+        GLTFast.Schema.Material GetSourceMaterial(int index = 0);
 
         /// <summary>
         /// Get source (de-serialized glTF) mesh.
         /// </summary>
         /// <param name="meshIndex">glTF mesh index.</param>
         /// <returns>De-serialized glTF mesh.</returns>
-        MeshBase GetSourceMesh(int meshIndex);
+        Mesh GetSourceMesh(int meshIndex);
 
         /// <summary>
         /// Get source (de-serialized glTF) mesh primitive
@@ -116,14 +110,14 @@ namespace GLTFast
         /// <param name="meshIndex">glTF mesh index.</param>
         /// <param name="primitiveIndex">glTF primitive index within mesh.</param>
         /// <returns>De-serialized glTF mesh primitive</returns>
-        MeshPrimitiveBase GetSourceMeshPrimitive(int meshIndex, int primitiveIndex);
+        MeshPrimitive GetSourceMeshPrimitive(int meshIndex, int primitiveIndex);
 
         /// <summary>
         /// Get source (de-serialized glTF) node
         /// </summary>
         /// <param name="index">glTF node index</param>
         /// <returns>De-serialized glTF node</returns>
-        NodeBase GetSourceNode(int index = 0);
+        Node GetSourceNode(int index = 0);
 
         /// <summary>
         /// Get source (de-serialized glTF) scene
@@ -137,7 +131,7 @@ namespace GLTFast
         /// </summary>
         /// <param name="index">glTF texture index</param>
         /// <returns>De-serialized glTF texture</returns>
-        TextureBase GetSourceTexture(int index = 0);
+        Texture GetSourceTexture(int index = 0);
 
         /// <summary>
         /// Get source (de-serialized glTF) image

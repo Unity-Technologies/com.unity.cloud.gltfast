@@ -115,7 +115,7 @@ namespace GLTFast.Tests
             var sg = new SampleGroup("Time", SampleUnit.Microsecond);
             Measure.Method(() =>
                 {
-                    bool OverridesImage(ITextureImageLoader loader, TextureBase texture, out int imageIndex)
+                    static bool OverridesImage(ITextureImageLoader loader, Texture texture, out int imageIndex)
                     {
                         return loader.IsAbleToLoad(texture, out imageIndex);
                     }
@@ -124,7 +124,7 @@ namespace GLTFast.Tests
 
                     m_TextureAddons
                         .SubCollection<ITextureImageLoader>()
-                        .ForEachTryGet<TextureBase, int>(
+                        .ForEachTryGet<Texture, int>(
                         m_Textures,
                         OverridesImage,
                         (addon, textureIndex, imageIndex) =>
@@ -150,7 +150,7 @@ namespace GLTFast.Tests
 
     class TextureAddon : AddonBase, ITextureImageLoader
     {
-        public bool IsAbleToLoad(TextureBase texture, out int imageIndex)
+        public bool IsAbleToLoad(Texture texture, out int imageIndex)
         {
             if (texture.source % 4 == 0)
             {
@@ -181,7 +181,7 @@ namespace GLTFast.Tests
         {
             return extensionName == "ext" && Value == 42;
         }
-        public override void Inject(GltfImportBase gltfImport) { }
+        public override void Inject(GltfImport gltfImport) { }
         public override void Inject(IInstantiator instantiator) { }
         public override void Dispose() { }
     }

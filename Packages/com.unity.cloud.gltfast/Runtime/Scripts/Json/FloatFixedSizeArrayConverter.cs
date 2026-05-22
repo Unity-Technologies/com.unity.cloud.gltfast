@@ -12,10 +12,10 @@ using Unity.Gltfast.Text.Json.Serialization;
 
 namespace GLTFast.Schema
 {
-    class Float2ArrayConverter : FloatFixedSizeArrayConverter { public Float2ArrayConverter() : base(2) {} }
-    class Float3ArrayConverter : FloatFixedSizeArrayConverter { public Float3ArrayConverter() : base(3) {} }
-    class Float4ArrayConverter : FloatFixedSizeArrayConverter { public Float4ArrayConverter() : base(4) {} }
-    class Float16ArrayConverter : FloatFixedSizeArrayConverter { public Float16ArrayConverter() : base(16) {} }
+    class Float2ArrayConverter : FloatFixedSizeArrayConverter { public Float2ArrayConverter() : base(2) { } }
+    class Float3ArrayConverter : FloatFixedSizeArrayConverter { public Float3ArrayConverter() : base(3) { } }
+    class Float4ArrayConverter : FloatFixedSizeArrayConverter { public Float4ArrayConverter() : base(4) { } }
+    class Float16ArrayConverter : FloatFixedSizeArrayConverter { public Float16ArrayConverter() : base(16) { } }
 
     class FloatFixedSizeArrayConverter : JsonConverter<float[]>
     {
@@ -47,7 +47,7 @@ namespace GLTFast.Schema
 
                 if (currentIndex < m_ExpectedArraySize)
                 {
-                    floatArray[currentIndex] = (float) FloatParser.GetDouble(reader.ValueSpan);
+                    floatArray[currentIndex] = (float)FloatParser.GetDouble(reader.ValueSpan);
                     currentIndex++;
                 }
                 else

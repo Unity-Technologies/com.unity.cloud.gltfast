@@ -11,7 +11,7 @@ namespace GLTFast.Addons
     /// To use this, implement the interface in an <see cref="ImportAddonInstance"/> and inject that instance.
     /// </summary>
     /// <seealso cref="ImportAddonRegistry"/>
-    /// <seealso cref="GltfImportBase.AddImportAddonInstance"/>
+    /// <seealso cref="GltfImport.AddImportAddonInstance"/>
     public interface IPostJsonDeserialization
     {
         /// <summary>

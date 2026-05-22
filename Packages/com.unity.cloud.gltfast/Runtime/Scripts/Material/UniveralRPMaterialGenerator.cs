@@ -14,6 +14,7 @@ using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 
 using Material = UnityEngine.Material;
+using GltfMaterial = GLTFast.Schema.Material;
 
 namespace GLTFast.Materials
 {
@@ -41,19 +42,19 @@ namespace GLTFast.Materials
             m_SupportsCameraOpaqueTexture = renderPipelineAsset.supportsCameraOpaqueTexture;
         }
 
-        protected override void SetDoubleSided(MaterialBase gltfMaterial, Material material)
+        protected override void SetDoubleSided(GltfMaterial gltfMaterial, Material material)
         {
             base.SetDoubleSided(gltfMaterial, material);
             material.SetFloat(MaterialProperty.Cull, (int)CullMode.Off);
         }
 
-        protected override void SetAlphaModeMask(MaterialBase gltfMaterial, Material material)
+        protected override void SetAlphaModeMask(GltfMaterial gltfMaterial, Material material)
         {
             base.SetAlphaModeMask(gltfMaterial, material);
             material.SetFloat(MaterialProperty.AlphaClip, 1);
         }
 
-        protected override void SetShaderModeBlend(MaterialBase gltfMaterial, Material material)
+        protected override void SetShaderModeBlend(GltfMaterial gltfMaterial, Material material)
         {
             material.SetOverrideTag(RenderTypeTag, TransparentRenderType);
             material.EnableKeyword(SurfaceTypeTransparentKeyword);
@@ -101,7 +102,7 @@ namespace GLTFast.Materials
             return base.GetMetallicShader(features);
         }
 
-        protected override ShaderMode? ApplyTransmissionShaderFeatures(MaterialBase gltfMaterial)
+        protected override ShaderMode? ApplyTransmissionShaderFeatures(GltfMaterial gltfMaterial)
         {
             if (!m_SupportsCameraOpaqueTexture)
             {

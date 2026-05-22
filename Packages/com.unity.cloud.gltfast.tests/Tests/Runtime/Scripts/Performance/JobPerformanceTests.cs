@@ -321,7 +321,7 @@ namespace GLTFast.Tests.Performance.Jobs
             {
                 indexBuffer = m_Indices.GetUnsafeReadOnlyPtr(),
                 indexConverter = GLTFast.Jobs.CachedFunction.GetIndexConverter(indexType),
-                inputByteStride = 3 * AccessorBase.GetComponentTypeSize(valueType),
+                inputByteStride = 3 * Accessor.GetComponentTypeSize(valueType),
                 input = m_Input.GetUnsafeReadOnlyPtr(),
                 valueConverter = GLTFast.Jobs.CachedFunction.GetPositionConverter(valueType, normalized),
                 outputByteStride = 12,

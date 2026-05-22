@@ -55,15 +55,5 @@ namespace GLTFast.Schema
             }
             writer.Close();
         }
-
-        /// <summary>
-        /// Has been used to clean up invalid parsing artifacts created by JsonUtility.
-        /// </summary>
-        /// <returns>True if the element itself still holds value. False if it can be safely removed.</returns>
-        [Obsolete("Has become obsolete after the transition from JsonUtility to System.Text.Json.")]
-        public virtual bool JsonUtilityCleanup()
-        {
-            return true;
-        }
     }
 }

@@ -9,10 +9,10 @@ using GLTFast.Schema;
 namespace GLTFast
 {
     class MeshComparer
-        : IEqualityComparer<MeshPrimitiveBase>
-        , IEqualityComparer<IReadOnlyList<MeshPrimitiveBase>>
+        : IEqualityComparer<MeshPrimitive>
+        , IEqualityComparer<IReadOnlyList<MeshPrimitive>>
     {
-        public bool Equals(IReadOnlyList<MeshPrimitiveBase> x, IReadOnlyList<MeshPrimitiveBase> y)
+        public bool Equals(IReadOnlyList<MeshPrimitive> x, IReadOnlyList<MeshPrimitive> y)
         {
             if (ReferenceEquals(x, y)) return true;
             if (x is null) return false;
@@ -26,7 +26,7 @@ namespace GLTFast
             return true;
         }
 
-        public int GetHashCode(IReadOnlyList<MeshPrimitiveBase> obj)
+        public int GetHashCode(IReadOnlyList<MeshPrimitive> obj)
         {
 #if NET_STANDARD
             var hashCode = new HashCode();
@@ -46,7 +46,7 @@ namespace GLTFast
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool Equals(MeshPrimitiveBase x, MeshPrimitiveBase y)
+        public bool Equals(MeshPrimitive x, MeshPrimitive y)
         {
             if (ReferenceEquals(x, y)) return true;
             if (x is null) return false;
@@ -58,7 +58,7 @@ namespace GLTFast
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public int GetHashCode(MeshPrimitiveBase primitive)
+        public int GetHashCode(MeshPrimitive primitive)
         {
 #if NET_STANDARD
             return HashCode.Combine(

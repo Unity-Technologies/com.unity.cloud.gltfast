@@ -31,7 +31,7 @@ namespace GLTFast.Schema
 
             var value = .0;
             var hasDigit = false;
-            while(pos < json.Length)
+            while (pos < json.Length)
             {
                 currentByte = json[pos];
                 if (currentByte >= '0' && currentByte <= '9')
@@ -63,10 +63,10 @@ namespace GLTFast.Schema
 
             return negative ? -value : value;
 
-            Radix:
+        Radix:
             double factor = 1;
             var hasRadixDigit = false;
-            while(pos < json.Length)
+            while (pos < json.Length)
             {
                 currentByte = json[pos];
                 if (currentByte >= '0' && currentByte <= '9')
@@ -98,7 +98,7 @@ namespace GLTFast.Schema
 
             return negative ? -value : value;
 
-            Exponent:
+        Exponent:
             short exponent = 0;
             var negateExponent = false;
             if (pos >= json.Length)
@@ -117,7 +117,7 @@ namespace GLTFast.Schema
             if (pos >= json.Length)
                 throw new InvalidDataException("Missing exponent digits");
 
-            while(pos < json.Length)
+            while (pos < json.Length)
             {
                 currentByte = json[pos];
                 if (currentByte >= '0' && currentByte <= '9')

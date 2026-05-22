@@ -57,7 +57,7 @@ namespace GLTFast.Tests.Import
 
         public override bool SupportsGltfExtension(string extensionName) => false;
 
-        public override void Inject(GltfImportBase gltfImport)
+        public override void Inject(GltfImport gltfImport)
         {
             gltfImport.AddImportAddonInstance(this);
         }

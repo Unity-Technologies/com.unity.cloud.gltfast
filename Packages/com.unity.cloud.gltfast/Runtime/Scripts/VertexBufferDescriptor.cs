@@ -35,7 +35,7 @@ namespace GLTFast
             m_MorphTargetCount = morphTargetCount;
         }
 
-        public static VertexBufferDescriptor FromPrimitive(MeshPrimitiveBase primitive)
+        public static VertexBufferDescriptor FromPrimitive(MeshPrimitive primitive)
         {
             return new VertexBufferDescriptor(
                 primitive.attributes.NORMAL >= 0,

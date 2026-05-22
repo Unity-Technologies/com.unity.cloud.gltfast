@@ -145,10 +145,10 @@ namespace GLTFast.Export
                 {
                     if (mainTex is Texture2D)
                     {
-                        pbr.baseColorTexture = ExportTextureInfo(mainTex, gltf);
-                        if (pbr.baseColorTexture != null)
+                        pbr.BaseColorTexture = ExportTextureInfo(mainTex, gltf);
+                        if (pbr.BaseColorTexture != null)
                         {
-                            ExportTextureTransform(pbr.baseColorTexture, uMaterial, mainTexProperty, gltf);
+                            ExportTextureTransform(pbr.BaseColorTexture, uMaterial, mainTexProperty, gltf);
                         }
                     }
                     else
@@ -265,7 +265,7 @@ namespace GLTFast.Export
         /// <param name="mat">Source Material</param>
         /// <param name="texPropertyId">Texture property to fetch transformation from</param>
         /// <param name="gltf">Context glTF to export to (for registering extension usage)</param>
-        protected static void ExportTextureTransform(TextureInfoBase def, UnityEngine.Material mat, int texPropertyId, IGltfWritable gltf)
+        protected static void ExportTextureTransform(TextureInfo def, UnityEngine.Material mat, int texPropertyId, IGltfWritable gltf)
         {
             var offset = mat.GetTextureOffset(texPropertyId);
             var scale = mat.GetTextureScale(texPropertyId);

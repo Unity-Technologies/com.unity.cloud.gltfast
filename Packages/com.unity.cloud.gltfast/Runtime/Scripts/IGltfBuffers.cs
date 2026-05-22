@@ -10,8 +10,8 @@ namespace GLTFast
 
     interface IGltfBuffers
     {
-        AccessorBase GetAccessor(int index);
-        unsafe void GetAccessorAndData(int index, out AccessorBase accessor, out void* data, out int byteStride);
+        Accessor GetAccessor(int index);
+        unsafe void GetAccessorAndData(int index, out Accessor accessor, out void* data, out int byteStride);
         unsafe void GetAccessorSparseIndices(AccessorSparseIndices sparseIndices, out void* data);
         unsafe void GetAccessorSparseValues(AccessorSparseValues sparseValues, out void* data);
         ReadOnlyNativeArray<byte> GetBufferView(int bufferViewIndex, out int byteStride, int offset = 0, int length = 0);

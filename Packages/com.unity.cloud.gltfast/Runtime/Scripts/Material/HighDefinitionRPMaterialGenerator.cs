@@ -11,7 +11,9 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.HighDefinition;
+
 using Material = UnityEngine.Material;
+using GltfMaterial = GLTFast.Schema.Material;
 
 namespace GLTFast.Materials
 {
@@ -47,14 +49,14 @@ namespace GLTFast.Materials
         static bool s_MetallicStackLitShaderQueried;
         static Shader s_MetallicStackLitShader;
 
-        public override Material GenerateMaterial(MaterialBase gltfMaterial, IGltfReadable gltf, bool pointsSupport = false)
+        public override Material GenerateMaterial(GltfMaterial gltfMaterial, IGltfReadable gltf, bool pointsSupport = false)
         {
             var material = base.GenerateMaterial(gltfMaterial, gltf, pointsSupport);
             HDMaterial.ValidateMaterial(material);
             return material;
         }
 
-        protected override void SetDoubleSided(Schema.MaterialBase gltfMaterial, Material material)
+        protected override void SetDoubleSided(Schema.Material gltfMaterial, Material material)
         {
             base.SetDoubleSided(gltfMaterial, material);
 
@@ -69,7 +71,7 @@ namespace GLTFast.Materials
             material.SetFloat(CullModeForwardProperty, (int)CullMode.Off);
         }
 
-        protected override void SetAlphaModeMask(Schema.MaterialBase gltfMaterial, Material material)
+        protected override void SetAlphaModeMask(Schema.Material gltfMaterial, Material material)
         {
             base.SetAlphaModeMask(gltfMaterial, material);
 
@@ -131,7 +133,7 @@ namespace GLTFast.Materials
             return base.GetMetallicShader(features);
         }
 
-        protected override void SetShaderModeBlend(Schema.MaterialBase gltfMaterial, Material material)
+        protected override void SetShaderModeBlend(Schema.Material gltfMaterial, Material material)
         {
 
             material.DisableKeyword(AlphaTestOnKeyword);

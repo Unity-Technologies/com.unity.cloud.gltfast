@@ -15,37 +15,24 @@ using UnityEngine;
 namespace GLTFast.Schema
 {
 
-    /// <inheritdoc />
-    [Serializable]
-    public class Camera : CameraBase<CameraOrthographic, CameraPerspective> { }
-
-    /// <inheritdoc />
-    /// <typeparam name="TOrthographic">Orthographic camera type</typeparam>
-    /// <typeparam name="TPerspective">Perspective camera type</typeparam>
-    [Serializable]
-    public abstract class CameraBase<TOrthographic, TPerspective> : CameraBase
-        where TOrthographic : CameraOrthographic
-        where TPerspective : CameraPerspective
-    {
-        /// <inheritdoc cref="Orthographic"/>
-        public TOrthographic orthographic;
-
-        /// <inheritdoc cref="Perspective"/>
-        public TPerspective perspective;
-
-        /// <inheritdoc />
-        public override CameraOrthographic Orthographic => orthographic;
-
-        /// <inheritdoc />
-        public override CameraPerspective Perspective => perspective;
-    }
-
     /// <summary>
     /// A camera’s projection
     /// </summary>
     [Serializable]
-    public abstract class CameraBase : NamedObject, IGltfObject
+    public class Camera : NamedObject, IGltfObject
     {
+        /// <inheritdoc cref="Orthographic"/>
+        public CameraOrthographic orthographic;
+
+        /// <inheritdoc cref="Perspective"/>
+        public CameraPerspective perspective;
+
+        /// <inheritdoc cref="CameraOrthographic"/>
+        public CameraOrthographic Orthographic => orthographic;
+
+        /// <inheritdoc cref="CameraPerspective"/>
+        public CameraPerspective Perspective => perspective;
+
         /// <summary>
         /// Camera projection type
         /// </summary>
@@ -104,12 +91,6 @@ namespace GLTFast.Schema
 #pragma warning restore CS0618 // Type or member is obsolete
             m_TypeEnum = cameraType;
         }
-
-        /// <inheritdoc cref="CameraOrthographic"/>
-        public abstract CameraOrthographic Orthographic { get; }
-
-        /// <inheritdoc cref="CameraOrthographic"/>
-        public abstract CameraPerspective Perspective { get; }
 
         /// <inheritdoc cref="Asset.extensions"/>
         public UnclassifiedData extensions;

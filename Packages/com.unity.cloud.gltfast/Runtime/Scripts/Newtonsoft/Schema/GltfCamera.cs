@@ -2,10 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
-using GLTFast.Schema;
 
 namespace GLTFast.Newtonsoft.Schema
 {
     [Obsolete("Use GLTFast.Schema.Camera instead.")]
-    public class Camera : CameraBase<CameraOrthographic, CameraPerspective>, IJsonObject { }
+    public class Camera : GLTFast.Schema.Camera, IJsonObject { }
 }

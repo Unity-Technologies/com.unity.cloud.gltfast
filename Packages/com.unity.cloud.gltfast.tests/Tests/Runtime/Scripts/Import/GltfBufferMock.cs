@@ -11,7 +11,7 @@ namespace GLTFast.Tests
     {
         public const int sparseAccessorIndex = 42;
 
-        public AccessorBase GetAccessor(int index)
+        public Accessor GetAccessor(int index)
         {
             return new Accessor
             {
@@ -30,7 +30,7 @@ namespace GLTFast.Tests
             throw new NotImplementedException();
         }
 
-        public void GetAccessorAndData(int index, out AccessorBase accessor, out void* data, out int byteStride)
+        public void GetAccessorAndData(int index, out Accessor accessor, out void* data, out int byteStride)
         {
             accessor = GetAccessor(index);
             accessor.SetAttributeType(GltfAccessorAttributeType.VEC3);

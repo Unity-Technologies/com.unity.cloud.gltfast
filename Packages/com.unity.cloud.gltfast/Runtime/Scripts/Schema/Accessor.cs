@@ -19,28 +19,6 @@ using UnityEngine.Rendering;
 
 namespace GLTFast.Schema
 {
-    /// <inheritdoc/>
-    [Serializable]
-    public class Accessor : AccessorBase<AccessorSparse> { }
-
-    /// <inheritdoc/>
-    [Serializable]
-    public abstract class AccessorBase<TSparse> : AccessorBase
-        where TSparse : AccessorSparseBase
-    {
-        /// <inheritdoc cref="Sparse"/>
-        public TSparse sparse;
-
-        /// <inheritdoc cref="AccessorBase.Sparse"/>
-        public override AccessorSparseBase Sparse => sparse;
-
-        /// <inheritdoc />
-        internal override void UnsetSparse()
-        {
-            sparse = null;
-        }
-    }
-
     /// <summary>
     /// An accessor defines a method for retrieving data as typed arrays from
     /// within a buffer view.
@@ -48,8 +26,24 @@ namespace GLTFast.Schema
     /// accessor in the glTF 2.0 specification</a>.
     /// </summary>
     [Serializable]
-    public abstract class AccessorBase : NamedObject, IGltfObject
+    public class Accessor : NamedObject, IGltfObject
     {
+        /// <inheritdoc cref="Sparse"/>
+        public AccessorSparse sparse;
+
+        /// <summary>
+        /// Sparse storage of attributes that deviate from their initialization value.
+        /// </summary>
+        public AccessorSparse Sparse => sparse;
+
+        /// <summary>
+        /// Sets <see cref="Sparse"/> to null.
+        /// </summary>
+        internal void UnsetSparse()
+        {
+            sparse = null;
+        }
+
         /// <summary>
         /// The index of the bufferView.
         /// If this is undefined, look in the sparse object for the index and value buffer views.
@@ -178,16 +172,6 @@ namespace GLTFast.Schema
         /// applied.
         /// </summary>
         public float[] min;
-
-        /// <summary>
-        /// Sparse storage of attributes that deviate from their initialization value.
-        /// </summary>
-        public abstract AccessorSparseBase Sparse { get; }
-
-        /// <summary>
-        /// Sets <see cref="Sparse"/> to null.
-        /// </summary>
-        internal abstract void UnsetSparse();
 
         /// <summary>
         /// Provides size of components by type

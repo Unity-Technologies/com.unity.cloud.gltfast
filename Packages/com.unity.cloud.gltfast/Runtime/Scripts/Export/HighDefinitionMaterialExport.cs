@@ -199,12 +199,12 @@ namespace GLTFast.Export
                 {
                     if (mainTex is Texture2D)
                     {
-                        pbr.baseColorTexture = ExportTextureInfo(mainTex, gltf,
-                            material.GetAlphaMode() == MaterialBase.AlphaMode.Opaque
+                        pbr.BaseColorTexture = ExportTextureInfo(mainTex, gltf,
+                            material.GetAlphaMode() == Material.AlphaMode.Opaque
                                 ? ImageFormat.Jpg
                                 : ImageFormat.Unknown
                             );
-                        ExportTextureTransform(pbr.baseColorTexture, uMaterial, k_BaseColorMap, gltf);
+                        ExportTextureTransform(pbr.BaseColorTexture, uMaterial, k_BaseColorMap, gltf);
                     }
                     else
                     {
@@ -266,11 +266,11 @@ namespace GLTFast.Export
 
                             if (metallicUsed || smoothnessUsed)
                             {
-                                pbr.metallicRoughnessTexture = new TextureInfo
+                                pbr.MetallicRoughnessTexture = new TextureInfo
                                 {
                                     index = ormTextureId
                                 };
-                                ExportTextureTransform(pbr.metallicRoughnessTexture, uMaterial, k_MaskMap, gltf);
+                                ExportTextureTransform(pbr.MetallicRoughnessTexture, uMaterial, k_MaskMap, gltf);
                             }
 
                             if (occStrength > 0)

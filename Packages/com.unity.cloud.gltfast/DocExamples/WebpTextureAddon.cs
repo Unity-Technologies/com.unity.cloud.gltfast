@@ -8,6 +8,7 @@ using GLTFast.Addons;
 using GLTFast.Schema;
 using Unity.Collections;
 using UnityEngine;
+using Texture = GLTFast.Schema.Texture;
 
 namespace GLTFast.Documentation.Examples
 {
@@ -15,7 +16,7 @@ namespace GLTFast.Documentation.Examples
 
     class WebpTextureAddonInstance : ImageLoaderAddonInstance, ITextureImageLoader
     {
-        public override void Inject(GltfImportBase gltfImport)
+        public override void Inject(GltfImport gltfImport)
         {
             if (gltfImport is not GltfImport)
                 return;
@@ -28,7 +29,7 @@ namespace GLTFast.Documentation.Examples
             return extensionName == "EXT_texture_webp";
         }
 
-        public bool IsAbleToLoad(TextureBase texture, out int imageIndex)
+        public bool IsAbleToLoad(Texture texture, out int imageIndex)
         {
             if (texture is Schema.Texture { extensions: not null } t
                 && t.extensions.TryGetValue<TextureWebpExtension>(

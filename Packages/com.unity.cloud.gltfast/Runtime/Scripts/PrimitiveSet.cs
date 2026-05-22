@@ -11,18 +11,18 @@ namespace GLTFast
     interface IPrimitiveSet
     {
         bool HasMorphTargets { get; }
-        void BuildAndDispose(out int[] indices, out MeshPrimitiveBase[] primitives, out SubMeshAssignment[] subMeshAssignments);
+        void BuildAndDispose(out int[] indices, out MeshPrimitive[] primitives, out SubMeshAssignment[] subMeshAssignments);
     }
 
     class PrimitiveSet : IPrimitiveSet
     {
         readonly List<int> m_Indices = new List<int>();
-        readonly List<MeshPrimitiveBase> m_Primitives = new List<MeshPrimitiveBase>();
+        readonly List<MeshPrimitive> m_Primitives = new List<MeshPrimitive>();
         List<SubMeshAssignment> m_SubMeshAssignments;
 
-        public IReadOnlyList<MeshPrimitiveBase> Primitives => m_Primitives;
+        public IReadOnlyList<MeshPrimitive> Primitives => m_Primitives;
 
-        public void Add(int index, MeshPrimitiveBase primitive)
+        public void Add(int index, MeshPrimitive primitive)
         {
             if (m_Primitives.Count > 0)
             {
@@ -71,7 +71,7 @@ namespace GLTFast
             m_SubMeshAssignments = null;
         }
 
-        public void BuildAndDispose(out int[] indices, out MeshPrimitiveBase[] primitives, out SubMeshAssignment[] subMeshAssignments)
+        public void BuildAndDispose(out int[] indices, out MeshPrimitive[] primitives, out SubMeshAssignment[] subMeshAssignments)
         {
             indices = m_Indices.ToArray();
             primitives = m_Primitives.ToArray();
@@ -86,9 +86,9 @@ namespace GLTFast
     class PrimitiveSingle : IPrimitiveSet
     {
         readonly int m_Index;
-        public MeshPrimitiveBase Primitive { get; }
+        public MeshPrimitive Primitive { get; }
 
-        public PrimitiveSingle(int index, MeshPrimitiveBase primitive)
+        public PrimitiveSingle(int index, MeshPrimitive primitive)
         {
             m_Index = index;
             Primitive = primitive;
@@ -102,7 +102,7 @@ namespace GLTFast
             subMeshAssignments = null;
         }
 
-        public void BuildAndDispose(out int[] indices, out MeshPrimitiveBase[] primitives, out SubMeshAssignment[] subMeshAssignments)
+        public void BuildAndDispose(out int[] indices, out MeshPrimitive[] primitives, out SubMeshAssignment[] subMeshAssignments)
         {
             indices = new[] { m_Index };
             primitives = new[] { Primitive };

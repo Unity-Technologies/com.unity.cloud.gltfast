@@ -13,29 +13,27 @@ using Unity.Gltfast.Text.Json.Serialization;
 
 namespace GLTFast.Schema
 {
-    /// <inheritdoc />
+    /// <summary>
+    /// A set of primitives to be rendered. Its global transform is defined by
+    /// a node that references it.
+    /// </summary>
     [Serializable]
-    public class Mesh : MeshBase<MeshExtras, MeshPrimitive> { }
-
-    /// <inheritdoc cref="MeshBase"/>
-    /// <typeparam name="TExtras">extras type</typeparam>
-    /// <typeparam name="TPrimitive">Mesh primitive type</typeparam>
-    [Serializable]
-    public abstract class MeshBase<TExtras, TPrimitive> : MeshBase, ICloneable
-        where TPrimitive : MeshPrimitiveBase
-        where TExtras : MeshExtras
+    public class Mesh : NamedObject, IGltfObject, ICloneable
     {
         /// <inheritdoc cref="Extras"/>
-        public TExtras extras;
+        public MeshExtras extras;
 
         /// <inheritdoc cref="Primitives"/>
-        public TPrimitive[] primitives;
+        public MeshPrimitive[] primitives;
 
-        /// <inheritdoc />
-        public override MeshExtras Extras => extras;
+        /// <summary>
+        /// An array of primitives, each defining geometry to be rendered with
+        /// a material.
+        /// </summary>
+        public IReadOnlyList<MeshPrimitive> Primitives => primitives;
 
-        /// <inheritdoc />
-        public override IReadOnlyList<MeshPrimitiveBase> Primitives => primitives;
+        /// <inheritdoc cref="MeshExtras"/>
+        public MeshExtras Extras => extras;
 
         /// <summary>
         /// Clones the Mesh object
@@ -43,31 +41,17 @@ namespace GLTFast.Schema
         /// <returns>Member-wise clone</returns>
         public object Clone()
         {
-            var clone = (MeshBase<TExtras, TPrimitive>)MemberwiseClone();
+            var clone = (Mesh)MemberwiseClone();
             if (Primitives != null)
             {
-                clone.primitives = new TPrimitive[primitives.Length];
+                clone.primitives = new MeshPrimitive[primitives.Length];
                 for (var i = 0; i < primitives.Length; i++)
                 {
-                    clone.primitives[i] = (TPrimitive)primitives[i].Clone();
+                    clone.primitives[i] = (MeshPrimitive)primitives[i].Clone();
                 }
             }
             return clone;
         }
-    }
-
-    /// <summary>
-    /// A set of primitives to be rendered. Its global transform is defined by
-    /// a node that references it.
-    /// </summary>
-    [Serializable]
-    public abstract class MeshBase : NamedObject, IGltfObject
-    {
-        /// <summary>
-        /// An array of primitives, each defining geometry to be rendered with
-        /// a material.
-        /// </summary>
-        public abstract IReadOnlyList<MeshPrimitiveBase> Primitives { get; }
 
         /// <summary>
         /// Array of weights to be applied to the Morph Targets.
@@ -76,9 +60,6 @@ namespace GLTFast.Schema
 
         /// <inheritdoc cref="Asset.extensions"/>
         public UnclassifiedData extensions;
-
-        /// <inheritdoc cref="MeshExtras"/>
-        public abstract MeshExtras Extras { get; }
 
         /// <summary>JSON properties without a matching member.</summary>
         [JsonExtensionData, JsonInclude] internal Dictionary<string, JsonElement> ExtensionsData { get; set; }

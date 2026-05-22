@@ -17,179 +17,12 @@ using UnityEngine.Profiling;
 
 namespace GLTFast.Schema
 {
-
-    /// <inheritdoc />
-    [Serializable]
-    public class Root : RootBase<
-        Accessor,
-        Animation,
-        Asset,
-        Buffer,
-        BufferView,
-        Camera,
-        RootExtensions,
-        Image,
-        Material,
-        Mesh,
-        Node,
-        Sampler,
-        Scene,
-        Skin,
-        Texture
-    >
-    { }
-
-    /// <inheritdoc />
-    /// <typeparam name="TAccessor">Accessor type</typeparam>
-    /// <typeparam name="TAnimation">Animation type</typeparam>
-    /// <typeparam name="TAsset">Asset type</typeparam>
-    /// <typeparam name="TBuffer">Buffer type</typeparam>
-    /// <typeparam name="TBufferView">BufferView type</typeparam>
-    /// <typeparam name="TCamera">Camera type</typeparam>
-    /// <typeparam name="TExtensions">Extensions type</typeparam>
-    /// <typeparam name="TImage">Image type</typeparam>
-    /// <typeparam name="TMaterial">Material type</typeparam>
-    /// <typeparam name="TMesh">Mesh type</typeparam>
-    /// <typeparam name="TNode">Node type</typeparam>
-    /// <typeparam name="TSampler">Sampler type</typeparam>
-    /// <typeparam name="TScene">Scene type</typeparam>
-    /// <typeparam name="TSkin">Skin type</typeparam>
-    /// <typeparam name="TTexture">Texture type</typeparam>
-    [Serializable]
-    public abstract class RootBase<
-        TAccessor,
-        TAnimation,
-        TAsset,
-        TBuffer,
-        TBufferView,
-        TCamera,
-        TExtensions,
-        TImage,
-        TMaterial,
-        TMesh,
-        TNode,
-        TSampler,
-        TScene,
-        TSkin,
-        TTexture
-    > : RootBase
-        where TAccessor : AccessorBase
-        where TAnimation : AnimationBase
-        where TAsset : Asset
-        where TBuffer : Buffer
-        where TBufferView : BufferViewBase
-        where TCamera : CameraBase
-        where TExtensions : RootExtensions
-        where TImage : Image
-        where TMaterial : MaterialBase
-        where TMesh : MeshBase
-        where TNode : NodeBase
-        where TSampler : Sampler
-        where TScene : Scene
-        where TSkin : Skin
-        where TTexture : TextureBase
-    {
-        /// <inheritdoc cref="Accessors"/>
-        public TAccessor[] accessors;
-
-#if UNITY_ANIMATION || GLTFAST_ANIMATION
-        /// <inheritdoc cref="Animations"/>
-        public TAnimation[] animations;
-#endif
-
-        /// <inheritdoc cref="Asset"/>
-        public TAsset asset;
-
-        /// <inheritdoc cref="Buffer"/>
-        public TBuffer[] buffers;
-
-        /// <inheritdoc cref="BufferView"/>
-        public TBufferView[] bufferViews;
-
-        /// <inheritdoc cref="Camera"/>
-        public TCamera[] cameras;
-
-        /// <inheritdoc cref="Image"/>
-        public TImage[] images;
-
-        /// <inheritdoc cref="Material"/>
-        public TMaterial[] materials;
-
-        /// <inheritdoc cref="Node"/>
-        public TNode[] nodes;
-
-        /// <inheritdoc cref="Sampler"/>
-        public TSampler[] samplers;
-
-        /// <inheritdoc cref="Scene"/>
-        public TScene[] scenes;
-
-        /// <inheritdoc cref="Skin"/>
-        public TSkin[] skins;
-
-        /// <inheritdoc cref="Texture"/>
-        public TTexture[] textures;
-
-        /// <inheritdoc cref="RootExtensions"/>
-        public TExtensions extensions;
-
-        /// <inheritdoc cref="Meshes"/>
-        public TMesh[] meshes;
-
-        /// <inheritdoc />
-        public override IReadOnlyList<AccessorBase> Accessors => accessors;
-
-#if UNITY_ANIMATION || GLTFAST_ANIMATION
-        /// <inheritdoc />
-        public override IReadOnlyList<AnimationBase> Animations => animations;
-#endif
-
-        /// <inheritdoc />
-        public override Asset Asset => asset;
-
-        /// <inheritdoc />
-        public override IReadOnlyList<Buffer> Buffers => buffers;
-
-        /// <inheritdoc />
-        public override IReadOnlyList<BufferViewBase> BufferViews => bufferViews;
-
-        /// <inheritdoc />
-        public override IReadOnlyList<CameraBase> Cameras => cameras;
-
-        /// <inheritdoc />
-        public override IReadOnlyList<Image> Images => images;
-
-        /// <inheritdoc />
-        public override IReadOnlyList<MaterialBase> Materials => materials;
-
-        /// <inheritdoc />
-        public override IReadOnlyList<NodeBase> Nodes => nodes;
-
-        /// <inheritdoc />
-        public override IReadOnlyList<Sampler> Samplers => samplers;
-
-        /// <inheritdoc />
-        public override IReadOnlyList<Scene> Scenes => scenes;
-
-        /// <inheritdoc />
-        public override IReadOnlyList<Skin> Skins => skins;
-
-        /// <inheritdoc />
-        public override IReadOnlyList<TextureBase> Textures => textures;
-
-        /// <inheritdoc />
-        public override RootExtensions Extensions => extensions;
-
-        /// <inheritdoc />
-        public override IReadOnlyList<MeshBase> Meshes => meshes;
-    }
-
     /// <summary>
     /// The root object for a glTF asset.
     /// </summary>
     /// <seealso href="https://www.khronos.org/registry/glTF/specs/2.0/glTF-2.0.html#reference-gltf"/>
     [Serializable]
-    public abstract class RootBase : IGltfObject
+    public class Root : IGltfObject
     {
         /// <summary>
         /// Names of glTF extensions used somewhere in this asset.
@@ -201,63 +34,110 @@ namespace GLTFast.Schema
         /// </summary>
         public string[] extensionsRequired;
 
+        /// <inheritdoc cref="Accessors"/>
+        public Accessor[] accessors;
+
+#if UNITY_ANIMATION || GLTFAST_ANIMATION
+        /// <inheritdoc cref="Animations"/>
+        public Animation[] animations;
+#endif
+
+        /// <inheritdoc cref="Asset"/>
+        public Asset asset;
+
+        /// <inheritdoc cref="Buffer"/>
+        public Buffer[] buffers;
+
+        /// <inheritdoc cref="BufferView"/>
+        public BufferView[] bufferViews;
+
+        /// <inheritdoc cref="Camera"/>
+        public Camera[] cameras;
+
+        /// <inheritdoc cref="Image"/>
+        public Image[] images;
+
+        /// <inheritdoc cref="Material"/>
+        public Material[] materials;
+
+        /// <inheritdoc cref="Node"/>
+        public Node[] nodes;
+
+        /// <inheritdoc cref="Sampler"/>
+        public Sampler[] samplers;
+
+        /// <inheritdoc cref="Scene"/>
+        public Scene[] scenes;
+
+        /// <inheritdoc cref="Skin"/>
+        public Skin[] skins;
+
+        /// <inheritdoc cref="Texture"/>
+        public Texture[] textures;
+
+        /// <inheritdoc cref="RootExtensions"/>
+        public RootExtensions extensions;
+
+        /// <inheritdoc cref="Meshes"/>
+        public Mesh[] meshes;
+
         /// <summary>
         /// An array of accessors. An accessor is a typed view into a bufferView.
         /// </summary>
-        public abstract IReadOnlyList<AccessorBase> Accessors { get; }
+        public IReadOnlyList<Accessor> Accessors => accessors;
 
 #if UNITY_ANIMATION || GLTFAST_ANIMATION
         /// <summary>
         /// An array of keyframe animations.
         /// </summary>
-        public abstract IReadOnlyList<AnimationBase> Animations { get; }
+        public IReadOnlyList<Animation> Animations => animations;
 #endif
 
         /// <summary>
         /// Metadata about the glTF asset.
         /// </summary>
-        public abstract Asset Asset { get; }
+        public Asset Asset => asset;
 
         /// <summary>
         /// An array of buffers. A buffer points to binary geometry, animation, or skins.
         /// </summary>
-        public abstract IReadOnlyList<Buffer> Buffers { get; }
+        public IReadOnlyList<Buffer> Buffers => buffers;
 
         /// <summary>
         /// An array of bufferViews.
         /// A bufferView is a view into a buffer generally representing a subset of the buffer.
         /// </summary>
-        public abstract IReadOnlyList<BufferViewBase> BufferViews { get; }
+        public IReadOnlyList<BufferView> BufferViews => bufferViews;
 
         /// <summary>
         /// An array of cameras. A camera defines a projection matrix.
         /// </summary>
-        public abstract IReadOnlyList<CameraBase> Cameras { get; }
+        public IReadOnlyList<Camera> Cameras => cameras;
 
         /// <summary>
         /// An array of images. An image defines data used to create a texture.
         /// </summary>
-        public abstract IReadOnlyList<Image> Images { get; }
+        public IReadOnlyList<Image> Images => images;
 
         /// <summary>
         /// An array of materials. A material defines the appearance of a primitive.
         /// </summary>
-        public abstract IReadOnlyList<MaterialBase> Materials { get; }
+        public IReadOnlyList<Material> Materials => materials;
 
         /// <summary>
         /// An array of meshes. A mesh is a set of primitives to be rendered.
         /// </summary>
-        public abstract IReadOnlyList<MeshBase> Meshes { get; }
+        public IReadOnlyList<Mesh> Meshes => meshes;
 
         /// <summary>
         /// An array of nodes.
         /// </summary>
-        public abstract IReadOnlyList<NodeBase> Nodes { get; }
+        public IReadOnlyList<Node> Nodes => nodes;
 
         /// <summary>
         /// An array of samplers. A sampler contains properties for texture filtering and wrapping modes.
         /// </summary>
-        public abstract IReadOnlyList<Sampler> Samplers { get; }
+        public IReadOnlyList<Sampler> Samplers => samplers;
 
         /// <summary>
         /// The index of the default scene.
@@ -267,20 +147,20 @@ namespace GLTFast.Schema
         /// <summary>
         /// An array of scenes.
         /// </summary>
-        public abstract IReadOnlyList<Scene> Scenes { get; }
+        public IReadOnlyList<Scene> Scenes => scenes;
 
         /// <summary>
         /// An array of skins. A skin is defined by joints and matrices.
         /// </summary>
-        public abstract IReadOnlyList<Skin> Skins { get; }
+        public IReadOnlyList<Skin> Skins => skins;
 
         /// <summary>
         /// An array of textures.
         /// </summary>
-        public abstract IReadOnlyList<TextureBase> Textures { get; }
+        public IReadOnlyList<Texture> Textures => textures;
 
         /// <inheritdoc cref="RootExtensions"/>
-        public abstract RootExtensions Extensions { get; }
+        public RootExtensions Extensions => extensions;
 
         /// <summary>Application-specific data.</summary>
         /// <seealso href="https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html#reference-extras"/>
@@ -474,12 +354,6 @@ namespace GLTFast.Schema
 
             writer.Close();
         }
-
-        /// <summary>
-        /// Has been used to clean up invalid parsing artifacts created by JsonUtility.
-        /// </summary>
-        [Obsolete("Has become obsolete after the transition from JsonUtility to System.Text.Json.")]
-        public virtual void JsonUtilityCleanup() { }
 
         /// <summary>
         /// Number of materials variants.

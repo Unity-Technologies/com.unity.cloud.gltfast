@@ -13,7 +13,11 @@ using NUnit.Framework;
 using Unity.Collections;
 using UnityEngine;
 using UnityEngine.TestTools;
+using Camera = GLTFast.Schema.Camera;
 using Material = UnityEngine.Material;
+using Mesh = GLTFast.Schema.Mesh;
+using GltfMaterial = GLTFast.Schema.Material;
+using Texture = GLTFast.Schema.Texture;
 
 namespace GLTFast.Tests.Import
 {
@@ -65,98 +69,101 @@ namespace GLTFast.Tests.Import
         public int MaterialsVariantsCount { get; }
         public string GetMaterialsVariantName(int index)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
         public Task<Material> GetMaterialAsync(int index)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
         public Task<Material> GetMaterialAsync(int index, CancellationToken cancellationToken)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
         public Task<Material> GetDefaultMaterialAsync()
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
         public Task<Material> GetDefaultMaterialAsync(CancellationToken cancellationToken)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
         public IMaterialsVariantsSlot[] GetMaterialsVariantsSlots(int meshIndex, int meshNumeration)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
+
+        public Root Root => throw new NotImplementedException();
+
         public int MaterialCount { get; }
         public int ImageCount { get; }
         public int TextureCount { get; }
         public Material GetMaterial(int index = 0)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
         public Material GetDefaultMaterial()
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
         public Texture2D GetImage(int index = 0)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
         public Texture2D GetTexture(int index = 0)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
         public bool IsTextureYFlipped(int index = 0)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
-        public CameraBase GetSourceCamera(uint index)
+        public Camera GetSourceCamera(uint index)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
-        public MaterialBase GetSourceMaterial(int index = 0)
+        public GltfMaterial GetSourceMaterial(int index = 0)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
-        public MeshBase GetSourceMesh(int meshIndex)
+        public Mesh GetSourceMesh(int meshIndex)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
-        public MeshPrimitiveBase GetSourceMeshPrimitive(int meshIndex, int primitiveIndex)
+        public MeshPrimitive GetSourceMeshPrimitive(int meshIndex, int primitiveIndex)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
-        public NodeBase GetSourceNode(int index = 0)
+        public Node GetSourceNode(int index = 0)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
         public Scene GetSourceScene(int index = 0)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
-        public TextureBase GetSourceTexture(int index = 0)
+        public Texture GetSourceTexture(int index = 0)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
         public Image GetSourceImage(int index = 0)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
         public LightPunctual GetSourceLightPunctual(uint index)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
         public Matrix4x4[] GetBindPoses(int skinId)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
         public NativeSlice<byte> GetAccessor(int accessorIndex)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
         public NativeSlice<byte> GetAccessorData(int accessorIndex)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
     }
 
@@ -164,7 +171,7 @@ namespace GLTFast.Tests.Import
     {
         List<IDisposable> m_Disposables = new();
 
-        public AccessorBase GetAccessor(int index)
+        public Accessor GetAccessor(int index)
         {
             switch (index)
             {
@@ -193,20 +200,20 @@ namespace GLTFast.Tests.Import
                     return accessor;
                 }
             }
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
-        public unsafe void GetAccessorAndData(int index, out AccessorBase accessor, out void* data, out int byteStride)
+        public unsafe void GetAccessorAndData(int index, out Accessor accessor, out void* data, out int byteStride)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
         public unsafe void GetAccessorSparseIndices(AccessorSparseIndices sparseIndices, out void* data)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
         public unsafe void GetAccessorSparseValues(AccessorSparseValues sparseValues, out void* data)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
         public ReadOnlyNativeArray<byte> GetBufferView(int bufferViewIndex, out int byteStride, int offset = 0, int length = 0)
         {
@@ -217,7 +224,7 @@ namespace GLTFast.Tests.Import
         }
         public ReadOnlyNativeArray<T> GetAccessorData<T>(int bufferViewIndex, int count, int offset = 0) where T : unmanaged
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
         public ReadOnlyNativeStridedArray<T> GetStridedAccessorData<T>(int bufferViewIndex, int count, int offset = 0) where T : unmanaged
         {

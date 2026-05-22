@@ -2,10 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
-using GLTFast.Schema;
 
 namespace GLTFast.Newtonsoft.Schema
 {
     [Obsolete("Use GLTFast.Schema.AccessorSparse instead.")]
-    public class AccessorSparse : AccessorSparseBase<AccessorSparseIndices, AccessorSparseValues>, IJsonObject { }
+    public class AccessorSparse : GLTFast.Schema.AccessorSparse, IJsonObject { }
 }

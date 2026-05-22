@@ -5,8 +5,7 @@
         "Unity.Burst",
         "Unity.Mathematics",
         "glTFast",
-        "glTFast.Export",
-        "glTFast.Newtonsoft"
+        "glTFast.Export"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
@@ -25,11 +24,6 @@
             "name": "com.unity.modules.imageconversion",
             "expression": "",
             "define": "UNITY_IMAGECONVERSION"
-        },
-        {
-            "name": "com.unity.nuget.newtonsoft-json",
-            "expression": "",
-            "define": "NEWTONSOFT_JSON"
         }
     ],
     "noEngineReferences": false

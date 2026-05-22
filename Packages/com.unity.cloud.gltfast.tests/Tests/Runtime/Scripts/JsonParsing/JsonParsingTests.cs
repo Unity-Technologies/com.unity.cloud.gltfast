@@ -318,13 +318,13 @@ namespace GLTFast.Tests.JsonParsing
             Assert.Throws<JsonException>(() => Parse("garbage", Assert.IsNull));
         }
 
-        static void Parse(string gltf, Action<RootBase> validationCallback)
+        static void Parse(string gltf, Action<Root> validationCallback)
         {
             var root = JsonSerializer.Deserialize(gltf, GltfRootSourceGenerator.Default.Root);
             validationCallback(root);
         }
 
-        static void AssertMaterialExtensionResult(RootBase gltf)
+        static void AssertMaterialExtensionResult(Root gltf)
         {
             Assert.NotNull(gltf);
             Assert.NotNull(gltf.Materials, "No materials");
@@ -443,7 +443,7 @@ namespace GLTFast.Tests.JsonParsing
             Assert.NotNull(all.Extensions.KHR_materials_transmission);
         }
 
-        static void AssertSparseAccessorsResult(RootBase gltf)
+        static void AssertSparseAccessorsResult(Root gltf)
         {
             Assert.NotNull(gltf);
             Assert.NotNull(gltf.Accessors, "No accessors");
@@ -473,7 +473,7 @@ namespace GLTFast.Tests.JsonParsing
             Assert.IsNull(invalid.Sparse.Values);
         }
 
-        static void AssertMeshTargetNamesResult(RootBase gltf)
+        static void AssertMeshTargetNamesResult(Root gltf)
         {
             Assert.NotNull(gltf);
             Assert.NotNull(gltf.Meshes, "No materials");
@@ -494,7 +494,7 @@ namespace GLTFast.Tests.JsonParsing
             Assert.IsNull(mat.Extras.targetNames);
         }
 
-        static void AssertMinMagFilterResult(RootBase gltf)
+        static void AssertMinMagFilterResult(Root gltf)
         {
             Assert.NotNull(gltf);
             Assert.NotNull(gltf.Samplers, "No samplers");
@@ -541,17 +541,17 @@ namespace GLTFast.Tests.JsonParsing
             Assert.AreEqual(Sampler.MinFilterMode.LinearMipmapLinear, sampler7.minFilter);
         }
 
-        static void AssertUnknownNodeExtensionResult(RootBase gltf)
+        static void AssertUnknownNodeExtensionResult(Root gltf)
         {
             AssertUnknownNodeExtensionResult(gltf, true);
         }
 
-        static void AssertUnknownNodeExtensionResultStrict(RootBase gltf)
+        static void AssertUnknownNodeExtensionResultStrict(Root gltf)
         {
             AssertUnknownNodeExtensionResult(gltf, false);
         }
 
-        static void AssertUnknownNodeExtensionResult(RootBase gltf, bool discardEmptyExtensions)
+        static void AssertUnknownNodeExtensionResult(Root gltf, bool discardEmptyExtensions)
         {
             Assert.NotNull(gltf);
             Assert.NotNull(gltf.Nodes, "No nodes");
@@ -618,17 +618,17 @@ namespace GLTFast.Tests.JsonParsing
             Assert.AreEqual(42, node5.Extensions.KHR_lights_punctual.light);
         }
 
-        static void AssertUnknownTextureExtensionResult(RootBase gltf)
+        static void AssertUnknownTextureExtensionResult(Root gltf)
         {
             AssertUnknownTextureExtensionResult(gltf, true);
         }
 
-        static void AssertUnknownTextureExtensionResultStrict(RootBase gltf)
+        static void AssertUnknownTextureExtensionResultStrict(Root gltf)
         {
             AssertUnknownTextureExtensionResult(gltf, false);
         }
 
-        static void AssertUnknownTextureExtensionResult(RootBase gltf, bool discardEmptyExtensions)
+        static void AssertUnknownTextureExtensionResult(Root gltf, bool discardEmptyExtensions)
         {
             Assert.NotNull(gltf);
             Assert.NotNull(gltf.Textures, "No textures");

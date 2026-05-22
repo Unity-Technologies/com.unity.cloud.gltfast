@@ -13,30 +13,19 @@ using Unity.Gltfast.Text.Json.Serialization;
 
 namespace GLTFast.Schema
 {
-    /// <inheritdoc />
-    [System.Serializable]
-    public class Node : NodeBase<NodeExtensions> { }
-
-    /// <inheritdoc />
-    /// <typeparam name="TExtensions">Node extensions type</typeparam>
-    [System.Serializable]
-    public abstract class NodeBase<TExtensions> : NodeBase
-        where TExtensions : NodeExtensions
-    {
-        /// <inheritdoc cref="Extensions"/>
-        public TExtensions extensions;
-
-        /// <inheritdoc />
-        public override NodeExtensions Extensions => extensions;
-    }
-
     /// <summary>
     /// An object defining the hierarchy relations and the local transform of
     /// its content.
     /// </summary>
     [System.Serializable]
-    public abstract class NodeBase : NamedObject, IGltfObject
+    public class Node : NamedObject, IGltfObject
     {
+        /// <inheritdoc cref="Extensions"/>
+        public NodeExtensions extensions;
+
+        /// <inheritdoc cref="NodeExtensions"/>
+        public NodeExtensions Extensions => extensions;
+
         /// <summary>
         /// The indices of this node's children.
         /// </summary>
@@ -79,7 +68,7 @@ namespace GLTFast.Schema
         public float[] weights;
 
         /// <summary>
-        /// The index of the skin (in <see cref="RootBase.Skins"/> referenced by this node.
+        /// The index of the skin (in <see cref="Root.Skins"/> referenced by this node.
         /// </summary>
         public int skin = -1;
 
@@ -87,9 +76,6 @@ namespace GLTFast.Schema
         /// Camera index
         /// </summary>
         public int camera = -1;
-
-        /// <inheritdoc cref="NodeExtensions"/>
-        public abstract NodeExtensions Extensions { get; }
 
         /// <summary>
         /// Application-specific data.
@@ -163,10 +149,6 @@ namespace GLTFast.Schema
             }
             writer.Close();
         }
-
-        /// <inheritdoc cref="Root.JsonUtilityCleanup"/>
-        [Obsolete("Has become obsolete after the transition from JsonUtility to System.Text.Json.")]
-        public virtual void JsonUtilityCleanup() { }
     }
 
     /// <summary>

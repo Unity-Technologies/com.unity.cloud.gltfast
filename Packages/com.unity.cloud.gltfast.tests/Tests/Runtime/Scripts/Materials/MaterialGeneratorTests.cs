@@ -8,10 +8,10 @@
 using System.Linq;
 using GLTFast.Logging;
 using GLTFast.Materials;
-using GLTFast.Schema;
 using NUnit.Framework;
 using UnityEngine;
 using Material = UnityEngine.Material;
+using GltfMaterial = GLTFast.Schema.Material;
 
 namespace GLTFast.Tests
 {
@@ -70,7 +70,7 @@ namespace GLTFast.Tests
         {
             throw new System.NotImplementedException();
         }
-        public override Material GenerateMaterial(MaterialBase gltfMaterial, IGltfReadable gltf, bool pointsSupport = false)
+        public override Material GenerateMaterial(GltfMaterial gltfMaterial, IGltfReadable gltf, bool pointsSupport = false)
         {
             throw new System.NotImplementedException();
         }

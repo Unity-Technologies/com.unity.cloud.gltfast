@@ -33,7 +33,7 @@ namespace GLTFast
         /// <param name="imageIndex">Corresponding, potentially updated glTF image index.</param>
         /// <returns>True if the texture image loader supports loading that texture, false otherwise.</returns>
         /// <seealso cref="ITextureImageLoader"/>
-        bool ITextureImageLoader.IsAbleToLoad(TextureBase texture, out int imageIndex)
+        bool ITextureImageLoader.IsAbleToLoad(Texture texture, out int imageIndex)
         {
             imageIndex = -1;
             return false;

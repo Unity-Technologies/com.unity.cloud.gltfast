@@ -11,10 +11,10 @@ namespace GLTFast
     /// </summary>
     public interface IMaterialsVariantsProvider
     {
-        /// <inheritdoc cref="RootBase.MaterialsVariantsCount"/>
+        /// <inheritdoc cref="Root.MaterialsVariantsCount"/>
         int MaterialsVariantsCount { get; }
 
-        /// <inheritdoc cref="RootBase.GetMaterialsVariantName"/>
+        /// <inheritdoc cref="Root.GetMaterialsVariantName"/>
         string GetMaterialsVariantName(int index);
     }
 }

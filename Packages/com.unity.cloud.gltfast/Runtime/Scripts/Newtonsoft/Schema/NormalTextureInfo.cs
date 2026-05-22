@@ -2,10 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
-using GLTFast.Schema;
 
 namespace GLTFast.Newtonsoft.Schema
 {
     [Obsolete("Use GLTFast.Schema.NormalTextureInfo instead.")]
-    public class NormalTextureInfo : NormalTextureInfoBase<TextureInfoExtensions>, IJsonObject { }
+    public class NormalTextureInfo : GLTFast.Schema.NormalTextureInfo, IJsonObject { }
 }

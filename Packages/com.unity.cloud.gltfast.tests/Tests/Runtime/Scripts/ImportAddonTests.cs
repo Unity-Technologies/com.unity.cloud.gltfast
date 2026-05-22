@@ -41,7 +41,7 @@ namespace GLTFast.Tests
                 var gltf = new GltfImport(logger: new ConsoleLogger());
                 new PostJsonDeserializationAddon().Inject(gltf);
                 Assert.IsTrue(await gltf.LoadGltfJson(@"{""asset"":{""copyright"":""© 2026 Unity Technologies and the glTFast authors.""}}"));
-                var root = gltf.GetSourceRoot();
+                var root = gltf.Root;
                 Assert.NotNull(root?.asset?.name);
                 Assert.AreEqual("My Custom Asset Name", root.asset.name);
             }
@@ -74,7 +74,7 @@ namespace GLTFast.Tests
                 return false;
             }
 
-            public override void Inject(GltfImportBase gltfImport)
+            public override void Inject(GltfImport gltfImport)
             {
                 gltfImport.AddImportAddonInstance(this);
             }
@@ -88,7 +88,7 @@ namespace GLTFast.Tests
         {
             public bool PostJsonDeserialization()
             {
-                var gltf = m_GltfImport.GetSourceRoot();
+                var gltf = m_GltfImport.Root;
                 gltf.asset.name ??= "My Custom Asset Name";
                 if (string.IsNullOrEmpty(gltf.asset.copyright))
                 {
@@ -105,7 +105,7 @@ namespace GLTFast.Tests
 
             public override bool SupportsGltfExtension(string extensionName) => false;
 
-            public override void Inject(GltfImportBase gltfImport)
+            public override void Inject(GltfImport gltfImport)
             {
                 gltfImport.AddImportAddonInstance(this);
                 m_GltfImport = gltfImport as GltfImport;

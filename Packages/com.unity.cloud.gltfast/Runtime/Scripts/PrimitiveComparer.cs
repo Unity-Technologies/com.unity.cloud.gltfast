@@ -10,7 +10,7 @@ namespace GLTFast
     static class PrimitiveComparer
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool HaveEqualVertexBuffers(MeshPrimitiveBase x, MeshPrimitiveBase y)
+        public static bool HaveEqualVertexBuffers(MeshPrimitive x, MeshPrimitive y)
         {
             if (ReferenceEquals(x, y)) return true;
             if (x is null) return false;
@@ -20,7 +20,7 @@ namespace GLTFast
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static int CalculateHashCode(MeshPrimitiveBase primitive)
+        public static int CalculateHashCode(MeshPrimitive primitive)
         {
 #if NET_STANDARD
             return HashCode.Combine(

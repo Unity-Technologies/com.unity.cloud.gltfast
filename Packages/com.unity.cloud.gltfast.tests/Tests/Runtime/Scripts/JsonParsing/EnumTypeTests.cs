@@ -318,7 +318,7 @@ namespace GLTFast.Tests.JsonParsing
 #pragma warning restore CS0618 // Type or member is obsolete
         }
 
-        static void CheckResultAccessor(RootBase gltf)
+        static void CheckResultAccessor(Root gltf)
         {
             Assert.NotNull(gltf);
             Assert.NotNull(gltf.Accessors);
@@ -328,7 +328,7 @@ namespace GLTFast.Tests.JsonParsing
         }
 
 #if UNITY_ANIMATION
-        static void CheckResultAnimation(RootBase gltf)
+        static void CheckResultAnimation(Root gltf)
         {
             Assert.NotNull(gltf);
             Assert.NotNull(gltf.Animations);
@@ -343,7 +343,7 @@ namespace GLTFast.Tests.JsonParsing
         }
 #endif
 
-        static void CheckResultCamera(RootBase gltf)
+        static void CheckResultCamera(Root gltf)
         {
             Assert.NotNull(gltf);
             Assert.NotNull(gltf.Cameras);
@@ -352,7 +352,7 @@ namespace GLTFast.Tests.JsonParsing
         }
 
 #if MESHOPT_IS_RECENT
-        static void CheckResultMeshopt(RootBase gltf)
+        static void CheckResultMeshopt(Root gltf)
         {
             Assert.NotNull(gltf);
             Assert.NotNull(gltf.BufferViews);
@@ -362,7 +362,7 @@ namespace GLTFast.Tests.JsonParsing
             Assert.AreEqual(Filter.Exponential, gltf.BufferViews[0].Extensions?.EXT_meshopt_compression.GetFilter());
         }
 #endif
-        static void CheckResultRootExtensions(RootBase gltf)
+        static void CheckResultRootExtensions(Root gltf)
         {
             Assert.NotNull(gltf);
             Assert.NotNull(gltf.Extensions);
@@ -372,7 +372,7 @@ namespace GLTFast.Tests.JsonParsing
             Assert.AreEqual(LightPunctual.Type.Directional, gltf.Extensions.KHR_lights_punctual.lights[0].GetLightType());
         }
 
-        static void CheckResultMaterials(RootBase gltf)
+        static void CheckResultMaterials(Root gltf)
         {
             Assert.NotNull(gltf);
             Assert.NotNull(gltf.Materials);
@@ -385,7 +385,7 @@ namespace GLTFast.Tests.JsonParsing
             Assert.AreEqual(DrawMode.LineStrip, gltf.Meshes[0].Primitives[0].mode);
         }
 
-        static void CheckResultSamplers(RootBase gltf)
+        static void CheckResultSamplers(Root gltf)
         {
             Assert.NotNull(gltf);
             Assert.NotNull(gltf.Samplers);

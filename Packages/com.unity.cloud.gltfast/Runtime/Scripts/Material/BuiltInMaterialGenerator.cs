@@ -18,7 +18,7 @@ namespace GLTFast.Materials
 {
 
     using Logging;
-    using AlphaMode = Schema.MaterialBase.AlphaMode;
+    using AlphaMode = Schema.Material.AlphaMode;
 
     /// <summary>
     /// Converts glTF materials to Unity materials for the Built-in Render Pipeline
@@ -187,7 +187,7 @@ namespace GLTFast.Materials
 
         /// <inheritdoc />
         public override Material GenerateMaterial(
-            Schema.MaterialBase gltfMaterial,
+            Schema.Material gltfMaterial,
             IGltfReadable gltf,
             bool pointsSupport = false
         )
@@ -415,7 +415,7 @@ namespace GLTFast.Materials
         /// </summary>
         /// <param name="material">Target material</param>
         /// <param name="gltfMaterial">Source material</param>
-        static void SetAlphaModeMask(Material material, Schema.MaterialBase gltfMaterial)
+        static void SetAlphaModeMask(Material material, Schema.Material gltfMaterial)
         {
             SetAlphaModeMask(material, gltfMaterial.alphaCutoff);
         }

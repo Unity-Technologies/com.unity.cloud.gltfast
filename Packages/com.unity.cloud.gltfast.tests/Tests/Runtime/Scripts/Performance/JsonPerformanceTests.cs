@@ -58,19 +58,12 @@ namespace GLTFast.Tests.Performance
         [Test, Performance]
         public void Empty()
         {
+#if !RUN_PERFORMANCE_TESTS
+            Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
+#endif
             RunTest(
                 s_GltfJsonEmpty.AsReadOnly(),
-                "Empty.JsonUtility",
-                DeserializeWrapper
-            );
-        }
-
-        [Test, Performance]
-        public void EmptyExtended()
-        {
-            RunTest(
-                s_GltfJsonEmpty.AsReadOnly(),
-                "Empty.Extended",
+                "Empty",
                 DeserializeWrapper
             );
         }
@@ -83,7 +76,7 @@ namespace GLTFast.Tests.Performance
 #endif
             RunTest(
                 m_GltfJsonFlatHierarchy.AsReadOnly(),
-                "FlatHierarchy.JsonUtility",
+                "FlatHierarchy",
                 DeserializeWrapper
             );
         }
@@ -91,37 +84,11 @@ namespace GLTFast.Tests.Performance
         [Test]
         public void FlatHierarchyCheck()
         {
-#if !RUN_PERFORMANCE_TESTS
-            Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
-#endif
             var gltf = DeserializeWrapper(m_GltfJsonFlatHierarchy.AsReadOnly());
             CheckFlatHierarchy(gltf);
         }
 
-        [Test, Performance]
-        public void FlatHierarchyExtended()
-        {
-#if !RUN_PERFORMANCE_TESTS
-            Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
-#endif
-            RunTest(
-                m_GltfJsonFlatHierarchy.AsReadOnly(),
-                "FlatHierarchy.Extended",
-                DeserializeWrapper
-            );
-        }
-
-        [Test]
-        public void FlatHierarchyExtendedCheck()
-        {
-#if !RUN_PERFORMANCE_TESTS
-            Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
-#endif
-            var gltf = DeserializeWrapper(m_GltfJsonFlatHierarchy.AsReadOnly());
-            CheckFlatHierarchy(gltf);
-        }
-
-        static void CheckFlatHierarchy(RootBase gltf)
+        static void CheckFlatHierarchy(Root gltf)
         {
             Assert.NotNull(gltf?.Asset);
             Assert.AreEqual("2.0", gltf.Asset.version);
@@ -151,7 +118,7 @@ namespace GLTFast.Tests.Performance
             NativeArray<byte>.ReadOnly gltfJson,
             string profilingMarker,
             Func<NativeArray<byte>.ReadOnly, T> jsonParser
-            ) where T : RootBase
+            ) where T : Root
         {
             var profilerMarkerName = $"JsonPerf.{profilingMarker}";
             var measure = Measure.Method(() =>
@@ -168,7 +135,7 @@ namespace GLTFast.Tests.Performance
             string profilingMarker,
             Func<NativeArray<byte>.ReadOnly, T> jsonParser,
             Action<T> resultCallback
-        ) where T : RootBase
+        ) where T : Root
         {
             var profilerMarkerName = $"JsonPerf.{profilingMarker}";
             var measure = Measure.Method(() =>

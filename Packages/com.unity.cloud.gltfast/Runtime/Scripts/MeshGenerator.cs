@@ -26,19 +26,19 @@ namespace GLTFast
         IndicesData m_Indices;
 
         readonly SubMeshAssignment[] m_SubMeshAssignments;
-        readonly IReadOnlyList<MeshPrimitiveBase> m_Primitives;
+        readonly IReadOnlyList<MeshPrimitive> m_Primitives;
 
         MeshTopology m_Topology;
 
         int SubMeshCount => m_SubMeshAssignments?.Length ?? m_Primitives.Count;
 
-        MeshPrimitiveBase GetSubMesh(int index) =>
+        MeshPrimitive GetSubMesh(int index) =>
             m_SubMeshAssignments == null
                 ? m_Primitives[index]
                 : m_SubMeshAssignments[index].Primitive;
 
         public MeshGenerator(
-            IReadOnlyList<MeshPrimitiveBase> primitives,
+            IReadOnlyList<MeshPrimitive> primitives,
             SubMeshAssignment[] subMeshAssignments,
             string[] morphTargetNames,
             string meshName,
@@ -412,7 +412,7 @@ namespace GLTFast
             return await CreateMeshResultAsync(logger);
         }
 
-        void AddMorphTargets(int subMesh, MeshPrimitiveBase primitive, ICodeLogger logger)
+        void AddMorphTargets(int subMesh, MeshPrimitive primitive, ICodeLogger logger)
         {
             if (m_MorphTargetsGenerator == null)
                 return;
@@ -557,7 +557,7 @@ namespace GLTFast
 
 
         static void GetIndicesUInt16Job(
-            AccessorBase accessor,
+            Accessor accessor,
             ReadOnlyNativeArray<byte> accessorData,
             NativeArray<ushort> indices,
             out JobHandle? jobHandle,
@@ -577,7 +577,7 @@ namespace GLTFast
                             input = accessorData.Reinterpret<byte3>().AsNativeArrayReadOnly(),
                             result = indices.Reinterpret<ushort3>(UnsafeUtility.SizeOf<ushort>())
                         };
-                        jobHandle = job8.Schedule(accessor.count / 3, GltfImportBase.DefaultBatchCount);
+                        jobHandle = job8.Schedule(accessor.count / 3, GltfImport.DefaultBatchCount);
                     }
                     else
                     {
@@ -586,7 +586,7 @@ namespace GLTFast
                             input = accessorData.AsNativeArrayReadOnly(),
                             result = indices
                         };
-                        jobHandle = job8.Schedule(accessor.count, GltfImportBase.DefaultBatchCount);
+                        jobHandle = job8.Schedule(accessor.count, GltfImport.DefaultBatchCount);
                     }
                     break;
                 }
@@ -599,7 +599,7 @@ namespace GLTFast
                             input = accessorData.Reinterpret<ushort3>().AsNativeArrayReadOnly(),
                             result = indices.Reinterpret<ushort3>(UnsafeUtility.SizeOf<ushort>())
                         };
-                        jobHandle = job16.Schedule(accessor.count / 3, GltfImportBase.DefaultBatchCount);
+                        jobHandle = job16.Schedule(accessor.count / 3, GltfImport.DefaultBatchCount);
                     }
                     else
                     {
@@ -625,7 +625,7 @@ namespace GLTFast
         }
 
         static void GetIndicesUInt32Job(
-            AccessorBase accessor,
+            Accessor accessor,
             ReadOnlyNativeArray<byte> accessorData,
             NativeArray<uint> indices,
             out JobHandle? jobHandle,
@@ -645,7 +645,7 @@ namespace GLTFast
                             input = accessorData.Reinterpret<byte3>().AsNativeArrayReadOnly(),
                             result = indices.Reinterpret<uint3>(UnsafeUtility.SizeOf<uint>())
                         };
-                        jobHandle = job8.Schedule(accessor.count / 3, GltfImportBase.DefaultBatchCount);
+                        jobHandle = job8.Schedule(accessor.count / 3, GltfImport.DefaultBatchCount);
                     }
                     else
                     {
@@ -654,7 +654,7 @@ namespace GLTFast
                             input = accessorData.AsNativeArrayReadOnly(),
                             result = indices
                         };
-                        jobHandle = job8.Schedule(accessor.count, GltfImportBase.DefaultBatchCount);
+                        jobHandle = job8.Schedule(accessor.count, GltfImport.DefaultBatchCount);
                     }
                     break;
                 }
@@ -667,7 +667,7 @@ namespace GLTFast
                             input = accessorData.Reinterpret<ushort3>().AsNativeArrayReadOnly(),
                             result = indices.Reinterpret<uint3>(UnsafeUtility.SizeOf<uint>())
                         };
-                        jobHandle = job16.Schedule(accessor.count / 3, GltfImportBase.DefaultBatchCount);
+                        jobHandle = job16.Schedule(accessor.count / 3, GltfImport.DefaultBatchCount);
                     }
                     else
                     {
@@ -676,7 +676,7 @@ namespace GLTFast
                             input = accessorData.Reinterpret<ushort>().AsNativeArrayReadOnly(),
                             result = indices
                         };
-                        jobHandle = job16.Schedule(accessor.count, GltfImportBase.DefaultBatchCount);
+                        jobHandle = job16.Schedule(accessor.count, GltfImport.DefaultBatchCount);
                     }
                     break;
                 }
@@ -689,7 +689,7 @@ namespace GLTFast
                             input = accessorData.Reinterpret<uint3>().AsNativeArrayReadOnly(),
                             result = indices.Reinterpret<uint3>(UnsafeUtility.SizeOf<uint>())
                         };
-                        jobHandle = job32.Schedule(accessor.count / 3, GltfImportBase.DefaultBatchCount);
+                        jobHandle = job32.Schedule(accessor.count / 3, GltfImport.DefaultBatchCount);
                     }
                     else
                     {
@@ -716,7 +716,7 @@ namespace GLTFast
         }
 
         static void CalculateIndicesUInt16Job(
-            MeshPrimitiveBase primitive,
+            MeshPrimitive primitive,
             NativeArray<ushort> indices,
             out JobHandle jobHandle
             )
@@ -733,7 +733,7 @@ namespace GLTFast
                     {
                         result = indices
                     };
-                    jobHandle = job.Schedule(indices.Length - 1, GltfImportBase.DefaultBatchCount);
+                    jobHandle = job.Schedule(indices.Length - 1, GltfImport.DefaultBatchCount);
                     break;
                 }
                 case DrawMode.Triangles:
@@ -742,7 +742,7 @@ namespace GLTFast
                     {
                         result = indices
                     };
-                    jobHandle = job.Schedule(indices.Length, GltfImportBase.DefaultBatchCount);
+                    jobHandle = job.Schedule(indices.Length, GltfImport.DefaultBatchCount);
                     break;
                 }
                 case DrawMode.TriangleStrip:
@@ -751,7 +751,7 @@ namespace GLTFast
                     {
                         result = indices
                     };
-                    jobHandle = job.Schedule(indices.Length, GltfImportBase.DefaultBatchCount);
+                    jobHandle = job.Schedule(indices.Length, GltfImport.DefaultBatchCount);
                     break;
                 }
                 case DrawMode.TriangleFan:
@@ -759,7 +759,7 @@ namespace GLTFast
                     {
                         result = indices
                     };
-                    jobHandle = triangleFanJob.Schedule(indices.Length, GltfImportBase.DefaultBatchCount);
+                    jobHandle = triangleFanJob.Schedule(indices.Length, GltfImport.DefaultBatchCount);
                     break;
                 default:
                 {
@@ -767,7 +767,7 @@ namespace GLTFast
                     {
                         result = indices
                     };
-                    jobHandle = job.Schedule(indices.Length, GltfImportBase.DefaultBatchCount);
+                    jobHandle = job.Schedule(indices.Length, GltfImport.DefaultBatchCount);
                     break;
                 }
             }
@@ -775,7 +775,7 @@ namespace GLTFast
         }
 
         static void CalculateIndicesUInt32Job(
-            MeshPrimitiveBase primitive,
+            MeshPrimitive primitive,
             NativeArray<uint> indices,
             out JobHandle jobHandle
             )
@@ -792,7 +792,7 @@ namespace GLTFast
                     {
                         result = indices
                     };
-                    jobHandle = job.Schedule(indices.Length - 1, GltfImportBase.DefaultBatchCount);
+                    jobHandle = job.Schedule(indices.Length - 1, GltfImport.DefaultBatchCount);
                     break;
                 }
                 case DrawMode.Triangles:
@@ -801,7 +801,7 @@ namespace GLTFast
                     {
                         result = indices
                     };
-                    jobHandle = job.Schedule(indices.Length, GltfImportBase.DefaultBatchCount);
+                    jobHandle = job.Schedule(indices.Length, GltfImport.DefaultBatchCount);
                     break;
                 }
                 case DrawMode.TriangleStrip:
@@ -810,7 +810,7 @@ namespace GLTFast
                     {
                         result = indices
                     };
-                    jobHandle = job.Schedule(indices.Length, GltfImportBase.DefaultBatchCount);
+                    jobHandle = job.Schedule(indices.Length, GltfImport.DefaultBatchCount);
                     break;
                 }
                 case DrawMode.TriangleFan:
@@ -818,7 +818,7 @@ namespace GLTFast
                     {
                         result = indices
                     };
-                    jobHandle = triangleFanJob.Schedule(indices.Length, GltfImportBase.DefaultBatchCount);
+                    jobHandle = triangleFanJob.Schedule(indices.Length, GltfImport.DefaultBatchCount);
                     break;
                 default:
                 {
@@ -826,7 +826,7 @@ namespace GLTFast
                     {
                         result = indices
                     };
-                    jobHandle = job.Schedule(indices.Length, GltfImportBase.DefaultBatchCount);
+                    jobHandle = job.Schedule(indices.Length, GltfImport.DefaultBatchCount);
                     break;
                 }
             }

@@ -138,7 +138,7 @@ namespace GLTFast
             if (posAcc.IsSparse && posAcc.bufferView >= 0)
                 jobCount++;
 
-            AccessorBase nrmAcc = null;
+            Accessor nrmAcc = null;
             void* nrmInput = null;
             var nrmInputByteStride = 0;
 
@@ -148,7 +148,7 @@ namespace GLTFast
                 jobCount += nrmAcc.IsSparse && nrmAcc.bufferView >= 0 ? 2 : 1;
             }
 
-            AccessorBase tanAcc = null;
+            Accessor tanAcc = null;
             void* tanInput = null;
             var tanInputByteStride = 0;
 
@@ -193,7 +193,7 @@ namespace GLTFast
             int offset,
             IGltfBuffers buffers,
             void* posData,
-            AccessorBase posAcc,
+            Accessor posAcc,
             NativeArray<JobHandle> handles,
             ref int handleIndex
             )
@@ -256,7 +256,7 @@ namespace GLTFast
         unsafe bool ScheduleNormalsJobs(
             int offset,
             IGltfBuffers buffers,
-            AccessorBase nrmAcc,
+            Accessor nrmAcc,
             void* nrmInput,
             int nrmInputByteStride,
             NativeArray<JobHandle> handles,
@@ -321,7 +321,7 @@ namespace GLTFast
         unsafe bool ScheduleTangentsJobs(
             int offset,
             IGltfBuffers buffers,
-            AccessorBase tanAcc,
+            Accessor tanAcc,
             void* tanInput,
             int tanInputByteStride,
             NativeArray<JobHandle> handles,

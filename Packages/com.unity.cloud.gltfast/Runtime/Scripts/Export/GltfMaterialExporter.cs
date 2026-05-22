@@ -7,8 +7,8 @@ using GLTFast.Materials;
 using GLTFast.Schema;
 using Unity.Mathematics;
 using UnityEngine;
-using UnityEngine.Rendering;
 using Material = UnityEngine.Material;
+using GltfMaterial = GLTFast.Schema.Material;
 
 namespace GLTFast.Export
 {
@@ -33,7 +33,7 @@ namespace GLTFast.Export
 
             var alphaMode = GetAlphaMode(unityMaterial);
             material.SetAlphaMode(alphaMode);
-            if (alphaMode == MaterialBase.AlphaMode.Mask)
+            if (alphaMode == GltfMaterial.AlphaMode.Mask)
             {
                 material.alphaCutoff = GetAlphaCutoff(unityMaterial);
             }
@@ -52,7 +52,7 @@ namespace GLTFast.Export
         /// <seealso href="https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html#_material_alphamode"/>
         /// <param name="material">Unity material.</param>
         /// <returns>glTF alpha mode.</returns>
-        protected abstract MaterialBase.AlphaMode GetAlphaMode(Material material);
+        protected abstract GltfMaterial.AlphaMode GetAlphaMode(Material material);
 
         /// <summary>
         /// Returns that material's alpha cutoff threshold.
@@ -85,7 +85,7 @@ namespace GLTFast.Export
                         texCoord = GetValue(unityMaterial, MaterialProperty.BaseColorTextureTexCoord)
                     };
 
-                    material.pbrMetallicRoughness.baseColorTexture = textureInfo;
+                    material.pbrMetallicRoughness.BaseColorTexture = textureInfo;
 
                     if (TryCreateTextureTransform(
                             gltf,
@@ -95,7 +95,7 @@ namespace GLTFast.Export
                             out var textureTransform
                         ))
                     {
-                        material.pbrMetallicRoughness.baseColorTexture.extensions = new TextureInfoExtensions
+                        material.pbrMetallicRoughness.BaseColorTexture.Extensions = new TextureInfoExtensions
                         {
                             KHR_texture_transform = textureTransform
                         };
@@ -135,13 +135,13 @@ namespace GLTFast.Export
                         out var textureTransform)
                     )
                 {
-                    textureInfo.extensions = new TextureInfoExtensions
+                    textureInfo.Extensions = new TextureInfoExtensions
                     {
                         KHR_texture_transform = textureTransform
                     };
                 }
 
-                material.pbrMetallicRoughness.metallicRoughnessTexture = textureInfo;
+                material.pbrMetallicRoughness.MetallicRoughnessTexture = textureInfo;
             }
 
             if (TryGetValue(unityMaterial, MaterialProperty.Metallic, out float metallicFactor))
@@ -190,7 +190,7 @@ namespace GLTFast.Export
                     out var textureTransform
                 ))
             {
-                material.normalTexture.extensions = new TextureInfoExtensions
+                material.normalTexture.Extensions = new TextureInfoExtensions
                 {
                     KHR_texture_transform = textureTransform
                 };
@@ -232,7 +232,7 @@ namespace GLTFast.Export
                     out var textureTransform
                 ))
             {
-                material.occlusionTexture.extensions = new TextureInfoExtensions
+                material.occlusionTexture.Extensions = new TextureInfoExtensions
                 {
                     KHR_texture_transform = textureTransform
                 };
@@ -266,7 +266,7 @@ namespace GLTFast.Export
                             out var textureTransform
                         ))
                     {
-                        material.emissiveTexture.extensions = new TextureInfoExtensions
+                        material.emissiveTexture.Extensions = new TextureInfoExtensions
                         {
                             KHR_texture_transform = textureTransform
                         };

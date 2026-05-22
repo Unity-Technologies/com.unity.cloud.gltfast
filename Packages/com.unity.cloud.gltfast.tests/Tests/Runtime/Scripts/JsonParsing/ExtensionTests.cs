@@ -418,24 +418,24 @@ $@"
             CertifyCustomExtensions(gltf.materials[0].pbrMetallicRoughness.extensions);
             CertifyCustomExtras(gltf.materials[0].pbrMetallicRoughness.extras);
 
-            CertifyCustomData(gltf.materials[0].pbrMetallicRoughness.baseColorTexture, 5000);
-            CertifyCustomExtensions(gltf.materials[0].pbrMetallicRoughness.baseColorTexture.extensions);
-            CertifyCustomExtras(gltf.materials[0].pbrMetallicRoughness.baseColorTexture.extras);
+            CertifyCustomData(gltf.materials[0].pbrMetallicRoughness.BaseColorTexture, 5000);
+            CertifyCustomExtensions(gltf.materials[0].pbrMetallicRoughness.BaseColorTexture.Extensions);
+            CertifyCustomExtras(gltf.materials[0].pbrMetallicRoughness.BaseColorTexture.extras);
 
-            CertifyCustomData(gltf.materials[0].pbrMetallicRoughness.metallicRoughnessTexture, 5001);
-            CertifyCustomExtensions(gltf.materials[0].pbrMetallicRoughness.metallicRoughnessTexture.extensions);
-            CertifyCustomExtras(gltf.materials[0].pbrMetallicRoughness.metallicRoughnessTexture.extras);
+            CertifyCustomData(gltf.materials[0].pbrMetallicRoughness.MetallicRoughnessTexture, 5001);
+            CertifyCustomExtensions(gltf.materials[0].pbrMetallicRoughness.MetallicRoughnessTexture.Extensions);
+            CertifyCustomExtras(gltf.materials[0].pbrMetallicRoughness.MetallicRoughnessTexture.extras);
 
             CertifyCustomData(gltf.materials[0].emissiveTexture, 501);
-            CertifyCustomExtensions(gltf.materials[0].emissiveTexture.extensions);
+            CertifyCustomExtensions(gltf.materials[0].emissiveTexture.Extensions);
             CertifyCustomExtras(gltf.materials[0].emissiveTexture.extras);
 
             CertifyCustomData(gltf.materials[0].normalTexture, 502);
-            CertifyCustomExtensions(gltf.materials[0].normalTexture.extensions);
+            CertifyCustomExtensions(gltf.materials[0].normalTexture.Extensions);
             CertifyCustomExtras(gltf.materials[0].normalTexture.extras);
 
             CertifyCustomData(gltf.materials[0].occlusionTexture, 503);
-            CertifyCustomExtensions(gltf.materials[0].occlusionTexture.extensions);
+            CertifyCustomExtensions(gltf.materials[0].occlusionTexture.Extensions);
             CertifyCustomExtras(gltf.materials[0].occlusionTexture.extras);
 
             CertifyCustomData(gltf.meshes[0], 51);
@@ -443,7 +443,7 @@ $@"
             CertifyCustomExtras(gltf.meshes[0].extras);
 
             CertifyCustomData(gltf.meshes[0].primitives[0], 510);
-            CertifyCustomExtensions(gltf.meshes[0].primitives[0].extensions);
+            CertifyCustomExtensions(gltf.meshes[0].primitives[0].Extensions);
             CertifyCustomExtras(gltf.meshes[0].primitives[0].extras);
 
             CertifyCustomData(gltf.nodes[0], 52);

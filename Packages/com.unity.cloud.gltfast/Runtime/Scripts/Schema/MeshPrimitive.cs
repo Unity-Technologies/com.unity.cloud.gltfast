@@ -36,29 +36,16 @@ namespace GLTFast.Schema
         TriangleFan = 6
     }
 
-    /// <inheritdoc />
-    [Serializable]
-    public class MeshPrimitive : MeshPrimitiveBase<MeshPrimitiveExtensions> { }
-
-    /// <inheritdoc />
-    /// <typeparam name="TExtensions">Mesh primitive extensions type</typeparam>
-    [Serializable]
-    public class MeshPrimitiveBase<TExtensions> : MeshPrimitiveBase
-    where TExtensions : MeshPrimitiveExtensions
-    {
-        /// <inheritdoc cref="Extensions"/>
-        public TExtensions extensions;
-
-        /// <inheritdoc />
-        public override MeshPrimitiveExtensions Extensions => extensions;
-    }
-
     /// <summary>
     /// Geometry to be rendered with the given material.
     /// </summary>
     [Serializable]
-    public abstract class MeshPrimitiveBase : ICloneable, IMaterialsVariantsSlot, IGltfObject
+    public class MeshPrimitive : ICloneable, IMaterialsVariantsSlot, IGltfObject
     {
+        /// <inheritdoc cref="MeshPrimitiveExtensions"/>
+        [JsonPropertyName("extensions")]
+        public MeshPrimitiveExtensions Extensions { get; set; }
+
         /// <summary>
         /// A dictionary object, where each key corresponds to mesh attribute semantic
         /// and each value is the index of the accessor containing attribute's data.
@@ -95,9 +82,6 @@ namespace GLTFast.Schema
         /// displacements' data).
         /// </summary>
         public MorphTarget[] targets;
-
-        /// <inheritdoc cref="MeshPrimitiveExtensions"/>
-        public abstract MeshPrimitiveExtensions Extensions { get; }
 
         /// <inheritdoc cref="Root.extras"/>
         public UnclassifiedData extras;

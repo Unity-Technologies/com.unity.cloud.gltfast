@@ -34,7 +34,7 @@ namespace GLTFast
         VertexBufferColors m_Colors;
         VertexBufferBones m_Bones;
 
-        AccessorBase[] m_PositionAccessors;
+        Accessor[] m_PositionAccessors;
 
         public override int VertexCount => VertexIntervals != null ? VertexIntervals[VertexIntervals.Length - 1] : 0;
 
@@ -77,7 +77,7 @@ namespace GLTFast
         {
             Assert.AreEqual(m_Attributes.Length, m_AttributeCount);
             var vertexCount = 0;
-            m_PositionAccessors = new AccessorBase[m_Attributes.Length];
+            m_PositionAccessors = new Accessor[m_Attributes.Length];
             VertexIntervals = new int[m_Attributes.Length + 1];
             for (var i = 0; i < m_Attributes.Length; i++)
             {

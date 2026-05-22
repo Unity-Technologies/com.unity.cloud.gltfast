@@ -16,36 +16,34 @@ using UnityEngine.Serialization;
 
 namespace GLTFast.Schema
 {
-    /// <inheritdoc />
-    [Serializable]
-    public class PbrMetallicRoughness : PbrMetallicRoughnessBase<TextureInfo> { }
-
-    /// <inheritdoc />
-    /// <typeparam name="TTextureInfo">textureInfo type</typeparam>
-    [Serializable]
-    public abstract class PbrMetallicRoughnessBase<TTextureInfo> : PbrMetallicRoughnessBase
-        where TTextureInfo : TextureInfoBase
-    {
-        /// <inheritdoc cref="BaseColorTexture"/>
-        public TTextureInfo baseColorTexture;
-
-        /// <inheritdoc cref="MetallicRoughnessTexture"/>
-        public TTextureInfo metallicRoughnessTexture;
-
-        /// <inheritdoc />
-        public override TextureInfoBase BaseColorTexture => baseColorTexture;
-
-        /// <inheritdoc />
-        public override TextureInfoBase MetallicRoughnessTexture => metallicRoughnessTexture;
-    }
-
     /// <summary>
     /// A set of parameter values that are used to define the metallic-roughness
     /// material model from Physically-Based Rendering (PBR) methodology.
     /// </summary>
     [Serializable]
-    public abstract class PbrMetallicRoughnessBase : IGltfObject
+    public class PbrMetallicRoughness : IGltfObject
     {
+        /// <summary>
+        /// The base color texture.
+        /// This texture contains RGB(A) components in sRGB color space.
+        /// The first three components (RGB) specify the base color of the material.
+        /// If the fourth component (A) is present, it represents the opacity of the
+        /// material. Otherwise, an opacity of 1.0 is assumed.
+        /// </summary>
+        [JsonPropertyName("baseColorTexture")]
+        public TextureInfo BaseColorTexture { get; set; }
+
+        /// <summary>
+        /// The metallic-roughness texture has two components.
+        /// The first component (R) contains the metallic-ness of the material.
+        /// The second component (G) contains the roughness of the material.
+        /// These values are linear.
+        /// If the third component (B) and/or the fourth component (A) are present,
+        /// they are ignored.
+        /// </summary>
+        [JsonPropertyName("metallicRoughnessTexture")]
+        public TextureInfo MetallicRoughnessTexture { get; set; }
+
         /// <summary>
         /// The RGBA components of the base color of the material.
         /// The fourth component (A) is the opacity of the material.
@@ -70,15 +68,6 @@ namespace GLTFast.Schema
                 baseColorFactor = new[] { value.r, value.g, value.b, value.a };
             }
         }
-
-        /// <summary>
-        /// The base color texture.
-        /// This texture contains RGB(A) components in sRGB color space.
-        /// The first three components (RGB) specify the base color of the material.
-        /// If the fourth component (A) is present, it represents the opacity of the
-        /// material. Otherwise, an opacity of 1.0 is assumed.
-        /// </summary>
-        public abstract TextureInfoBase BaseColorTexture { get; }
 
         /// <summary>
         /// The metalness of the material.
@@ -112,16 +101,6 @@ namespace GLTFast.Schema
         {
             return ExtensionsData.TryGetValue(key, out value);
         }
-
-        /// <summary>
-        /// The metallic-roughness texture has two components.
-        /// The first component (R) contains the metallic-ness of the material.
-        /// The second component (G) contains the roughness of the material.
-        /// These values are linear.
-        /// If the third component (B) and/or the fourth component (A) are present,
-        /// they are ignored.
-        /// </summary>
-        public abstract TextureInfoBase MetallicRoughnessTexture { get; }
 
         internal void GltfSerialize(JsonWriter writer)
         {

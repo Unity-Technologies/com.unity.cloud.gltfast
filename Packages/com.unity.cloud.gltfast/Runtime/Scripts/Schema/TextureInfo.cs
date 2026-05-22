@@ -13,35 +13,11 @@ using UnityEngine.Serialization;
 
 namespace GLTFast.Schema
 {
-
-    /// <inheritdoc />
-    [System.Serializable]
-    public class TextureInfo : TextureInfoBase<TextureInfoExtensions> { }
-
-    /// <inheritdoc />
-    /// <typeparam name="TExtensions">textureInfo extensions type</typeparam>
-    [System.Serializable]
-    public abstract class TextureInfoBase<TExtensions> : TextureInfoBase
-        where TExtensions : TextureInfoExtensions, new()
-    {
-        /// <inheritdoc cref="Extensions"/>
-        public TExtensions extensions;
-
-        /// <inheritdoc />
-        public override TextureInfoExtensions Extensions => extensions;
-
-        internal override void SetTextureTransform(TextureTransform textureTransform)
-        {
-            extensions = extensions ?? new TExtensions();
-            extensions.KHR_texture_transform = textureTransform;
-        }
-    }
-
     /// <summary>
     /// Reference to a texture.
     /// </summary>
     [System.Serializable]
-    public abstract class TextureInfoBase : IGltfObject
+    public class TextureInfo : IGltfObject
     {
 
         /// <summary>
@@ -57,7 +33,8 @@ namespace GLTFast.Schema
         public int texCoord;
 
         /// <inheritdoc cref="TextureInfoExtensions"/>
-        public abstract TextureInfoExtensions Extensions { get; }
+        [JsonPropertyName("extensions")]
+        public TextureInfoExtensions Extensions { get; set; }
 
         /// <inheritdoc cref="Root.extras"/>
         public UnclassifiedData extras;
@@ -76,7 +53,11 @@ namespace GLTFast.Schema
         /// <see cref="TextureInfoExtensions.KHR_texture_transform" /> field.
         /// </summary>
         /// <param name="textureTransform">Texture transform to apply.</param>
-        internal abstract void SetTextureTransform(TextureTransform textureTransform);
+        internal void SetTextureTransform(TextureTransform textureTransform)
+        {
+            Extensions ??= new TextureInfoExtensions();
+            Extensions.KHR_texture_transform = textureTransform;
+        }
 
         internal void GltfSerializeTextureInfo(JsonWriter writer)
         {

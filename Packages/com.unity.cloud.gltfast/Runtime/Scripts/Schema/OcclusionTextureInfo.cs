@@ -5,34 +5,11 @@ using Unity.Mathematics;
 
 namespace GLTFast.Schema
 {
-    /// <inheritdoc />
-    [System.Serializable]
-    public class OcclusionTextureInfo : OcclusionTextureInfoBase<TextureInfoExtensions> { }
-
-    /// <inheritdoc />
-    /// <typeparam name="TExtensions">occlusionTextureInfo extensions type</typeparam>
-    [System.Serializable]
-    public abstract class OcclusionTextureInfoBase<TExtensions> : OcclusionTextureInfoBase
-        where TExtensions : TextureInfoExtensions, new()
-    {
-        /// <inheritdoc cref="Extensions"/>
-        public TExtensions extensions;
-
-        /// <inheritdoc />
-        public override TextureInfoExtensions Extensions => extensions;
-
-        internal override void SetTextureTransform(TextureTransform textureTransform)
-        {
-            extensions = extensions ?? new TExtensions();
-            extensions.KHR_texture_transform = textureTransform;
-        }
-    }
-
     /// <summary>
     /// Occlusion map specific texture info
     /// </summary>
     [System.Serializable]
-    public abstract class OcclusionTextureInfoBase : TextureInfoBase
+    public class OcclusionTextureInfo : TextureInfo
     {
         /// <summary>
         /// A scalar multiplier controlling the amount of occlusion applied.

@@ -30,7 +30,7 @@ namespace GLTFast
         public override bool IsCompleted => base.IsCompleted && (!m_HasMorphTargets || m_MorphTargetsJobHandle.IsCompleted);
 
         public DracoMeshGenerator(
-            IReadOnlyList<MeshPrimitiveBase> primitives,
+            IReadOnlyList<MeshPrimitive> primitives,
             string[] morphTargetNames,
             string meshName,
             IGltfReadable gltf,
@@ -109,7 +109,7 @@ namespace GLTFast
         }
 
         void InitializeMorphTargets(
-            IReadOnlyList<MeshPrimitiveBase> primitives,
+            IReadOnlyList<MeshPrimitive> primitives,
             string[] morphTargetNames,
             int[] vertexIntervals,
             int vertexCount,
@@ -141,7 +141,7 @@ namespace GLTFast
         }
 
         async Task<Mesh> Decode(
-            IReadOnlyList<MeshPrimitiveBase> primitives,
+            IReadOnlyList<MeshPrimitive> primitives,
             IGltfBuffers buffers,
             Bounds[] bounds
             )

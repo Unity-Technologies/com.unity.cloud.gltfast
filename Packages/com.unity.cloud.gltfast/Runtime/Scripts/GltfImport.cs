@@ -56,9 +56,12 @@ using UnityEngine.Assertions;
 using UnityEngine.Profiling;
 using UnityEngine;
 using Buffer = GLTFast.Schema.Buffer;
+using Camera = GLTFast.Schema.Camera;
 using Debug = UnityEngine.Debug;
+using Material = GLTFast.Schema.Material;
+using Mesh = GLTFast.Schema.Mesh;
 using Sampler = GLTFast.Schema.Sampler;
-using TextureBase = GLTFast.Schema.TextureBase;
+using Texture = GLTFast.Schema.Texture;
 
 namespace GLTFast
 {
@@ -66,61 +69,7 @@ namespace GLTFast
     /// Loads a glTF's content, converts it to Unity resources and is able to
     /// feed it to an <see cref="IInstantiator"/> for instantiation.
     /// </summary>
-    public class GltfImport : GltfImportBase<Root>
-    {
-        /// <inheritdoc cref="GltfImportBase(IDownloadProvider,IDeferAgent,IMaterialGenerator,ICodeLogger)"/>
-        public GltfImport(
-            IDownloadProvider downloadProvider = null,
-            IDeferAgent deferAgent = null,
-            IMaterialGenerator materialGenerator = null,
-            ICodeLogger logger = null
-        ) : base(downloadProvider, deferAgent, materialGenerator, logger) { }
-
-        /// <inheritdoc />
-        [Obsolete("Slow operation! Use the static GltfImportBase.ParseJson that accepts a UTF-8 encoded" +
-            " NativeArray<byte>.ReadOnly glTF JSON directly instead.")]
-        protected override RootBase ParseJson(string json)
-        {
-            var jsonUTF8 = Encoding.UTF8.GetBytes(json);
-            using var jsonNative = new ManagedNativeArray<byte, byte>(jsonUTF8);
-            return ParseJson(jsonNative.nativeArray.AsReadOnly());
-        }
-    }
-
-    /// <inheritdoc cref="GltfImportBase"/>
-    /// <typeparam name="TRoot">Root schema class to use for de-serialization.</typeparam>
-    public abstract class GltfImportBase<TRoot> : GltfImportBase, IGltfReadable<TRoot>
-        where TRoot : RootBase
-    {
-        /// <inheritdoc cref="GltfImportBase(IDownloadProvider,IDeferAgent,IMaterialGenerator,ICodeLogger)"/>
-        public GltfImportBase(
-            IDownloadProvider downloadProvider = null,
-            IDeferAgent deferAgent = null,
-            IMaterialGenerator materialGenerator = null,
-            ICodeLogger logger = null
-        ) : base(downloadProvider, deferAgent, materialGenerator, logger) { }
-
-        TRoot m_Root;
-
-        /// <inheritdoc />
-        protected override RootBase Root
-        {
-            get => m_Root;
-            set => m_Root = (TRoot)value;
-        }
-
-        /// <inheritdoc />
-        public TRoot GetSourceRoot()
-        {
-            return m_Root;
-        }
-    }
-
-    /// <summary>
-    /// Loads a glTF's content, converts it to Unity resources and is able to
-    /// feed it to an <see cref="IInstantiator"/> for instantiation.
-    /// </summary>
-    public abstract class GltfImportBase : IGltfReadable, IGltfBuffers, IGltfAccessors, IDisposable
+    public class GltfImport : IGltfReadable, IGltfBuffers, IGltfAccessors, IDisposable
     {
         /// <summary>
         /// Default value for a C# Job's innerloopBatchCount parameter.
@@ -245,7 +194,8 @@ namespace GLTFast
         Uri BaseUri { get; set; }
 
         /// <summary>Main glTF data structure</summary>
-        protected abstract RootBase Root { get; set; }
+        public Root Root { get; protected set; }
+
         UnityEngine.Material[] m_Materials;
         List<UnityEngine.Object> m_Resources;
 
@@ -287,7 +237,7 @@ namespace GLTFast
         /// <param name="deferAgent">Provides custom update loop behavior for better frame rate control</param>
         /// <param name="materialGenerator">Provides custom glTF to Unity material conversion</param>
         /// <param name="logger">Provides custom message logging</param>
-        public GltfImportBase(
+        public GltfImport(
             IDownloadProvider downloadProvider = null,
             IDeferAgent deferAgent = null,
             IMaterialGenerator materialGenerator = null,
@@ -704,7 +654,7 @@ namespace GLTFast
         }
 
         /// <summary>
-        /// Creates an instance of the main scene of the glTF ( <see cref="RootBase.scene">scene</see> property in the JSON at root level)
+        /// Creates an instance of the main scene of the glTF ( <see cref="Root.scene">scene</see> property in the JSON at root level)
         /// If the main scene index is not set, it instantiates nothing (as defined in the glTF 2.0 specification)
         /// </summary>
         /// <param name="parent">Transform that the scene will get parented to</param>
@@ -723,7 +673,7 @@ namespace GLTFast
         }
 
         /// <summary>
-        /// Creates an instance of the main scene of the glTF ( <see cref="RootBase.scene">scene</see> property in the JSON at root level)
+        /// Creates an instance of the main scene of the glTF ( <see cref="Root.scene">scene</see> property in the JSON at root level)
         /// If the main scene index is not set, it instantiates nothing (as defined in the glTF 2.0 specification)
         /// </summary>
         /// <param name="instantiator">Instantiator implementation; Receives and processes the scene data</param>
@@ -1051,7 +1001,7 @@ namespace GLTFast
         }
 
         /// <inheritdoc />
-        public CameraBase GetSourceCamera(uint index)
+        public Camera GetSourceCamera(uint index)
         {
             if (Root?.Cameras != null && index < Root.Cameras.Count)
             {
@@ -1081,7 +1031,7 @@ namespace GLTFast
         }
 
         /// <inheritdoc />
-        public MaterialBase GetSourceMaterial(int index = 0)
+        public Material GetSourceMaterial(int index = 0)
         {
             if (Root?.Materials != null && index >= 0 && index < Root.Materials.Count)
             {
@@ -1091,7 +1041,7 @@ namespace GLTFast
         }
 
         /// <inheritdoc />
-        public MeshBase GetSourceMesh(int meshIndex)
+        public Mesh GetSourceMesh(int meshIndex)
         {
             if (Root?.Meshes != null && meshIndex >= 0 && meshIndex < Root.Meshes.Count)
             {
@@ -1101,7 +1051,7 @@ namespace GLTFast
         }
 
         /// <inheritdoc />
-        public MeshPrimitiveBase GetSourceMeshPrimitive(int meshIndex, int primitiveIndex)
+        public MeshPrimitive GetSourceMeshPrimitive(int meshIndex, int primitiveIndex)
         {
             if (Root?.Meshes != null && meshIndex >= 0 && meshIndex < Root.Meshes.Count)
             {
@@ -1133,7 +1083,7 @@ namespace GLTFast
         }
 
         /// <inheritdoc />
-        public NodeBase GetSourceNode(int index = 0)
+        public Node GetSourceNode(int index = 0)
         {
             if (Root?.Nodes != null && index >= 0 && index < Root.Nodes.Count)
             {
@@ -1143,7 +1093,7 @@ namespace GLTFast
         }
 
         /// <inheritdoc />
-        public TextureBase GetSourceTexture(int index = 0)
+        public Texture GetSourceTexture(int index = 0)
         {
             if (Root?.Textures != null && index >= 0 && index < Root.Textures.Count)
             {
@@ -1434,21 +1384,13 @@ namespace GLTFast
         /// </summary>
         /// <param name="json">glTF JSON (UTF-8 encoded)</param>
         /// <returns>De-serialized glTF root object.</returns>
-        protected static RootBase ParseJson(ReadOnlySpan<byte> json)
+        protected static Root ParseJson(ReadOnlySpan<byte> json)
         {
             Profiler.BeginSample("ParseJson");
-            return JsonSerializer.Deserialize(json, GltfRootSourceGenerator.Default.Root);
+            var result = JsonSerializer.Deserialize(json, GltfRootSourceGenerator.Default.Root);
             Profiler.EndSample();
+            return result;
         }
-
-        /// <summary>
-        /// De-serializes a glTF JSON string and returns the glTF root object.
-        /// </summary>
-        /// <param name="json">glTF JSON</param>
-        /// <returns>De-serialized glTF root object.</returns>
-        [Obsolete("Slow operation! Use the static GltfImportBase.ParseJson that accepts UTF-8 encoded" +
-            " ReadOnlySpan<byte> glTF JSON directly instead.")]
-        protected abstract RootBase ParseJson(string json);
 
         /// <summary>
         /// De-serializes a UTF-8 encoded glTF JSON string and returns the glTF root object.
@@ -1456,7 +1398,7 @@ namespace GLTFast
         /// <param name="json">glTF JSON (UTF-8 encoded)</param>
         /// <returns>De-serialized glTF root object.</returns>
         [Obsolete("Use ParseJson that accepts ReadOnlySpan<byte> instead.")]
-        protected static RootBase ParseJson(NativeArray<byte>.ReadOnly json)
+        protected static Root ParseJson(NativeArray<byte>.ReadOnly json)
         {
             return ParseJson(json.AsReadOnlySpan());
         }
@@ -1686,14 +1628,14 @@ namespace GLTFast
             if (Root.Textures is { Count: > 0 })
             {
                 Dictionary<int, ITextureImageLoader> textureImageLoaderMap = null;
-                bool OverridesImage(ITextureImageLoader loader, TextureBase texture, out int imageIndex)
+                static bool OverridesImage(ITextureImageLoader loader, Texture texture, out int imageIndex)
                 {
                     return loader.IsAbleToLoad(texture, out imageIndex);
                 }
 
                 m_Addons
                     ?.SubCollection<ITextureImageLoader>()
-                    ?.ForEachTryGet<TextureBase, int>(
+                    ?.ForEachTryGet<Texture, int>(
                     Root.Textures,
                     OverridesImage,
                     (addon, textureIndex, imageIndex) =>
@@ -1711,7 +1653,7 @@ namespace GLTFast
                 {
                     textureGamma = new bool[Root.Textures.Count];
 
-                    void SetTextureGamma(TextureInfoBase textureInfo)
+                    void SetTextureGamma(TextureInfo textureInfo)
                     {
                         if (
                             textureInfo is { index: >= 0 } &&
@@ -2551,7 +2493,7 @@ namespace GLTFast
 
                     switch (channel.Target.GetPath())
                     {
-                        case AnimationChannelBase.Path.Translation:
+                        case AnimationChannel.Path.Translation:
                         {
                             var values = GetAccessorData<float3>(sampler.output);
                             if (!values.IsCreated)
@@ -2569,7 +2511,7 @@ namespace GLTFast
                             );
                             break;
                         }
-                        case AnimationChannelBase.Path.Rotation:
+                        case AnimationChannel.Path.Rotation:
                         {
                             var values = GetAccessorData<quaternion>(sampler.output);
                             if (!values.IsCreated)
@@ -2587,7 +2529,7 @@ namespace GLTFast
                             );
                             break;
                         }
-                        case AnimationChannelBase.Path.Scale:
+                        case AnimationChannel.Path.Scale:
                         {
                             var values = GetAccessorData<float3>(sampler.output);
                             if (!values.IsCreated)
@@ -2605,7 +2547,7 @@ namespace GLTFast
                             );
                             break;
                         }
-                        case AnimationChannelBase.Path.Weights:
+                        case AnimationChannel.Path.Weights:
                         {
                             var node = Root.Nodes[channel.Target.node];
                             if (node.mesh < 0 || node.mesh >= Root.Meshes.Count)
@@ -2657,11 +2599,11 @@ namespace GLTFast
                             // HACK END
                             break;
                         }
-                        case AnimationChannelBase.Path.Pointer:
+                        case AnimationChannel.Path.Pointer:
                             Logger?.Warning(LogCode.AnimationTargetPathUnsupported, channel.Target.GetPath().ToString());
                             break;
-                        case AnimationChannelBase.Path.Unknown:
-                        case AnimationChannelBase.Path.Invalid:
+                        case AnimationChannel.Path.Unknown:
+                        case AnimationChannel.Path.Invalid:
                         default:
                             Logger?.Error(LogCode.AnimationTargetPathUnsupported, channel.Target.GetPath().ToString());
                             break;
@@ -2828,7 +2770,7 @@ namespace GLTFast
             }
         }
 
-        int GetImageIndexFromTexture(TextureBase txt, int textureIndex)
+        int GetImageIndexFromTexture(Texture txt, int textureIndex)
         {
             if (m_TextureImageOverrides != null && m_TextureImageOverrides.TryGetValue(textureIndex, out var mappedImageIndex))
             {
@@ -2912,7 +2854,7 @@ namespace GLTFast
             return parentIndex;
         }
 
-        static string GetUniqueNodeName(RootBase gltf, uint index, ICollection<string> excludeNames)
+        static string GetUniqueNodeName(Root gltf, uint index, ICollection<string> excludeNames)
         {
             if (gltf.Nodes == null || index >= gltf.Nodes.Count) return null;
             var name = gltf.Nodes[(int)index].name;
@@ -3370,7 +3312,7 @@ namespace GLTFast
 #if DEBUG
             // Detect and report poor shared accessor usage. Since this adds performance overhead, it's done in debug
             // mode only.
-            var perPrimitiveSetIndices = new Dictionary<IReadOnlyList<MeshPrimitiveBase>, int[]>(
+            var perPrimitiveSetIndices = new Dictionary<IReadOnlyList<MeshPrimitive>, int[]>(
                 comparer: new PrimitivesComparer());
 #endif
 
@@ -3388,7 +3330,7 @@ namespace GLTFast
                 meshAssignmentIndices[0] = 0;
             }
             var meshAssignmentCounter = 0;
-            var primitiveSets = new Dictionary<IReadOnlyList<MeshPrimitiveBase>, MeshOrder>(s_MeshComparer);
+            var primitiveSets = new Dictionary<IReadOnlyList<MeshPrimitive>, MeshOrder>(s_MeshComparer);
             for (var meshIndex = 0; meshIndex < meshCount; meshIndex++)
             {
                 var mesh = Root.Meshes[meshIndex];
@@ -3638,7 +3580,7 @@ namespace GLTFast
 
 #if DEBUG
         bool CheckVertexBufferUsage(
-            Dictionary<IReadOnlyList<MeshPrimitiveBase>, int[]> perAttributeMeshCollection,
+            Dictionary<IReadOnlyList<MeshPrimitive>, int[]> perAttributeMeshCollection,
             PrimitiveSingle primitiveSingle
         )
         {
@@ -3646,7 +3588,7 @@ namespace GLTFast
         }
 
         bool CheckVertexBufferUsage(
-            Dictionary<IReadOnlyList<MeshPrimitiveBase>, int[]> perAttributeMeshCollection,
+            Dictionary<IReadOnlyList<MeshPrimitive>, int[]> perAttributeMeshCollection,
             PrimitiveSet primitiveSet
         )
         {
@@ -3654,8 +3596,8 @@ namespace GLTFast
         }
 
         bool CheckVertexBufferUsage(
-            Dictionary<IReadOnlyList<MeshPrimitiveBase>, int[]> perAttributeMeshCollection,
-            IReadOnlyList<MeshPrimitiveBase> primitives
+            Dictionary<IReadOnlyList<MeshPrimitive>, int[]> perAttributeMeshCollection,
+            IReadOnlyList<MeshPrimitive> primitives
             )
         {
             if (perAttributeMeshCollection.TryGetValue(primitives, out var indicesAccessors))
@@ -3681,7 +3623,7 @@ namespace GLTFast
             {
                 indicesAccessors = new int[primitives.Count];
                 // Original will be disposed, so make a copy.
-                var primitiveArray = new MeshPrimitiveBase[primitives.Count];
+                var primitiveArray = new MeshPrimitive[primitives.Count];
                 for (var i = 0; i < primitives.Count; i++)
                 {
                     indicesAccessors[i] = primitives[i].indices;
@@ -3696,11 +3638,11 @@ namespace GLTFast
 
         MeshOrder CreateMeshOrder(
             IPrimitiveSet primitiveSet,
-            MeshBase mesh,
+            Mesh mesh,
             int meshIndex,
             int meshNumeration,
             out int[] primIndexArray,
-            out MeshPrimitiveBase[] primitives
+            out MeshPrimitive[] primitives
             )
         {
             var morphTargetNames = primitiveSet.HasMorphTargets
@@ -4031,7 +3973,7 @@ namespace GLTFast
 
 #endif // UNITY_ANIMATION
 
-        AccessorBase IGltfBuffers.GetAccessor(int index)
+        Accessor IGltfBuffers.GetAccessor(int index)
         {
             return index < 0 || Root.Accessors == null || index >= Root.Accessors.Count
                 ? null
@@ -4045,7 +3987,7 @@ namespace GLTFast
         /// <param name="accessor">De-serialized glTF accessor</param>
         /// <param name="data">Pointer to accessor's data in memory</param>
         /// <param name="byteStride">Element byte stride</param>
-        unsafe void IGltfBuffers.GetAccessorAndData(int index, out AccessorBase accessor, out void* data, out int byteStride)
+        unsafe void IGltfBuffers.GetAccessorAndData(int index, out Accessor accessor, out void* data, out int byteStride)
         {
             accessor = Root.Accessors[index];
             if (accessor.bufferView < 0 || accessor.bufferView >= Root.BufferViews.Count)

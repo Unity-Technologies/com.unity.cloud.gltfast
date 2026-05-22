@@ -15,21 +15,8 @@ using Unity.Gltfast.Text.Json.Serialization;
 
 namespace GLTFast.Schema
 {
-
     [Serializable]
-    public class AnimationChannel : AnimationChannelBase<AnimationChannelTarget> { }
-
-    [Serializable]
-    public abstract class AnimationChannelBase<TTarget> : AnimationChannelBase
-    where TTarget : AnimationChannelTarget
-    {
-        public TTarget target;
-
-        public override AnimationChannelTarget Target => target;
-    }
-
-    [Serializable]
-    public abstract class AnimationChannelBase : IGltfObject
+    public class AnimationChannel : IGltfObject
     {
         public enum Path
         {
@@ -48,6 +35,14 @@ namespace GLTFast.Schema
         /// </summary>
         public int sampler;
 
+        /// <summary>
+        /// The index of the node and TRS property to target.
+        /// </summary>
+        public AnimationChannelTarget target;
+
+        /// <inheritdoc cref="target"/>
+        public AnimationChannelTarget Target => target;
+
         /// <inheritdoc cref="Asset.extensions"/>
         public UnclassifiedData extensions;
 
@@ -62,11 +57,6 @@ namespace GLTFast.Schema
         {
             return ExtensionsData.TryGetValue(key, out value);
         }
-
-        /// <summary>
-        /// The index of the node and TRS property to target.
-        /// </summary>
-        public abstract AnimationChannelTarget Target { get; }
 
         internal void GltfSerialize(JsonWriter writer)
         {

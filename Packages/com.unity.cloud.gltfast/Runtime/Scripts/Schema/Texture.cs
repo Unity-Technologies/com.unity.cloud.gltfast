@@ -13,29 +13,18 @@ using Unity.Gltfast.Text.Json.Serialization;
 
 namespace GLTFast.Schema
 {
-    /// <inheritdoc />
-    [Serializable]
-    public class Texture : TextureBase<TextureExtensions> { }
-
-    /// <inheritdoc />
-    /// <typeparam name="TExtensions">Texture extensions type</typeparam>
-    [Serializable]
-    public abstract class TextureBase<TExtensions> : TextureBase
-    where TExtensions : TextureExtensions
-    {
-        /// <inheritdoc cref="Extensions"/>
-        public TExtensions extensions;
-
-        /// <inheritdoc />
-        public override TextureExtensions Extensions => extensions;
-    }
-
     /// <summary>
     /// A texture is defined by an image and a sampler.
     /// </summary>
     [Serializable]
-    public abstract class TextureBase : NamedObject, IGltfObject
+    public class Texture : NamedObject, IGltfObject
     {
+        /// <inheritdoc cref="Extensions"/>
+        public TextureExtensions extensions;
+
+        /// <inheritdoc cref="TextureExtensions"/>
+        public TextureExtensions Extensions => extensions;
+
         /// <summary>
         /// The index of the sampler used by this texture.
         /// </summary>
@@ -45,9 +34,6 @@ namespace GLTFast.Schema
         /// The index of the image used by this texture.
         /// </summary>
         public int source = -1;
-
-        /// <inheritdoc cref="TextureExtensions"/>
-        public abstract TextureExtensions Extensions { get; }
 
         /// <inheritdoc cref="Root.extras"/>
         public UnclassifiedData extras;

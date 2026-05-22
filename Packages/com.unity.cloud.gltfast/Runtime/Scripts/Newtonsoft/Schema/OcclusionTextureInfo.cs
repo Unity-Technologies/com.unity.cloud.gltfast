@@ -2,10 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
-using GLTFast.Schema;
 
 namespace GLTFast.Newtonsoft.Schema
 {
     [Obsolete("Use GLTFast.Schema.OcclusionTextureInfo instead.")]
-    public class OcclusionTextureInfo : OcclusionTextureInfoBase<TextureInfoExtensions>, IJsonObject { }
+    public class OcclusionTextureInfo : GLTFast.Schema.OcclusionTextureInfo, IJsonObject { }
 }

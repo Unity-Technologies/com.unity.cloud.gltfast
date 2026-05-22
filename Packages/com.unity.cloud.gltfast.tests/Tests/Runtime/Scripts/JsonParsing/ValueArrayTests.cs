@@ -86,7 +86,7 @@ namespace GLTFast.Tests.JsonParsing
             CheckResultNodeValues(m_Gltf);
         }
 
-        static void CheckResultAccessor(RootBase gltf)
+        static void CheckResultAccessor(Root gltf)
         {
             Assert.NotNull(gltf);
             Assert.NotNull(gltf.Accessors);
@@ -95,7 +95,7 @@ namespace GLTFast.Tests.JsonParsing
             CheckFloatArray(gltf.Accessors[0].min, 3, -1, -2, -3);
         }
 
-        static void CheckResultLightPunctualColor(RootBase gltf)
+        static void CheckResultLightPunctualColor(Root gltf)
         {
             var lights = gltf?.Extensions?.KHR_lights_punctual?.lights;
             Assert.NotNull(lights);
@@ -103,7 +103,7 @@ namespace GLTFast.Tests.JsonParsing
             Assert.AreEqual(new Color(.1f, .2f, .3f), lights[0].LightColor);
         }
 
-        static void CheckResultMaterialValues(RootBase gltf)
+        static void CheckResultMaterialValues(Root gltf)
         {
             Assert.NotNull(gltf);
             Assert.NotNull(gltf.Materials);
@@ -124,7 +124,7 @@ namespace GLTFast.Tests.JsonParsing
             Assert.AreEqual(new Color(.1f, .2f, .3f), ext.KHR_materials_pbrSpecularGlossiness.SpecularColor);
         }
 
-        static void CheckResultMeshWeights(RootBase gltf)
+        static void CheckResultMeshWeights(Root gltf)
         {
             Assert.NotNull(gltf?.Meshes);
             Assert.AreEqual(1, gltf.Meshes.Count);
@@ -132,7 +132,7 @@ namespace GLTFast.Tests.JsonParsing
             CheckFloatArray(mesh.weights, 5, 1, 2, 3, 4, 5);
         }
 
-        static void CheckResultNodeValues(RootBase gltf)
+        static void CheckResultNodeValues(Root gltf)
         {
             Assert.NotNull(gltf?.Nodes);
             Assert.AreEqual(1, gltf.Nodes.Count);
