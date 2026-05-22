@@ -8,3 +8,5 @@
 *.ktx filter=lfs diff=lfs merge=lfs -text
 *.bytes filter=lfs diff=lfs merge=lfs -text
 *.webp filter=lfs diff=lfs merge=lfs -text
+graphify-out/*.json filter=lfs diff=lfs merge=lfs -text
+graphify-out/GRAPH_REPORT.md filter=lfs diff=lfs merge=lfs -text
