@@ -27,9 +27,9 @@ namespace GLTFast.Export
         /// <param name="name">Name of the node</param>
         /// <returns>glTF node index</returns>
         uint AddNode(
-            float3? translation = null,
-            quaternion? rotation = null,
-            float3? scale = null,
+            double3? translation = null,
+            double4? rotation = null,
+            double3? scale = null,
             uint[] children = null,
             string name = null
         );

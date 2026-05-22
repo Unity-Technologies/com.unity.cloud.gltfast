@@ -50,27 +50,27 @@ namespace GLTFast.Schema
         /// <summary>
         /// A floating-point 4x4 transformation matrix stored in column-major order.
         /// </summary>
-        [JsonConverter(typeof(Float16ArrayConverter))]
-        public float[] matrix;
+        [JsonConverter(typeof(Double16ArrayConverter))]
+        public double[] matrix;
 
         /// <summary>
         /// The node's unit quaternion rotation in the order (x, y, z, w),
         /// where w is the scalar.
         /// </summary>
-        [JsonConverter(typeof(Float4ArrayConverter))]
-        public float[] rotation;
+        [JsonConverter(typeof(Double4ArrayConverter))]
+        public double[] rotation;
 
         /// <summary>
         /// The node's non-uniform scale.
         /// </summary>
-        [JsonConverter(typeof(Float3ArrayConverter))]
-        public float[] scale;
+        [JsonConverter(typeof(Double3ArrayConverter))]
+        public double[] scale;
 
         /// <summary>
         /// The node's translation.
         /// </summary>
-        [JsonConverter(typeof(Float3ArrayConverter))]
-        public float[] translation;
+        [JsonConverter(typeof(Double3ArrayConverter))]
+        public double[] translation;
 
         /// <summary>
         /// The weights of the instantiated Morph Target.

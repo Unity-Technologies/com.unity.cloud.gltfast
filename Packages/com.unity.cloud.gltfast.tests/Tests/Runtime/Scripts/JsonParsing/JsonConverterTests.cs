@@ -74,11 +74,10 @@ namespace GLTFast.Tests.JsonParsing
         public static void Float2ArrayConverterTooManyTest()
         {
             var converter = new Float2ArrayConverter();
-            var result = ReadFromConverter(k_TooManyJson, converter);
-            Assert.NotNull(result);
-            Assert.AreEqual(2, result.Length);
-            Assert.AreEqual(1.1f, result[0]);
-            Assert.AreEqual(2.2f, result[1]);
+            Assert.Throws<JsonException>(delegate
+            {
+                ReadFromConverter(k_TooManyJson, converter);
+            });
         }
 
         [Test]
@@ -173,12 +172,10 @@ namespace GLTFast.Tests.JsonParsing
         public static void Float3ArrayConverterTooManyTest()
         {
             var converter = new Float3ArrayConverter();
-            var result = ReadFromConverter(k_TooManyJson, converter);
-            Assert.NotNull(result);
-            Assert.AreEqual(3, result.Length);
-            Assert.AreEqual(1.1f, result[0]);
-            Assert.AreEqual(2.2f, result[1]);
-            Assert.AreEqual(3.3f, result[2]);
+            Assert.Throws<JsonException>(delegate
+            {
+                ReadFromConverter(k_TooManyJson, converter);
+            });
         }
 
         [Test]
@@ -232,13 +229,10 @@ namespace GLTFast.Tests.JsonParsing
         public static void Float4ArrayConverterTooManyTest()
         {
             var converter = new Float4ArrayConverter();
-            var result = ReadFromConverter(k_TooManyJson, converter);
-            Assert.NotNull(result);
-            Assert.AreEqual(4, result.Length);
-            Assert.AreEqual(1.1f, result[0]);
-            Assert.AreEqual(2.2f, result[1]);
-            Assert.AreEqual(3.3f, result[2]);
-            Assert.AreEqual(4.4f, result[3]);
+            Assert.Throws<JsonException>(delegate
+            {
+                ReadFromConverter(k_TooManyJson, converter);
+            });
         }
 
         [Test]
@@ -305,26 +299,10 @@ namespace GLTFast.Tests.JsonParsing
         public static void Float16ArrayConverterTooManyTest()
         {
             var converter = new Float16ArrayConverter();
-            var result = ReadFromConverter(k_TooManyJson, converter);
-            Assert.NotNull(result);
-            Assert.NotNull(result);
-            Assert.AreEqual(16, result.Length);
-            Assert.AreEqual(1.1f, result[0]);
-            Assert.AreEqual(2.2f, result[1]);
-            Assert.AreEqual(3.3f, result[2]);
-            Assert.AreEqual(4.4f, result[3]);
-            Assert.AreEqual(5.5f, result[4]);
-            Assert.AreEqual(6.6f, result[5]);
-            Assert.AreEqual(7.7f, result[6]);
-            Assert.AreEqual(8.8f, result[7]);
-            Assert.AreEqual(9.9f, result[8]);
-            Assert.AreEqual(10.10f, result[9]);
-            Assert.AreEqual(11.11f, result[10]);
-            Assert.AreEqual(12.12f, result[11]);
-            Assert.AreEqual(13.13f, result[12]);
-            Assert.AreEqual(14.14f, result[13]);
-            Assert.AreEqual(15.15f, result[14]);
-            Assert.AreEqual(16.16f, result[15]);
+            Assert.Throws<JsonException>(delegate
+            {
+                ReadFromConverter(k_TooManyJson, converter);
+            });
         }
 
         static float[] ReadFromConverter(string json, JsonConverter<float[]> converter)

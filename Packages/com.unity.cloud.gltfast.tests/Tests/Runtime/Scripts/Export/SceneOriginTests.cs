@@ -23,14 +23,14 @@ namespace GLTFast.Tests.Export
     [Category("Export")]
     class SceneOriginTests
     {
-        static Vector3EqualityComparer s_Vector3Comparer;
-        static QuaternionEqualityComparer s_QuaternionComparer;
+        static Double3EqualityComparer s_Vector3Comparer;
+        static Double4EqualityComparer s_Vector4Comparer;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            s_Vector3Comparer = new Vector3EqualityComparer(10e-6f);
-            s_QuaternionComparer = new QuaternionEqualityComparer(10e-6f);
+            s_Vector3Comparer = new Double3EqualityComparer(1e-4);
+            s_Vector4Comparer = new Double4EqualityComparer(1e-6);
         }
 
         [UnityTest]
@@ -43,7 +43,7 @@ namespace GLTFast.Tests.Export
             yield return AsyncWrapper.WaitForTask(task);
             var node = task.Result;
             node.GetTransform(out var position, out _, out _);
-            Assert.That(position, Is.EqualTo(new Vector3(42, 13, 0)).Using(s_Vector3Comparer));
+            Assert.That(position, Is.EqualTo(new double3(42, 13, 0)).Using(s_Vector3Comparer));
         }
 
         [UnityTest]
@@ -61,21 +61,21 @@ namespace GLTFast.Tests.Export
             yield return AsyncWrapper.WaitForTask(task);
             var node = task.Result;
             node.GetTransform(out var position, out var rotation, out var scale);
-            Assert.That(position, Is.EqualTo(new Vector3(70, 130, 420)).Using(s_Vector3Comparer));
+            Assert.That(position, Is.EqualTo(new double3(70, 130, 420)).Using(s_Vector3Comparer));
             Assert.That(
                 rotation,
-                Is.EqualTo(Quaternion.Euler(0, -90, 0))
-                    .Using(s_QuaternionComparer)
+                Is.EqualTo((double4)quaternion.Euler(0, -math.PIHALF, 0).value)
+                    .Using(s_Vector4Comparer)
             );
             Assert.That(
                 scale,
-                Is.EqualTo(new Vector3(10, 10, 10)).Using(s_Vector3Comparer));
+                Is.EqualTo(new double3(10, 10, 10)).Using(s_Vector3Comparer));
         }
 
         static async Task<NodeBase> ExportScene(
             float3 parentPosition,
             float3 nodePosition,
-            float4x4? sceneOrigin = null
+            double4x4? sceneOrigin = null
             )
         {
             var root = new GameObject("root");
@@ -87,7 +87,7 @@ namespace GLTFast.Tests.Export
 
             var logger = new CollectingLogger();
             var export = new GameObjectExport(logger: logger);
-            export.AddScene(new[] { node }, sceneOrigin ?? float4x4.identity, "UnityScene");
+            export.AddScene(new[] { node }, sceneOrigin ?? double4x4.identity, "UnityScene");
 
             var path = Path.Combine(Application.persistentDataPath, "SceneOrigin.gltf");
             var success = await export.SaveToFileAndDispose(path);

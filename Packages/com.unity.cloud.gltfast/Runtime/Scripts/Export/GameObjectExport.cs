@@ -54,7 +54,7 @@ namespace GLTFast.Export
         /// <returns>True, if the scene was added flawlessly. False, otherwise</returns>
         public bool AddScene(GameObject[] gameObjects, string name = null)
         {
-            return AddScene(gameObjects, float4x4.identity, name);
+            return AddScene(gameObjects, double4x4.identity, name);
         }
 
         /// <summary>
@@ -66,7 +66,21 @@ namespace GLTFast.Export
         /// <param name="origin">Inverse scene origin matrix. This transform will be applied to all nodes.</param>
         /// <param name="name">Name of the scene</param>
         /// <returns>True if the scene was added successfully, false otherwise</returns>
-        public bool AddScene(ICollection<GameObject> gameObjects, float4x4 origin, string name)
+        public bool AddScene(ICollection<GameObject> gameObjects, Matrix4x4 origin, string name)
+        {
+            return AddScene(gameObjects, origin.ToDouble(), name);
+        }
+
+        /// <summary>
+        /// Creates a glTF scene from a collection of GameObjects. The GameObjects will be converted into glTF nodes.
+        /// The nodes' positions within the glTF scene will be their GameObjects' world position transformed by the
+        /// <see cref="origin"/> matrix, essentially allowing you to set an arbitrary scene center.
+        /// </summary>
+        /// <param name="gameObjects">Root level GameObjects (will get added recursively)</param>
+        /// <param name="origin">Inverse scene origin matrix. This transform will be applied to all nodes.</param>
+        /// <param name="name">Name of the scene</param>
+        /// <returns>True if the scene was added successfully, false otherwise</returns>
+        public bool AddScene(ICollection<GameObject> gameObjects, double4x4 origin, string name)
         {
             CertifyNotDisposed();
             var rootNodes = new List<uint>(gameObjects.Count);
@@ -155,7 +169,7 @@ namespace GLTFast.Export
         }
         bool AddGameObject(
             GameObject gameObject,
-            float4x4? sceneOrigin,
+            double4x4? sceneOrigin,
             Queue<Transform> nodesQueue,
             Dictionary<Transform, uint> transformNodeId,
             out int nodeId)
@@ -200,22 +214,23 @@ namespace GLTFast.Export
 
             if (onIncludedLayer || children != null)
             {
-                float3 translation;
-                quaternion rotation;
-                float3 scale;
+                double3 translation;
+                double4 rotation;
+                double3 scale;
 
                 if (sceneOrigin.HasValue)
                 {
                     // root level node - calculate transform based on scene origin
-                    var trans = math.mul(sceneOrigin.Value, transform.localToWorldMatrix);
+                    var localToWorldMatrix = transform.localToWorldMatrix.ToDouble();
+                    var trans = math.mul(sceneOrigin.Value, localToWorldMatrix);
                     trans.Decompose(out translation, out rotation, out scale);
                 }
                 else
                 {
                     // nested node - use local transform
-                    translation = transform.localPosition;
-                    rotation = transform.localRotation;
-                    scale = transform.localScale;
+                    translation = transform.localPosition.ToDouble();
+                    rotation = transform.localRotation.ToDouble();
+                    scale = transform.localScale.ToDouble();
                 }
 
                 var newNodeId = m_Writer.AddNode(

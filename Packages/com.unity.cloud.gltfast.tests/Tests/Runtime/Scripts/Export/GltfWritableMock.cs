@@ -33,7 +33,13 @@ namespace GLTFast.Tests.Export
             m_ImageConversion = imageConversion;
         }
 
-        public uint AddNode(float3? translation = null, quaternion? rotation = null, float3? scale = null, uint[] children = null, string name = null)
+        public uint AddNode(
+            double3? translation = null,
+            double4? rotation = null,
+            double3? scale = null,
+            uint[] children = null,
+            string name = null
+            )
         {
             throw new NotImplementedException();
         }

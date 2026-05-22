@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using GLTFast.Schema;
 using Unity.Collections;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Profiling;
 #if UNITY_ANIMATION
@@ -157,17 +158,17 @@ namespace GLTFast
         public void CreateNode(
             uint nodeIndex,
             uint? parentIndex,
-            Vector3 position,
-            Quaternion rotation,
-            Vector3 scale
+            double3 position,
+            double4 rotation,
+            double3 scale
         )
         {
             var go = new GameObject();
             // Deactivate root-level nodes, so half-loaded scenes won't render.
             go.SetActive(parentIndex.HasValue);
-            go.transform.localScale = scale;
-            go.transform.localPosition = position;
-            go.transform.localRotation = rotation;
+            go.transform.localScale = scale.ToVector3();
+            go.transform.localPosition = position.ToVector3();
+            go.transform.localRotation = rotation.ToUnityEngineQuaternion();
             go.layer = m_Settings.Layer;
             m_Nodes[nodeIndex] = go;
 

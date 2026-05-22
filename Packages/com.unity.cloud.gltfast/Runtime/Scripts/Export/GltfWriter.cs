@@ -135,9 +135,9 @@ namespace GLTFast.Export
 
         /// <inheritdoc />
         public uint AddNode(
-            float3? translation = null,
-            quaternion? rotation = null,
-            float3? scale = null,
+            double3? translation = null,
+            double4? rotation = null,
+            double3? scale = null,
             uint[] children = null,
             string name = null
         )
@@ -318,7 +318,7 @@ namespace GLTFast.Export
             //       (from glTF import) and discard it (if possible) to enable
             //       lossless round-trips
             var parent = m_Nodes[nodeId];
-            var node = AddChildNode(nodeId, rotation: quaternion.RotateY(math.PI), name: $"{parent.name}_Orientation");
+            var node = AddChildNode(nodeId, rotation: Mathematics.RotateY(math.PI_DBL), name: $"{parent.name}_Orientation");
             node.camera = cameraId;
         }
 
@@ -335,7 +335,7 @@ namespace GLTFast.Export
                 // TODO: Detect if this is node is already a helper node
                 //       (from glTF import) and discard it (if possible) to enable
                 //       lossless round-trips
-                node = AddChildNode(nodeId, rotation: quaternion.RotateY(math.PI), name: $"{node.name}_Orientation");
+                node = AddChildNode(nodeId, rotation: Mathematics.RotateY(math.PI_DBL), name: $"{node.name}_Orientation");
             }
             node.extensions = node.extensions ?? new NodeExtensions();
             node.Extensions.KHR_lights_punctual = new NodeLightsPunctual
@@ -2180,9 +2180,9 @@ namespace GLTFast.Export
 
         Node AddChildNode(
             int parentId,
-            float3? translation = null,
-            quaternion? rotation = null,
-            float3? scale = null,
+            double3? translation = null,
+            double4? rotation = null,
+            double3? scale = null,
             string name = null
         )
         {
@@ -2205,9 +2205,9 @@ namespace GLTFast.Export
         }
 
         static Node CreateNode(
-            float3? translation = null,
-            quaternion? rotation = null,
-            float3? scale = null,
+            double3? translation = null,
+            double4? rotation = null,
+            double3? scale = null,
             string name = null
             )
         {
@@ -2215,15 +2215,15 @@ namespace GLTFast.Export
             {
                 name = name,
             };
-            if (translation.HasValue && !translation.Equals(float3.zero))
+            if (translation.HasValue && !translation.Value.Equals(double3.zero))
             {
                 node.translation = new[] { -translation.Value.x, translation.Value.y, translation.Value.z };
             }
-            if (rotation.HasValue && !rotation.Equals(quaternion.identity))
+            if (rotation.HasValue && !rotation.Value.Equals(Mathematics.k_QuaternionIdentity))
             {
-                node.rotation = new[] { rotation.Value.value.x, -rotation.Value.value.y, -rotation.Value.value.z, rotation.Value.value.w };
+                node.rotation = new[] { rotation.Value.x, -rotation.Value.y, -rotation.Value.z, rotation.Value.w };
             }
-            if (scale.HasValue && !scale.Equals(new float3(1f)))
+            if (scale.HasValue && !scale.Value.Equals(new double3(1f)))
             {
                 node.scale = new[] { scale.Value.x, scale.Value.y, scale.Value.z };
             }

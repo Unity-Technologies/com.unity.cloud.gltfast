@@ -113,9 +113,9 @@ namespace GLTFast
         public void CreateNode(
             uint nodeIndex,
             uint? parentIndex,
-            Vector3 position,
-            Quaternion rotation,
-            Vector3 scale
+            double3 position,
+            double4 rotation,
+            double3 scale
         )
         {
             var parent = new Parent { Value = parentIndex.HasValue ? m_Nodes[parentIndex.Value] : m_Parent };
@@ -125,9 +125,9 @@ namespace GLTFast
 
         Entity CreateNodeInternal(
             Parent parent,
-            float3 position,
-            quaternion rotation,
-            float3 scale
+            double3 position,
+            double4 rotation,
+            double3 scale
         )
         {
             Profiler.BeginSample("CreateNode");
@@ -139,9 +139,9 @@ namespace GLTFast
                 node,
                 new LocalTransform
                 {
-                    Position = position,
-                    Rotation = rotation,
-                    Scale = isUniformScale ? scale.x : 1f
+                    Position = (float3)position,
+                    Rotation = rotation.ToQuaternion(),
+                    Scale = isUniformScale ? (float)scale.x : 1f
                 });
             if (!isUniformScale)
             {
@@ -149,7 +149,7 @@ namespace GLTFast
                 m_EntityManager.AddComponent<PostTransformMatrix>(node);
                 m_EntityManager.SetComponentData(
                     node,
-                    new PostTransformMatrix { Value = float4x4.Scale(scale) }
+                    new PostTransformMatrix { Value = float4x4.Scale((float3)scale) }
                     );
             }
 
@@ -217,7 +217,7 @@ namespace GLTFast
                     node = CreateNodeInternal(
                         new Parent { Value = m_Nodes[nodeIndex] },
                         float3.zero,
-                        quaternion.identity,
+                        Mathematics.k_QuaternionIdentity,
                         new float3(1f)
                         );
 #if UNITY_EDITOR
@@ -389,7 +389,7 @@ namespace GLTFast
             Profiler.EndSample();
         }
 
-        static bool IsUniform(Vector3 scale)
+        static bool IsUniform(double3 scale)
         {
             return Math.Abs(scale.x - scale.y) < k_Epsilon && Math.Abs(scale.x - scale.z) < k_Epsilon;
         }

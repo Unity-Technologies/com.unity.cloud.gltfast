@@ -7,13 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Support for high precision node transforms.
 
 ### Changed
+- JSON de-serialization is performed by [System.Text.Json](https://www.nuget.org/packages/system.text.json/) (or `Unity.Gltfast.Text.Json`, a copy of it for Unity 6.4 and older to avoid conflicts).
+- Node transforms (translation, rotation, scale or matrix) are now in double precision throughout the API.
 - Clarified [IDeferAgent.ShouldDefer](xref:GLTFast.IDeferAgent.ShouldDefer) documentation to note that it must eventually return `false`, otherwise imports may stall indefinitely without raising an error.
 
 ### Fixed
 
 ### Removed
+- JsonUtility dependency.
+- Newtonsoft JSON dependency.
 
 ### Deprecated
 

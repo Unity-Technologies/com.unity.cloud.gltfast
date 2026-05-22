@@ -159,6 +159,22 @@ namespace GLTFast.Tests.JsonParsing
             }
         }
 
+        static void CheckFloatArray(IReadOnlyList<double> actual, int expectedLength, params float[] expected)
+        {
+            if (actual == null && expected == null && expectedLength == 0)
+            {
+                return;
+            }
+            Assert.NotNull(actual);
+            Assert.NotNull(expected);
+            Assert.AreEqual(expectedLength, actual.Count);
+            Assert.AreEqual(expectedLength, expected.Length);
+            for (var i = 0; i < expectedLength; i++)
+            {
+                Assert.AreEqual(expected[i], actual[i]);
+            }
+        }
+
         const string k_ValueArraysJson = @"
 {
     ""accessors"": [{

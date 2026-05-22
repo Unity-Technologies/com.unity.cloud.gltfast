@@ -2,40 +2,35 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
-#if UNITY_6000_5_OR_NEWER
-using System.Text.Json;
-using System.Text.Json.Serialization;
-#else
 using Unity.Gltfast.Text.Json;
 using Unity.Gltfast.Text.Json.Serialization;
-#endif
 
 namespace GLTFast.Schema
 {
-    class Float2ArrayConverter : FloatFixedSizeArrayConverter { public Float2ArrayConverter() : base(2) {} }
-    class Float3ArrayConverter : FloatFixedSizeArrayConverter { public Float3ArrayConverter() : base(3) {} }
-    class Float4ArrayConverter : FloatFixedSizeArrayConverter { public Float4ArrayConverter() : base(4) {} }
-    class Float16ArrayConverter : FloatFixedSizeArrayConverter { public Float16ArrayConverter() : base(16) {} }
+    class Double2ArrayConverter : DoubleFixedSizeArrayConverter { public Double2ArrayConverter() : base(2) {} }
+    class Double3ArrayConverter : DoubleFixedSizeArrayConverter { public Double3ArrayConverter() : base(3) {} }
+    class Double4ArrayConverter : DoubleFixedSizeArrayConverter { public Double4ArrayConverter() : base(4) {} }
+    class Double16ArrayConverter : DoubleFixedSizeArrayConverter { public Double16ArrayConverter() : base(16) {} }
 
-    class FloatFixedSizeArrayConverter : JsonConverter<float[]>
+    class DoubleFixedSizeArrayConverter : JsonConverter<double[]>
     {
         readonly int m_ExpectedArraySize;
 
-        protected FloatFixedSizeArrayConverter(int expectedArraySize)
+        protected DoubleFixedSizeArrayConverter(int expectedArraySize)
         {
             m_ExpectedArraySize = expectedArraySize;
         }
 
-        public override float[] Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        public override double[] Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             if (reader.TokenType != JsonTokenType.StartArray)
             {
-                throw new JsonException("Expected StartArray token for float array.");
+                throw new JsonException("Expected StartArray token for double array.");
             }
 
             reader.Read();
 
-            var floatArray = new float[m_ExpectedArraySize];
+            var doubleArray = new double[m_ExpectedArraySize];
             var currentIndex = 0;
 
             while (reader.TokenType != JsonTokenType.EndArray)
@@ -47,7 +42,7 @@ namespace GLTFast.Schema
 
                 if (currentIndex < m_ExpectedArraySize)
                 {
-                    floatArray[currentIndex] = (float) FloatParser.GetDouble(reader.ValueSpan);
+                    doubleArray[currentIndex] = FloatParser.GetDouble(reader.ValueSpan);
                     currentIndex++;
                 }
                 else
@@ -59,11 +54,11 @@ namespace GLTFast.Schema
             }
 
             return currentIndex == m_ExpectedArraySize
-                ? floatArray
-                : throw new JsonException($"Expected {m_ExpectedArraySize} float elements, only found {currentIndex}.");
+                ? doubleArray
+                : throw new JsonException($"Expected {m_ExpectedArraySize} double elements, only found {currentIndex}.");
         }
 
-        public override void Write(Utf8JsonWriter writer, float[] value, JsonSerializerOptions options)
+        public override void Write(Utf8JsonWriter writer, double[] value, JsonSerializerOptions options)
         {
             writer.WriteStartArray();
             foreach (var item in value)

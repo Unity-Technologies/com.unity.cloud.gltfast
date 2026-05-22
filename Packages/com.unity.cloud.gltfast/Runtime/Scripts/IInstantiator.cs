@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using Unity.Collections;
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace GLTFast
@@ -49,9 +50,9 @@ namespace GLTFast
         void CreateNode(
             uint nodeIndex,
             uint? parentIndex,
-            Vector3 position,
-            Quaternion rotation,
-            Vector3 scale
+            double3 position,
+            double4 rotation,
+            double3 scale
             );
 
         /// <summary>
