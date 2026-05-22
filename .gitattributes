@@ -10,3 +10,5 @@
 *.webp filter=lfs diff=lfs merge=lfs -text
 *.dll filter=lfs diff=lfs merge=lfs -text
 *.json eol=lf
+graphify-out/*.json filter=lfs diff=lfs merge=lfs -text
+graphify-out/GRAPH_REPORT.md filter=lfs diff=lfs merge=lfs -text

@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 ### Changed
+- Clarified [IDeferAgent.ShouldDefer](xref:GLTFast.IDeferAgent.ShouldDefer) documentation to note that it must eventually return `false`, otherwise imports may stall indefinitely without raising an error.
 
 ### Fixed
 

@@ -1,0 +1,60 @@
+# Test projects
+/Projects
+/Projects/*/Build
+
+test-results~
+upm-ci~
+
+# Developer docs
+/Docs
+
+# Tools
+/Tools
+
+# CI
+.yamato
+.github
+
+# Graphify
+graphify-out/.graphify_*
+graphify-out/cache
+graphify-out/cost.json
+graphify-out/graph.html
+graphify-out/manifest.json
+
+# Claude Code
+.claude
+
+AGENTS.md
+CLAUDE.md
+
+# Long, append-only changelog (370+ heading nodes)
+CHANGELOG.md
+
+# User-facing documentation
+Documentation~/
+
+# Boilerplate / legal / community docs
+# (use both '**/x' and bare 'x' so root-level files are matched too)
+CODE_OF_CONDUCT.md
+CONTRIBUTING.md
+LICENSE.md
+Third Party Notices.md
+README.md
+
+# Test fixtures shipped as Assets~ (binary glTFs + README/json descriptors)
+*.gltf.txt
+*.gltf
+*.glb
+*.bin
+*.png
+*.gif
+*.jpg
+*.ktx2
+*.ktx
+*.bytes
+*.webp
+
+# Package manifests (not meaningful graph nodes)
+package.json
+projectMetadata.json
