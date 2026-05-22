@@ -161,6 +161,29 @@ namespace GLTFast.Tests.JsonParsing
             Assert.AreEqual(expected, FloatParser.GetDouble(Utf8(input)), expected * 1e-9);
         }
 
+        // --- Exponent lookup table corner cases ---
+
+        [TestCase("42E22", 42e22)]
+        [TestCase("42E23", 42e23)]
+        [TestCase("42E-23", 42e-23)]
+        [TestCase("42E-22", 42e-22)]
+        public static void ExponentLookupTableCornerCases(string input, double expected)
+        {
+            Assert.AreEqual(expected, FloatParser.GetDouble(Utf8(input)), expected * 1e-9);
+        }
+
+        // --- Exponent corner cases ---
+
+        [TestCase("1E308", 1e308)]
+        [TestCase("2E308", double.PositiveInfinity)] // → overflows
+        [TestCase("1E-323", 1e-323)]
+        [TestCase("2E-323", 2e-323)]
+        [TestCase("1E-324", 1e-324)] // → silently becomes 0.0 (underflows)
+        public static void ExponentCornerCases(string input, double expected)
+        {
+            Assert.AreEqual(expected, FloatParser.GetDouble(Utf8(input)), expected * 1e-9);
+        }
+
         // --- Error cases ---
 
         [Test]

@@ -3,11 +3,17 @@
 
 using System;
 using System.IO;
+using Unity.Mathematics;
 
 namespace GLTFast.Schema
 {
     static class FloatParser
     {
+        static readonly double[] k_PosPowersOf10 = {
+            1e0, 1e1, 1e2, 1e3, 1e4, 1e5, 1e6, 1e7, 1e8, 1e9, 1e10,
+            1e11, 1e12, 1e13, 1e14, 1e15, 1e16, 1e17, 1e18, 1e19, 1e20, 1e21, 1e22
+        };
+
         public static double GetDouble(ReadOnlySpan<byte> json)
         {
             if (json.Length == 0)
@@ -16,7 +22,8 @@ namespace GLTFast.Schema
             var pos = 0;
 
             var negative = false;
-            if (json[pos] == '-')
+            var currentByte = json[pos];
+            if (currentByte == '-')
             {
                 negative = true;
                 pos++;
@@ -26,18 +33,19 @@ namespace GLTFast.Schema
             var hasDigit = false;
             while(pos < json.Length)
             {
-                if (json[pos] >= '0' && json[pos] <= '9')
+                currentByte = json[pos];
+                if (currentByte >= '0' && currentByte <= '9')
                 {
                     hasDigit = true;
-                    value = value * 10L + (json[pos] - 48);
+                    value = value * 10L + (currentByte - 48);
                     pos++;
                 }
-                else if (json[pos] == '.')
+                else if (currentByte == '.')
                 {
                     pos++;
                     goto Radix;
                 }
-                else if ((json[pos] & 0b11011111) == 'E')
+                else if ((currentByte & 0b11011111) == 'E')
                 {
                     if (!hasDigit)
                         throw new InvalidDataException($"Expected digit before exponent at {pos}");
@@ -60,21 +68,22 @@ namespace GLTFast.Schema
             var hasRadixDigit = false;
             while(pos < json.Length)
             {
-                if (json[pos] >= '0' && json[pos] <= '9')
+                currentByte = json[pos];
+                if (currentByte >= '0' && currentByte <= '9')
                 {
                     hasRadixDigit = true;
                     factor *= .1;
-                    value += (json[pos] - 48) * factor;
+                    value += (currentByte - 48) * factor;
                     pos++;
                 }
-                else if ((json[pos] & 0b11011111) == 'E')
+                else if ((currentByte & 0b11011111) == 'E')
                 {
                     if (!hasRadixDigit)
                         throw new InvalidDataException($"Expected digit after '.' at {pos}");
                     pos++;
                     goto Exponent;
                 }
-                else if (json[pos] == '.')
+                else if (currentByte == '.')
                 {
                     throw new InvalidDataException($"Multiple radix points in number at {pos}");
                 }
@@ -90,15 +99,16 @@ namespace GLTFast.Schema
             return negative ? -value : value;
 
             Exponent:
-            long exponent = 0;
+            short exponent = 0;
             var negateExponent = false;
             if (pos >= json.Length)
                 throw new InvalidDataException("Unexpected end of input in exponent");
-            if (json[pos] == '+')
+            currentByte = json[pos];
+            if (currentByte == '+')
             {
                 pos++;
             }
-            else if (json[pos] == '-')
+            else if (currentByte == '-')
             {
                 pos++;
                 negateExponent = true;
@@ -109,9 +119,10 @@ namespace GLTFast.Schema
 
             while(pos < json.Length)
             {
-                if (json[pos] >= '0' && json[pos] <= '9')
+                currentByte = json[pos];
+                if (currentByte >= '0' && currentByte <= '9')
                 {
-                    exponent = exponent * 10L + (json[pos] - 48);
+                    exponent = (short)(exponent * 10 + (currentByte - 48));
                     pos++;
                 }
                 else
@@ -120,7 +131,20 @@ namespace GLTFast.Schema
                 }
             }
 
-            return (negative ? -value : value) * Math.Pow(10, negateExponent ? -exponent : exponent);
+            double scale;
+            if (exponent >= 0 && exponent < k_PosPowersOf10.Length)
+            {
+                scale = k_PosPowersOf10[exponent];
+                if (negateExponent)
+                {
+                    scale = 1.0 / scale;
+                }
+            }
+            else
+            {
+                scale = Math.Pow(10, negateExponent ? -exponent : exponent);
+            }
+            return (negative ? -value : value) * scale;
         }
     }
 }

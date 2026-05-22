@@ -4,6 +4,7 @@
 using System.Text;
 using GLTFast.Schema;
 using NUnit.Framework;
+using Unity.Mathematics;
 using Unity.PerformanceTesting;
 
 namespace GLTFast.Tests.Performance
@@ -77,7 +78,7 @@ namespace GLTFast.Tests.Performance
                     foreach (var input in inputs)
                         FloatParser.GetDouble(input);
                 })
-                .SampleGroup(new SampleGroup("Time", SampleUnit.Microsecond))
+                .SampleGroup(new SampleGroup("Time", SampleUnit.Nanosecond))
                 .WarmupCount(1)
                 .DynamicMeasurementCount()
                 .Run();
@@ -94,6 +95,24 @@ namespace GLTFast.Tests.Performance
             Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
 #endif
             var inputs = k_Decimals;
+            Measure.Method(() =>
+                {
+                    foreach (var input in inputs)
+                        FloatParser.GetDouble(input);
+                })
+                .SampleGroup(new SampleGroup("Time", SampleUnit.Nanosecond))
+                .WarmupCount(1)
+                .DynamicMeasurementCount()
+                .Run();
+        }
+
+        [Test, Performance]
+        public void FloatParser_DecimalsGenerated()
+        {
+#if !RUN_PERFORMANCE_TESTS
+            Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
+#endif
+            var inputs = GenerateTestData(1_000);
             Measure.Method(() =>
                 {
                     foreach (var input in inputs)
@@ -121,6 +140,61 @@ namespace GLTFast.Tests.Performance
                     foreach (var input in inputs)
                         FloatParser.GetDouble(input);
                 })
+                .SampleGroup(new SampleGroup("Time", SampleUnit.Nanosecond))
+                .WarmupCount(1)
+                .DynamicMeasurementCount()
+                .Run();
+        }
+
+        [Test, Performance]
+        public void FloatParser_ScientificGenerated()
+        {
+#if !RUN_PERFORMANCE_TESTS
+            Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
+#endif
+            var inputs = GenerateScientificTestData(1_000);
+            Measure.Method(() =>
+                {
+                    foreach (var input in inputs)
+                        FloatParser.GetDouble(input);
+                })
+                .SampleGroup(new SampleGroup("Time", SampleUnit.Microsecond))
+                .WarmupCount(1)
+                .DynamicMeasurementCount()
+                .Run();
+        }
+
+        [Test, Performance]
+        public void FloatParser_ScientificGeneratedCommon()
+        {
+#if !RUN_PERFORMANCE_TESTS
+            Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
+#endif
+            var inputs = GenerateScientificTestData(1_000, -21, 21);
+            Measure.Method(() =>
+                {
+                    foreach (var input in inputs)
+                        FloatParser.GetDouble(input);
+                })
+                .SampleGroup(new SampleGroup("Time", SampleUnit.Microsecond))
+                .WarmupCount(1)
+                .DynamicMeasurementCount()
+                .Run();
+        }
+
+
+        [Test, Performance]
+        public void FloatParser_ScientificGeneratedUnCommon()
+        {
+#if !RUN_PERFORMANCE_TESTS
+            Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
+#endif
+            var inputs = GenerateScientificTestData(1_000, 22);
+            Measure.Method(() =>
+                {
+                    foreach (var input in inputs)
+                        FloatParser.GetDouble(input);
+                })
                 .SampleGroup(new SampleGroup("Time", SampleUnit.Microsecond))
                 .WarmupCount(1)
                 .DynamicMeasurementCount()
@@ -143,7 +217,7 @@ namespace GLTFast.Tests.Performance
                     foreach (var input in inputs)
                         FloatParser.GetDouble(input);
                 })
-                .SampleGroup(new SampleGroup("Time", SampleUnit.Microsecond))
+                .SampleGroup(new SampleGroup("Time", SampleUnit.Nanosecond))
                 .WarmupCount(1)
                 .DynamicMeasurementCount()
                 .Run();
@@ -158,6 +232,32 @@ namespace GLTFast.Tests.Performance
             var result = new byte[values.Length][];
             for (var i = 0; i < values.Length; i++)
                 result[i] = Encoding.UTF8.GetBytes(values[i]);
+            return result;
+        }
+
+        static byte[][] GenerateTestData(int count)
+        {
+            var rng = new Random(42);
+            var result = new byte[count][];
+            for (var i = 0; i < count; i++)
+            {
+                var v = rng.NextDouble();
+                result[i] = Encoding.UTF8.GetBytes(v.ToString());
+            }
+            return result;
+        }
+
+        static byte[][] GenerateScientificTestData(int count, int minExp = -100, int maxExp = 100)
+        {
+            var rng = new Random(42);
+            var result = new byte[count][];
+            for (var i = 0; i < count; i++)
+            {
+                var v = rng.NextInt();
+                var exp = rng.NextInt(minExp, maxExp);
+                var str = $"{v}e{exp}";
+                result[i] = Encoding.UTF8.GetBytes(str);
+            }
             return result;
         }
     }

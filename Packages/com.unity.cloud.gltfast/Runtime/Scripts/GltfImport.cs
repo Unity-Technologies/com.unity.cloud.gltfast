@@ -1436,7 +1436,9 @@ namespace GLTFast
         /// <returns>De-serialized glTF root object.</returns>
         protected static RootBase ParseJson(ReadOnlySpan<byte> json)
         {
+            Profiler.BeginSample("ParseJson");
             return JsonSerializer.Deserialize(json, GltfRootSourceGenerator.Default.Root);
+            Profiler.EndSample();
         }
 
         /// <summary>
