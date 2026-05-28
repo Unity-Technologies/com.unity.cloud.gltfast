@@ -24,7 +24,7 @@ namespace GLTFast.Export
         {
             var light = new LightPunctual
             {
-                name = uLight.name
+                Name = uLight.name
             };
 
             var renderPipeline = RenderPipelineUtils.RenderPipeline;

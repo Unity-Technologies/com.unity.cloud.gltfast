@@ -14,16 +14,16 @@ namespace GLTFast.Tests
         public void VertexBufferDescriptorEqualTest()
         {
             var a = VertexBufferDescriptor.FromPrimitive(
-                new MeshPrimitive { attributes = new Attributes { POSITION = 42 } });
+                new MeshPrimitive { Attributes = new Attributes { POSITION = 42 } });
             var b = VertexBufferDescriptor.FromPrimitive(
-                new MeshPrimitive { attributes = new Attributes { POSITION = 42 } });
+                new MeshPrimitive { Attributes = new Attributes { POSITION = 42 } });
 
             Assert.IsTrue(a == b);
 
             a = VertexBufferDescriptor.FromPrimitive(
-                new MeshPrimitive { attributes = new Attributes { POSITION = 41 } });
+                new MeshPrimitive { Attributes = new Attributes { POSITION = 41 } });
             b = VertexBufferDescriptor.FromPrimitive(
-                new MeshPrimitive { attributes = new Attributes { POSITION = 42 } });
+                new MeshPrimitive { Attributes = new Attributes { POSITION = 42 } });
 
             Assert.IsTrue(a == b);
         }

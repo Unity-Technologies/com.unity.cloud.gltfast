@@ -1,7 +1,6 @@
 // SPDX-FileCopyrightText: 2023 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
-using System;
 using System.Collections.Generic;
 #if UNITY_6000_5_OR_NEWER
 using System.Text.Json;
@@ -17,7 +16,6 @@ namespace GLTFast.Schema
     /// An object defining the hierarchy relations and the local transform of
     /// its content.
     /// </summary>
-    [System.Serializable]
     public class Node : NamedObject, IGltfObject
     {
         /// <inheritdoc cref="NodeExtensions"/>
@@ -27,59 +25,69 @@ namespace GLTFast.Schema
         /// <summary>
         /// The indices of this node's children.
         /// </summary>
-        public uint[] children;
+        [JsonPropertyName("children")]
+        public uint[] Children { get; set; }
 
         /// <summary>
         /// The index of the mesh in this node.
         /// </summary>
-        public int mesh = -1;
+        [JsonPropertyName("mesh")]
+        public int Mesh { get; set; } = -1;
 
         /// <summary>
         /// A floating-point 4x4 transformation matrix stored in column-major order.
         /// </summary>
+        [JsonPropertyName("matrix")]
         [JsonConverter(typeof(Double16ArrayConverter))]
-        public double[] matrix;
+        public double[] Matrix { get; set; }
 
         /// <summary>
         /// The node's unit quaternion rotation in the order (x, y, z, w),
         /// where w is the scalar.
         /// </summary>
+        [JsonPropertyName("rotation")]
         [JsonConverter(typeof(Double4ArrayConverter))]
-        public double[] rotation;
+        public double[] Rotation { get; set; }
 
         /// <summary>
         /// The node's non-uniform scale.
         /// </summary>
+        [JsonPropertyName("scale")]
         [JsonConverter(typeof(Double3ArrayConverter))]
-        public double[] scale;
+        public double[] Scale { get; set; }
 
         /// <summary>
         /// The node's translation.
         /// </summary>
+        [JsonPropertyName("translation")]
         [JsonConverter(typeof(Double3ArrayConverter))]
-        public double[] translation;
+        public double[] Translation { get; set; }
 
         /// <summary>
         /// The weights of the instantiated Morph Target.
         /// Number of elements must match number of Morph Targets of used mesh.
         /// </summary>
-        public float[] weights;
+        [JsonPropertyName("weights")]
+        public float[] Weights { get; set; }
 
         /// <summary>
         /// The index of the skin (in <see cref="Root.Skins"/> referenced by this node.
         /// </summary>
-        public int skin = -1;
+        [JsonPropertyName("skin")]
+        public int Skin { get; set; } = -1;
 
         /// <summary>
         /// Camera index
         /// </summary>
-        public int camera = -1;
+        [JsonPropertyName("camera")]
+        public int Camera { get; set; } = -1;
 
         /// <summary>
         /// Application-specific data.
         /// </summary>
         /// <seealso href="https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html#reference-extras"/>
-        public UnclassifiedData extras { get; set; }
+        [JsonPropertyName("extras")]
+        public UnclassifiedData Extras { get; set; }
 
         /// <summary>JSON properties without a matching member.</summary>
         [JsonExtensionData, JsonInclude] internal Dictionary<string, JsonElement> ExtensionsData { get; set; }
@@ -95,49 +103,49 @@ namespace GLTFast.Schema
             writer.AddObject();
             GltfSerializeName(writer);
 
-            if (children != null)
+            if (Children != null)
             {
-                writer.AddArrayProperty("children", children);
+                writer.AddArrayProperty("children", Children);
             }
 
-            if (mesh >= 0)
+            if (Mesh >= 0)
             {
-                writer.AddProperty("mesh", mesh);
+                writer.AddProperty("mesh", Mesh);
             }
 
-            if (translation != null)
+            if (Translation != null)
             {
-                writer.AddArrayProperty("translation", translation);
+                writer.AddArrayProperty("translation", Translation);
             }
 
-            if (rotation != null)
+            if (Rotation != null)
             {
-                writer.AddArrayProperty("rotation", rotation);
+                writer.AddArrayProperty("rotation", Rotation);
             }
 
-            if (scale != null)
+            if (Scale != null)
             {
-                writer.AddArrayProperty("scale", scale);
+                writer.AddArrayProperty("scale", Scale);
             }
 
-            if (matrix != null)
+            if (Matrix != null)
             {
-                writer.AddArrayProperty("matrix", matrix);
+                writer.AddArrayProperty("matrix", Matrix);
             }
 
-            if (weights != null)
+            if (Weights != null)
             {
-                writer.AddArrayProperty("weights", weights);
+                writer.AddArrayProperty("weights", Weights);
             }
 
-            if (skin >= 0)
+            if (Skin >= 0)
             {
-                writer.AddProperty("skin", skin);
+                writer.AddProperty("skin", Skin);
             }
 
-            if (camera >= 0)
+            if (Camera >= 0)
             {
-                writer.AddProperty("camera", camera);
+                writer.AddProperty("camera", Camera);
             }
 
             if (Extensions != null)
@@ -152,7 +160,6 @@ namespace GLTFast.Schema
     /// <summary>
     /// Node extensions
     /// </summary>
-    [System.Serializable]
     public class NodeExtensions : IGltfObject
     {
         // Names are identical to glTF specified properties, that's why
@@ -160,9 +167,9 @@ namespace GLTFast.Schema
         // ReSharper disable InconsistentNaming
 
         /// <inheritdoc cref="MeshGpuInstancing"/>
-        public MeshGpuInstancing EXT_mesh_gpu_instancing;
+        public MeshGpuInstancing EXT_mesh_gpu_instancing { get; set; }
         /// <inheritdoc cref="LightsPunctual"/>
-        public NodeLightsPunctual KHR_lights_punctual;
+        public NodeLightsPunctual KHR_lights_punctual { get; set; }
 
         // Whenever an extension is added, the JsonParser
         // (specifically step four of JsonParser.ParseJson)

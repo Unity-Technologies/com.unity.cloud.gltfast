@@ -39,7 +39,6 @@ namespace GLTFast.Schema
     /// <summary>
     /// Geometry to be rendered with the given material.
     /// </summary>
-    [Serializable]
     public class MeshPrimitive : ICloneable, IMaterialsVariantsSlot, IGltfObject
     {
         /// <inheritdoc cref="MeshPrimitiveExtensions"/>
@@ -50,7 +49,8 @@ namespace GLTFast.Schema
         /// A dictionary object, where each key corresponds to mesh attribute semantic
         /// and each value is the index of the accessor containing attribute's data.
         /// </summary>
-        public Attributes attributes;
+        [JsonPropertyName("attributes")]
+        public Attributes Attributes { get; set; }
 
         /// <summary>
         /// The index of the accessor that contains mesh indices.
@@ -63,17 +63,20 @@ namespace GLTFast.Schema
         /// or 5125 (UNSIGNED_INT), the latter is only allowed
         /// when `OES_element_index_uint` extension is used; `type` must be `\"SCALAR\"`.
         /// </summary>
-        public int indices = -1;
+        [JsonPropertyName("indices")]
+        public int Indices { get; set; } = -1;
 
         /// <summary>
         /// The index of the material to apply to this primitive when rendering.
         /// </summary>
-        public int material = -1;
+        [JsonPropertyName("material")]
+        public int Material { get; set; } = -1;
 
         /// <summary>
         /// The type of primitives to render. All valid values correspond to WebGL enums.
         /// </summary>
-        public DrawMode mode = DrawMode.Triangles;
+        [JsonPropertyName("mode")]
+        public DrawMode Mode { get; set; } = DrawMode.Triangles;
 
         /// <summary>
         /// An array of Morph Targets, each  Morph Target is a dictionary mapping
@@ -81,10 +84,12 @@ namespace GLTFast.Schema
         /// in the Morph Target (index of the accessor containing the attribute
         /// displacements' data).
         /// </summary>
-        public MorphTarget[] targets;
+        [JsonPropertyName("targets")]
+        public MorphTarget[] Targets { get; set; }
 
-        /// <inheritdoc cref="Root.extras"/>
-        public UnclassifiedData extras;
+        /// <inheritdoc cref="Root.Extras"/>
+        [JsonPropertyName("extras")]
+        public UnclassifiedData Extras { get; set; }
 
         /// <summary>JSON properties without a matching member.</summary>
         [JsonExtensionData, JsonInclude] internal Dictionary<string, JsonElement> ExtensionsData { get; set; }
@@ -103,7 +108,7 @@ namespace GLTFast.Schema
             {
                 return materialIndex;
             }
-            return material;
+            return Material;
         }
 
 #if DRACO_IS_INSTALLED
@@ -145,27 +150,27 @@ namespace GLTFast.Schema
         internal void GltfSerialize(JsonWriter writer)
         {
             writer.AddObject();
-            if (attributes != null)
+            if (Attributes != null)
             {
                 writer.AddProperty("attributes");
-                attributes.GltfSerialize(writer);
+                Attributes.GltfSerialize(writer);
             }
-            if (indices >= 0)
+            if (Indices >= 0)
             {
-                writer.AddProperty("indices", indices);
+                writer.AddProperty("indices", Indices);
             }
-            if (material >= 0)
+            if (Material >= 0)
             {
-                writer.AddProperty("material", material);
+                writer.AddProperty("material", Material);
             }
-            if (mode != DrawMode.Triangles)
+            if (Mode != DrawMode.Triangles)
             {
-                writer.AddProperty("mode", (int)mode);
+                writer.AddProperty("mode", (int)Mode);
             }
-            if (targets != null)
+            if (Targets != null)
             {
                 writer.AddArray("targets");
-                foreach (var target in targets)
+                foreach (var target in Targets)
                 {
                     target.GltfSerialize(writer);
                 }
@@ -184,7 +189,6 @@ namespace GLTFast.Schema
     /// Mesh vertex attribute collection. Each property value is the index of
     /// the accessor containing attribute’s data.
     /// </summary>
-    [Serializable]
     public class Attributes
     {
 
@@ -193,35 +197,35 @@ namespace GLTFast.Schema
         // ReSharper disable InconsistentNaming
 
         /// <summary>Vertex position accessor index.</summary>
-        public int POSITION = -1;
+        public int POSITION { get; set; } = -1;
         /// <summary>Vertex normals accessor index.</summary>
-        public int NORMAL = -1;
+        public int NORMAL { get; set; } = -1;
         /// <summary>Vertex tangents accessor index.</summary>
-        public int TANGENT = -1;
+        public int TANGENT { get; set; } = -1;
         /// <summary>Texture coordinates accessor index.</summary>
-        public int TEXCOORD_0 = -1;
+        public int TEXCOORD_0 { get; set; } = -1;
         /// <summary>Texture coordinates accessor index (second UV set).</summary>
-        public int TEXCOORD_1 = -1;
+        public int TEXCOORD_1 { get; set; } = -1;
         /// <summary>Texture coordinates accessor index (third UV set).</summary>
-        public int TEXCOORD_2 = -1;
+        public int TEXCOORD_2 { get; set; } = -1;
         /// <summary>Texture coordinates accessor index (fourth UV set).</summary>
-        public int TEXCOORD_3 = -1;
+        public int TEXCOORD_3 { get; set; } = -1;
         /// <summary>Texture coordinates accessor index (fifth UV set).</summary>
-        public int TEXCOORD_4 = -1;
+        public int TEXCOORD_4 { get; set; } = -1;
         /// <summary>Texture coordinates accessor index (sixth UV set).</summary>
-        public int TEXCOORD_5 = -1;
+        public int TEXCOORD_5 { get; set; } = -1;
         /// <summary>Texture coordinates accessor index (seventh UV set).</summary>
-        public int TEXCOORD_6 = -1;
+        public int TEXCOORD_6 { get; set; } = -1;
         /// <summary>Texture coordinates accessor index (eighth UV set).</summary>
-        public int TEXCOORD_7 = -1;
+        public int TEXCOORD_7 { get; set; } = -1;
         /// <summary>Texture coordinates accessor index (ninth UV set).</summary>
-        public int TEXCOORD_8 = -1;
+        public int TEXCOORD_8 { get; set; } = -1;
         /// <summary>Vertex color accessor index.</summary>
-        public int COLOR_0 = -1;
+        public int COLOR_0 { get; set; } = -1;
         /// <summary>Bone joints accessor index.</summary>
-        public int JOINTS_0 = -1;
+        public int JOINTS_0 { get; set; } = -1;
         /// <summary>Bone weights accessor index.</summary>
-        public int WEIGHTS_0 = -1;
+        public int WEIGHTS_0 { get; set; } = -1;
 
         // ReSharper restore InconsistentNaming
 
@@ -346,20 +350,20 @@ namespace GLTFast.Schema
     /// <summary>
     /// Mesh primitive extensions
     /// </summary>
-    [Serializable]
     public class MeshPrimitiveExtensions : IGltfObject
     {
 #if DRACO_IS_INSTALLED
         // ReSharper disable once InconsistentNaming
-        public MeshPrimitiveDracoExtension KHR_draco_mesh_compression;
+        public MeshPrimitiveDracoExtension KHR_draco_mesh_compression { get; set; }
 #endif
 
         /// <inheritdoc cref="MaterialsVariantsMeshPrimitiveExtension"/>
         // ReSharper disable once InconsistentNaming
-        public MaterialsVariantsMeshPrimitiveExtension KHR_materials_variants;
+        public MaterialsVariantsMeshPrimitiveExtension KHR_materials_variants { get; set; }
 
-        /// <inheritdoc cref="Root.extras"/>
-        public UnclassifiedData extras;
+        /// <inheritdoc cref="Root.Extras"/>
+        [JsonPropertyName("extras")]
+        public UnclassifiedData Extras { get; set; }
 
         /// <summary>JSON properties without a matching member.</summary>
         [JsonExtensionData, JsonInclude] internal Dictionary<string, JsonElement> ExtensionsData { get; set; }
@@ -390,18 +394,19 @@ namespace GLTFast.Schema
     }
 
 #if DRACO_IS_INSTALLED
-    [Serializable]
     public class MeshPrimitiveDracoExtension
     {
-        public int bufferView;
-        public Attributes attributes;
+        [JsonPropertyName("bufferView")]
+        public int BufferView { get; set; }
+        [JsonPropertyName("attributes")]
+        public Attributes Attributes { get; set; }
 
         internal void GltfSerialize(JsonWriter writer)
         {
             writer.AddObject();
-            writer.AddProperty("bufferView", bufferView);
+            writer.AddProperty("bufferView", BufferView);
             writer.AddProperty("attributes");
-            attributes.GltfSerialize(writer);
+            Attributes.GltfSerialize(writer);
             writer.Close();
         }
     }
@@ -410,7 +415,6 @@ namespace GLTFast.Schema
     /// <summary>
     /// Morph target (blend shape)
     /// </summary>
-    [Serializable]
     public class MorphTarget
     {
         // Names are identical to glTF specified property names, that's why
@@ -418,11 +422,11 @@ namespace GLTFast.Schema
         // ReSharper disable InconsistentNaming
 
         /// <summary>Vertex position deviation accessor index.</summary>
-        public int POSITION = -1;
+        public int POSITION { get; set; } = -1;
         /// <summary>Vertex normal deviation accessor index.</summary>
-        public int NORMAL = -1;
+        public int NORMAL { get; set; } = -1;
         /// <summary>Vertex tangent deviation accessor index.</summary>
-        public int TANGENT = -1;
+        public int TANGENT { get; set; } = -1;
 
         // ReSharper restore InconsistentNaming
 

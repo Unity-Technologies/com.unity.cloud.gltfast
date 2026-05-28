@@ -1,7 +1,6 @@
 // SPDX-FileCopyrightText: 2023 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
-using System;
 using System.Collections.Generic;
 #if UNITY_6000_5_OR_NEWER
 using System.Text.Json;
@@ -17,12 +16,11 @@ namespace GLTFast.Schema
     /// BufferView extensions
     /// </summary>
     /// <seealso href="https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html#reference-bufferview"/>
-    [Serializable]
     public class BufferViewExtensions : IGltfObject
     {
 #if MESHOPT_IS_RECENT
         // ReSharper disable InconsistentNaming
-        public BufferViewMeshoptExtension EXT_meshopt_compression;
+        public BufferViewMeshoptExtension EXT_meshopt_compression { get; set; }
         // ReSharper restore InconsistentNaming
 #endif
         /// <summary>JSON properties without a matching member.</summary>

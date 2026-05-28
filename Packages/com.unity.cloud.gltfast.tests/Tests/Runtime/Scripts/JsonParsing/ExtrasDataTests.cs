@@ -170,7 +170,7 @@ namespace GLTFast.Tests.JsonParsing
         static void AssertResultExtendedJson(Root gltf)
         {
             Assert.NotNull(gltf);
-            var e = gltf.Nodes[0].extras;
+            var e = gltf.Nodes[0].Extras;
             Assert.IsNotNull(e);
 
             Assert.IsTrue(e.TryGetValue("floatProp", out float floatProp));

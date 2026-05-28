@@ -135,7 +135,7 @@ namespace GLTFast
                 );
 
             var jobCount = 1;
-            if (posAcc.IsSparse && posAcc.bufferView >= 0)
+            if (posAcc.IsSparse && posAcc.BufferView >= 0)
                 jobCount++;
 
             Accessor nrmAcc = null;
@@ -145,7 +145,7 @@ namespace GLTFast
             if (morphTarget.NORMAL >= 0)
             {
                 buffers.GetAccessorAndData(morphTarget.NORMAL, out nrmAcc, out nrmInput, out nrmInputByteStride);
-                jobCount += nrmAcc.IsSparse && nrmAcc.bufferView >= 0 ? 2 : 1;
+                jobCount += nrmAcc.IsSparse && nrmAcc.BufferView >= 0 ? 2 : 1;
             }
 
             Accessor tanAcc = null;
@@ -155,7 +155,7 @@ namespace GLTFast
             if (morphTarget.TANGENT >= 0)
             {
                 buffers.GetAccessorAndData(morphTarget.TANGENT, out tanAcc, out tanInput, out tanInputByteStride);
-                jobCount += tanAcc.IsSparse && tanAcc.bufferView >= 0 ? 2 : 1;
+                jobCount += tanAcc.IsSparse && tanAcc.BufferView >= 0 ? 2 : 1;
             }
 
             var handles = new NativeArray<JobHandle>(jobCount, VertexBufferGeneratorBase.defaultAllocator);
@@ -208,7 +208,7 @@ namespace GLTFast
                         posAcc,
                         (float3*)dest,
                         12,
-                        posAcc.normalized,
+                        posAcc.Normalized,
                         false // positional data never needs to be normalized
                     );
                     if (h.HasValue)
@@ -229,13 +229,13 @@ namespace GLTFast
                     var sparseJobHandle = VertexBufferGeneratorBase.GetVector3SparseJob(
                         posIndexData,
                         posValueData,
-                        posAcc.Sparse.count,
-                        posAcc.Sparse.Indices.componentType,
-                        posAcc.componentType,
+                        posAcc.Sparse.Count,
+                        posAcc.Sparse.Indices.ComponentType,
+                        posAcc.ComponentType,
                         (float3*)dest,
                         12,
                         dependsOn: ref h,
-                        posAcc.normalized
+                        posAcc.Normalized
                     );
                     if (sparseJobHandle.HasValue)
                     {
@@ -266,14 +266,14 @@ namespace GLTFast
             fixed (void* dest = &(m_Normals[offset]))
             {
                 JobHandle? h = null;
-                if (nrmAcc.bufferView >= 0)
+                if (nrmAcc.BufferView >= 0)
                 {
                     h = VertexBufferGeneratorBase.GetVector3Job(
                         buffers,
                         nrmAcc,
                         (float3*)dest,
                         12,
-                        nrmAcc.normalized,
+                        nrmAcc.Normalized,
                         false // morph target normals are deltas -> don't normalize
                     );
                     if (h.HasValue)
@@ -294,13 +294,13 @@ namespace GLTFast
                     var sparseJobHandle = VertexBufferGeneratorBase.GetVector3SparseJob(
                         indexData,
                         valueData,
-                        nrmAcc.Sparse.count,
-                        nrmAcc.Sparse.Indices.componentType,
-                        nrmAcc.componentType,
+                        nrmAcc.Sparse.Count,
+                        nrmAcc.Sparse.Indices.ComponentType,
+                        nrmAcc.ComponentType,
                         (float3*)dest,
                         12,
                         dependsOn: ref h,
-                        nrmAcc.normalized
+                        nrmAcc.Normalized
                     );
                     if (sparseJobHandle.HasValue)
                     {
@@ -331,14 +331,14 @@ namespace GLTFast
             fixed (void* dest = &(m_Tangents[offset]))
             {
                 JobHandle? h = null;
-                if (tanAcc.bufferView >= 0)
+                if (tanAcc.BufferView >= 0)
                 {
                     h = VertexBufferGeneratorBase.GetVector3Job(
                         buffers,
                         tanAcc,
                         (float3*)dest,
                         12,
-                        tanAcc.normalized,
+                        tanAcc.Normalized,
                         false // morph target tangents are deltas -> don't normalize
                     );
                     if (h.HasValue)
@@ -359,13 +359,13 @@ namespace GLTFast
                     var sparseJobHandle = VertexBufferGeneratorBase.GetVector3SparseJob(
                         indexData,
                         valueData,
-                        tanAcc.Sparse.count,
-                        tanAcc.Sparse.Indices.componentType,
-                        tanAcc.componentType,
+                        tanAcc.Sparse.Count,
+                        tanAcc.Sparse.Indices.ComponentType,
+                        tanAcc.ComponentType,
                         (float3*)dest,
                         12,
                         dependsOn: ref h,
-                        tanAcc.normalized
+                        tanAcc.Normalized
                     );
                     if (sparseJobHandle.HasValue)
                     {

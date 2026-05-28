@@ -216,7 +216,7 @@ namespace GLTFast.Materials
                 Logger?.Warning(LogCode.TopologyPointsMaterialUnsupported);
             }
 
-            material.name = gltfMaterial.name;
+            material.name = gltfMaterial.Name;
 
             StandardShaderMode shaderMode = StandardShaderMode.Opaque;
             Color baseColorLinear = Color.white;

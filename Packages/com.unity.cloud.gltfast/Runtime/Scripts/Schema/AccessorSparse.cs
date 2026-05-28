@@ -16,13 +16,13 @@ namespace GLTFast.Schema
     /// Sparse property of a glTF
     /// </summary>
     /// <seealso cref="Accessor"/>
-    [System.Serializable]
     public class AccessorSparse : IGltfObject
     {
         /// <summary>
         /// Number of entries stored in the sparse array.
         /// </summary>
-        public int count;
+        [JsonPropertyName("count")]
+        public int Count { get; set; }
 
         /// <summary>
         /// Index array of size `count` that points to those accessor attributes that
@@ -39,11 +39,13 @@ namespace GLTFast.Schema
         [JsonPropertyName("values")]
         public AccessorSparseValues Values { get; set; }
 
-        /// <inheritdoc cref="Asset.extensions"/>
-        public UnclassifiedData extensions;
+        /// <inheritdoc cref="Asset.Extensions"/>
+        [JsonPropertyName("extensions")]
+        public UnclassifiedData Extensions { get; set; }
 
-        /// <inheritdoc cref="Root.extras"/>
-        public UnclassifiedData extras;
+        /// <inheritdoc cref="Root.Extras"/>
+        [JsonPropertyName("extras")]
+        public UnclassifiedData Extras { get; set; }
 
         /// <summary>JSON properties without a matching member.</summary>
         [JsonExtensionData, JsonInclude] internal Dictionary<string, JsonElement> ExtensionsData { get; set; }
@@ -57,7 +59,7 @@ namespace GLTFast.Schema
         internal void GltfSerialize(JsonWriter writer)
         {
             writer.AddObject();
-            writer.AddProperty("count", count);
+            writer.AddProperty("count", Count);
             if (Indices != null)
             {
                 writer.AddProperty("indices");

@@ -136,24 +136,24 @@ namespace GLTFast.Tests.JsonParsing
 #pragma warning disable CS0618 // Type or member is obsolete
             var accessor = new Accessor
             {
-                type = null
+                Type = null
             };
             Assert.AreEqual(GltfAccessorAttributeType.Undefined, accessor.GetAttributeType());
-            Assert.IsNull(accessor.type);
+            Assert.IsNull(accessor.Type);
 
-            accessor.type = "MAT3";
+            accessor.Type = "MAT3";
             Assert.AreEqual(GltfAccessorAttributeType.MAT3, accessor.GetAttributeType());
-            Assert.IsNull(accessor.type);
+            Assert.IsNull(accessor.Type);
             accessor.SetAttributeType(GltfAccessorAttributeType.Undefined);
-            Assert.IsNull(accessor.type);
+            Assert.IsNull(accessor.Type);
 
-            accessor.type = "Nonsense";
+            accessor.Type = "Nonsense";
             Assert.AreEqual(GltfAccessorAttributeType.Undefined, accessor.GetAttributeType());
-            Assert.IsNull(accessor.type);
+            Assert.IsNull(accessor.Type);
 
-            accessor.type = "";
+            accessor.Type = "";
             Assert.AreEqual(GltfAccessorAttributeType.Undefined, accessor.GetAttributeType());
-            Assert.IsNull(accessor.type);
+            Assert.IsNull(accessor.Type);
 #pragma warning restore CS0618 // Type or member is obsolete
         }
 
@@ -323,7 +323,7 @@ namespace GLTFast.Tests.JsonParsing
             Assert.NotNull(gltf);
             Assert.NotNull(gltf.Accessors);
             Assert.AreEqual(1, gltf.Accessors.Count);
-            Assert.AreEqual(GltfComponentType.UnsignedShort, gltf.Accessors[0].componentType);
+            Assert.AreEqual(GltfComponentType.UnsignedShort, gltf.Accessors[0].ComponentType);
             Assert.AreEqual(GltfAccessorAttributeType.MAT3, gltf.Accessors[0].GetAttributeType());
         }
 
@@ -382,7 +382,7 @@ namespace GLTFast.Tests.JsonParsing
             Assert.AreEqual(1, gltf.Meshes.Count);
             Assert.NotNull(gltf.Meshes[0].Primitives);
             Assert.AreEqual(1, gltf.Meshes[0].Primitives.Count);
-            Assert.AreEqual(DrawMode.LineStrip, gltf.Meshes[0].Primitives[0].mode);
+            Assert.AreEqual(DrawMode.LineStrip, gltf.Meshes[0].Primitives[0].Mode);
         }
 
         static void CheckResultSamplers(Root gltf)

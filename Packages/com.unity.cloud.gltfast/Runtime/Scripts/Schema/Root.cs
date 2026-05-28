@@ -1,7 +1,6 @@
 // SPDX-FileCopyrightText: 2023 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
-using System;
 using System.Collections.Generic;
 using System.IO;
 #if UNITY_6000_5_OR_NEWER
@@ -12,27 +11,25 @@ using Unity.Gltfast.Text.Json;
 using Unity.Gltfast.Text.Json.Serialization;
 #endif
 
-using UnityEngine.Assertions;
-using UnityEngine.Profiling;
-
 namespace GLTFast.Schema
 {
     /// <summary>
     /// The root object for a glTF asset.
     /// </summary>
     /// <seealso href="https://www.khronos.org/registry/glTF/specs/2.0/glTF-2.0.html#reference-gltf"/>
-    [Serializable]
     public class Root : IGltfObject
     {
         /// <summary>
         /// Names of glTF extensions used somewhere in this asset.
         /// </summary>
-        public string[] extensionsUsed;
+        [JsonPropertyName("extensionsUsed")]
+        public string[] ExtensionsUsed { get; set; }
 
         /// <summary>
         /// Names of glTF extensions required to properly load this asset.
         /// </summary>
-        public string[] extensionsRequired;
+        [JsonPropertyName("extensionsRequired")]
+        public string[] ExtensionsRequired { get; set; }
 
         /// <summary>
         /// An array of accessors. An accessor is a typed view into a bufferView.
@@ -106,7 +103,8 @@ namespace GLTFast.Schema
         /// <summary>
         /// The index of the default scene.
         /// </summary>
-        public int scene = -1;
+        [JsonPropertyName("scene")]
+        public int Scene { get; set; } = -1;
 
         /// <summary>
         /// An array of scenes.
@@ -132,7 +130,8 @@ namespace GLTFast.Schema
 
         /// <summary>Application-specific data.</summary>
         /// <seealso href="https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html#reference-extras"/>
-        public UnclassifiedData extras { get; set; }
+        [JsonPropertyName("extras")]
+        public UnclassifiedData Extras { get; set; }
 
         /// <summary>JSON properties without a matching member.</summary>
         [JsonExtensionData, JsonInclude] internal Dictionary<string, JsonElement> ExtensionsData { get; set; }
@@ -156,9 +155,9 @@ namespace GLTFast.Schema
         public bool IsAccessorInterleaved(int accessorIndex)
         {
             var accessor = Accessors[accessorIndex];
-            var bufferView = BufferViews[accessor.bufferView];
-            if (bufferView.byteStride < 0) return false;
-            return bufferView.byteStride > accessor.ElementByteSize;
+            var bufferView = BufferViews[accessor.BufferView];
+            if (bufferView.ByteStride < 0) return false;
+            return bufferView.ByteStride > accessor.ElementByteSize;
         }
 
         /// <summary>
@@ -184,14 +183,14 @@ namespace GLTFast.Schema
                 writer.CloseArray();
             }
 
-            if (extensionsRequired != null)
+            if (ExtensionsRequired != null)
             {
-                writer.AddArrayProperty("extensionsRequired", extensionsRequired);
+                writer.AddArrayProperty("extensionsRequired", ExtensionsRequired);
             }
 
-            if (extensionsUsed != null)
+            if (ExtensionsUsed != null)
             {
-                writer.AddArrayProperty("extensionsUsed", extensionsUsed);
+                writer.AddArrayProperty("extensionsUsed", ExtensionsUsed);
             }
 
 #if UNITY_ANIMATION || GLTFAST_ANIMATION
@@ -282,9 +281,9 @@ namespace GLTFast.Schema
                 }
                 writer.CloseArray();
             }
-            if (scene >= 0)
+            if (Scene >= 0)
             {
-                writer.AddProperty("scene", scene);
+                writer.AddProperty("scene", Scene);
             }
             if (Scenes != null)
             {
@@ -340,7 +339,7 @@ namespace GLTFast.Schema
             var variants = Extensions?.KHR_materials_variants?.variants;
             if (variants != null && index >= 0 && index < variants.Count)
             {
-                return variants[index].name;
+                return variants[index].Name;
             }
 
             return null;

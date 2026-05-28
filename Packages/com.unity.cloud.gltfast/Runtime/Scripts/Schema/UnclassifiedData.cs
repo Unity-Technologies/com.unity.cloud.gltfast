@@ -15,7 +15,6 @@ namespace GLTFast.Schema
     /// <summary>
     /// JSON object, with unknown structure
     /// </summary>
-    [System.Serializable]
     public class UnclassifiedData : IGltfObject
     {
         /// <summary>JSON properties without a matching member.</summary>

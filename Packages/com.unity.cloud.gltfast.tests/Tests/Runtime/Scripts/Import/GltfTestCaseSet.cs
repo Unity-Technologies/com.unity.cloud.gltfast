@@ -270,10 +270,10 @@ namespace GLTFast.Tests.Import
 
             var gltf = JsonSerializer.Deserialize(json, GltfRootSourceGenerator.Default.Root);
 
-            if (gltf.extensionsRequired != null)
+            if (gltf.ExtensionsRequired != null)
             {
                 var extensionsRequired = new List<Extension>();
-                foreach (var extensionName in gltf.extensionsRequired)
+                foreach (var extensionName in gltf.ExtensionsRequired)
                 {
                     var ext = ExtensionExtensions.FromName(extensionName);
                     if (ext.HasValue)

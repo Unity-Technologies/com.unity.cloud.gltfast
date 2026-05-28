@@ -26,7 +26,7 @@ namespace GLTFast.Export
         {
             material = new GLTFast.Schema.Material
             {
-                name = unityMaterial.name,
+                Name = unityMaterial.name,
                 PbrMetallicRoughness = new PbrMetallicRoughness(),
                 doubleSided = IsDoubleSided(unityMaterial)
             };

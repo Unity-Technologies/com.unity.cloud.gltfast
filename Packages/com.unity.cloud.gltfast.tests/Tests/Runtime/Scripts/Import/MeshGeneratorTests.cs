@@ -14,9 +14,9 @@ using Unity.Collections;
 using UnityEngine;
 using UnityEngine.TestTools;
 using Camera = GLTFast.Schema.Camera;
+using GltfMaterial = GLTFast.Schema.Material;
 using Material = UnityEngine.Material;
 using Mesh = GLTFast.Schema.Mesh;
-using GltfMaterial = GLTFast.Schema.Material;
 using Texture = GLTFast.Schema.Texture;
 
 namespace GLTFast.Tests.Import
@@ -34,12 +34,12 @@ namespace GLTFast.Tests.Import
         {
             var primitives = new[] { new MeshPrimitive
             {
-                mode = DrawMode.TriangleFan,
-                attributes = new Attributes
+                Mode = DrawMode.TriangleFan,
+                Attributes = new Attributes
                 {
                     POSITION = 0
                 },
-                indices = 1
+                Indices = 1
             } };
 
             var logger = new CollectingLogger();
@@ -179,10 +179,10 @@ namespace GLTFast.Tests.Import
                 {
                     var accessor = new Accessor
                     {
-                        bufferView = 0,
-                        byteOffset = 0,
-                        componentType = GltfComponentType.Float,
-                        count = 3
+                        BufferView = 0,
+                        ByteOffset = 0,
+                        ComponentType = GltfComponentType.Float,
+                        Count = 3
                     };
                     accessor.SetAttributeType(GltfAccessorAttributeType.VEC3);
                     return accessor;
@@ -191,10 +191,10 @@ namespace GLTFast.Tests.Import
                 {
                     var accessor = new Accessor
                     {
-                        bufferView = 0,
-                        byteOffset = 0,
-                        componentType = GltfComponentType.UnsignedShort,
-                        count = 2
+                        BufferView = 0,
+                        ByteOffset = 0,
+                        ComponentType = GltfComponentType.UnsignedShort,
+                        Count = 2
                     };
                     accessor.SetAttributeType(GltfAccessorAttributeType.SCALAR);
                     return accessor;

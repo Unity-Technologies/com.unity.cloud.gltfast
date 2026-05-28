@@ -95,15 +95,15 @@ namespace GLTFast.Tests.Performance
             Assert.IsFalse(string.IsNullOrEmpty(gltf.Asset.generator));
             Assert.IsTrue(gltf.Asset.generator.StartsWith("Unity"));
             Assert.IsTrue(gltf.Asset.generator.Contains("glTFast"));
-            Assert.AreEqual(0, gltf.scene);
+            Assert.AreEqual(0, gltf.Scene);
             Assert.AreEqual(10_000, gltf.Nodes.Count);
-            Assert.AreEqual("Node-20-14-11", gltf.Nodes[9999].name);
-            Assert.AreEqual(-20f, gltf.Nodes[9999].translation[0]);
-            Assert.AreEqual(14f, gltf.Nodes[9999].translation[1]);
-            Assert.AreEqual(11f, gltf.Nodes[9999].translation[2]);
-            Assert.AreEqual(10_000, gltf.Scenes[0].nodes.Length);
-            Assert.AreEqual(42, gltf.Scenes[0].nodes[42]);
-            Assert.AreEqual(9999, gltf.Scenes[0].nodes[9999]);
+            Assert.AreEqual("Node-20-14-11", gltf.Nodes[9999].Name);
+            Assert.AreEqual(-20f, gltf.Nodes[9999].Translation[0]);
+            Assert.AreEqual(14f, gltf.Nodes[9999].Translation[1]);
+            Assert.AreEqual(11f, gltf.Nodes[9999].Translation[2]);
+            Assert.AreEqual(10_000, gltf.Scenes[0].Nodes.Length);
+            Assert.AreEqual(42, gltf.Scenes[0].Nodes[42]);
+            Assert.AreEqual(9999, gltf.Scenes[0].Nodes[9999]);
         }
 
         internal static Root DeserializeWrapper(NativeArray<byte>.ReadOnly json)

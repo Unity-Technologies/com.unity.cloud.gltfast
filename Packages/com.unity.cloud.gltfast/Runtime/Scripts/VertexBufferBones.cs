@@ -53,8 +53,8 @@ namespace GLTFast
             {
                 var h = GetWeightsJob(
                     weightsData,
-                    weightsAcc.count,
-                    weightsAcc.componentType,
+                    weightsAcc.Count,
+                    weightsAcc.ComponentType,
                     weightsByteStride,
                     (float4*)(vDataPtr + offset * sizeof(VBones)),
                     32
@@ -78,8 +78,8 @@ namespace GLTFast
                 }
                 var h = GetJointsJob(
                     jointsData,
-                    jointsAcc.count,
-                    jointsAcc.componentType,
+                    jointsAcc.Count,
+                    jointsAcc.ComponentType,
                     jointsByteStride,
                     (uint4*)(vDataPtr + offset * sizeof(VBones) + sizeof(float4)),
                     32,

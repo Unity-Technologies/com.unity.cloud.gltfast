@@ -17,7 +17,6 @@ namespace GLTFast.Schema
     /// A set of primitives to be rendered. Its global transform is defined by
     /// a node that references it.
     /// </summary>
-    [Serializable]
     public class Mesh : NamedObject, IGltfObject, ICloneable
     {
         /// <summary>
@@ -52,10 +51,12 @@ namespace GLTFast.Schema
         /// <summary>
         /// Array of weights to be applied to the Morph Targets.
         /// </summary>
-        public float[] weights;
+        [JsonPropertyName("weights")]
+        public float[] Weights { get; set; }
 
-        /// <inheritdoc cref="Asset.extensions"/>
-        public UnclassifiedData extensions;
+        /// <inheritdoc cref="Asset.Extensions"/>
+        [JsonPropertyName("extensions")]
+        public UnclassifiedData Extensions { get; set; }
 
         /// <summary>JSON properties without a matching member.</summary>
         [JsonExtensionData, JsonInclude] internal Dictionary<string, JsonElement> ExtensionsData { get; set; }
@@ -80,9 +81,9 @@ namespace GLTFast.Schema
                 writer.CloseArray();
             }
 
-            if (weights != null)
+            if (Weights != null)
             {
-                writer.AddArrayProperty("weights", weights);
+                writer.AddArrayProperty("weights", Weights);
             }
 
             if (Extras != null)
@@ -98,13 +99,13 @@ namespace GLTFast.Schema
     /// <summary>
     /// Application-specific data for meshes
     /// </summary>
-    [Serializable]
     public class MeshExtras : IGltfObject
     {
         /// <summary>
         /// Morph targets' names
         /// </summary>
-        public string[] targetNames;
+        [JsonPropertyName("targetNames")]
+        public string[] TargetNames { get; set; }
 
         /// <summary>JSON properties without a matching member.</summary>
         [JsonExtensionData, JsonInclude] internal Dictionary<string, JsonElement> ExtensionsData { get; set; }
@@ -117,9 +118,9 @@ namespace GLTFast.Schema
 
         internal void GltfSerialize(JsonWriter writer)
         {
-            if (targetNames != null)
+            if (TargetNames != null)
             {
-                writer.AddArrayPropertySafe("targetNames", targetNames);
+                writer.AddArrayPropertySafe("targetNames", TargetNames);
             }
         }
     }

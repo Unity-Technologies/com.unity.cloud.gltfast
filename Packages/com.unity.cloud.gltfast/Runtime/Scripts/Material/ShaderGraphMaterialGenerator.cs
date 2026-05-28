@@ -249,7 +249,7 @@ namespace GLTFast.Materials
 
             if (material == null) return null;
 
-            material.name = gltfMaterial.name;
+            material.name = gltfMaterial.Name;
 
             Color baseColorLinear = Color.white;
             RenderQueue? renderQueue = null;

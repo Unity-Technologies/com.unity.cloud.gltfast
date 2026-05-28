@@ -331,8 +331,8 @@ namespace GLTFast.Editor
             {
                 throw new InvalidOperationException("Instantiating scene failed");
             }
-            var useFirstChild = scene.nodes is { Length: > 0 };
-            var singleNode = scene.nodes is { Length: 1 };
+            var useFirstChild = scene.Nodes is { Length: > 0 };
+            var singleNode = scene.Nodes is { Length: 1 };
             var hasAnimation = false;
 #if UNITY_ANIMATION
             if (importSettings.AnimationMethod != AnimationMethod.None

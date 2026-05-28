@@ -40,7 +40,7 @@ namespace GLTFast
             )
             : base(meshName)
         {
-            var morphTargets = primitives[0].targets;
+            var morphTargets = primitives[0].Targets;
             m_HasMorphTargets = morphTargets is { Length: > 0 };
 
             var vertexCount = 0;
@@ -56,13 +56,13 @@ namespace GLTFast
                 var primitive = primitives[index];
                 Assert.IsTrue(primitive.IsDracoCompressed);
 
-                var posAccessor = buffers.GetAccessor(primitive.attributes.POSITION);
+                var posAccessor = buffers.GetAccessor(primitive.Attributes.POSITION);
 
                 if (m_HasMorphTargets)
                 {
                     vertexIntervals[index] = vertexCount;
                 }
-                vertexCount += posAccessor.count;
+                vertexCount += posAccessor.Count;
 
                 if (bounds != null)
                 {
@@ -74,18 +74,18 @@ namespace GLTFast
                     }
                     else
                     {
-                        logger?.Error(LogCode.MeshBoundsMissing, primitive.attributes.POSITION.ToString());
+                        logger?.Error(LogCode.MeshBoundsMissing, primitive.Attributes.POSITION.ToString());
                         bounds = null;
                     }
                 }
 
-                if (primitive.material < 0)
+                if (primitive.Material < 0)
                 {
                     m_NeedsNormals = true;
                 }
                 else
                 {
-                    var material = gltf.GetSourceMaterial(primitive.material);
+                    var material = gltf.GetSourceMaterial(primitive.Material);
                     m_NeedsNormals |= material.RequiresNormals;
                     m_NeedsTangents |= material.RequiresTangents;
                 }
@@ -131,9 +131,9 @@ namespace GLTFast
             for (var subMesh = 0; subMesh < primitives.Count; subMesh++)
             {
                 var primitive = primitives[subMesh];
-                for (var morphTargetIndex = 0; morphTargetIndex < primitive.targets.Length; morphTargetIndex++)
+                for (var morphTargetIndex = 0; morphTargetIndex < primitive.Targets.Length; morphTargetIndex++)
                 {
-                    var target = primitive.targets[morphTargetIndex];
+                    var target = primitive.Targets[morphTargetIndex];
                     m_MorphTargetsGenerator.AddMorphTarget(vertexIntervals[subMesh], subMesh, morphTargetIndex, target);
                 }
             }
@@ -152,8 +152,8 @@ namespace GLTFast
             for (var index = 0; index < primitives.Count; index++)
             {
                 var dracoExt = primitives[index].Extensions.KHR_draco_mesh_compression;
-                bufferViews[index] = buffers.GetBufferView(dracoExt.bufferView, out _).AsNativeArrayReadOnly();
-                attributesArray[index] = dracoExt.attributes;
+                bufferViews[index] = buffers.GetBufferView(dracoExt.BufferView, out _).AsNativeArrayReadOnly();
+                attributesArray[index] = dracoExt.Attributes;
             }
 
             var mesh = await StartDecode(bufferViews, attributesArray, bounds == null);

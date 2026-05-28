@@ -16,24 +16,27 @@ namespace GLTFast.Schema
     /// <summary>
     /// A buffer points to binary geometry, animation, or skins.
     /// </summary>
-    [System.Serializable]
     public class Buffer : NamedObject, IGltfObject
     {
         /// <summary>
         /// The length of the buffer in bytes.
         /// </summary>
-        public uint byteLength;
+        [JsonPropertyName("byteLength")]
+        public uint ByteLength { get; set; }
 
         /// <summary>
         /// The URI (or IRI) of the buffer.
         /// </summary>
-        public string uri;
+        [JsonPropertyName("uri")]
+        public string Uri { get; set; }
 
-        /// <inheritdoc cref="Asset.extensions"/>
-        public UnclassifiedData extensions;
+        /// <inheritdoc cref="Asset.Extensions"/>
+        [JsonPropertyName("extensions")]
+        public UnclassifiedData Extensions { get; set; }
 
-        /// <inheritdoc cref="Root.extras"/>
-        public UnclassifiedData extras;
+        /// <inheritdoc cref="Root.Extras"/>
+        [JsonPropertyName("extras")]
+        public UnclassifiedData Extras { get; set; }
 
         /// <summary>JSON properties without a matching member.</summary>
         [JsonExtensionData, JsonInclude] internal Dictionary<string, JsonElement> ExtensionsData { get; set; }
@@ -47,11 +50,11 @@ namespace GLTFast.Schema
         internal void GltfSerialize(JsonWriter writer)
         {
             writer.AddObject();
-            if (!string.IsNullOrEmpty(uri))
+            if (!string.IsNullOrEmpty(Uri))
             {
-                writer.AddPropertySafe("uri", uri);
+                writer.AddPropertySafe("uri", Uri);
             }
-            writer.AddProperty("byteLength", byteLength);
+            writer.AddProperty("byteLength", ByteLength);
             writer.Close();
         }
     }

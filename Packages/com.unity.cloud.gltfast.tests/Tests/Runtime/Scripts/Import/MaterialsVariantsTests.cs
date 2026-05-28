@@ -108,7 +108,7 @@ namespace GLTFast.Tests
         {
             var result = new MeshPrimitive
             {
-                material = seed == 0 ? -1 : seed,
+                Material = seed == 0 ? -1 : seed,
                 Extensions = new MeshPrimitiveExtensions
                 {
                     KHR_materials_variants = new MaterialsVariantsMeshPrimitiveExtension
@@ -139,9 +139,9 @@ namespace GLTFast.Tests
                     {
                         variants = new List<MaterialsVariant>
                         {
-                            new MaterialsVariant { name = "One" },
-                            new MaterialsVariant { name = "Two" },
-                            new MaterialsVariant { name = "Spanish Inquisition" },
+                            new MaterialsVariant { Name = "One" },
+                            new MaterialsVariant { Name = "Two" },
+                            new MaterialsVariant { Name = "Spanish Inquisition" },
                         }
                     }
                 }

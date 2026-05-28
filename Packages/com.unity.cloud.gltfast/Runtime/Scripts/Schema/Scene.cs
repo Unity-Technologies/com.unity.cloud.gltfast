@@ -16,21 +16,22 @@ namespace GLTFast.Schema
     /// <summary>
     /// Scene, the top level hierarchy object.
     /// </summary>
-    [System.Serializable]
     public class Scene : NamedObject, IGltfObject
     {
 
         /// <summary>
         /// The indices of all root nodes
         /// </summary>
-        public uint[] nodes;
+        [JsonPropertyName("nodes")]
+        public uint[] Nodes { get; set; }
 
-        /// <inheritdoc cref="Asset.extensions"/>
-        /// <inheritdoc cref="Asset.extensions"/>
-        public UnclassifiedData extensions;
+        /// <inheritdoc cref="Asset.Extensions"/>
+        [JsonPropertyName("extensions")]
+        public UnclassifiedData Extensions { get; set; }
 
-        /// <inheritdoc cref="Root.extras"/>
-        public UnclassifiedData extras;
+        /// <inheritdoc cref="Root.Extras"/>
+        [JsonPropertyName("extras")]
+        public UnclassifiedData Extras { get; set; }
 
         /// <summary>JSON properties without a matching member.</summary>
         [JsonExtensionData, JsonInclude] internal Dictionary<string, JsonElement> ExtensionsData { get; set; }
@@ -45,7 +46,7 @@ namespace GLTFast.Schema
         {
             writer.AddObject();
             GltfSerializeName(writer);
-            writer.AddArrayProperty("nodes", nodes);
+            writer.AddArrayProperty("nodes", Nodes);
             writer.Close();
         }
     }

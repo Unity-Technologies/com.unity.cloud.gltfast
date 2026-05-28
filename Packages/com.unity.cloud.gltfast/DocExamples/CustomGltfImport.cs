@@ -91,7 +91,7 @@ namespace GLTFast.Documentation.Examples
             var gltf = m_GltfImport.Root;
 
             var node = gltf.Nodes[(int)nodeIndex];
-            var extras = node?.extras;
+            var extras = node?.Extras;
 
             if (extras == null)
                 return;

@@ -89,12 +89,12 @@ namespace GLTFast
                 }
                 var h = GetUvsJob(
                     data,
-                    uvAcc.count,
-                    uvAcc.componentType,
+                    uvAcc.Count,
+                    uvAcc.ComponentType,
                     byteStride,
                     (float2*)(vDataPtr + outputByteStride * offset + uvSet * sizeof(float2)),
                     outputByteStride,
-                    uvAcc.normalized
+                    uvAcc.Normalized
                 );
                 if (h.HasValue)
                 {

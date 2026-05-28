@@ -49,7 +49,7 @@ namespace GLTFast
                 m_Logger?.Error(LogCode.SparseAccessor, "color");
             }
 
-            var colorDestination = m_Data.GetSubArray(offset, colorAcc.count);
+            var colorDestination = m_Data.GetSubArray(offset, colorAcc.Count);
 
 #if ENABLE_UNITY_COLLECTIONS_CHECKS
             if (offset > 0)
@@ -65,7 +65,7 @@ namespace GLTFast
 
             var h = GetColors32Job(
                 data,
-                colorAcc.componentType,
+                colorAcc.ComponentType,
                 colorAcc.GetAttributeType(),
                 byteStride,
                 colorDestination

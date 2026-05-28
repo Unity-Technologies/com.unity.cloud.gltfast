@@ -10,8 +10,8 @@ using GLTFast.Logging;
 using GLTFast.Materials;
 using NUnit.Framework;
 using UnityEngine;
-using Material = UnityEngine.Material;
 using GltfMaterial = GLTFast.Schema.Material;
+using Material = UnityEngine.Material;
 
 namespace GLTFast.Tests
 {

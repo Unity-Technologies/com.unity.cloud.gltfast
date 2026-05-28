@@ -361,7 +361,7 @@ namespace GLTFast
                         o.zfar >= 0 ? o.zfar : (float?)null,
                         o.xmag,
                         o.ymag,
-                        camera.name
+                        camera.Name
                     );
                     break;
                 case Schema.Camera.Type.Perspective:
@@ -372,7 +372,7 @@ namespace GLTFast
                         p.znear,
                         p.zfar,
                         p.aspectRatio > 0 ? p.aspectRatio : (float?)null,
-                        camera.name
+                        camera.Name
                     );
                     break;
             }

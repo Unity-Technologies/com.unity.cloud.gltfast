@@ -1,7 +1,6 @@
 // SPDX-FileCopyrightText: 2023 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
-using System;
 using System.Collections.Generic;
 #if UNITY_6000_5_OR_NEWER
 using System.Text.Json;
@@ -29,7 +28,6 @@ namespace GLTFast.Schema
     }
 
     /// <inheritdoc cref="IBufferView"/>
-    [Serializable]
     public class BufferView : NamedObject, IBufferView, IGltfObject
     {
         /// <inheritdoc cref="BufferViewExtensions"/>
@@ -39,33 +37,39 @@ namespace GLTFast.Schema
         /// <summary>
         /// The index of the buffer.
         /// </summary>
-        public int buffer;
+        [JsonPropertyName("buffer")]
+        public int Buffer { get; set; }
 
         /// <summary>
         /// The offset into the buffer in bytes.
         /// </summary>
-        public int byteOffset;
+        [JsonPropertyName("byteOffset")]
+        public int ByteOffset { get; set; }
 
         /// <summary>
         /// The length of the bufferView in bytes.
         /// </summary>
-        public int byteLength;
+        [JsonPropertyName("byteLength")]
+        public int ByteLength { get; set; }
 
         /// <summary>
         /// The stride, in bytes, between vertex attributes or other interleaved data.
         /// When this is zero, data is tightly packed.
         /// </summary>
-        public int byteStride = -1;
+        [JsonPropertyName("byteStride")]
+        public int ByteStride { get; set; } = -1;
 
         /// <summary>
         /// The target that the WebGL buffer should be bound to.
         /// All valid values correspond to WebGL enums.
         /// When this is not provided, the bufferView contains animation or skin data.
         /// </summary>
-        public int target;
+        [JsonPropertyName("target")]
+        public int Target { get; set; }
 
-        /// <inheritdoc cref="Root.extras"/>
-        public UnclassifiedData extras;
+        /// <inheritdoc cref="Root.Extras"/>
+        [JsonPropertyName("extras")]
+        public UnclassifiedData Extras { get; set; }
 
         /// <summary>JSON properties without a matching member.</summary>
         [JsonExtensionData, JsonInclude] internal Dictionary<string, JsonElement> ExtensionsData { get; set; }
@@ -76,34 +80,22 @@ namespace GLTFast.Schema
             return ExtensionsData.TryGetValue(key, out value);
         }
 
-        /// <inheritdoc cref="IBufferView.Buffer"/>
-        public int Buffer => buffer;
-
-        /// <inheritdoc cref="IBufferView.ByteOffset"/>
-        public int ByteOffset => byteOffset;
-
-        /// <inheritdoc cref="IBufferView.ByteLength"/>
-        public int ByteLength => byteLength;
-
-        /// <inheritdoc cref="IBufferView.ByteStride"/>
-        public int ByteStride => byteStride;
-
         internal void GltfSerialize(JsonWriter writer)
         {
             writer.AddObject();
-            writer.AddProperty("buffer", buffer);
-            writer.AddProperty("byteLength", byteLength);
-            if (byteOffset > 0)
+            writer.AddProperty("buffer", Buffer);
+            writer.AddProperty("byteLength", ByteLength);
+            if (ByteOffset > 0)
             {
-                writer.AddProperty("byteOffset", byteOffset);
+                writer.AddProperty("byteOffset", ByteOffset);
             }
-            if (byteStride > 0)
+            if (ByteStride > 0)
             {
-                writer.AddProperty("byteStride", byteStride);
+                writer.AddProperty("byteStride", ByteStride);
             }
-            if (target > 0)
+            if (Target > 0)
             {
-                writer.AddProperty("target", target);
+                writer.AddProperty("target", Target);
             }
             writer.Close();
         }

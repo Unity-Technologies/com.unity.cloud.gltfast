@@ -332,12 +332,12 @@ namespace GLTFast.Tests.JsonParsing
 
             var none = gltf.Materials[0];
             Assert.NotNull(none);
-            Assert.AreEqual("noExtension", none.name);
+            Assert.AreEqual("noExtension", none.Name);
             Assert.IsNull(none.Extensions);
 
             var empty = gltf.Materials[1];
             Assert.NotNull(empty);
-            Assert.AreEqual("emptyExtension", empty.name);
+            Assert.AreEqual("emptyExtension", empty.Name);
             Assert.NotNull(empty.Extensions);
             Assert.IsNull(empty.Extensions.KHR_materials_unlit);
             Assert.IsNull(empty.Extensions.KHR_materials_pbrSpecularGlossiness);
@@ -349,7 +349,7 @@ namespace GLTFast.Tests.JsonParsing
 
             var unlit = gltf.Materials[2];
             Assert.NotNull(unlit);
-            Assert.AreEqual("unlit", unlit.name);
+            Assert.AreEqual("unlit", unlit.Name);
             Assert.NotNull(unlit.Extensions);
             Assert.NotNull(unlit.Extensions.KHR_materials_unlit);
             Assert.IsNull(unlit.Extensions.KHR_materials_pbrSpecularGlossiness);
@@ -361,7 +361,7 @@ namespace GLTFast.Tests.JsonParsing
 
             var specGloss = gltf.Materials[3];
             Assert.NotNull(specGloss);
-            Assert.AreEqual("specularGlossiness", specGloss.name);
+            Assert.AreEqual("specularGlossiness", specGloss.Name);
             Assert.NotNull(specGloss.Extensions);
             Assert.IsNull(specGloss.Extensions.KHR_materials_unlit);
             Assert.NotNull(specGloss.Extensions.KHR_materials_pbrSpecularGlossiness);
@@ -373,7 +373,7 @@ namespace GLTFast.Tests.JsonParsing
 
             var transmission = gltf.Materials[4];
             Assert.NotNull(transmission);
-            Assert.AreEqual("transmission", transmission.name);
+            Assert.AreEqual("transmission", transmission.Name);
             Assert.NotNull(transmission.Extensions);
             Assert.IsNull(transmission.Extensions.KHR_materials_unlit);
             Assert.IsNull(transmission.Extensions.KHR_materials_pbrSpecularGlossiness);
@@ -385,7 +385,7 @@ namespace GLTFast.Tests.JsonParsing
 
             var clearcoat = gltf.Materials[5];
             Assert.NotNull(clearcoat);
-            Assert.AreEqual("clearcoat", clearcoat.name);
+            Assert.AreEqual("clearcoat", clearcoat.Name);
             Assert.NotNull(clearcoat.Extensions);
             Assert.IsNull(clearcoat.Extensions.KHR_materials_unlit);
             Assert.IsNull(clearcoat.Extensions.KHR_materials_pbrSpecularGlossiness);
@@ -397,7 +397,7 @@ namespace GLTFast.Tests.JsonParsing
 
             var sheen = gltf.Materials[6];
             Assert.NotNull(sheen);
-            Assert.AreEqual("sheen", sheen.name);
+            Assert.AreEqual("sheen", sheen.Name);
             Assert.NotNull(sheen.Extensions);
             Assert.IsNull(sheen.Extensions.KHR_materials_unlit);
             Assert.IsNull(sheen.Extensions.KHR_materials_pbrSpecularGlossiness);
@@ -410,7 +410,7 @@ namespace GLTFast.Tests.JsonParsing
 
             var ior = gltf.Materials[7];
             Assert.NotNull(ior);
-            Assert.AreEqual("ior", ior.name);
+            Assert.AreEqual("ior", ior.Name);
             Assert.NotNull(ior.Extensions);
             Assert.IsNull(ior.Extensions.KHR_materials_unlit);
             Assert.IsNull(ior.Extensions.KHR_materials_pbrSpecularGlossiness);
@@ -422,7 +422,7 @@ namespace GLTFast.Tests.JsonParsing
 
             var specular = gltf.Materials[8];
             Assert.NotNull(specular);
-            Assert.AreEqual("specular", specular.name);
+            Assert.AreEqual("specular", specular.Name);
             Assert.NotNull(specular.Extensions);
             Assert.IsNull(specular.Extensions.KHR_materials_unlit);
             Assert.IsNull(specular.Extensions.KHR_materials_pbrSpecularGlossiness);
@@ -434,7 +434,7 @@ namespace GLTFast.Tests.JsonParsing
 
             var all = gltf.Materials[9];
             Assert.NotNull(all);
-            Assert.AreEqual("all", all.name);
+            Assert.AreEqual("all", all.Name);
             Assert.NotNull(all.Extensions);
             Assert.NotNull(all.Extensions.KHR_materials_unlit);
             Assert.NotNull(all.Extensions.KHR_materials_pbrSpecularGlossiness);
@@ -455,16 +455,16 @@ namespace GLTFast.Tests.JsonParsing
 
             var sparse = gltf.Accessors[1];
             Assert.NotNull(sparse);
-            Assert.AreEqual(14, sparse.count);
+            Assert.AreEqual(14, sparse.Count);
             Assert.NotNull(sparse.Sparse);
-            Assert.AreEqual(3, sparse.Sparse.count);
+            Assert.AreEqual(3, sparse.Sparse.Count);
             Assert.NotNull(sparse.Sparse.Indices);
-            Assert.AreEqual(2, sparse.Sparse.Indices.bufferView);
-            Assert.AreEqual(0, sparse.Sparse.Indices.byteOffset);
-            Assert.AreEqual(GltfComponentType.UnsignedShort, sparse.Sparse.Indices.componentType);
+            Assert.AreEqual(2, sparse.Sparse.Indices.BufferView);
+            Assert.AreEqual(0, sparse.Sparse.Indices.ByteOffset);
+            Assert.AreEqual(GltfComponentType.UnsignedShort, sparse.Sparse.Indices.ComponentType);
             Assert.NotNull(sparse.Sparse.Values);
-            Assert.AreEqual(3, sparse.Sparse.Values.bufferView);
-            Assert.AreEqual(0, sparse.Sparse.Values.byteOffset);
+            Assert.AreEqual(3, sparse.Sparse.Values.BufferView);
+            Assert.AreEqual(0, sparse.Sparse.Values.ByteOffset);
 
             var invalid = gltf.Accessors[2];
             Assert.NotNull(invalid);
@@ -482,16 +482,16 @@ namespace GLTFast.Tests.JsonParsing
             var mat = gltf.Meshes[0];
             Assert.NotNull(mat);
             Assert.NotNull(mat.Extras);
-            Assert.NotNull(mat.Extras.targetNames);
-            Assert.NotNull(mat.Extras.targetNames);
-            Assert.AreEqual(2, mat.Extras.targetNames.Length, "Invalid targetNames quantity");
-            Assert.AreEqual("Key 1", mat.Extras.targetNames[0]);
-            Assert.AreEqual("Key 2", mat.Extras.targetNames[1]);
+            Assert.NotNull(mat.Extras.TargetNames);
+            Assert.NotNull(mat.Extras.TargetNames);
+            Assert.AreEqual(2, mat.Extras.TargetNames.Length, "Invalid targetNames quantity");
+            Assert.AreEqual("Key 1", mat.Extras.TargetNames[0]);
+            Assert.AreEqual("Key 2", mat.Extras.TargetNames[1]);
 
             mat = gltf.Meshes[1];
             Assert.NotNull(mat);
             Assert.NotNull(mat.Extras);
-            Assert.IsNull(mat.Extras.targetNames);
+            Assert.IsNull(mat.Extras.TargetNames);
         }
 
         static void AssertMinMagFilterResult(Root gltf)

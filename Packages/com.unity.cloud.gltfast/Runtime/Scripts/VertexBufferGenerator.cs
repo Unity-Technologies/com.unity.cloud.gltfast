@@ -83,7 +83,7 @@ namespace GLTFast
             {
                 VertexIntervals[i] = vertexCount;
                 m_PositionAccessors[i] = m_Buffers.GetAccessor(m_Attributes[i].POSITION);
-                vertexCount += m_PositionAccessors[i].count;
+                vertexCount += m_PositionAccessors[i].Count;
             }
             VertexIntervals[m_Attributes.Length] = vertexCount;
         }
@@ -157,7 +157,7 @@ namespace GLTFast
 
                 var att = m_Attributes[i];
 
-                if (m_PositionAccessors[i].IsSparse && m_PositionAccessors[i].bufferView >= 0)
+                if (m_PositionAccessors[i].IsSparse && m_PositionAccessors[i].BufferView >= 0)
                     jobCount++;
 
                 if (att.NORMAL >= 0)
@@ -217,14 +217,14 @@ namespace GLTFast
         {
             JobHandle? h = null;
 
-            if (m_PositionAccessors[i].bufferView >= 0)
+            if (m_PositionAccessors[i].BufferView >= 0)
             {
                 h = GetVector3Job(
                     m_Buffers,
                     m_PositionAccessors[i],
                     (float3*)(vDataPtr + outputByteStride * VertexIntervals[i]),
                     outputByteStride,
-                    m_PositionAccessors[i].normalized,
+                    m_PositionAccessors[i].Normalized,
                     false // positional data never needs to be normalized
                 );
             }
@@ -236,13 +236,13 @@ namespace GLTFast
                 var sparseJobHandle = GetVector3SparseJob(
                     posIndexData,
                     posValueData,
-                    m_PositionAccessors[i].Sparse.count,
-                    m_PositionAccessors[i].Sparse.Indices.componentType,
-                    m_PositionAccessors[i].componentType,
+                    m_PositionAccessors[i].Sparse.Count,
+                    m_PositionAccessors[i].Sparse.Indices.ComponentType,
+                    m_PositionAccessors[i].ComponentType,
                     (float3*)(vDataPtr + outputByteStride * VertexIntervals[i]),
                     outputByteStride,
                     dependsOn: ref h,
-                    m_PositionAccessors[i].normalized
+                    m_PositionAccessors[i].Normalized
                 );
                 if (sparseJobHandle.HasValue)
                 {
@@ -288,7 +288,7 @@ namespace GLTFast
                 nrmAcc,
                 (float3*)(vDataPtr + outputByteStride * VertexIntervals[i] + 12),
                 outputByteStride,
-                nrmAcc.normalized
+                nrmAcc.Normalized
 
             //, normals need to be unit length
             );
@@ -321,12 +321,12 @@ namespace GLTFast
 
             var h = GetTangentsJob(
                 input,
-                tanAcc.count,
-                tanAcc.componentType,
+                tanAcc.Count,
+                tanAcc.ComponentType,
                 inputByteStride,
                 (float4*)(vDataPtr + outputByteStride * VertexIntervals[i] + 24),
                 outputByteStride,
-                tanAcc.normalized
+                tanAcc.Normalized
             );
             if (h.HasValue)
             {

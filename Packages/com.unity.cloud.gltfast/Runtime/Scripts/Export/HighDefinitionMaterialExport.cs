@@ -47,7 +47,7 @@ namespace GLTFast.Export
             var success = true;
             material = new Material
             {
-                name = uMaterial.name,
+                Name = uMaterial.name,
                 PbrMetallicRoughness = new PbrMetallicRoughness
                 {
                     metallicFactor = 0,
@@ -93,7 +93,7 @@ namespace GLTFast.Export
                     }
                     else
                     {
-                        logger?.Error(LogCode.TextureInvalidType, "emission", material.name);
+                        logger?.Error(LogCode.TextureInvalidType, "emission", material.Name);
                         success = false;
                     }
                 }
@@ -146,7 +146,7 @@ namespace GLTFast.Export
                         }
                         else
                         {
-                            logger?.Error(LogCode.TextureInvalidType, "clearcoat", material.name);
+                            logger?.Error(LogCode.TextureInvalidType, "clearcoat", material.Name);
                             success = false;
                         }
                     }

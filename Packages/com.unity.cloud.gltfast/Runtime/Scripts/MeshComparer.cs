@@ -52,9 +52,9 @@ namespace GLTFast
             if (x is null) return false;
             if (y is null) return false;
             if (x.GetType() != y.GetType()) return false;
-            return x.indices == y.indices
-                && Equals(x.attributes, y.attributes)
-                && Equals(x.targets, y.targets);
+            return x.Indices == y.Indices
+                && Equals(x.Attributes, y.Attributes)
+                && Equals(x.Targets, y.Targets);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -62,15 +62,15 @@ namespace GLTFast
         {
 #if NET_STANDARD
             return HashCode.Combine(
-                primitive.indices,
-                GetHashCode(primitive.attributes),
-                GetHashCode(primitive.targets)
+                primitive.Indices,
+                GetHashCode(primitive.Attributes),
+                GetHashCode(primitive.Targets)
             );
 #else
             var hash = 17;
-            hash = hash * 31 + primitive.indices;
-            hash = hash * 31 + GetHashCode(primitive.attributes);
-            hash = hash * 31 + GetHashCode(primitive.targets);
+            hash = hash * 31 + primitive.Indices;
+            hash = hash * 31 + GetHashCode(primitive.Attributes);
+            hash = hash * 31 + GetHashCode(primitive.Targets);
             return hash;
 #endif
         }

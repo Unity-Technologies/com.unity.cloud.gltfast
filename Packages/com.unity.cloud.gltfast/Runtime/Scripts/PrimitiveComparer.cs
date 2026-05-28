@@ -15,8 +15,8 @@ namespace GLTFast
             if (ReferenceEquals(x, y)) return true;
             if (x is null) return false;
             if (y is null) return false;
-            return Equals(x.attributes, y.attributes)
-                && Equals(x.targets, y.targets);
+            return Equals(x.Attributes, y.Attributes)
+                && Equals(x.Targets, y.Targets);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -24,13 +24,13 @@ namespace GLTFast
         {
 #if NET_STANDARD
             return HashCode.Combine(
-                GetHashCode(primitive.attributes),
-                GetHashCode(primitive.targets)
+                GetHashCode(primitive.Attributes),
+                GetHashCode(primitive.Targets)
                 );
 #else
             var hash = 17;
-            hash = hash * 31 + GetHashCode(primitive.attributes);
-            hash = hash * 31 + GetHashCode(primitive.targets);
+            hash = hash * 31 + GetHashCode(primitive.Attributes);
+            hash = hash * 31 + GetHashCode(primitive.Targets);
             return hash;
 #endif
         }

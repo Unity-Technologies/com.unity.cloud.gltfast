@@ -28,7 +28,7 @@ namespace GLTFast.Export
 
             material = new GLTFast.Schema.Material
             {
-                name = unityMaterial.name,
+                Name = unityMaterial.name,
                 Extensions = new MaterialExtensions
                 {
                     KHR_materials_unlit = new MaterialUnlit()

@@ -5,8 +5,8 @@ using System;
 using GLTFast.Materials;
 using UnityEngine;
 using UnityEngine.Rendering;
-using Material = UnityEngine.Material;
 using GltfMaterial = GLTFast.Schema.Material;
+using Material = UnityEngine.Material;
 
 namespace GLTFast.Export
 {

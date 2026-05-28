@@ -66,7 +66,7 @@ namespace GLTFast
             out bool hasTangents
             )
         {
-            var drawMode = m_Primitives[0].mode;
+            var drawMode = m_Primitives[0].Mode;
             if (!SetTopology(drawMode))
             {
                 logger?.Error(LogCode.PrimitiveModeUnsupported, drawMode.ToString());
@@ -94,7 +94,7 @@ namespace GLTFast
 
             foreach (var primitive in m_Primitives)
             {
-                m_VertexData.AddPrimitive(primitive.attributes);
+                m_VertexData.AddPrimitive(primitive.Attributes);
             }
 
             m_VertexData.Initialize();
@@ -108,7 +108,7 @@ namespace GLTFast
             )
         {
             var mainBufferType = MainBufferType.Position;
-            var firstAttributes = m_Primitives[0].attributes;
+            var firstAttributes = m_Primitives[0].Attributes;
             hasNormals = firstAttributes.NORMAL >= 0;
             hasTangents = firstAttributes.TANGENT >= 0;
 
@@ -122,17 +122,17 @@ namespace GLTFast
             for (var i = 0; i < SubMeshCount; i++)
             {
                 var primitive = GetSubMesh(i);
-                if (primitive.mode == DrawMode.Triangles
-                    || primitive.mode == DrawMode.TriangleFan
-                    || primitive.mode == DrawMode.TriangleStrip)
+                if (primitive.Mode == DrawMode.Triangles
+                    || primitive.Mode == DrawMode.TriangleFan
+                    || primitive.Mode == DrawMode.TriangleStrip)
                 {
-                    if (primitive.material < 0)
+                    if (primitive.Material < 0)
                     {
                         mainBufferType |= MainBufferType.Normal;
                     }
                     else
                     {
-                        var material = gltf.GetSourceMaterial(primitive.material);
+                        var material = gltf.GetSourceMaterial(primitive.Material);
                         if (material.RequiresTangents)
                         {
                             mainBufferType |= MainBufferType.Normal | MainBufferType.Tangent;
@@ -184,7 +184,7 @@ namespace GLTFast
             ICodeLogger logger
             )
         {
-            var morphTargets = m_Primitives[0].targets;
+            var morphTargets = m_Primitives[0].Targets;
             if (morphTargets != null)
             {
                 m_MorphTargetsGenerator = new MorphTargetsGenerator(
@@ -209,10 +209,10 @@ namespace GLTFast
             for (var i = 0; i < SubMeshCount; i++)
             {
                 var primitive = GetSubMesh(i);
-                if (primitive.indices >= 0)
+                if (primitive.Indices >= 0)
                 {
-                    var accessor = buffers.GetAccessor(primitive.indices);
-                    if (accessor.componentType == GltfComponentType.UnsignedInt)
+                    var accessor = buffers.GetAccessor(primitive.Indices);
+                    if (accessor.ComponentType == GltfComponentType.UnsignedInt)
                     {
                         indexFormat = IndexFormat.UInt32;
                         break;
@@ -220,7 +220,7 @@ namespace GLTFast
                 }
                 else
                 {
-                    var vertexCount = buffers.GetAccessor(primitive.attributes.POSITION).count;
+                    var vertexCount = buffers.GetAccessor(primitive.Attributes.POSITION).Count;
                     if (vertexCount > ushort.MaxValue)
                     {
                         indexFormat = IndexFormat.UInt32;
@@ -235,21 +235,21 @@ namespace GLTFast
             for (var subMeshIndex = 0; subMeshIndex < SubMeshCount; subMeshIndex++)
             {
                 var primitive = GetSubMesh(subMeshIndex);
-                if (primitive.indices >= 0)
+                if (primitive.Indices >= 0)
                 {
-                    var flip = primitive.mode == DrawMode.Triangles;
-                    var accessor = buffers.GetAccessor(primitive.indices);
+                    var flip = primitive.Mode == DrawMode.Triangles;
+                    var accessor = buffers.GetAccessor(primitive.Indices);
 
                     var minIndexCount = 3;
-                    var indexCount = accessor.count;
-                    switch (primitive.mode)
+                    var indexCount = accessor.Count;
+                    switch (primitive.Mode)
                     {
                         case DrawMode.TriangleStrip or DrawMode.TriangleFan:
-                            indexCount = (accessor.count - 2) * 3;
+                            indexCount = (accessor.Count - 2) * 3;
                             break;
                         case DrawMode.LineLoop:
                             minIndexCount = 2;
-                            indexCount = accessor.count + 1;
+                            indexCount = accessor.Count + 1;
                             break;
                         case DrawMode.Lines or DrawMode.LineStrip:
                             minIndexCount = 2;
@@ -259,11 +259,11 @@ namespace GLTFast
                             break;
                     }
 
-                    if (accessor.count < minIndexCount)
+                    if (accessor.Count < minIndexCount)
                     {
                         logger?.Error(
                             LogCode.IndexCountInvalid,
-                            accessor.count.ToString()
+                            accessor.Count.ToString()
                         );
                         return null;
                     }
@@ -273,9 +273,9 @@ namespace GLTFast
                     m_Indices.Allocate(subMeshIndex, indexCount);
 
                     var accessorData = buffers.GetBufferView(
-                        accessor.bufferView,
+                        accessor.BufferView,
                         out _,
-                        accessor.byteOffset,
+                        accessor.ByteOffset,
                         accessor.ByteSize
                     );
 
@@ -303,7 +303,7 @@ namespace GLTFast
                     if (!getIndicesJob.HasValue)
                         return null;
 
-                    switch (primitive.mode)
+                    switch (primitive.Mode)
                     {
                         case DrawMode.LineLoop:
                         {
@@ -374,8 +374,8 @@ namespace GLTFast
                 }
                 else
                 {
-                    var vertexCount = buffers.GetAccessor(primitive.attributes.POSITION).count;
-                    var indexCount = primitive.mode switch
+                    var vertexCount = buffers.GetAccessor(primitive.Attributes.POSITION).Count;
+                    var indexCount = primitive.Mode switch
                     {
                         DrawMode.TriangleStrip or DrawMode.TriangleFan => (vertexCount - 2) * 3,
                         DrawMode.LineLoop => vertexCount + 1,
@@ -417,9 +417,9 @@ namespace GLTFast
             if (m_MorphTargetsGenerator == null)
                 return;
             var vertexOffset = m_VertexData.VertexIntervals[subMesh];
-            for (var morphTargetIndex = 0; morphTargetIndex < primitive.targets.Length; morphTargetIndex++)
+            for (var morphTargetIndex = 0; morphTargetIndex < primitive.Targets.Length; morphTargetIndex++)
             {
-                var morphTarget = primitive.targets[morphTargetIndex];
+                var morphTarget = primitive.Targets[morphTargetIndex];
                 var success = m_MorphTargetsGenerator.AddMorphTarget(
                     vertexOffset,
                     subMesh,
@@ -566,7 +566,7 @@ namespace GLTFast
             )
         {
             Profiler.BeginSample("GetIndicesUInt16Job");
-            switch (accessor.componentType)
+            switch (accessor.ComponentType)
             {
                 case GltfComponentType.UnsignedByte:
                 {
@@ -577,7 +577,7 @@ namespace GLTFast
                             input = accessorData.Reinterpret<byte3>().AsNativeArrayReadOnly(),
                             result = indices.Reinterpret<ushort3>(UnsafeUtility.SizeOf<ushort>())
                         };
-                        jobHandle = job8.Schedule(accessor.count / 3, GltfImport.DefaultBatchCount);
+                        jobHandle = job8.Schedule(accessor.Count / 3, GltfImport.DefaultBatchCount);
                     }
                     else
                     {
@@ -586,7 +586,7 @@ namespace GLTFast
                             input = accessorData.AsNativeArrayReadOnly(),
                             result = indices
                         };
-                        jobHandle = job8.Schedule(accessor.count, GltfImport.DefaultBatchCount);
+                        jobHandle = job8.Schedule(accessor.Count, GltfImport.DefaultBatchCount);
                     }
                     break;
                 }
@@ -599,7 +599,7 @@ namespace GLTFast
                             input = accessorData.Reinterpret<ushort3>().AsNativeArrayReadOnly(),
                             result = indices.Reinterpret<ushort3>(UnsafeUtility.SizeOf<ushort>())
                         };
-                        jobHandle = job16.Schedule(accessor.count / 3, GltfImport.DefaultBatchCount);
+                        jobHandle = job16.Schedule(accessor.Count / 3, GltfImport.DefaultBatchCount);
                     }
                     else
                     {
@@ -617,7 +617,7 @@ namespace GLTFast
                     break;
                 }
                 default:
-                    logger?.Error(LogCode.IndexFormatInvalid, accessor.componentType.ToString());
+                    logger?.Error(LogCode.IndexFormatInvalid, accessor.ComponentType.ToString());
                     jobHandle = null;
                     break;
             }
@@ -634,7 +634,7 @@ namespace GLTFast
             )
         {
             Profiler.BeginSample("GetIndicesUInt32Job");
-            switch (accessor.componentType)
+            switch (accessor.ComponentType)
             {
                 case GltfComponentType.UnsignedByte:
                 {
@@ -645,7 +645,7 @@ namespace GLTFast
                             input = accessorData.Reinterpret<byte3>().AsNativeArrayReadOnly(),
                             result = indices.Reinterpret<uint3>(UnsafeUtility.SizeOf<uint>())
                         };
-                        jobHandle = job8.Schedule(accessor.count / 3, GltfImport.DefaultBatchCount);
+                        jobHandle = job8.Schedule(accessor.Count / 3, GltfImport.DefaultBatchCount);
                     }
                     else
                     {
@@ -654,7 +654,7 @@ namespace GLTFast
                             input = accessorData.AsNativeArrayReadOnly(),
                             result = indices
                         };
-                        jobHandle = job8.Schedule(accessor.count, GltfImport.DefaultBatchCount);
+                        jobHandle = job8.Schedule(accessor.Count, GltfImport.DefaultBatchCount);
                     }
                     break;
                 }
@@ -667,7 +667,7 @@ namespace GLTFast
                             input = accessorData.Reinterpret<ushort3>().AsNativeArrayReadOnly(),
                             result = indices.Reinterpret<uint3>(UnsafeUtility.SizeOf<uint>())
                         };
-                        jobHandle = job16.Schedule(accessor.count / 3, GltfImport.DefaultBatchCount);
+                        jobHandle = job16.Schedule(accessor.Count / 3, GltfImport.DefaultBatchCount);
                     }
                     else
                     {
@@ -676,7 +676,7 @@ namespace GLTFast
                             input = accessorData.Reinterpret<ushort>().AsNativeArrayReadOnly(),
                             result = indices
                         };
-                        jobHandle = job16.Schedule(accessor.count, GltfImport.DefaultBatchCount);
+                        jobHandle = job16.Schedule(accessor.Count, GltfImport.DefaultBatchCount);
                     }
                     break;
                 }
@@ -689,13 +689,13 @@ namespace GLTFast
                             input = accessorData.Reinterpret<uint3>().AsNativeArrayReadOnly(),
                             result = indices.Reinterpret<uint3>(UnsafeUtility.SizeOf<uint>())
                         };
-                        jobHandle = job32.Schedule(accessor.count / 3, GltfImport.DefaultBatchCount);
+                        jobHandle = job32.Schedule(accessor.Count / 3, GltfImport.DefaultBatchCount);
                     }
                     else
                     {
                         unsafe
                         {
-                            Assert.AreEqual(accessor.count * UnsafeUtility.SizeOf<uint>(), accessorData.Length);
+                            Assert.AreEqual(accessor.Count * UnsafeUtility.SizeOf<uint>(), accessorData.Length);
                             var job = new MemCopyJob
                             {
                                 bufferSize = accessorData.Length,
@@ -708,7 +708,7 @@ namespace GLTFast
                     break;
                 }
                 default:
-                    logger?.Error(LogCode.IndexFormatInvalid, accessor.componentType.ToString());
+                    logger?.Error(LogCode.IndexFormatInvalid, accessor.ComponentType.ToString());
                     jobHandle = null;
                     break;
             }
@@ -723,7 +723,7 @@ namespace GLTFast
         {
             Profiler.BeginSample("CalculateIndicesJob");
             // No indices: calculate them
-            switch (primitive.mode)
+            switch (primitive.Mode)
             {
                 case DrawMode.LineLoop:
                 {
@@ -782,7 +782,7 @@ namespace GLTFast
         {
             Profiler.BeginSample("CalculateIndicesJob");
             // No indices: calculate them
-            switch (primitive.mode)
+            switch (primitive.Mode)
             {
                 case DrawMode.LineLoop:
                 {

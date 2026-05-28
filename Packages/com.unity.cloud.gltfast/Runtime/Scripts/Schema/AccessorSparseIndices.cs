@@ -17,19 +17,20 @@ namespace GLTFast.Schema
     /// Sparse indices property of a glTF
     /// </summary>
     /// <seealso cref="AccessorSparse"/>
-    [System.Serializable]
     public class AccessorSparseIndices : IGltfObject
     {
         /// <summary>
         /// The index of the bufferView with sparse indices.
         /// Referenced bufferView can't have ARRAY_BUFFER or ELEMENT_ARRAY_BUFFER target.
         /// </summary>
-        public uint bufferView;
+        [JsonPropertyName("bufferView")]
+        public uint BufferView { get; set; }
 
         /// <summary>
         /// The offset relative to the start of the bufferView in bytes. Must be aligned.
         /// </summary>
-        public int byteOffset;
+        [JsonPropertyName("byteOffset")]
+        public int ByteOffset { get; set; }
 
         /// <summary>
         /// The indices data type. Valid values correspond to WebGL enums:
@@ -37,13 +38,16 @@ namespace GLTFast.Schema
         /// `5123` (UNSIGNED_SHORT)
         /// `5125` (UNSIGNED_INT)
         /// </summary>
-        public GltfComponentType componentType;
+        [JsonPropertyName("componentType")]
+        public GltfComponentType ComponentType { get; set; }
 
-        /// <inheritdoc cref="Asset.extensions"/>
-        public UnclassifiedData extensions;
+        /// <inheritdoc cref="Asset.Extensions"/>
+        [JsonPropertyName("extensions")]
+        public UnclassifiedData Extensions { get; set; }
 
-        /// <inheritdoc cref="Root.extras"/>
-        public UnclassifiedData extras;
+        /// <inheritdoc cref="Root.Extras"/>
+        [JsonPropertyName("extras")]
+        public UnclassifiedData Extras { get; set; }
 
         /// <summary>JSON properties without a matching member.</summary>
         [JsonExtensionData, JsonInclude] internal Dictionary<string, JsonElement> ExtensionsData { get; set; }
@@ -57,11 +61,11 @@ namespace GLTFast.Schema
         internal void GltfSerialize(JsonWriter writer)
         {
             writer.AddObject();
-            writer.AddProperty("bufferView", bufferView);
-            writer.AddProperty("componentType", componentType);
-            if (byteOffset >= 0)
+            writer.AddProperty("bufferView", BufferView);
+            writer.AddProperty("componentType", ComponentType);
+            if (ByteOffset >= 0)
             {
-                writer.AddProperty("byteOffset", byteOffset);
+                writer.AddProperty("byteOffset", ByteOffset);
             }
             writer.Close();
         }

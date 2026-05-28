@@ -35,25 +35,25 @@ namespace GLTFast
             rotation = Mathematics.k_QuaternionIdentity;
             scale = Mathematics.k_Double3One;
 
-            if (node.matrix != null)
+            if (node.Matrix != null)
             {
                 var m = new double4x4(
-                    node.matrix[0],
-                    -node.matrix[4],
-                    -node.matrix[8],
-                    -node.matrix[12],
-                    -node.matrix[1],
-                    node.matrix[5],
-                    node.matrix[9],
-                    node.matrix[13],
-                    -node.matrix[2],
-                    node.matrix[6],
-                    node.matrix[10],
-                    node.matrix[14],
-                    node.matrix[3],
-                    node.matrix[7],
-                    node.matrix[11],
-                    node.matrix[15]
+                    node.Matrix[0],
+                    -node.Matrix[4],
+                    -node.Matrix[8],
+                    -node.Matrix[12],
+                    -node.Matrix[1],
+                    node.Matrix[5],
+                    node.Matrix[9],
+                    node.Matrix[13],
+                    -node.Matrix[2],
+                    node.Matrix[6],
+                    node.Matrix[10],
+                    node.Matrix[14],
+                    node.Matrix[3],
+                    node.Matrix[7],
+                    node.Matrix[11],
+                    node.Matrix[15]
                 );
 
                 m.Decompose(out var t, out var r, out var s);
@@ -64,32 +64,32 @@ namespace GLTFast
             }
             else
             {
-                if (node.translation != null)
+                if (node.Translation != null)
                 {
-                    Assert.AreEqual(node.translation.Length, 3);
+                    Assert.AreEqual(node.Translation.Length, 3);
                     position = new double3(
-                        -node.translation[0],
-                        node.translation[1],
-                        node.translation[2]
+                        -node.Translation[0],
+                        node.Translation[1],
+                        node.Translation[2]
                     );
                 }
-                if (node.rotation != null)
+                if (node.Rotation != null)
                 {
-                    Assert.AreEqual(node.rotation.Length, 4);
+                    Assert.AreEqual(node.Rotation.Length, 4);
                     rotation = new double4(
-                        node.rotation[0],
-                        -node.rotation[1],
-                        -node.rotation[2],
-                        node.rotation[3]
+                        node.Rotation[0],
+                        -node.Rotation[1],
+                        -node.Rotation[2],
+                        node.Rotation[3]
                     );
                 }
-                if (node.scale != null)
+                if (node.Scale != null)
                 {
-                    Assert.AreEqual(node.scale.Length, 3);
+                    Assert.AreEqual(node.Scale.Length, 3);
                     scale = new double3(
-                        node.scale[0],
-                        node.scale[1],
-                        node.scale[2]
+                        node.Scale[0],
+                        node.Scale[1],
+                        node.Scale[2]
                     );
                 }
             }

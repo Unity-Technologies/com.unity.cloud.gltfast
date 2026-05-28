@@ -91,8 +91,8 @@ namespace GLTFast.Tests.JsonParsing
             Assert.NotNull(gltf);
             Assert.NotNull(gltf.Accessors);
             Assert.AreEqual(1, gltf.Accessors.Count);
-            CheckFloatArray(gltf.Accessors[0].max, 3, 1, 2, 3);
-            CheckFloatArray(gltf.Accessors[0].min, 3, -1, -2, -3);
+            CheckFloatArray(gltf.Accessors[0].Max, 3, 1, 2, 3);
+            CheckFloatArray(gltf.Accessors[0].Min, 3, -1, -2, -3);
         }
 
         static void CheckResultLightPunctualColor(Root gltf)
@@ -129,7 +129,7 @@ namespace GLTFast.Tests.JsonParsing
             Assert.NotNull(gltf?.Meshes);
             Assert.AreEqual(1, gltf.Meshes.Count);
             var mesh = gltf.Meshes[0];
-            CheckFloatArray(mesh.weights, 5, 1, 2, 3, 4, 5);
+            CheckFloatArray(mesh.Weights, 5, 1, 2, 3, 4, 5);
         }
 
         static void CheckResultNodeValues(Root gltf)
@@ -137,10 +137,10 @@ namespace GLTFast.Tests.JsonParsing
             Assert.NotNull(gltf?.Nodes);
             Assert.AreEqual(1, gltf.Nodes.Count);
             var node = gltf.Nodes[0];
-            CheckFloatArray(node.matrix, 16, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
-            CheckFloatArray(node.rotation, 4, 1, 2, 3, 4);
-            CheckFloatArray(node.scale, 3, 1, 2, 3);
-            CheckFloatArray(node.translation, 3, 1, 2, 3);
+            CheckFloatArray(node.Matrix, 16, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+            CheckFloatArray(node.Rotation, 4, 1, 2, 3, 4);
+            CheckFloatArray(node.Scale, 3, 1, 2, 3);
+            CheckFloatArray(node.Translation, 3, 1, 2, 3);
         }
 
         static void CheckFloatArray(IReadOnlyList<float> actual, int expectedLength, params float[] expected)

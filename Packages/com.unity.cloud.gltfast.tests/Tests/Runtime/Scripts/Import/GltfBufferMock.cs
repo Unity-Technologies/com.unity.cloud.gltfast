@@ -15,13 +15,13 @@ namespace GLTFast.Tests
         {
             return new Accessor
             {
-                bufferView = index,
-                componentType = GltfComponentType.Float,
+                BufferView = index,
+                ComponentType = GltfComponentType.Float,
                 Sparse = index == sparseAccessorIndex
                     ? new AccessorSparse()
                     : null,
-                min = new float[] { -1, -1, -1 },
-                max = new float[] { 1, 1, 1 }
+                Min = new float[] { -1, -1, -1 },
+                Max = new float[] { 1, 1, 1 }
             };
         }
 

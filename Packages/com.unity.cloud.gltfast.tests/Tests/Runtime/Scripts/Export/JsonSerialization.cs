@@ -25,9 +25,9 @@ namespace GLTFast.Tests.Export
                     {
                         variants = new List<MaterialsVariant>
                         {
-                            new() { name = "red" },
-                            new() { name = "green" },
-                            new() { name = "blue" },
+                            new() { Name = "red" },
+                            new() { Name = "green" },
+                            new() { Name = "blue" },
                         }
                     }
                 },

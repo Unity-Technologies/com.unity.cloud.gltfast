@@ -153,7 +153,7 @@ namespace GLTFast.Export
                     }
                     else
                     {
-                        logger?.Error(LogCode.TextureInvalidType, "main", material.name);
+                        logger?.Error(LogCode.TextureInvalidType, "main", material.Name);
                     }
                 }
             }

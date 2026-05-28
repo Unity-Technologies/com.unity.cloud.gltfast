@@ -57,7 +57,7 @@ namespace GLTFast
             get
             {
                 Assert.IsTrue(m_Primitives.Count > 0);
-                return m_Primitives[0].targets != null && m_Primitives[0].targets.Length > 0;
+                return m_Primitives[0].Targets != null && m_Primitives[0].Targets.Length > 0;
             }
         }
 
@@ -94,7 +94,7 @@ namespace GLTFast
             Primitive = primitive;
         }
 
-        public bool HasMorphTargets => Primitive.targets != null && Primitive.targets.Length > 0;
+        public bool HasMorphTargets => Primitive.Targets != null && Primitive.Targets.Length > 0;
 
         public void BuildAndDispose(out int[] indices, out SubMeshAssignment[] subMeshAssignments)
         {

@@ -25,7 +25,6 @@ namespace GLTFast.Schema
     /// See <a href="https://www.khronos.org/registry/glTF/specs/2.0/glTF-2.0.html#accessors">.
     /// accessor in the glTF 2.0 specification</a>.
     /// </summary>
-    [Serializable]
     public class Accessor : NamedObject, IGltfObject
     {
         /// <summary>
@@ -38,13 +37,15 @@ namespace GLTFast.Schema
         /// The index of the bufferView.
         /// If this is undefined, look in the sparse object for the index and value buffer views.
         /// </summary>
-        public int bufferView = -1;
+        [JsonPropertyName("bufferView")]
+        public int BufferView { get; set; } = -1;
 
         /// <summary>
         /// The offset relative to the start of the bufferView in bytes.
         /// This must be a multiple of the size of the component datatype.
         /// </summary>
-        public int byteOffset;
+        [JsonPropertyName("byteOffset")]
+        public int ByteOffset { get; set; }
 
         /// <summary>
         /// The datatype of components in the attribute.
@@ -54,7 +55,8 @@ namespace GLTFast.Schema
         /// 5125 (UNSIGNED_INT) is only allowed when the accessor contains indices
         /// i.e., the accessor is only referenced by `primitive.indices`.
         /// </summary>
-        public GltfComponentType componentType;
+        [JsonPropertyName("componentType")]
+        public GltfComponentType ComponentType { get; set; }
 
         /// <summary>
         /// Specifies whether integer data values should be normalized
@@ -62,27 +64,32 @@ namespace GLTFast.Schema
         /// or converted directly (`false`) when they are accessed.
         /// Must be `false` when accessor is used for animation data.
         /// </summary>
-        public bool normalized;
+        [JsonPropertyName("normalized")]
+        public bool Normalized { get; set; }
 
         /// <summary>
         /// The number of attributes referenced by this accessor, not to be confused
         /// with the number of bytes or number of components.
         /// </summary>
-        public int count;
+        [JsonPropertyName("count")]
+        public int Count { get; set; }
 
         /// <summary>
         /// Specifies if the attribute is a scalar, vector, or matrix,
         /// and the number of elements in the vector or matrix.
         /// </summary>
-        // Field is public for unified serialization only. Warn via Obsolete attribute.
+        // Property is public for unified serialization only. Warn via Obsolete attribute.
         [Obsolete("Use GetAttributeType and SetAttributeType for access.")]
-        public string type;
+        [JsonPropertyName("type")]
+        public string Type { get; set; }
 
-        /// <inheritdoc cref="Root.extras"/>
-        public UnclassifiedData extras;
+        /// <inheritdoc cref="Root.Extras"/>
+        [JsonPropertyName("extras")]
+        public UnclassifiedData Extras { get; set; }
 
-        /// <inheritdoc cref="Asset.extensions"/>
-        public UnclassifiedData extensions;
+        /// <inheritdoc cref="Asset.Extensions"/>
+        [JsonPropertyName("extensions")]
+        public UnclassifiedData Extensions { get; set; }
 
         /// <summary>JSON properties without a matching member.</summary>
         [JsonExtensionData, JsonInclude] internal Dictionary<string, JsonElement> ExtensionsData { get; set; }
@@ -93,11 +100,10 @@ namespace GLTFast.Schema
             return ExtensionsData.TryGetValue(key, out value);
         }
 
-        [NonSerialized]
         GltfAccessorAttributeType m_TypeEnum = GltfAccessorAttributeType.Undefined;
 
         /// <summary>
-        /// <see cref="GltfAccessorAttributeType"/> typed/cached getter from the <see cref="type"/> string.
+        /// <see cref="GltfAccessorAttributeType"/> typed/cached getter from the <see cref="Type"/> string.
         /// </summary>
         /// <returns>The Accessor's attribute type, if it could be retrieved correctly. <see cref="GltfAccessorAttributeType.Undefined"/> otherwise</returns>
         public GltfAccessorAttributeType GetAttributeType()
@@ -106,27 +112,27 @@ namespace GLTFast.Schema
                 return m_TypeEnum;
 
 #pragma warning disable CS0618 // Type or member is obsolete
-            if (Enum.TryParse(type, true, out m_TypeEnum))
+            if (Enum.TryParse(Type, true, out m_TypeEnum))
             {
-                type = null;
+                Type = null;
                 return m_TypeEnum;
             }
 
-            type = null;
+            Type = null;
 #pragma warning restore CS0618 // Type or member is obsolete
 
             return GltfAccessorAttributeType.Undefined;
         }
 
         /// <summary>
-        /// <see cref="GltfAccessorAttributeType"/> typed setter for the <see cref="type"/> string.
+        /// <see cref="GltfAccessorAttributeType"/> typed setter for the <see cref="Type"/> string.
         /// </summary>
         /// <param name="attributeType">Attribute type</param>
         public void SetAttributeType(GltfAccessorAttributeType attributeType)
         {
             m_TypeEnum = attributeType;
 #pragma warning disable CS0618 // Type or member is obsolete
-            type = null;
+            Type = null;
 #pragma warning restore CS0618 // Type or member is obsolete
         }
 
@@ -145,7 +151,8 @@ namespace GLTFast.Schema
         /// property must contain max values of accessor data with sparse substitution
         /// applied.
         /// </summary>
-        public float[] max;
+        [JsonPropertyName("max")]
+        public float[] Max { get; set; }
 
         /// <summary>
         /// Minimum value of each component in this attribute.
@@ -161,14 +168,15 @@ namespace GLTFast.Schema
         /// property must contain min values of accessor data with sparse substitution
         /// applied.
         /// </summary>
-        public float[] min;
+        [JsonPropertyName("min")]
+        public float[] Min { get; set; }
 
         /// <summary>
         /// Provides size of components by type
         /// </summary>
         /// <param name="componentType">glTF component type</param>
         /// <returns>Component size in bytes</returns>
-        /// <exception cref="ArgumentOutOfRangeException">Thrown when value of <see cref="componentType"/> is unknown</exception>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when value of <see cref="ComponentType"/> is unknown</exception>
         public static int GetComponentTypeSize(GltfComponentType componentType)
         {
             switch (componentType)
@@ -271,13 +279,13 @@ namespace GLTFast.Schema
         public Bounds? TryGetBounds()
         {
             Assert.AreEqual(GltfAccessorAttributeType.VEC3, GetAttributeType());
-            if (min != null && min.Length > 2 && max != null && max.Length > 2)
+            if (Min != null && Min.Length > 2 && Max != null && Max.Length > 2)
             {
-                var maxBounds = new float3(-min[0], max[1], max[2]);
-                var minBounds = new float3(-max[0], min[1], min[2]);
-                if (normalized)
+                var maxBounds = new float3(-Min[0], Max[1], Max[2]);
+                var minBounds = new float3(-Max[0], Min[1], Min[2]);
+                if (Normalized)
                 {
-                    switch (componentType)
+                    switch (ComponentType)
                     {
                         case GltfComponentType.Byte:
                             maxBounds = math.max(maxBounds / sbyte.MaxValue, -1);
@@ -318,40 +326,40 @@ namespace GLTFast.Schema
         /// <summary>
         /// Byte size of one element
         /// </summary>
-        public int ElementByteSize => GetAccessorAttributeTypeLength(GetAttributeType()) * GetComponentTypeSize(componentType);
+        public int ElementByteSize => GetAccessorAttributeTypeLength(GetAttributeType()) * GetComponentTypeSize(ComponentType);
 
         /// <summary>
         /// Overall, byte size.
         /// Ignores interleaved or sparse accessors
         /// </summary>
-        public int ByteSize => ElementByteSize * count;
+        public int ByteSize => ElementByteSize * Count;
 
         internal void GltfSerialize(JsonWriter writer)
         {
             writer.AddObject();
-            if (bufferView >= 0)
+            if (BufferView >= 0)
             {
-                writer.AddProperty("bufferView", bufferView);
+                writer.AddProperty("bufferView", BufferView);
             }
-            writer.AddProperty("componentType", (int)componentType);
-            writer.AddProperty("count", count);
+            writer.AddProperty("componentType", (int)ComponentType);
+            writer.AddProperty("count", Count);
             Assert.AreNotEqual(GltfAccessorAttributeType.Undefined, m_TypeEnum);
             writer.AddProperty("type", m_TypeEnum.ToString());
-            if (byteOffset > 0)
+            if (ByteOffset > 0)
             {
-                writer.AddProperty("byteOffset", byteOffset);
+                writer.AddProperty("byteOffset", ByteOffset);
             }
-            if (normalized)
+            if (Normalized)
             {
-                writer.AddProperty("normalized", normalized);
+                writer.AddProperty("normalized", Normalized);
             }
-            if (max != null)
+            if (Max != null)
             {
-                writer.AddArrayProperty("max", max);
+                writer.AddArrayProperty("max", Max);
             }
-            if (min != null)
+            if (Min != null)
             {
-                writer.AddArrayProperty("min", min);
+                writer.AddArrayProperty("min", Min);
             }
 
             if (Sparse != null)

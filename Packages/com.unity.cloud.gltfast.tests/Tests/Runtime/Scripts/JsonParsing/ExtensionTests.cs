@@ -346,23 +346,23 @@ $@"
 
             CertifyCustomData(gltf, 48);
             CertifyCustomExtensions(gltf.Extensions);
-            CertifyCustomExtras(gltf.extras);
+            CertifyCustomExtras(gltf.Extras);
 
             CertifyCustomData(gltf.Accessors[0], 42);
-            CertifyCustomExtensions(gltf.Accessors[0].extensions);
-            CertifyCustomExtras(gltf.Accessors[0].extras);
+            CertifyCustomExtensions(gltf.Accessors[0].Extensions);
+            CertifyCustomExtras(gltf.Accessors[0].Extras);
 
             CertifyCustomData(gltf.Accessors[0].Sparse, 420);
-            CertifyCustomExtensions(gltf.Accessors[0].Sparse.extensions);
-            CertifyCustomExtras(gltf.Accessors[0].Sparse.extras);
+            CertifyCustomExtensions(gltf.Accessors[0].Sparse.Extensions);
+            CertifyCustomExtras(gltf.Accessors[0].Sparse.Extras);
 
             CertifyCustomData(gltf.Accessors[0].Sparse.Indices, 4200);
-            CertifyCustomExtensions(gltf.Accessors[0].Sparse.Indices.extensions);
-            CertifyCustomExtras(gltf.Accessors[0].Sparse.Indices.extras);
+            CertifyCustomExtensions(gltf.Accessors[0].Sparse.Indices.Extensions);
+            CertifyCustomExtras(gltf.Accessors[0].Sparse.Indices.Extras);
 
             CertifyCustomData(gltf.Accessors[0].Sparse.Values, 4201);
-            CertifyCustomExtensions(gltf.Accessors[0].Sparse.Values.extensions);
-            CertifyCustomExtras(gltf.Accessors[0].Sparse.Values.extras);
+            CertifyCustomExtensions(gltf.Accessors[0].Sparse.Values.Extensions);
+            CertifyCustomExtras(gltf.Accessors[0].Sparse.Values.Extras);
 
 #if UNITY_ANIMATION
             CertifyCustomData(gltf.Animations[0], 43);
@@ -387,12 +387,12 @@ $@"
             CertifyCustomExtras(gltf.Asset.extras);
 
             CertifyCustomData(gltf.Buffers[0], 45);
-            CertifyCustomExtensions(gltf.Buffers[0].extensions);
-            CertifyCustomExtras(gltf.Buffers[0].extras);
+            CertifyCustomExtensions(gltf.Buffers[0].Extensions);
+            CertifyCustomExtras(gltf.Buffers[0].Extras);
 
             CertifyCustomData(gltf.BufferViews[0], 46);
             CertifyCustomExtensions(gltf.BufferViews[0].Extensions);
-            CertifyCustomExtras(gltf.BufferViews[0].extras);
+            CertifyCustomExtras(gltf.BufferViews[0].Extras);
 
             CertifyCustomData(gltf.Cameras[0], 47);
             CertifyCustomExtensions(gltf.Cameras[0].extensions);
@@ -439,24 +439,24 @@ $@"
             CertifyCustomExtras(gltf.Materials[0].OcclusionTexture.extras);
 
             CertifyCustomData(gltf.Meshes[0], 51);
-            CertifyCustomExtensions(gltf.Meshes[0].extensions);
+            CertifyCustomExtensions(gltf.Meshes[0].Extensions);
             CertifyCustomExtras(gltf.Meshes[0].Extras);
 
             CertifyCustomData(gltf.Meshes[0].Primitives[0], 510);
             CertifyCustomExtensions(gltf.Meshes[0].Primitives[0].Extensions);
-            CertifyCustomExtras(gltf.Meshes[0].Primitives[0].extras);
+            CertifyCustomExtras(gltf.Meshes[0].Primitives[0].Extras);
 
             CertifyCustomData(gltf.Nodes[0], 52);
             CertifyCustomExtensions(gltf.Nodes[0].Extensions);
-            CertifyCustomExtras(gltf.Nodes[0].extras);
+            CertifyCustomExtras(gltf.Nodes[0].Extras);
 
             CertifyCustomData(gltf.Samplers[0], 53);
             CertifyCustomExtensions(gltf.Samplers[0].extensions);
             CertifyCustomExtras(gltf.Samplers[0].extras);
 
             CertifyCustomData(gltf.Scenes[0], 54);
-            CertifyCustomExtensions(gltf.Scenes[0].extensions);
-            CertifyCustomExtras(gltf.Scenes[0].extras);
+            CertifyCustomExtensions(gltf.Scenes[0].Extensions);
+            CertifyCustomExtras(gltf.Scenes[0].Extras);
 
             CertifyCustomData(gltf.Skins[0], 55);
             CertifyCustomExtensions(gltf.Skins[0].extensions);
@@ -548,11 +548,11 @@ $@"
             var gltf = JsonSerializer.Deserialize(json, GltfRootSourceGenerator.Default.Root);
 
             Assert.NotNull(gltf);
-            Assert.IsNull(gltf.extras);
+            Assert.IsNull(gltf.Extras);
             Assert.IsNull(gltf.Extensions);
 
-            Assert.IsNull(gltf.Accessors[0].extras);
-            Assert.IsNull(gltf.Accessors[0].extensions);
+            Assert.IsNull(gltf.Accessors[0].Extras);
+            Assert.IsNull(gltf.Accessors[0].Extensions);
 
 #if UNITY_ANIMATION
             Assert.IsNull(gltf.Animations[0].extras);
@@ -562,10 +562,10 @@ $@"
             Assert.IsNull(gltf.Asset.extras);
             Assert.IsNull(gltf.Asset.extensions);
 
-            Assert.IsNull(gltf.Buffers[0].extras);
-            Assert.IsNull(gltf.Buffers[0].extensions);
+            Assert.IsNull(gltf.Buffers[0].Extras);
+            Assert.IsNull(gltf.Buffers[0].Extensions);
 
-            Assert.IsNull(gltf.BufferViews[0].extras);
+            Assert.IsNull(gltf.BufferViews[0].Extras);
             Assert.IsNull(gltf.BufferViews[0].Extensions);
 
             Assert.IsNull(gltf.Cameras[0].extras);
@@ -578,16 +578,16 @@ $@"
             Assert.IsNull(gltf.Materials[0].Extensions);
 
             Assert.IsNull(gltf.Meshes[0].Extras);
-            Assert.IsNull(gltf.Meshes[0].extensions);
+            Assert.IsNull(gltf.Meshes[0].Extensions);
 
-            Assert.IsNull(gltf.Nodes[0].extras);
+            Assert.IsNull(gltf.Nodes[0].Extras);
             Assert.IsNull(gltf.Nodes[0].Extensions);
 
             Assert.IsNull(gltf.Samplers[0].extras);
             Assert.IsNull(gltf.Samplers[0].extensions);
 
-            Assert.IsNull(gltf.Scenes[0].extras);
-            Assert.IsNull(gltf.Scenes[0].extensions);
+            Assert.IsNull(gltf.Scenes[0].Extras);
+            Assert.IsNull(gltf.Scenes[0].Extensions);
 
             Assert.IsNull(gltf.Skins[0].extras);
             Assert.IsNull(gltf.Skins[0].extensions);
