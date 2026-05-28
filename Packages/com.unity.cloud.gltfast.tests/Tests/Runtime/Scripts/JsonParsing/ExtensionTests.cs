@@ -130,12 +130,12 @@ $@"
 
             var gltf = JsonSerializer.Deserialize(json, GltfRootSourceGenerator.Default.Root);
             Assert.NotNull(gltf);
-            Assert.NotNull(gltf.extensions);
-            Assert.NotNull(gltf.extensions.KHR_lights_punctual);
-            Assert.NotNull(gltf.extensions.KHR_lights_punctual.lights);
-            Assert.AreEqual(1, gltf.extensions.KHR_lights_punctual.lights.Length);
-            Assert.AreEqual(LightPunctual.Type.Directional, gltf.extensions.KHR_lights_punctual.lights[0].GetLightType());
-            Assert.IsFalse(gltf.extensions.TryGetValue<MyExtension>("CUSTOM_my_extension", out var ext));
+            Assert.NotNull(gltf.Extensions);
+            Assert.NotNull(gltf.Extensions.KHR_lights_punctual);
+            Assert.NotNull(gltf.Extensions.KHR_lights_punctual.lights);
+            Assert.AreEqual(1, gltf.Extensions.KHR_lights_punctual.lights.Length);
+            Assert.AreEqual(LightPunctual.Type.Directional, gltf.Extensions.KHR_lights_punctual.lights[0].GetLightType());
+            Assert.IsFalse(gltf.Extensions.TryGetValue<MyExtension>("CUSTOM_my_extension", out var ext));
             Assert.IsNull(ext);
         }
 
@@ -151,10 +151,10 @@ $@"
 
             var gltf = JsonSerializer.Deserialize(json, GltfRootSourceGenerator.Default.Root);
             Assert.NotNull(gltf);
-            Assert.NotNull(gltf.extensions);
-            Assert.IsNull(gltf.extensions.KHR_lights_punctual);
-            Assert.IsTrue(gltf.extensions.TryGetValue<MyExtension>("CUSTOM_my_extension", out var ext));
-            CertifyCustomExtensions(gltf.extensions);
+            Assert.NotNull(gltf.Extensions);
+            Assert.IsNull(gltf.Extensions.KHR_lights_punctual);
+            Assert.IsTrue(gltf.Extensions.TryGetValue<MyExtension>("CUSTOM_my_extension", out var ext));
+            CertifyCustomExtensions(gltf.Extensions);
         }
 
         [Test]
@@ -174,13 +174,13 @@ $@"
         {
             var gltf = JsonSerializer.Deserialize(k_CustomExtensionJson, GltfRootSourceGenerator.Default.Root);
             Assert.NotNull(gltf);
-            Assert.NotNull(gltf.extensions);
-            Assert.NotNull(gltf.extensions.KHR_lights_punctual);
-            Assert.NotNull(gltf.extensions.KHR_lights_punctual.lights);
-            Assert.AreEqual(1, gltf.extensions.KHR_lights_punctual.lights.Length);
-            Assert.AreEqual(LightPunctual.Type.Directional, gltf.extensions.KHR_lights_punctual.lights[0].GetLightType());
-            Assert.IsTrue(gltf.extensions.TryGetValue<MyExtension>("CUSTOM_my_extension", out var ext));
-            CertifyCustomExtensions(gltf.extensions);
+            Assert.NotNull(gltf.Extensions);
+            Assert.NotNull(gltf.Extensions.KHR_lights_punctual);
+            Assert.NotNull(gltf.Extensions.KHR_lights_punctual.lights);
+            Assert.AreEqual(1, gltf.Extensions.KHR_lights_punctual.lights.Length);
+            Assert.AreEqual(LightPunctual.Type.Directional, gltf.Extensions.KHR_lights_punctual.lights[0].GetLightType());
+            Assert.IsTrue(gltf.Extensions.TryGetValue<MyExtension>("CUSTOM_my_extension", out var ext));
+            CertifyCustomExtensions(gltf.Extensions);
         }
 
         [Test]
@@ -345,126 +345,126 @@ $@"
             var gltf = JsonSerializer.Deserialize(json, GltfRootSourceGenerator.Default.Root);
 
             CertifyCustomData(gltf, 48);
-            CertifyCustomExtensions(gltf.extensions);
+            CertifyCustomExtensions(gltf.Extensions);
             CertifyCustomExtras(gltf.extras);
 
-            CertifyCustomData(gltf.accessors[0], 42);
-            CertifyCustomExtensions(gltf.accessors[0].extensions);
-            CertifyCustomExtras(gltf.accessors[0].extras);
+            CertifyCustomData(gltf.Accessors[0], 42);
+            CertifyCustomExtensions(gltf.Accessors[0].extensions);
+            CertifyCustomExtras(gltf.Accessors[0].extras);
 
-            CertifyCustomData(gltf.accessors[0].sparse, 420);
-            CertifyCustomExtensions(gltf.accessors[0].sparse.extensions);
-            CertifyCustomExtras(gltf.accessors[0].sparse.extras);
+            CertifyCustomData(gltf.Accessors[0].Sparse, 420);
+            CertifyCustomExtensions(gltf.Accessors[0].Sparse.extensions);
+            CertifyCustomExtras(gltf.Accessors[0].Sparse.extras);
 
-            CertifyCustomData(gltf.accessors[0].sparse.indices, 4200);
-            CertifyCustomExtensions(gltf.accessors[0].sparse.indices.extensions);
-            CertifyCustomExtras(gltf.accessors[0].sparse.indices.extras);
+            CertifyCustomData(gltf.Accessors[0].Sparse.Indices, 4200);
+            CertifyCustomExtensions(gltf.Accessors[0].Sparse.Indices.extensions);
+            CertifyCustomExtras(gltf.Accessors[0].Sparse.Indices.extras);
 
-            CertifyCustomData(gltf.accessors[0].sparse.values, 4201);
-            CertifyCustomExtensions(gltf.accessors[0].sparse.values.extensions);
-            CertifyCustomExtras(gltf.accessors[0].sparse.values.extras);
+            CertifyCustomData(gltf.Accessors[0].Sparse.Values, 4201);
+            CertifyCustomExtensions(gltf.Accessors[0].Sparse.Values.extensions);
+            CertifyCustomExtras(gltf.Accessors[0].Sparse.Values.extras);
 
 #if UNITY_ANIMATION
-            CertifyCustomData(gltf.animations[0], 43);
-            CertifyCustomExtensions(gltf.animations[0].extensions);
-            CertifyCustomExtras(gltf.animations[0].extras);
+            CertifyCustomData(gltf.Animations[0], 43);
+            CertifyCustomExtensions(gltf.Animations[0].extensions);
+            CertifyCustomExtras(gltf.Animations[0].extras);
 
-            CertifyCustomData(gltf.animations[0].channels[0], 430);
-            CertifyCustomExtensions(gltf.animations[0].channels[0].extensions);
-            CertifyCustomExtras(gltf.animations[0].channels[0].extras);
+            CertifyCustomData(gltf.Animations[0].Channels[0], 430);
+            CertifyCustomExtensions(gltf.Animations[0].Channels[0].extensions);
+            CertifyCustomExtras(gltf.Animations[0].Channels[0].extras);
 
-            CertifyCustomData(gltf.animations[0].channels[0].target, 4300);
-            CertifyCustomExtensions(gltf.animations[0].channels[0].target.extensions);
-            CertifyCustomExtras(gltf.animations[0].channels[0].target.extras);
+            CertifyCustomData(gltf.Animations[0].Channels[0].Target, 4300);
+            CertifyCustomExtensions(gltf.Animations[0].Channels[0].Target.extensions);
+            CertifyCustomExtras(gltf.Animations[0].Channels[0].Target.extras);
 
-            CertifyCustomData(gltf.animations[0].samplers[0], 431);
-            CertifyCustomExtensions(gltf.animations[0].samplers[0].extensions);
-            CertifyCustomExtras(gltf.animations[0].samplers[0].extras);
+            CertifyCustomData(gltf.Animations[0].Samplers[0], 431);
+            CertifyCustomExtensions(gltf.Animations[0].Samplers[0].extensions);
+            CertifyCustomExtras(gltf.Animations[0].Samplers[0].extras);
 #endif
 
-            CertifyCustomData(gltf.asset, 44);
-            CertifyCustomExtensions(gltf.asset.extensions);
-            CertifyCustomExtras(gltf.asset.extras);
+            CertifyCustomData(gltf.Asset, 44);
+            CertifyCustomExtensions(gltf.Asset.extensions);
+            CertifyCustomExtras(gltf.Asset.extras);
 
-            CertifyCustomData(gltf.buffers[0], 45);
-            CertifyCustomExtensions(gltf.buffers[0].extensions);
-            CertifyCustomExtras(gltf.buffers[0].extras);
+            CertifyCustomData(gltf.Buffers[0], 45);
+            CertifyCustomExtensions(gltf.Buffers[0].extensions);
+            CertifyCustomExtras(gltf.Buffers[0].extras);
 
-            CertifyCustomData(gltf.bufferViews[0], 46);
-            CertifyCustomExtensions(gltf.bufferViews[0].extensions);
-            CertifyCustomExtras(gltf.bufferViews[0].extras);
+            CertifyCustomData(gltf.BufferViews[0], 46);
+            CertifyCustomExtensions(gltf.BufferViews[0].Extensions);
+            CertifyCustomExtras(gltf.BufferViews[0].extras);
 
-            CertifyCustomData(gltf.cameras[0], 47);
-            CertifyCustomExtensions(gltf.cameras[0].extensions);
-            CertifyCustomExtras(gltf.cameras[0].extras);
+            CertifyCustomData(gltf.Cameras[0], 47);
+            CertifyCustomExtensions(gltf.Cameras[0].extensions);
+            CertifyCustomExtras(gltf.Cameras[0].extras);
 
-            CertifyCustomData(gltf.cameras[0].orthographic, 470);
-            CertifyCustomExtensions(gltf.cameras[0].orthographic.extensions);
-            CertifyCustomExtras(gltf.cameras[0].orthographic.extras);
+            CertifyCustomData(gltf.Cameras[0].Orthographic, 470);
+            CertifyCustomExtensions(gltf.Cameras[0].Orthographic.extensions);
+            CertifyCustomExtras(gltf.Cameras[0].Orthographic.extras);
 
-            CertifyCustomData(gltf.cameras[0].perspective, 471);
-            CertifyCustomExtensions(gltf.cameras[0].perspective.extensions);
-            CertifyCustomExtras(gltf.cameras[0].perspective.extras);
+            CertifyCustomData(gltf.Cameras[0].Perspective, 471);
+            CertifyCustomExtensions(gltf.Cameras[0].Perspective.extensions);
+            CertifyCustomExtras(gltf.Cameras[0].Perspective.extras);
 
-            CertifyCustomData(gltf.images[0], 49);
-            CertifyCustomExtensions(gltf.images[0].extensions);
-            CertifyCustomExtras(gltf.images[0].extras);
+            CertifyCustomData(gltf.Images[0], 49);
+            CertifyCustomExtensions(gltf.Images[0].extensions);
+            CertifyCustomExtras(gltf.Images[0].extras);
 
-            CertifyCustomData(gltf.materials[0], 50);
-            CertifyCustomExtensions(gltf.materials[0].extensions);
-            CertifyCustomExtras(gltf.materials[0].extras);
+            CertifyCustomData(gltf.Materials[0], 50);
+            CertifyCustomExtensions(gltf.Materials[0].Extensions);
+            CertifyCustomExtras(gltf.Materials[0].extras);
 
-            CertifyCustomData(gltf.materials[0].pbrMetallicRoughness, 500);
-            CertifyCustomExtensions(gltf.materials[0].pbrMetallicRoughness.extensions);
-            CertifyCustomExtras(gltf.materials[0].pbrMetallicRoughness.extras);
+            CertifyCustomData(gltf.Materials[0].PbrMetallicRoughness, 500);
+            CertifyCustomExtensions(gltf.Materials[0].PbrMetallicRoughness.extensions);
+            CertifyCustomExtras(gltf.Materials[0].PbrMetallicRoughness.extras);
 
-            CertifyCustomData(gltf.materials[0].pbrMetallicRoughness.BaseColorTexture, 5000);
-            CertifyCustomExtensions(gltf.materials[0].pbrMetallicRoughness.BaseColorTexture.Extensions);
-            CertifyCustomExtras(gltf.materials[0].pbrMetallicRoughness.BaseColorTexture.extras);
+            CertifyCustomData(gltf.Materials[0].PbrMetallicRoughness.BaseColorTexture, 5000);
+            CertifyCustomExtensions(gltf.Materials[0].PbrMetallicRoughness.BaseColorTexture.Extensions);
+            CertifyCustomExtras(gltf.Materials[0].PbrMetallicRoughness.BaseColorTexture.extras);
 
-            CertifyCustomData(gltf.materials[0].pbrMetallicRoughness.MetallicRoughnessTexture, 5001);
-            CertifyCustomExtensions(gltf.materials[0].pbrMetallicRoughness.MetallicRoughnessTexture.Extensions);
-            CertifyCustomExtras(gltf.materials[0].pbrMetallicRoughness.MetallicRoughnessTexture.extras);
+            CertifyCustomData(gltf.Materials[0].PbrMetallicRoughness.MetallicRoughnessTexture, 5001);
+            CertifyCustomExtensions(gltf.Materials[0].PbrMetallicRoughness.MetallicRoughnessTexture.Extensions);
+            CertifyCustomExtras(gltf.Materials[0].PbrMetallicRoughness.MetallicRoughnessTexture.extras);
 
-            CertifyCustomData(gltf.materials[0].emissiveTexture, 501);
-            CertifyCustomExtensions(gltf.materials[0].emissiveTexture.Extensions);
-            CertifyCustomExtras(gltf.materials[0].emissiveTexture.extras);
+            CertifyCustomData(gltf.Materials[0].EmissiveTexture, 501);
+            CertifyCustomExtensions(gltf.Materials[0].EmissiveTexture.Extensions);
+            CertifyCustomExtras(gltf.Materials[0].EmissiveTexture.extras);
 
-            CertifyCustomData(gltf.materials[0].normalTexture, 502);
-            CertifyCustomExtensions(gltf.materials[0].normalTexture.Extensions);
-            CertifyCustomExtras(gltf.materials[0].normalTexture.extras);
+            CertifyCustomData(gltf.Materials[0].NormalTexture, 502);
+            CertifyCustomExtensions(gltf.Materials[0].NormalTexture.Extensions);
+            CertifyCustomExtras(gltf.Materials[0].NormalTexture.extras);
 
-            CertifyCustomData(gltf.materials[0].occlusionTexture, 503);
-            CertifyCustomExtensions(gltf.materials[0].occlusionTexture.Extensions);
-            CertifyCustomExtras(gltf.materials[0].occlusionTexture.extras);
+            CertifyCustomData(gltf.Materials[0].OcclusionTexture, 503);
+            CertifyCustomExtensions(gltf.Materials[0].OcclusionTexture.Extensions);
+            CertifyCustomExtras(gltf.Materials[0].OcclusionTexture.extras);
 
-            CertifyCustomData(gltf.meshes[0], 51);
-            CertifyCustomExtensions(gltf.meshes[0].extensions);
-            CertifyCustomExtras(gltf.meshes[0].extras);
+            CertifyCustomData(gltf.Meshes[0], 51);
+            CertifyCustomExtensions(gltf.Meshes[0].extensions);
+            CertifyCustomExtras(gltf.Meshes[0].Extras);
 
-            CertifyCustomData(gltf.meshes[0].primitives[0], 510);
-            CertifyCustomExtensions(gltf.meshes[0].primitives[0].Extensions);
-            CertifyCustomExtras(gltf.meshes[0].primitives[0].extras);
+            CertifyCustomData(gltf.Meshes[0].Primitives[0], 510);
+            CertifyCustomExtensions(gltf.Meshes[0].Primitives[0].Extensions);
+            CertifyCustomExtras(gltf.Meshes[0].Primitives[0].extras);
 
-            CertifyCustomData(gltf.nodes[0], 52);
-            CertifyCustomExtensions(gltf.nodes[0].extensions);
-            CertifyCustomExtras(gltf.nodes[0].extras);
+            CertifyCustomData(gltf.Nodes[0], 52);
+            CertifyCustomExtensions(gltf.Nodes[0].Extensions);
+            CertifyCustomExtras(gltf.Nodes[0].extras);
 
-            CertifyCustomData(gltf.samplers[0], 53);
-            CertifyCustomExtensions(gltf.samplers[0].extensions);
-            CertifyCustomExtras(gltf.samplers[0].extras);
+            CertifyCustomData(gltf.Samplers[0], 53);
+            CertifyCustomExtensions(gltf.Samplers[0].extensions);
+            CertifyCustomExtras(gltf.Samplers[0].extras);
 
-            CertifyCustomData(gltf.scenes[0], 54);
-            CertifyCustomExtensions(gltf.scenes[0].extensions);
-            CertifyCustomExtras(gltf.scenes[0].extras);
+            CertifyCustomData(gltf.Scenes[0], 54);
+            CertifyCustomExtensions(gltf.Scenes[0].extensions);
+            CertifyCustomExtras(gltf.Scenes[0].extras);
 
-            CertifyCustomData(gltf.skins[0], 55);
-            CertifyCustomExtensions(gltf.skins[0].extensions);
-            CertifyCustomExtras(gltf.skins[0].extras);
+            CertifyCustomData(gltf.Skins[0], 55);
+            CertifyCustomExtensions(gltf.Skins[0].extensions);
+            CertifyCustomExtras(gltf.Skins[0].extras);
 
-            CertifyCustomData(gltf.textures[0], 56);
-            CertifyCustomExtensions(gltf.textures[0].extensions);
-            CertifyCustomExtras(gltf.textures[0].extras);
+            CertifyCustomData(gltf.Textures[0], 56);
+            CertifyCustomExtensions(gltf.Textures[0].Extensions);
+            CertifyCustomExtras(gltf.Textures[0].extras);
         }
 
         static void CertifyCustomData(IGltfObject gltf, int expected)
@@ -549,51 +549,51 @@ $@"
 
             Assert.NotNull(gltf);
             Assert.IsNull(gltf.extras);
-            Assert.IsNull(gltf.extensions);
+            Assert.IsNull(gltf.Extensions);
 
-            Assert.IsNull(gltf.accessors[0].extras);
-            Assert.IsNull(gltf.accessors[0].extensions);
+            Assert.IsNull(gltf.Accessors[0].extras);
+            Assert.IsNull(gltf.Accessors[0].extensions);
 
 #if UNITY_ANIMATION
-            Assert.IsNull(gltf.animations[0].extras);
-            Assert.IsNull(gltf.animations[0].extensions);
+            Assert.IsNull(gltf.Animations[0].extras);
+            Assert.IsNull(gltf.Animations[0].extensions);
 #endif
 
-            Assert.IsNull(gltf.asset.extras);
-            Assert.IsNull(gltf.asset.extensions);
+            Assert.IsNull(gltf.Asset.extras);
+            Assert.IsNull(gltf.Asset.extensions);
 
-            Assert.IsNull(gltf.buffers[0].extras);
-            Assert.IsNull(gltf.buffers[0].extensions);
+            Assert.IsNull(gltf.Buffers[0].extras);
+            Assert.IsNull(gltf.Buffers[0].extensions);
 
-            Assert.IsNull(gltf.bufferViews[0].extras);
-            Assert.IsNull(gltf.bufferViews[0].extensions);
+            Assert.IsNull(gltf.BufferViews[0].extras);
+            Assert.IsNull(gltf.BufferViews[0].Extensions);
 
-            Assert.IsNull(gltf.cameras[0].extras);
-            Assert.IsNull(gltf.cameras[0].extensions);
+            Assert.IsNull(gltf.Cameras[0].extras);
+            Assert.IsNull(gltf.Cameras[0].extensions);
 
-            Assert.IsNull(gltf.images[0].extras);
-            Assert.IsNull(gltf.images[0].extensions);
+            Assert.IsNull(gltf.Images[0].extras);
+            Assert.IsNull(gltf.Images[0].extensions);
 
-            Assert.IsNull(gltf.materials[0].extras);
-            Assert.IsNull(gltf.materials[0].extensions);
+            Assert.IsNull(gltf.Materials[0].extras);
+            Assert.IsNull(gltf.Materials[0].Extensions);
 
-            Assert.IsNull(gltf.meshes[0].extras);
-            Assert.IsNull(gltf.meshes[0].extensions);
+            Assert.IsNull(gltf.Meshes[0].Extras);
+            Assert.IsNull(gltf.Meshes[0].extensions);
 
-            Assert.IsNull(gltf.nodes[0].extras);
-            Assert.IsNull(gltf.nodes[0].Extensions);
+            Assert.IsNull(gltf.Nodes[0].extras);
+            Assert.IsNull(gltf.Nodes[0].Extensions);
 
-            Assert.IsNull(gltf.samplers[0].extras);
-            Assert.IsNull(gltf.samplers[0].extensions);
+            Assert.IsNull(gltf.Samplers[0].extras);
+            Assert.IsNull(gltf.Samplers[0].extensions);
 
-            Assert.IsNull(gltf.scenes[0].extras);
-            Assert.IsNull(gltf.scenes[0].extensions);
+            Assert.IsNull(gltf.Scenes[0].extras);
+            Assert.IsNull(gltf.Scenes[0].extensions);
 
-            Assert.IsNull(gltf.skins[0].extras);
-            Assert.IsNull(gltf.skins[0].extensions);
+            Assert.IsNull(gltf.Skins[0].extras);
+            Assert.IsNull(gltf.Skins[0].extensions);
 
-            Assert.IsNull(gltf.textures[0].extras);
-            Assert.IsNull(gltf.textures[0].Extensions);
+            Assert.IsNull(gltf.Textures[0].extras);
+            Assert.IsNull(gltf.Textures[0].Extensions);
         }
     }
 }

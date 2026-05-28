@@ -19,25 +19,25 @@ namespace GLTFast.Tests.Export
         {
             var gltf = new Root
             {
-                extensions = new RootExtensions
+                Extensions = new RootExtensions
                 {
                     KHR_materials_variants = new MaterialsVariantsRootExtension
                     {
                         variants = new List<MaterialsVariant>
                         {
-                            new MaterialsVariant{ name = "red" },
-                            new MaterialsVariant{ name = "green" },
-                            new MaterialsVariant{ name = "blue" },
+                            new() { name = "red" },
+                            new() { name = "green" },
+                            new() { name = "blue" },
                         }
                     }
                 },
-                meshes = new[]
+                Meshes = new List<Mesh>
                 {
-                    new Mesh
+                    new()
                     {
-                        primitives = new []
+                        Primitives = new List<MeshPrimitive>
                         {
-                            new MeshPrimitive
+                            new()
                             {
                                 Extensions = new MeshPrimitiveExtensions
                                 {
@@ -45,9 +45,9 @@ namespace GLTFast.Tests.Export
                                     {
                                         mappings = new List<MaterialVariantsMapping>
                                         {
-                                            new MaterialVariantsMapping {material = 0, variants = new [] { 0 }},
-                                            new MaterialVariantsMapping {material = 1, variants = new [] { 1 }},
-                                            new MaterialVariantsMapping {material = 2, variants = new [] { 2 }},
+                                            new() {material = 0, variants = new [] { 0 }},
+                                            new() {material = 1, variants = new [] { 1 }},
+                                            new() {material = 2, variants = new [] { 2 }},
                                         }
                                     }
                                 }

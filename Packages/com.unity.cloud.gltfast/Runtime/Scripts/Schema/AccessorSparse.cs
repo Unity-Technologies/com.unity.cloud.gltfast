@@ -28,20 +28,16 @@ namespace GLTFast.Schema
         /// Index array of size `count` that points to those accessor attributes that
         /// deviate from their initialization value. Indices must strictly increase.
         /// </summary>
-        public AccessorSparseIndices indices;
-
-        /// <inheritdoc cref="indices"/>
-        public AccessorSparseIndices Indices => indices;
+        [JsonPropertyName("indices")]
+        public AccessorSparseIndices Indices { get; set; }
 
         /// <summary>
         /// "Array of size `count` times number of components, storing the displaced
         /// accessor attributes pointed by `indices`. Substituted values must have
         /// the same `componentType` and number of components as the base accessor.
         /// </summary>
-        public AccessorSparseValues values;
-
-        /// <inheritdoc cref="values"/>
-        public AccessorSparseValues Values => values;
+        [JsonPropertyName("values")]
+        public AccessorSparseValues Values { get; set; }
 
         /// <inheritdoc cref="Asset.extensions"/>
         public UnclassifiedData extensions;
@@ -62,15 +58,15 @@ namespace GLTFast.Schema
         {
             writer.AddObject();
             writer.AddProperty("count", count);
-            if (indices != null)
+            if (Indices != null)
             {
                 writer.AddProperty("indices");
-                indices.GltfSerialize(writer);
+                Indices.GltfSerialize(writer);
             }
-            if (values != null)
+            if (Values != null)
             {
                 writer.AddProperty("values");
-                values.GltfSerialize(writer);
+                Values.GltfSerialize(writer);
             }
             writer.Close();
         }

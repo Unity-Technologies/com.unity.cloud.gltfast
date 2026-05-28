@@ -128,10 +128,10 @@ namespace GLTFast.Export
         {
 
             gltf.RegisterExtensionUsage(Extension.MaterialsUnlit);
-            material.extensions = material.extensions ?? new MaterialExtensions();
-            material.extensions.KHR_materials_unlit = new MaterialUnlit();
+            material.Extensions = material.Extensions ?? new MaterialExtensions();
+            material.Extensions.KHR_materials_unlit = new MaterialUnlit();
 
-            var pbr = material.pbrMetallicRoughness ?? new PbrMetallicRoughness();
+            var pbr = material.PbrMetallicRoughness ?? new PbrMetallicRoughness();
 
             if (GetUnlitColor(uMaterial, out var baseColor))
             {
@@ -158,7 +158,7 @@ namespace GLTFast.Export
                 }
             }
 
-            material.pbrMetallicRoughness = pbr;
+            material.PbrMetallicRoughness = pbr;
         }
 
         /// <summary>

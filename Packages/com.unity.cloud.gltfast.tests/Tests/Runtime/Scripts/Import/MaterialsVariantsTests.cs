@@ -133,7 +133,7 @@ namespace GLTFast.Tests
         {
             var root = new Root
             {
-                extensions = new RootExtensions
+                Extensions = new RootExtensions
                 {
                     KHR_materials_variants = new MaterialsVariantsRootExtension
                     {

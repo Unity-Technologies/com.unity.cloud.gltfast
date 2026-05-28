@@ -31,8 +31,8 @@ namespace GLTFast.Documentation.Examples
 
         public bool IsAbleToLoad(Texture texture, out int imageIndex)
         {
-            if (texture is Schema.Texture { extensions: not null } t
-                && t.extensions.TryGetValue<TextureWebpExtension>(
+            if (texture?.Extensions != null
+                && texture.Extensions.TryGetValue<TextureWebpExtension>(
                     "EXT_texture_webp", out var ext))
             {
                 imageIndex = ext.source;

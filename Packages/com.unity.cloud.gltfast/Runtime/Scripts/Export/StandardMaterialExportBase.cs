@@ -50,7 +50,7 @@ namespace GLTFast.Export
             material = new Material
             {
                 name = uMaterial.name,
-                pbrMetallicRoughness = new PbrMetallicRoughness
+                PbrMetallicRoughness = new PbrMetallicRoughness
                 {
                     metallicFactor = 0,
                     roughnessFactor = 1.0f
@@ -97,10 +97,10 @@ namespace GLTFast.Export
                     {
                         if (emissionTex is Texture2D)
                         {
-                            material.emissiveTexture = ExportTextureInfo(emissionTex, gltf);
-                            if (material.emissiveTexture != null)
+                            material.EmissiveTexture = ExportTextureInfo(emissionTex, gltf);
+                            if (material.EmissiveTexture != null)
                             {
-                                ExportTextureTransform(material.emissiveTexture, uMaterial, mainTexProperty, gltf);
+                                ExportTextureTransform(material.EmissiveTexture, uMaterial, mainTexProperty, gltf);
                             }
                         }
                         else
@@ -123,10 +123,10 @@ namespace GLTFast.Export
                 {
                     if (normalTex is Texture2D)
                     {
-                        material.normalTexture = ExportNormalTextureInfo(normalTex, uMaterial, gltf, k_BumpScale);
-                        if (material.normalTexture != null)
+                        material.NormalTexture = ExportNormalTextureInfo(normalTex, uMaterial, gltf, k_BumpScale);
+                        if (material.NormalTexture != null)
                         {
-                            ExportTextureTransform(material.normalTexture, uMaterial, mainTexProperty, gltf);
+                            ExportTextureTransform(material.NormalTexture, uMaterial, mainTexProperty, gltf);
                         }
                     }
                     else
@@ -171,7 +171,7 @@ namespace GLTFast.Export
             else if (uMaterial.HasProperty(mainTexProperty))
             {
                 var mainTex = uMaterial.GetTexture(mainTexProperty);
-                material.pbrMetallicRoughness = new PbrMetallicRoughness
+                material.PbrMetallicRoughness = new PbrMetallicRoughness
                 {
                     metallicFactor = 0,
                     roughnessFactor = 1.0f,
@@ -181,16 +181,16 @@ namespace GLTFast.Export
                 };
                 if (mainTex != null)
                 {
-                    material.pbrMetallicRoughness.BaseColorTexture = ExportTextureInfo(mainTex, gltf);
-                    if (material.pbrMetallicRoughness.BaseColorTexture != null)
+                    material.PbrMetallicRoughness.BaseColorTexture = ExportTextureInfo(mainTex, gltf);
+                    if (material.PbrMetallicRoughness.BaseColorTexture != null)
                     {
-                        ExportTextureTransform(material.pbrMetallicRoughness.BaseColorTexture, uMaterial, mainTexProperty, gltf);
+                        ExportTextureTransform(material.PbrMetallicRoughness.BaseColorTexture, uMaterial, mainTexProperty, gltf);
                     }
                 }
                 if (uMaterial.HasProperty(k_TintColor))
                 {
                     //particles use _TintColor instead of _Color
-                    material.pbrMetallicRoughness.BaseColor = uMaterial.GetColor(k_TintColor).linear;
+                    material.PbrMetallicRoughness.BaseColor = uMaterial.GetColor(k_TintColor).linear;
                 }
             }
 
@@ -203,17 +203,17 @@ namespace GLTFast.Export
                     {
                         if (!needsMetalRoughTexture)
                         {
-                            material.occlusionTexture = ExportOcclusionTextureInfo(occTex2d, gltf);
+                            material.OcclusionTexture = ExportOcclusionTextureInfo(occTex2d, gltf);
                         }
                         else
                         {
-                            material.occlusionTexture = new OcclusionTextureInfo();
+                            material.OcclusionTexture = new OcclusionTextureInfo();
                             occlusionTexture = occTex2d;
                         }
-                        if (material.occlusionTexture != null)
+                        if (material.OcclusionTexture != null)
                         {
                             ExportTextureTransform(
-                                material.occlusionTexture,
+                                material.OcclusionTexture,
                                 uMaterial,
                                 mainTexProperty, // Standard and Lit re-use main texture transform
                                 gltf
@@ -228,13 +228,13 @@ namespace GLTFast.Export
                 }
             }
 
-            if (needsMetalRoughTexture && material.pbrMetallicRoughness != null)
+            if (needsMetalRoughTexture && material.PbrMetallicRoughness != null)
             {
                 var ormImageExport = new OrmImageExport(
                     metalGlossTexture, occlusionTexture, smoothnessTexture, smoothnessFactor);
                 if (MaterialExport.AddImageExport(gltf, ormImageExport, out var ormTextureId))
                 {
-                    if (material.pbrMetallicRoughness.MetallicRoughnessTexture != null)
+                    if (material.PbrMetallicRoughness.MetallicRoughnessTexture != null)
                     {
                         material.PbrMetallicRoughness.MetallicRoughnessTexture.index = ormTextureId;
                         ExportTextureTransform(material.PbrMetallicRoughness.MetallicRoughnessTexture, uMaterial, mainTexProperty, gltf);
@@ -242,7 +242,7 @@ namespace GLTFast.Export
 
                     if (ormImageExport.HasOcclusion)
                     {
-                        material.occlusionTexture.index = ormTextureId;
+                        material.OcclusionTexture.index = ormTextureId;
                     }
                 }
 #if UNITY_IMAGECONVERSION
@@ -253,11 +253,11 @@ namespace GLTFast.Export
 #endif
             }
 
-            if (material.occlusionTexture != null)
+            if (material.OcclusionTexture != null)
             {
                 if (uMaterial.HasProperty(k_OcclusionStrength))
                 {
-                    material.occlusionTexture.strength = uMaterial.GetFloat(k_OcclusionStrength);
+                    material.OcclusionTexture.strength = uMaterial.GetFloat(k_OcclusionStrength);
                 }
             }
 
@@ -406,7 +406,7 @@ namespace GLTFast.Export
                 smoothnessFactor = 0f;
             }
 
-            material.pbrMetallicRoughness = pbr;
+            material.PbrMetallicRoughness = pbr;
             return success;
         }
 

@@ -257,7 +257,7 @@ namespace GLTFast.Export
                 {
                     aspectRatio = targetTexture.width / (float)targetTexture.height;
                 }
-                camera.orthographic = new CameraOrthographic
+                camera.Orthographic = new CameraOrthographic
                 {
                     ymag = oSize,
                     xmag = oSize * aspectRatio,
@@ -269,7 +269,7 @@ namespace GLTFast.Export
             else
             {
                 camera.SetCameraType(Camera.Type.Perspective);
-                camera.perspective = new CameraPerspective
+                camera.Perspective = new CameraPerspective
                 {
                     yfov = uCamera.fieldOfView * Mathf.Deg2Rad,
                     // TODO: Check if local scale should be applied to near/far
@@ -337,7 +337,7 @@ namespace GLTFast.Export
                 //       lossless round-trips
                 node = AddChildNode(nodeId, rotation: Mathematics.RotateY(math.PI_DBL), name: $"{node.name}_Orientation");
             }
-            node.extensions = node.extensions ?? new NodeExtensions();
+            node.Extensions = node.Extensions ?? new NodeExtensions();
             node.Extensions.KHR_lights_punctual = new NodeLightsPunctual
             {
                 light = lightId
@@ -774,7 +774,7 @@ namespace GLTFast.Export
 
             if (m_BufferStream != null && m_BufferStream.Length > 0)
             {
-                m_Gltf.buffers = new[] {
+                m_Gltf.Buffers = new[] {
                     new Buffer {
                         uri = bufferPath,
                         byteLength = (uint) m_BufferStream.Length
@@ -782,27 +782,27 @@ namespace GLTFast.Export
                 };
             }
 
-            m_Gltf.scenes = m_Scenes?.ToArray();
-            m_Gltf.nodes = m_Nodes?.ToArray();
-            m_Gltf.meshes = m_Meshes?.ToArray();
-            m_Gltf.skins = m_Skins?.ToArray();
-            m_Gltf.accessors = m_Accessors?.ToArray();
-            m_Gltf.bufferViews = m_BufferViews?.ToArray();
-            m_Gltf.materials = m_Materials?.ToArray();
-            m_Gltf.images = m_Images?.ToArray();
-            m_Gltf.textures = m_Textures?.ToArray();
-            m_Gltf.samplers = m_Samplers?.ToArray();
-            m_Gltf.cameras = m_Cameras?.ToArray();
+            m_Gltf.Scenes = m_Scenes;
+            m_Gltf.Nodes = m_Nodes;
+            m_Gltf.Meshes = m_Meshes;
+            m_Gltf.Skins = m_Skins;
+            m_Gltf.Accessors = m_Accessors;
+            m_Gltf.BufferViews = m_BufferViews;
+            m_Gltf.Materials = m_Materials;
+            m_Gltf.Images = m_Images;
+            m_Gltf.Textures = m_Textures;
+            m_Gltf.Samplers = m_Samplers;
+            m_Gltf.Cameras = m_Cameras;
 
             if (m_Lights != null && m_Lights.Count > 0)
             {
                 RegisterExtensionUsage(Extension.LightsPunctual);
-                m_Gltf.extensions = m_Gltf.extensions ?? new Schema.RootExtensions();
-                m_Gltf.extensions.KHR_lights_punctual = m_Gltf.extensions.KHR_lights_punctual ?? new LightsPunctual();
-                m_Gltf.extensions.KHR_lights_punctual.lights = m_Lights.ToArray();
+                m_Gltf.Extensions = m_Gltf.Extensions ?? new Schema.RootExtensions();
+                m_Gltf.Extensions.KHR_lights_punctual = m_Gltf.Extensions.KHR_lights_punctual ?? new LightsPunctual();
+                m_Gltf.Extensions.KHR_lights_punctual.lights = m_Lights.ToArray();
             }
 
-            m_Gltf.asset = new Asset
+            m_Gltf.Asset = new Asset
             {
                 version = "2.0",
                 generator = $"Unity {Application.unityVersion} glTFast {Constants.version}"
@@ -912,9 +912,9 @@ namespace GLTFast.Export
 
         static void AssignMaterialsToMesh(int[] materialIds, Mesh mesh)
         {
-            for (var i = 0; i < materialIds.Length && i < mesh.primitives.Length; i++)
+            for (var i = 0; i < materialIds.Length && i < mesh.Primitives.Count; i++)
             {
-                mesh.primitives[i].material = materialIds[i] >= 0 ? materialIds[i] : -1;
+                mesh.Primitives[i].material = materialIds[i] >= 0 ? materialIds[i] : -1;
             }
         }
 
@@ -1194,7 +1194,7 @@ namespace GLTFast.Export
             }
 
             var indexComponentType = uMesh.indexFormat == IndexFormat.UInt16 ? GltfComponentType.UnsignedShort : GltfComponentType.UnsignedInt;
-            mesh.primitives = new MeshPrimitive[meshData.subMeshCount];
+            mesh.Primitives = new List<MeshPrimitive>(meshData.subMeshCount);
             var indexAccessors = new Accessor[meshData.subMeshCount];
             var indexOffset = 0;
             MeshTopology? topology = null;
@@ -1238,12 +1238,14 @@ namespace GLTFast.Export
 
                 indexOffset += indexAccessor.count * Accessor.GetComponentTypeSize(indexComponentType);
 
-                mesh.primitives[subMeshIndex] = new MeshPrimitive
+                var primitive = new MeshPrimitive
                 {
                     mode = mode.Value,
                     attributes = attributes,
                     indices = indexAccessorId,
                 };
+                Assert.AreEqual(subMeshIndex, mesh.Primitives.Count);
+                mesh.Primitives.Add(primitive);
             }
 
             if (!topology.HasValue)
@@ -1608,7 +1610,7 @@ namespace GLTFast.Export
 
             if (results == null) return;
 
-            mesh.primitives = new MeshPrimitive[results.Length];
+            mesh.Primitives = new List<MeshPrimitive>(results.Length);
             for (var submesh = 0; submesh < results.Length; submesh++)
             {
                 var encodeResult = results[submesh];
@@ -1670,7 +1672,7 @@ namespace GLTFast.Export
 
                 var indicesId = AddAccessor(indexAccessor);
 
-                mesh.primitives[submesh] = new MeshPrimitive
+                var primitive = new MeshPrimitive
                 {
                     Extensions = new MeshPrimitiveExtensions
                     {
@@ -1683,6 +1685,8 @@ namespace GLTFast.Export
                     attributes = attributes,
                     indices = indicesId
                 };
+                Assert.AreEqual(submesh, mesh.Primitives.Count);
+                mesh.Primitives.Add(primitive);
             }
 
             await ExportBindPoses(meshId, unityMesh, sync);

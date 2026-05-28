@@ -25,24 +25,20 @@ namespace GLTFast.Schema
     [Serializable]
     public class Animation : NamedObject, IGltfObject
     {
-        /// <inheritdoc cref="Channels"/>
-        public AnimationChannel[] channels;
-
-        /// <inheritdoc cref="Samplers"/>
-        public AnimationSampler[] samplers;
-
         /// <summary>
         /// An array of channels, each of which targets an animation's sampler at a
         /// node's property. Different channels of the same animation can't have equal
         /// targets.
         /// </summary>
-        public IReadOnlyList<AnimationChannel> Channels => channels;
+        [JsonPropertyName("channels")]
+        public List<AnimationChannel> Channels { get; set; }
 
         /// <summary>
         /// An array of samplers that combines input and output accessors with an
         /// interpolation algorithm to define a keyframe graph (but not its target).
         /// </summary>
-        public IReadOnlyList<AnimationSampler> Samplers => samplers;
+        [JsonPropertyName("samplers")]
+        public List<AnimationSampler> Samplers { get; set; }
 
         /// <inheritdoc cref="Asset.extensions"/>
         public UnclassifiedData extensions;

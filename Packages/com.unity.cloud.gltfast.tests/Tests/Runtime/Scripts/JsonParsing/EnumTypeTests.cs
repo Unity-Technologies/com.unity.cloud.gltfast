@@ -262,12 +262,12 @@ namespace GLTFast.Tests.JsonParsing
             Assert.AreEqual(Schema.Camera.Type.Perspective, obj.GetCameraType());
             obj = new Camera
             {
-                orthographic = new CameraOrthographic()
+                Orthographic = new CameraOrthographic()
             };
             Assert.AreEqual(Schema.Camera.Type.Orthographic, obj.GetCameraType());
             obj = new Camera
             {
-                perspective = new CameraPerspective()
+                Perspective = new CameraPerspective()
             };
             Assert.AreEqual(Schema.Camera.Type.Perspective, obj.GetCameraType());
 #pragma warning restore CS0618 // Type or member is obsolete

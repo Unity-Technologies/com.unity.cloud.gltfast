@@ -38,10 +38,8 @@ namespace GLTFast.Schema
         /// <summary>
         /// The index of the node and TRS property to target.
         /// </summary>
-        public AnimationChannelTarget target;
-
-        /// <inheritdoc cref="target"/>
-        public AnimationChannelTarget Target => target;
+        [JsonPropertyName("target")]
+        public AnimationChannelTarget Target { get; set; }
 
         /// <inheritdoc cref="Asset.extensions"/>
         public UnclassifiedData extensions;

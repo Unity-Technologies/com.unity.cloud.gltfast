@@ -1470,7 +1470,7 @@ namespace GLTFast
 
             if (Root.Buffers != null)
             {
-                var bufferCount = Root.Buffers.Count;
+                var bufferCount = Root.Buffers.Length;
                 if (bufferCount > 0)
                 {
                     m_Buffers = new ReadOnlyNativeArray<byte>[bufferCount];

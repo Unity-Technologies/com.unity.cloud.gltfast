@@ -28,21 +28,11 @@ namespace GLTFast.Schema
     [Serializable]
     public class Accessor : NamedObject, IGltfObject
     {
-        /// <inheritdoc cref="Sparse"/>
-        public AccessorSparse sparse;
-
         /// <summary>
         /// Sparse storage of attributes that deviate from their initialization value.
         /// </summary>
-        public AccessorSparse Sparse => sparse;
-
-        /// <summary>
-        /// Sets <see cref="Sparse"/> to null.
-        /// </summary>
-        internal void UnsetSparse()
-        {
-            sparse = null;
-        }
+        [JsonPropertyName("sparse")]
+        public AccessorSparse Sparse { get; set; }
 
         /// <summary>
         /// The index of the bufferView.

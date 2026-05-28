@@ -27,7 +27,7 @@ namespace GLTFast.Export
             material = new GLTFast.Schema.Material
             {
                 name = unityMaterial.name,
-                pbrMetallicRoughness = new PbrMetallicRoughness(),
+                PbrMetallicRoughness = new PbrMetallicRoughness(),
                 doubleSided = IsDoubleSided(unityMaterial)
             };
 
@@ -85,7 +85,7 @@ namespace GLTFast.Export
                         texCoord = GetValue(unityMaterial, MaterialProperty.BaseColorTextureTexCoord)
                     };
 
-                    material.pbrMetallicRoughness.BaseColorTexture = textureInfo;
+                    material.PbrMetallicRoughness.BaseColorTexture = textureInfo;
 
                     if (TryCreateTextureTransform(
                             gltf,
@@ -95,7 +95,7 @@ namespace GLTFast.Export
                             out var textureTransform
                         ))
                     {
-                        material.pbrMetallicRoughness.BaseColorTexture.Extensions = new TextureInfoExtensions
+                        material.PbrMetallicRoughness.BaseColorTexture.Extensions = new TextureInfoExtensions
                         {
                             KHR_texture_transform = textureTransform
                         };
@@ -105,7 +105,7 @@ namespace GLTFast.Export
 
             if (TryGetValue(unityMaterial, MaterialProperty.BaseColor, out Color baseColor))
             {
-                material.pbrMetallicRoughness.BaseColor = baseColor.linear;
+                material.PbrMetallicRoughness.BaseColor = baseColor.linear;
             }
 
             material = HandleMetallicRoughness(gltf, material, unityMaterial);
@@ -141,17 +141,17 @@ namespace GLTFast.Export
                     };
                 }
 
-                material.pbrMetallicRoughness.MetallicRoughnessTexture = textureInfo;
+                material.PbrMetallicRoughness.MetallicRoughnessTexture = textureInfo;
             }
 
             if (TryGetValue(unityMaterial, MaterialProperty.Metallic, out float metallicFactor))
             {
-                material.pbrMetallicRoughness.metallicFactor = metallicFactor;
+                material.PbrMetallicRoughness.metallicFactor = metallicFactor;
             }
 
             if (TryGetValue(unityMaterial, MaterialProperty.RoughnessFactor, out float roughnessFactor))
             {
-                material.pbrMetallicRoughness.roughnessFactor = roughnessFactor;
+                material.PbrMetallicRoughness.roughnessFactor = roughnessFactor;
             }
 
             return material;
@@ -180,7 +180,7 @@ namespace GLTFast.Export
                 scale = normalScale
             };
 
-            material.normalTexture = textureInfo;
+            material.NormalTexture = textureInfo;
 
             if (TryCreateTextureTransform(
                     gltf,
@@ -190,7 +190,7 @@ namespace GLTFast.Export
                     out var textureTransform
                 ))
             {
-                material.normalTexture.Extensions = new TextureInfoExtensions
+                material.NormalTexture.Extensions = new TextureInfoExtensions
                 {
                     KHR_texture_transform = textureTransform
                 };
@@ -222,7 +222,7 @@ namespace GLTFast.Export
                 strength = occlusionStrength
             };
 
-            material.occlusionTexture = info;
+            material.OcclusionTexture = info;
 
             if (TryCreateTextureTransform(
                     gltf,
@@ -232,7 +232,7 @@ namespace GLTFast.Export
                     out var textureTransform
                 ))
             {
-                material.occlusionTexture.Extensions = new TextureInfoExtensions
+                material.OcclusionTexture.Extensions = new TextureInfoExtensions
                 {
                     KHR_texture_transform = textureTransform
                 };
@@ -256,7 +256,7 @@ namespace GLTFast.Export
                         texCoord = GetValue(unityMaterial, MaterialProperty.EmissiveTextureTexCoord)
                     };
 
-                    material.emissiveTexture = info;
+                    material.EmissiveTexture = info;
 
                     if (TryCreateTextureTransform(
                             gltf,
@@ -266,7 +266,7 @@ namespace GLTFast.Export
                             out var textureTransform
                         ))
                     {
-                        material.emissiveTexture.Extensions = new TextureInfoExtensions
+                        material.EmissiveTexture.Extensions = new TextureInfoExtensions
                         {
                             KHR_texture_transform = textureTransform
                         };

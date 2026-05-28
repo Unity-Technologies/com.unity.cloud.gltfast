@@ -34,110 +34,74 @@ namespace GLTFast.Schema
         /// </summary>
         public string[] extensionsRequired;
 
-        /// <inheritdoc cref="Accessors"/>
-        public Accessor[] accessors;
-
-#if UNITY_ANIMATION || GLTFAST_ANIMATION
-        /// <inheritdoc cref="Animations"/>
-        public Animation[] animations;
-#endif
-
-        /// <inheritdoc cref="Asset"/>
-        public Asset asset;
-
-        /// <inheritdoc cref="Buffer"/>
-        public Buffer[] buffers;
-
-        /// <inheritdoc cref="BufferView"/>
-        public BufferView[] bufferViews;
-
-        /// <inheritdoc cref="Camera"/>
-        public Camera[] cameras;
-
-        /// <inheritdoc cref="Image"/>
-        public Image[] images;
-
-        /// <inheritdoc cref="Material"/>
-        public Material[] materials;
-
-        /// <inheritdoc cref="Node"/>
-        public Node[] nodes;
-
-        /// <inheritdoc cref="Sampler"/>
-        public Sampler[] samplers;
-
-        /// <inheritdoc cref="Scene"/>
-        public Scene[] scenes;
-
-        /// <inheritdoc cref="Skin"/>
-        public Skin[] skins;
-
-        /// <inheritdoc cref="Texture"/>
-        public Texture[] textures;
-
-        /// <inheritdoc cref="RootExtensions"/>
-        public RootExtensions extensions;
-
-        /// <inheritdoc cref="Meshes"/>
-        public Mesh[] meshes;
-
         /// <summary>
         /// An array of accessors. An accessor is a typed view into a bufferView.
         /// </summary>
-        public IReadOnlyList<Accessor> Accessors => accessors;
+        [JsonPropertyName("accessors")]
+        public List<Accessor> Accessors { get; set; }
 
 #if UNITY_ANIMATION || GLTFAST_ANIMATION
         /// <summary>
         /// An array of keyframe animations.
         /// </summary>
-        public IReadOnlyList<Animation> Animations => animations;
+        [JsonPropertyName("animations")]
+        public List<Animation> Animations { get; set; }
 #endif
 
         /// <summary>
         /// Metadata about the glTF asset.
         /// </summary>
-        public Asset Asset => asset;
+        [JsonPropertyName("asset")]
+        public Asset Asset { get; set; }
 
         /// <summary>
         /// An array of buffers. A buffer points to binary geometry, animation, or skins.
         /// </summary>
-        public IReadOnlyList<Buffer> Buffers => buffers;
+        [JsonPropertyName("buffers")]
+        public Buffer[] Buffers { get; set; }
 
         /// <summary>
         /// An array of bufferViews.
         /// A bufferView is a view into a buffer generally representing a subset of the buffer.
         /// </summary>
-        public IReadOnlyList<BufferView> BufferViews => bufferViews;
+        [JsonPropertyName("bufferViews")]
+        public List<BufferView> BufferViews { get; set; }
 
         /// <summary>
         /// An array of cameras. A camera defines a projection matrix.
         /// </summary>
-        public IReadOnlyList<Camera> Cameras => cameras;
+        [JsonPropertyName("cameras")]
+        public List<Camera> Cameras { get; set; }
 
         /// <summary>
         /// An array of images. An image defines data used to create a texture.
         /// </summary>
-        public IReadOnlyList<Image> Images => images;
+        [JsonPropertyName("images")]
+        public List<Image> Images { get; set; }
 
         /// <summary>
         /// An array of materials. A material defines the appearance of a primitive.
         /// </summary>
-        public IReadOnlyList<Material> Materials => materials;
+        [JsonPropertyName("materials")]
+        public List<Material> Materials { get; set; }
 
         /// <summary>
         /// An array of meshes. A mesh is a set of primitives to be rendered.
         /// </summary>
-        public IReadOnlyList<Mesh> Meshes => meshes;
+        [JsonPropertyName("meshes")]
+        public List<Mesh> Meshes { get; set; }
 
         /// <summary>
         /// An array of nodes.
         /// </summary>
-        public IReadOnlyList<Node> Nodes => nodes;
+        [JsonPropertyName("nodes")]
+        public List<Node> Nodes { get; set; }
 
         /// <summary>
         /// An array of samplers. A sampler contains properties for texture filtering and wrapping modes.
         /// </summary>
-        public IReadOnlyList<Sampler> Samplers => samplers;
+        [JsonPropertyName("samplers")]
+        public List<Sampler> Samplers { get; set; }
 
         /// <summary>
         /// The index of the default scene.
@@ -147,20 +111,24 @@ namespace GLTFast.Schema
         /// <summary>
         /// An array of scenes.
         /// </summary>
-        public IReadOnlyList<Scene> Scenes => scenes;
+        [JsonPropertyName("scenes")]
+        public List<Scene> Scenes { get; set; }
 
         /// <summary>
         /// An array of skins. A skin is defined by joints and matrices.
         /// </summary>
-        public IReadOnlyList<Skin> Skins => skins;
+        [JsonPropertyName("skins")]
+        public List<Skin> Skins { get; set; }
 
         /// <summary>
         /// An array of textures.
         /// </summary>
-        public IReadOnlyList<Texture> Textures => textures;
+        [JsonPropertyName("textures")]
+        public List<Texture> Textures { get; set; }
 
         /// <inheritdoc cref="RootExtensions"/>
-        public RootExtensions Extensions => extensions;
+        [JsonPropertyName("extensions")]
+        public RootExtensions Extensions { get; set; }
 
         /// <summary>Application-specific data.</summary>
         /// <seealso href="https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html#reference-extras"/>
@@ -176,7 +144,7 @@ namespace GLTFast.Schema
         }
 
 #if UNITY_ANIMATION || GLTFAST_ANIMATION
-        public bool HasAnimation => Animations != null && Animations.Count > 0;
+        public bool HasAnimation => Animations is { Count: > 0 };
 #endif // UNITY_ANIMATION || GLTFAST_ANIMATION
 
         /// <summary>

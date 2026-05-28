@@ -32,11 +32,9 @@ namespace GLTFast.Schema
     [Serializable]
     public class BufferView : NamedObject, IBufferView, IGltfObject
     {
-        /// <inheritdoc cref="Extensions"/>
-        public BufferViewExtensions extensions;
-
         /// <inheritdoc cref="BufferViewExtensions"/>
-        public BufferViewExtensions Extensions => extensions;
+        [JsonPropertyName("extensions")]
+        public BufferViewExtensions Extensions { get; set; }
 
         /// <summary>
         /// The index of the buffer.

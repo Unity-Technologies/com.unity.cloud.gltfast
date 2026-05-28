@@ -160,9 +160,9 @@ namespace GLTFast.Tests.JsonParsing
             var gltf = JsonSerializer.Deserialize(k_ExtrasDataJson, GltfRootSourceGenerator.Default.Root);
 
             Assert.NotNull(gltf);
-            Assert.NotNull(gltf.nodes);
-            Assert.GreaterOrEqual(gltf.nodes.Length, 1);
-            Assert.NotNull(gltf.nodes[0]);
+            Assert.NotNull(gltf.Nodes);
+            Assert.GreaterOrEqual(gltf.Nodes.Count, 1);
+            Assert.NotNull(gltf.Nodes[0]);
 
             AssertResultExtendedJson(gltf);
         }
@@ -170,7 +170,7 @@ namespace GLTFast.Tests.JsonParsing
         static void AssertResultExtendedJson(Root gltf)
         {
             Assert.NotNull(gltf);
-            var e = gltf.nodes[0].extras;
+            var e = gltf.Nodes[0].extras;
             Assert.IsNotNull(e);
 
             Assert.IsTrue(e.TryGetValue("floatProp", out float floatProp));

@@ -22,47 +22,41 @@ namespace GLTFast.Schema
     [Serializable]
     public class Material : NamedObject, IGltfObject
     {
-        /// <inheritdoc cref="EmissiveTexture"/>
-        public TextureInfo emissiveTexture;
-        /// <inheritdoc cref="Extensions"/>
-        public MaterialExtensions extensions;
-        /// <inheritdoc cref="NormalTexture"/>
-        public NormalTextureInfo normalTexture;
-        /// <inheritdoc cref="OcclusionTexture"/>
-        public OcclusionTextureInfo occlusionTexture;
-        /// <inheritdoc cref="PbrMetallicRoughness"/>
-        public PbrMetallicRoughness pbrMetallicRoughness;
-
         /// <summary>
         /// Material extensions.
         /// </summary>
-        public MaterialExtensions Extensions => extensions;
+        [JsonPropertyName("extensions")]
+        public MaterialExtensions Extensions { get; set; }
 
         /// <summary>
         /// A set of parameter values that are used to define the metallic-roughness
         /// material model from Physically-Based Rendering (PBR) methodology.
         /// </summary>
-        public PbrMetallicRoughness PbrMetallicRoughness => pbrMetallicRoughness;
+        [JsonPropertyName("pbrMetallicRoughness")]
+        public PbrMetallicRoughness PbrMetallicRoughness { get; set; }
 
         /// <summary>
         /// A tangent space normal map. Each texel represents the XYZ components of a
         /// normal vector in tangent space.
         /// </summary>
-        public NormalTextureInfo NormalTexture => normalTexture;
+        [JsonPropertyName("normalTexture")]
+        public NormalTextureInfo NormalTexture { get; set; }
 
         /// <summary>
         /// The occlusion map is a greyscale texture, with white indicating areas that
         /// should receive full indirect lighting and black indicating no indirect
         /// lighting.
         /// </summary>
-        public OcclusionTextureInfo OcclusionTexture => occlusionTexture;
+        [JsonPropertyName("occlusionTexture")]
+        public OcclusionTextureInfo OcclusionTexture { get; set; }
 
         /// <summary>
         /// The emissive map controls the color and intensity of the light being emitted
         /// by the material. This texture contains RGB components in sRGB color space.
         /// If a fourth component (A) is present, it is ignored.
         /// </summary>
-        public TextureInfo EmissiveTexture => emissiveTexture;
+        [JsonPropertyName("emissiveTexture")]
+        public TextureInfo EmissiveTexture { get; set; }
 
 
         /// <summary>

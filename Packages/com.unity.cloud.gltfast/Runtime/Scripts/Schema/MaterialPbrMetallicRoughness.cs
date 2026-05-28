@@ -12,7 +12,6 @@ using Unity.Gltfast.Text.Json.Serialization;
 #endif
 using Unity.Mathematics;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace GLTFast.Schema
 {

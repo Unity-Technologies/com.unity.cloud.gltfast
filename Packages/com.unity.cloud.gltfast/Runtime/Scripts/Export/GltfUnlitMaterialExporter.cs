@@ -29,7 +29,7 @@ namespace GLTFast.Export
             material = new GLTFast.Schema.Material
             {
                 name = unityMaterial.name,
-                extensions = new MaterialExtensions
+                Extensions = new MaterialExtensions
                 {
                     KHR_materials_unlit = new MaterialUnlit()
                 }
@@ -60,8 +60,8 @@ namespace GLTFast.Export
                         texCoord = GltfMaterialExporter.GetValue(unityMaterial, MaterialProperty.BaseColorTextureTexCoord)
                     };
 
-                    material.pbrMetallicRoughness ??= new PbrMetallicRoughness();
-                    material.pbrMetallicRoughness.BaseColorTexture = textureInfo;
+                    material.PbrMetallicRoughness ??= new PbrMetallicRoughness();
+                    material.PbrMetallicRoughness.BaseColorTexture = textureInfo;
 
                     if (GltfMaterialExporter.TryCreateTextureTransform(
                             gltf,
@@ -71,7 +71,7 @@ namespace GLTFast.Export
                             out var textureTransform
                         ))
                     {
-                        material.pbrMetallicRoughness.BaseColorTexture.Extensions = new TextureInfoExtensions
+                        material.PbrMetallicRoughness.BaseColorTexture.Extensions = new TextureInfoExtensions
                         {
                             KHR_texture_transform = textureTransform
                         };
@@ -82,8 +82,8 @@ namespace GLTFast.Export
             if (GltfMaterialExporter.TryGetValue(unityMaterial, MaterialProperty.BaseColor, out Color baseColor)
                 && baseColor != Color.white)
             {
-                material.pbrMetallicRoughness ??= new PbrMetallicRoughness();
-                material.pbrMetallicRoughness.BaseColor = baseColor.linear;
+                material.PbrMetallicRoughness ??= new PbrMetallicRoughness();
+                material.PbrMetallicRoughness.BaseColor = baseColor.linear;
             }
 
             return material;

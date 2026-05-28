@@ -19,11 +19,9 @@ namespace GLTFast.Schema
     [Serializable]
     public class Texture : NamedObject, IGltfObject
     {
-        /// <inheritdoc cref="Extensions"/>
-        public TextureExtensions extensions;
-
         /// <inheritdoc cref="TextureExtensions"/>
-        public TextureExtensions Extensions => extensions;
+        [JsonPropertyName("extensions")]
+        public TextureExtensions Extensions { get; set; }
 
         /// <summary>
         /// The index of the sampler used by this texture.

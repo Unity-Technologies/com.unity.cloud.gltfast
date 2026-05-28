@@ -20,11 +20,9 @@ namespace GLTFast.Schema
     [System.Serializable]
     public class Node : NamedObject, IGltfObject
     {
-        /// <inheritdoc cref="Extensions"/>
-        public NodeExtensions extensions;
-
         /// <inheritdoc cref="NodeExtensions"/>
-        public NodeExtensions Extensions => extensions;
+        [JsonPropertyName("extensions")]
+        public NodeExtensions Extensions { get; set; }
 
         /// <summary>
         /// The indices of this node's children.

@@ -21,17 +21,13 @@ namespace GLTFast.Schema
     [Serializable]
     public class Camera : NamedObject, IGltfObject
     {
-        /// <inheritdoc cref="Orthographic"/>
-        public CameraOrthographic orthographic;
-
-        /// <inheritdoc cref="Perspective"/>
-        public CameraPerspective perspective;
-
         /// <inheritdoc cref="CameraOrthographic"/>
-        public CameraOrthographic Orthographic => orthographic;
+        [JsonPropertyName("orthographic")]
+        public CameraOrthographic Orthographic { get; set; }
 
         /// <inheritdoc cref="CameraPerspective"/>
-        public CameraPerspective Perspective => perspective;
+        [JsonPropertyName("perspective")]
+        public CameraPerspective Perspective { get; set; }
 
         /// <summary>
         /// Camera projection type

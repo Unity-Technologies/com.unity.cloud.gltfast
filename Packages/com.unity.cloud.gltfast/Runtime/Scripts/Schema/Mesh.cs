@@ -20,20 +20,16 @@ namespace GLTFast.Schema
     [Serializable]
     public class Mesh : NamedObject, IGltfObject, ICloneable
     {
-        /// <inheritdoc cref="Extras"/>
-        public MeshExtras extras;
-
-        /// <inheritdoc cref="Primitives"/>
-        public MeshPrimitive[] primitives;
-
         /// <summary>
         /// An array of primitives, each defining geometry to be rendered with
         /// a material.
         /// </summary>
-        public IReadOnlyList<MeshPrimitive> Primitives => primitives;
+        [JsonPropertyName("primitives")]
+        public List<MeshPrimitive> Primitives { get; set; }
 
         /// <inheritdoc cref="MeshExtras"/>
-        public MeshExtras Extras => extras;
+        [JsonPropertyName("extras")]
+        public MeshExtras Extras { get; set; }
 
         /// <summary>
         /// Clones the Mesh object
@@ -44,10 +40,10 @@ namespace GLTFast.Schema
             var clone = (Mesh)MemberwiseClone();
             if (Primitives != null)
             {
-                clone.primitives = new MeshPrimitive[primitives.Length];
-                for (var i = 0; i < primitives.Length; i++)
+                clone.Primitives = new List<MeshPrimitive>(Primitives.Count);
+                for (var i = 0; i < Primitives.Count; i++)
                 {
-                    clone.primitives[i] = (MeshPrimitive)primitives[i].Clone();
+                    clone.Primitives.Add((MeshPrimitive)Primitives[i].Clone());
                 }
             }
             return clone;

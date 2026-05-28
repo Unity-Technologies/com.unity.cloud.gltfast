@@ -48,7 +48,7 @@ namespace GLTFast.Export
             material = new Material
             {
                 name = uMaterial.name,
-                pbrMetallicRoughness = new PbrMetallicRoughness
+                PbrMetallicRoughness = new PbrMetallicRoughness
                 {
                     metallicFactor = 0,
                     roughnessFactor = 1.0f
@@ -88,8 +88,8 @@ namespace GLTFast.Export
                 {
                     if (emissionTex is Texture2D)
                     {
-                        material.emissiveTexture = ExportTextureInfo(emissionTex, gltf);
-                        ExportTextureTransform(material.emissiveTexture, uMaterial, mainTexProperty, gltf);
+                        material.EmissiveTexture = ExportTextureInfo(emissionTex, gltf);
+                        ExportTextureTransform(material.EmissiveTexture, uMaterial, mainTexProperty, gltf);
                     }
                     else
                     {
@@ -113,8 +113,8 @@ namespace GLTFast.Export
                 {
                     if (normalTex is Texture2D)
                     {
-                        material.normalTexture = ExportNormalTextureInfo(normalTex, uMaterial, gltf, k_NormalScale);
-                        ExportTextureTransform(material.normalTexture, uMaterial, mainTexProperty, gltf);
+                        material.NormalTexture = ExportNormalTextureInfo(normalTex, uMaterial, gltf, k_NormalScale);
+                        ExportTextureTransform(material.NormalTexture, uMaterial, mainTexProperty, gltf);
                     }
                     else
                     {
@@ -130,9 +130,9 @@ namespace GLTFast.Export
             if (uMaterial.HasProperty(k_CoatMask) && uMaterial.GetFloat(k_CoatMask) > 0)
             {
                 gltf.RegisterExtensionUsage(Extension.MaterialsClearcoat);
-                material.extensions = material.extensions ?? new MaterialExtensions();
-                material.extensions.KHR_materials_clearcoat = new ClearCoat();
-                material.extensions.KHR_materials_clearcoat.clearcoatFactor = uMaterial.GetFloat(k_CoatMask);
+                material.Extensions ??= new MaterialExtensions();
+                material.Extensions.KHR_materials_clearcoat = new ClearCoat();
+                material.Extensions.KHR_materials_clearcoat.clearcoatFactor = uMaterial.GetFloat(k_CoatMask);
 
                 if (uMaterial.HasProperty(k_CoatMaskMap))
                 {
@@ -141,8 +141,8 @@ namespace GLTFast.Export
                     {
                         if (coatMaskTex is Texture2D)
                         {
-                            material.extensions.KHR_materials_clearcoat.clearcoatTexture = ExportTextureInfo(coatMaskTex, gltf);
-                            ExportTextureTransform(material.extensions.KHR_materials_clearcoat.clearcoatTexture, uMaterial, mainTexProperty, gltf);
+                            material.Extensions.KHR_materials_clearcoat.clearcoatTexture = ExportTextureInfo(coatMaskTex, gltf);
+                            ExportTextureTransform(material.Extensions.KHR_materials_clearcoat.clearcoatTexture, uMaterial, mainTexProperty, gltf);
                         }
                         else
                         {
@@ -279,13 +279,13 @@ namespace GLTFast.Export
                                 // on pixel values
                                 // (i.e. have non-white pixels) and not assign the
                                 // texture info if not.
-                                material.occlusionTexture = new OcclusionTextureInfo
+                                material.OcclusionTexture = new OcclusionTextureInfo
                                 {
                                     index = ormTextureId,
                                     strength = occStrength
                                 };
                                 ExportTextureTransform(
-                                    material.occlusionTexture,
+                                    material.OcclusionTexture,
                                     uMaterial,
                                     k_BaseColorMap, // HDRP Lit always re-uses baseColorMap transform
                                     gltf
@@ -310,7 +310,7 @@ namespace GLTFast.Export
                 pbr.roughnessFactor = 1f - uMaterial.GetFloat(SmoothnessProperty);
             }
 
-            material.pbrMetallicRoughness = pbr;
+            material.PbrMetallicRoughness = pbr;
             return success;
         }
 

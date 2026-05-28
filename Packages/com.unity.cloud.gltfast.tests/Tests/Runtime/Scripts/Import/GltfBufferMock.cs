@@ -17,7 +17,7 @@ namespace GLTFast.Tests
             {
                 bufferView = index,
                 componentType = GltfComponentType.Float,
-                sparse = index == sparseAccessorIndex
+                Sparse = index == sparseAccessorIndex
                     ? new AccessorSparse()
                     : null,
                 min = new float[] { -1, -1, -1 },
