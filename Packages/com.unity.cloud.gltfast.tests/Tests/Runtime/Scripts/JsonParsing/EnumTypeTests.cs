@@ -385,9 +385,9 @@ namespace GLTFast.Tests.JsonParsing
             Assert.NotNull(gltf);
             Assert.NotNull(gltf.Samplers);
             Assert.AreEqual(1, gltf.Samplers.Count);
-            Assert.AreEqual(Sampler.MagFilterMode.Nearest, gltf.Samplers[0].magFilter);
-            Assert.AreEqual(Sampler.WrapMode.MirroredRepeat, gltf.Samplers[0].wrapS);
-            Assert.AreEqual(Sampler.WrapMode.None, gltf.Samplers[0].wrapT);
+            Assert.AreEqual(Sampler.MagFilterMode.Nearest, gltf.Samplers[0].MagFilter);
+            Assert.AreEqual(Sampler.WrapMode.MirroredRepeat, gltf.Samplers[0].WrapS);
+            Assert.AreEqual(Sampler.WrapMode.Undefined, gltf.Samplers[0].WrapT);
         }
 
         const string k_EnumTypesJson = @"

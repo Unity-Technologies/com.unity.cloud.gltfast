@@ -47,7 +47,7 @@ namespace GLTFast.Tests
             m_Textures = new Texture[k_TextureCount];
             for (var i = 0; i < k_TextureCount; i++)
             {
-                m_Textures[i] = new Texture { source = i };
+                m_Textures[i] = new Texture { Source = i };
             }
 
             m_TextureAddons = new ImportAddonInstanceCollection();
@@ -152,9 +152,9 @@ namespace GLTFast.Tests
     {
         public bool IsAbleToLoad(Texture texture, out int imageIndex)
         {
-            if (texture.source % 4 == 0)
+            if (texture.Source % 4 == 0)
             {
-                imageIndex = texture.source * 2;
+                imageIndex = texture.Source * 2;
                 return true;
             }
             imageIndex = -1;

@@ -498,43 +498,43 @@ namespace GLTFast.Tests.JsonParsing
 
             var sampler0 = gltf.Samplers[0];
             Assert.NotNull(sampler0);
-            Assert.AreEqual(Sampler.MagFilterMode.None, sampler0.magFilter);
-            Assert.AreEqual(Sampler.MinFilterMode.None, sampler0.minFilter);
+            Assert.AreEqual(Sampler.MagFilterMode.Undefined, sampler0.MagFilter);
+            Assert.AreEqual(Sampler.MinFilterMode.Undefined, sampler0.MinFilter);
 
             var sampler1 = gltf.Samplers[1];
             Assert.NotNull(sampler1);
-            Assert.AreEqual((Sampler.MagFilterMode)100, sampler1.magFilter);
-            Assert.AreEqual((Sampler.MinFilterMode)100, sampler1.minFilter);
+            Assert.AreEqual((Sampler.MagFilterMode)100, sampler1.MagFilter);
+            Assert.AreEqual((Sampler.MinFilterMode)100, sampler1.MinFilter);
 
             var sampler2 = gltf.Samplers[2];
             Assert.NotNull(sampler2);
-            Assert.AreEqual(Sampler.MagFilterMode.Nearest, sampler2.magFilter);
-            Assert.AreEqual(Sampler.MinFilterMode.Nearest, sampler2.minFilter);
+            Assert.AreEqual(Sampler.MagFilterMode.Nearest, sampler2.MagFilter);
+            Assert.AreEqual(Sampler.MinFilterMode.Nearest, sampler2.MinFilter);
 
             var sampler3 = gltf.Samplers[3];
             Assert.NotNull(sampler3);
-            Assert.AreEqual(Sampler.MagFilterMode.Linear, sampler3.magFilter);
-            Assert.AreEqual(Sampler.MinFilterMode.Linear, sampler3.minFilter);
+            Assert.AreEqual(Sampler.MagFilterMode.Linear, sampler3.MagFilter);
+            Assert.AreEqual(Sampler.MinFilterMode.Linear, sampler3.MinFilter);
 
             var sampler4 = gltf.Samplers[4];
             Assert.NotNull(sampler4);
-            Assert.AreEqual(Sampler.MagFilterMode.None, sampler4.magFilter);
-            Assert.AreEqual(Sampler.MinFilterMode.NearestMipmapNearest, sampler4.minFilter);
+            Assert.AreEqual(Sampler.MagFilterMode.Undefined, sampler4.MagFilter);
+            Assert.AreEqual(Sampler.MinFilterMode.NearestMipmapNearest, sampler4.MinFilter);
 
             var sampler5 = gltf.Samplers[5];
             Assert.NotNull(sampler5);
-            Assert.AreEqual(Sampler.MagFilterMode.None, sampler5.magFilter);
-            Assert.AreEqual(Sampler.MinFilterMode.LinearMipmapNearest, sampler5.minFilter);
+            Assert.AreEqual(Sampler.MagFilterMode.Undefined, sampler5.MagFilter);
+            Assert.AreEqual(Sampler.MinFilterMode.LinearMipmapNearest, sampler5.MinFilter);
 
             var sampler6 = gltf.Samplers[6];
             Assert.NotNull(sampler6);
-            Assert.AreEqual(Sampler.MagFilterMode.None, sampler6.magFilter);
-            Assert.AreEqual(Sampler.MinFilterMode.NearestMipmapLinear, sampler6.minFilter);
+            Assert.AreEqual(Sampler.MagFilterMode.Undefined, sampler6.MagFilter);
+            Assert.AreEqual(Sampler.MinFilterMode.NearestMipmapLinear, sampler6.MinFilter);
 
             var sampler7 = gltf.Samplers[7];
             Assert.NotNull(sampler7);
-            Assert.AreEqual(Sampler.MagFilterMode.None, sampler7.magFilter);
-            Assert.AreEqual(Sampler.MinFilterMode.LinearMipmapLinear, sampler7.minFilter);
+            Assert.AreEqual(Sampler.MagFilterMode.Undefined, sampler7.MagFilter);
+            Assert.AreEqual(Sampler.MinFilterMode.LinearMipmapLinear, sampler7.MinFilter);
         }
 
         static void AssertUnknownNodeExtensionResult(Root gltf)
@@ -651,14 +651,14 @@ namespace GLTFast.Tests.JsonParsing
             var texture3 = gltf.Textures[3];
             Assert.NotNull(texture3);
             Assert.NotNull(texture3.Extensions);
-            Assert.NotNull(texture3.Extensions.KHR_texture_basisu);
-            Assert.AreEqual(42, texture3.Extensions.KHR_texture_basisu.source);
+            Assert.NotNull(texture3.Extensions.BasisU);
+            Assert.AreEqual(42, texture3.Extensions.BasisU.Source);
 
             var texture4 = gltf.Textures[4];
             Assert.NotNull(texture4);
             Assert.NotNull(texture4.Extensions);
-            Assert.NotNull(texture4.Extensions.KHR_texture_basisu);
-            Assert.AreEqual(42, texture4.Extensions.KHR_texture_basisu.source);
+            Assert.NotNull(texture4.Extensions.BasisU);
+            Assert.AreEqual(42, texture4.Extensions.BasisU.Source);
         }
     }
 }

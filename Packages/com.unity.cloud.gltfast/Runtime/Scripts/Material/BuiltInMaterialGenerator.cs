@@ -311,7 +311,7 @@ namespace GLTFast.Materials
             ))
             {
                 material.EnableKeyword(Constants.NormalMapKeyword);
-                material.SetFloat(MaterialProperty.NormalTextureScale, gltfMaterial.NormalTexture.scale);
+                material.SetFloat(MaterialProperty.NormalTextureScale, gltfMaterial.NormalTexture.Scale);
             }
 
             if (TrySetTexture(
@@ -325,7 +325,7 @@ namespace GLTFast.Materials
                 ))
             {
                 material.EnableKeyword(k_OcclusionKeyword);
-                material.SetFloat(MaterialProperty.OcclusionTextureStrength, gltfMaterial.OcclusionTexture.strength);
+                material.SetFloat(MaterialProperty.OcclusionTextureStrength, gltfMaterial.OcclusionTexture.Strength);
             }
 
             if (TrySetTexture(
@@ -355,7 +355,7 @@ namespace GLTFast.Materials
                     // This is an approximation for some corner cases
                     if (transmission.transmissionFactor > 0f
                         && (transmission.transmissionTexture == null
-                           || transmission.transmissionTexture.index < 0)
+                           || transmission.transmissionTexture.Index < 0)
                         )
                     {
                         var premultiply = TransmissionWorkaroundShaderMode(transmission, ref baseColorLinear);

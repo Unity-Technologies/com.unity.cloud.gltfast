@@ -1,7 +1,6 @@
 // SPDX-FileCopyrightText: 2023 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
-using System;
 using System.Collections.Generic;
 using Unity.Gltfast.Text.Json;
 using Unity.Gltfast.Text.Json.Serialization;
@@ -11,7 +10,6 @@ namespace GLTFast.Schema
     /// <summary>
     /// A texture is defined by an image and a sampler.
     /// </summary>
-    [Serializable]
     public class Texture : NamedObject, IGltfObject
     {
         /// <inheritdoc cref="TextureExtensions"/>
@@ -21,15 +19,18 @@ namespace GLTFast.Schema
         /// <summary>
         /// The index of the sampler used by this texture.
         /// </summary>
-        public int sampler = -1;
+        [JsonPropertyName("sampler")]
+        public int Sampler { get; set; } = -1;
 
         /// <summary>
         /// The index of the image used by this texture.
         /// </summary>
-        public int source = -1;
+        [JsonPropertyName("source")]
+        public int Source { get; set; } = -1;
 
-        /// <inheritdoc cref="Root.extras"/>
-        public UnclassifiedData extras;
+        /// <inheritdoc cref="Root.Extras"/>
+        [JsonPropertyName("extras")]
+        public UnclassifiedData Extras { get; set; }
 
         /// <summary>JSON properties without a matching member.</summary>
         [JsonExtensionData, JsonInclude] internal Dictionary<string, JsonElement> ExtensionsData { get; set; }
@@ -48,30 +49,30 @@ namespace GLTFast.Schema
         {
             if (Extensions != null)
             {
-                if (Extensions.KHR_texture_basisu != null && Extensions.KHR_texture_basisu.source >= 0)
+                if (Extensions.BasisU != null && Extensions.BasisU.Source >= 0)
                 {
-                    return Extensions.KHR_texture_basisu.source;
+                    return Extensions.BasisU.Source;
                 }
             }
-            return source;
+            return Source;
         }
 
         /// <summary>
         /// True, if the texture is of the KTX format.
         /// </summary>
-        public bool IsKtx => Extensions?.KHR_texture_basisu != null;
+        public bool IsKtx => Extensions?.BasisU != null;
 
         internal void GltfSerialize(JsonWriter writer)
         {
             writer.AddObject();
             GltfSerializeName(writer);
-            if (source >= 0)
+            if (Source >= 0)
             {
-                writer.AddProperty("source", source);
+                writer.AddProperty("source", Source);
             }
-            if (sampler >= 0)
+            if (Sampler >= 0)
             {
-                writer.AddProperty("sampler", sampler);
+                writer.AddProperty("sampler", Sampler);
             }
             if (Extensions != null)
             {

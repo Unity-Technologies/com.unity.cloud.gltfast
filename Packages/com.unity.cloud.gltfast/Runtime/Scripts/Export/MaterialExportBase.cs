@@ -206,8 +206,8 @@ namespace GLTFast.Export
             {
                 return new TextureInfo
                 {
-                    index = textureId,
-                    // texCoord = 0 // TODO: figure out which UV set was used
+                    Index = textureId,
+                    // TexCoord = 0 // TODO: figure out which UV set was used
                 };
             }
             return null;
@@ -238,13 +238,13 @@ namespace GLTFast.Export
             {
                 var info = new NormalTextureInfo
                 {
-                    index = textureId,
-                    // texCoord = 0 // TODO: figure out which UV set was used
+                    Index = textureId,
+                    // TexCoord = 0 // TODO: figure out which UV set was used
                 };
 
                 if (material.HasProperty(normalScalePropId))
                 {
-                    info.scale = material.GetFloat(normalScalePropId);
+                    info.Scale = material.GetFloat(normalScalePropId);
                 }
                 return info;
             }
@@ -275,8 +275,8 @@ namespace GLTFast.Export
                 gltf.RegisterExtensionUsage(Extension.TextureTransform);
                 def.SetTextureTransform(new TextureTransform
                 {
-                    scale = new[] { scale.x, scale.y },
-                    offset = new[] { offset.x, 1 - offset.y - scale.y }
+                    Scale = new[] { scale.x, scale.y },
+                    Offset = new[] { offset.x, 1 - offset.y - scale.y }
                 });
             }
         }

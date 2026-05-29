@@ -52,11 +52,11 @@ namespace GLTFast.Tests.Export
                 renderPipeline,
                 out _);
             Assert.IsTrue(gltfWriter.extensions[Extension.TextureTransform]);
-            var transform = texture.Extensions?.KHR_texture_transform;
+            var transform = texture.Extensions?.TextureTransform;
             Assert.IsNotNull(transform);
-            Assert.AreEqual(new[] { 0.4f, 0.6f }, transform.offset);
-            Assert.AreEqual(new[] { 1f, 1f }, transform.scale);
-            Assert.AreEqual(0, transform.rotation);
+            Assert.AreEqual(new[] { 0.4f, 0.6f }, transform.Offset);
+            Assert.AreEqual(new[] { 1f, 1f }, transform.Scale);
+            Assert.AreEqual(0, transform.Rotation);
 #else
             Assert.Ignore("Texture export is disabled! " + LogMessages.GetFullMessage(LogCode.ImageConversionNotEnabled));
 #endif
@@ -72,11 +72,11 @@ namespace GLTFast.Tests.Export
                 renderPipeline,
                 out _);
             Assert.IsTrue(gltfWriter.extensions[Extension.TextureTransform]);
-            var transform = texture.Extensions?.KHR_texture_transform;
+            var transform = texture.Extensions?.TextureTransform;
             Assert.IsNotNull(transform);
-            Assert.AreEqual(new[] { 1.2f, 1.3f }, transform.scale);
-            Assert.AreEqual(new[] { 0f, 0f }, transform.offset);
-            Assert.AreEqual(0, transform.rotation);
+            Assert.AreEqual(new[] { 1.2f, 1.3f }, transform.Scale);
+            Assert.AreEqual(new[] { 0f, 0f }, transform.Offset);
+            Assert.AreEqual(0, transform.Rotation);
 #else
             Assert.Ignore("Texture export is disabled! " + LogMessages.GetFullMessage(LogCode.ImageConversionNotEnabled));
 #endif
@@ -120,12 +120,12 @@ namespace GLTFast.Tests.Export
                 renderPipeline,
                 out _);
             Assert.IsTrue(gltfWriter.extensions[Extension.TextureTransform]);
-            var transform = texture.Extensions?.KHR_texture_transform;
+            var transform = texture.Extensions?.TextureTransform;
             Assert.IsNotNull(transform);
-            Assert.AreEqual(45, transform.rotation);
-            Assert.AreEqual(new[] { 0f, 0f }, transform.offset);
+            Assert.AreEqual(45, transform.Rotation);
+            Assert.AreEqual(new[] { 0f, 0f }, transform.Offset);
             var comparer = new FloatEqualityComparer(10e-8f);
-            Assert.That(transform.scale, Is.EquivalentTo(new[] { 1f, 1f }).Using(comparer));
+            Assert.That(transform.Scale, Is.EquivalentTo(new[] { 1f, 1f }).Using(comparer));
 #else
             Assert.Ignore("Texture export is disabled! " + LogMessages.GetFullMessage(LogCode.ImageConversionNotEnabled));
 #endif
@@ -175,9 +175,9 @@ namespace GLTFast.Tests.Export
             var mrTexture = material.PbrMetallicRoughness?.MetallicRoughnessTexture;
             Assert.NotNull(mrTexture);
 
-            var transform = mrTexture.Extensions?.KHR_texture_transform;
+            var transform = mrTexture.Extensions?.TextureTransform;
             Assert.IsNotNull(transform);
-            Assert.AreEqual(new[] { 2f, 2f }, transform.scale);
+            Assert.AreEqual(new[] { 2f, 2f }, transform.Scale);
 #else
             Assert.Ignore("Texture export is disabled! " + LogMessages.GetFullMessage(LogCode.ImageConversionNotEnabled));
 #endif
@@ -219,7 +219,7 @@ namespace GLTFast.Tests.Export
 
             var oTexture = material.OcclusionTexture;
             Assert.NotNull(oTexture);
-            Assert.AreEqual(.8f, oTexture.strength);
+            Assert.AreEqual(.8f, oTexture.Strength);
 #else
             Assert.Ignore("Texture export is disabled! " + LogMessages.GetFullMessage(LogCode.ImageConversionNotEnabled));
 #endif
@@ -240,11 +240,11 @@ namespace GLTFast.Tests.Export
 
             var oTexture = material.OcclusionTexture;
             Assert.NotNull(oTexture);
-            Assert.AreEqual(.8f, oTexture.strength);
+            Assert.AreEqual(.8f, oTexture.Strength);
 
-            var transform = oTexture.Extensions?.KHR_texture_transform;
+            var transform = oTexture.Extensions?.TextureTransform;
             Assert.IsNotNull(transform);
-            Assert.AreEqual(new[] { 2f, 2f }, transform.scale);
+            Assert.AreEqual(new[] { 2f, 2f }, transform.Scale);
 #else
             Assert.Ignore("Texture export is disabled! " + LogMessages.GetFullMessage(LogCode.ImageConversionNotEnabled));
 #endif
@@ -273,7 +273,7 @@ namespace GLTFast.Tests.Export
             var texture = material.EmissiveTexture;
             Assert.NotNull(texture);
 
-            Assert.IsNull(texture.Extensions?.KHR_texture_transform);
+            Assert.IsNull(texture.Extensions?.TextureTransform);
 #else
             Assert.Ignore("Texture export is disabled! " + LogMessages.GetFullMessage(LogCode.ImageConversionNotEnabled));
 #endif
@@ -294,9 +294,9 @@ namespace GLTFast.Tests.Export
             var texture = material.EmissiveTexture;
             Assert.NotNull(texture);
 
-            var transform = texture.Extensions?.KHR_texture_transform;
+            var transform = texture.Extensions?.TextureTransform;
             Assert.IsNotNull(transform);
-            Assert.AreEqual(new[] { 2f, 3f }, transform.scale);
+            Assert.AreEqual(new[] { 2f, 3f }, transform.Scale);
 #else
             Assert.Ignore("Texture export is disabled! " + LogMessages.GetFullMessage(LogCode.ImageConversionNotEnabled));
 #endif
@@ -316,13 +316,13 @@ namespace GLTFast.Tests.Export
 
             var texture = material.NormalTexture;
             Assert.NotNull(texture);
-            Assert.AreEqual(1.1f, texture.scale);
+            Assert.AreEqual(1.1f, texture.Scale);
 
-            var transform = texture.Extensions?.KHR_texture_transform;
+            var transform = texture.Extensions?.TextureTransform;
             Assert.IsNotNull(transform);
-            Assert.AreEqual(new[] { 1.5f, 1.2f }, transform.scale);
-            Assert.AreEqual(new[] { 0f, 0f }, transform.offset);
-            Assert.AreEqual(0, transform.rotation);
+            Assert.AreEqual(new[] { 1.5f, 1.2f }, transform.Scale);
+            Assert.AreEqual(new[] { 0f, 0f }, transform.Offset);
+            Assert.AreEqual(0, transform.Rotation);
 #else
             Assert.Ignore("Texture export is disabled! " + LogMessages.GetFullMessage(LogCode.ImageConversionNotEnabled));
 #endif
@@ -348,41 +348,41 @@ namespace GLTFast.Tests.Export
             Assert.AreEqual(new[] { 0.787412345f, 0.603827417f, 0.447988421f, 1 }, material.PbrMetallicRoughness.baseColorFactor);
             var baseColorTexture = material.PbrMetallicRoughness.BaseColorTexture;
             Assert.IsNotNull(baseColorTexture);
-            Assert.AreEqual(0, baseColorTexture.index);
-            Assert.AreEqual(0, baseColorTexture.texCoord);
+            Assert.AreEqual(0, baseColorTexture.Index);
+            Assert.AreEqual(0, baseColorTexture.TexCoord);
 
             Assert.AreEqual(1, gltfWriter.extensions.Count);
 
-            var baseColorTransform = baseColorTexture.Extensions?.KHR_texture_transform;
+            var baseColorTransform = baseColorTexture.Extensions?.TextureTransform;
             Assert.IsNotNull(baseColorTransform);
-            Assert.AreEqual(new[] { 0.4f, 0.6f }, baseColorTransform.offset);
-            Assert.AreEqual(new[] { 1f, 1f }, baseColorTransform.scale);
-            Assert.AreEqual(0, baseColorTransform.rotation);
+            Assert.AreEqual(new[] { 0.4f, 0.6f }, baseColorTransform.Offset);
+            Assert.AreEqual(new[] { 1f, 1f }, baseColorTransform.Scale);
+            Assert.AreEqual(0, baseColorTransform.Rotation);
 
             var mrTexture = material.PbrMetallicRoughness?.MetallicRoughnessTexture;
             Assert.NotNull(mrTexture);
 
-            var mrTransform = mrTexture.Extensions?.KHR_texture_transform;
+            var mrTransform = mrTexture.Extensions?.TextureTransform;
             Assert.IsNotNull(mrTransform);
-            Assert.AreEqual(new[] { 1.11f, 1.21f }, mrTransform.scale);
+            Assert.AreEqual(new[] { 1.11f, 1.21f }, mrTransform.Scale);
 
             var normalTexture = material.NormalTexture;
             Assert.NotNull(normalTexture);
-            Assert.AreEqual(0.42f, normalTexture.scale);
+            Assert.AreEqual(0.42f, normalTexture.Scale);
 
-            var normalTransform = normalTexture.Extensions?.KHR_texture_transform;
+            var normalTransform = normalTexture.Extensions?.TextureTransform;
             Assert.IsNotNull(normalTransform);
-            Assert.AreEqual(new[] { 1.5f, 1.2f }, normalTransform.scale);
-            Assert.AreEqual(new[] { 0f, 0f }, normalTransform.offset);
-            Assert.AreEqual(0, normalTransform.rotation);
+            Assert.AreEqual(new[] { 1.5f, 1.2f }, normalTransform.Scale);
+            Assert.AreEqual(new[] { 0f, 0f }, normalTransform.Offset);
+            Assert.AreEqual(0, normalTransform.Rotation);
 
             var oTexture = material.OcclusionTexture;
             Assert.NotNull(oTexture);
-            Assert.AreEqual(.58f, oTexture.strength);
+            Assert.AreEqual(.58f, oTexture.Strength);
 
-            var oTransform = oTexture.Extensions?.KHR_texture_transform;
+            var oTransform = oTexture.Extensions?.TextureTransform;
             Assert.IsNotNull(oTransform);
-            Assert.AreEqual(new[] { 1.1f, 1.2f }, oTransform.scale);
+            Assert.AreEqual(new[] { 1.1f, 1.2f }, oTransform.Scale);
 #else
             Assert.Ignore("Texture export is disabled! " + LogMessages.GetFullMessage(LogCode.ImageConversionNotEnabled));
 #endif
@@ -424,8 +424,8 @@ namespace GLTFast.Tests.Export
             Assert.AreEqual(new[] { 0.787412345f, 0.603827417f, 0.447988421f, 1 }, material.PbrMetallicRoughness.baseColorFactor);
             var texture = material.PbrMetallicRoughness.BaseColorTexture;
             Assert.IsNotNull(texture);
-            Assert.AreEqual(0, texture.index);
-            Assert.AreEqual(0, texture.texCoord);
+            Assert.AreEqual(0, texture.Index);
+            Assert.AreEqual(0, texture.TexCoord);
             return texture;
         }
 

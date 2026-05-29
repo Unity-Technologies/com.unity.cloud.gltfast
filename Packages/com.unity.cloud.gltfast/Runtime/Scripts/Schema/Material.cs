@@ -187,7 +187,7 @@ namespace GLTFast.Schema
         /// <summary>
         /// True if the material requires the mesh to have tangents.
         /// </summary>
-        public bool RequiresTangents => NormalTexture != null && NormalTexture.index >= 0;
+        public bool RequiresTangents => NormalTexture is { Index: >= 0 };
 
         internal void GltfSerialize(JsonWriter writer)
         {

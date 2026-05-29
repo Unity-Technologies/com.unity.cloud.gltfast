@@ -108,10 +108,10 @@ namespace GLTFast.Tests.JsonParsing
             Assert.AreEqual(new Color(.1f, .2f, .3f), mat.Emissive);
             Assert.NotNull(mat.PbrMetallicRoughness);
             Assert.AreEqual(new Color(.1f, .2f, .3f, .4f), mat.PbrMetallicRoughness.BaseColor);
-            var transform = mat.NormalTexture?.Extensions?.KHR_texture_transform;
+            var transform = mat.NormalTexture?.Extensions?.TextureTransform;
             Assert.NotNull(transform);
-            CheckFloatArray(transform.offset, 2, 1, 2);
-            CheckFloatArray(transform.scale, 2, 3, 4);
+            CheckFloatArray(transform.Offset, 2, 1, 2);
+            CheckFloatArray(transform.Scale, 2, 3, 4);
             var ext = mat.Extensions;
             Assert.NotNull(ext?.KHR_materials_sheen);
             Assert.AreEqual(new Color(.1f, .2f, .3f), ext.KHR_materials_sheen.SheenColor);

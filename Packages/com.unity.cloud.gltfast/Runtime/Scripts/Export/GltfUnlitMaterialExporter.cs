@@ -56,8 +56,8 @@ namespace GLTFast.Export
                 {
                     var textureInfo = new TextureInfo
                     {
-                        index = textureId,
-                        texCoord = GltfMaterialExporter.GetValue(unityMaterial, MaterialProperty.BaseColorTextureTexCoord)
+                        Index = textureId,
+                        TexCoord = GltfMaterialExporter.GetValue(unityMaterial, MaterialProperty.BaseColorTextureTexCoord)
                     };
 
                     material.PbrMetallicRoughness ??= new PbrMetallicRoughness();
@@ -73,7 +73,7 @@ namespace GLTFast.Export
                     {
                         material.PbrMetallicRoughness.BaseColorTexture.Extensions = new TextureInfoExtensions
                         {
-                            KHR_texture_transform = textureTransform
+                            TextureTransform = textureTransform
                         };
                     }
                 }

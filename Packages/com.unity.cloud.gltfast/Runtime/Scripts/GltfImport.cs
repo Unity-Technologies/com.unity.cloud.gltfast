@@ -1159,21 +1159,21 @@ namespace GLTFast
         /// <returns>Image's data (needs to be disposed after consumption)</returns>
         async Task<IReadOnlyDisposableData> GetImageDataAsync(Image image, CancellationToken cancellationToken)
         {
-            if (image.bufferView >= 0)
+            if (image.BufferView >= 0)
             {
-                var bufferView = Root.BufferViews[image.bufferView];
+                var bufferView = Root.BufferViews[image.BufferView];
                 return new ReadOnlyData(
                     await GetBufferViewAsync(bufferView),
                     null
                     );
             }
 
-            if (!string.IsNullOrEmpty(image.uri))
+            if (!string.IsNullOrEmpty(image.Uri))
             {
-                if (DataUri.IsDataUri(image.uri))
+                if (DataUri.IsDataUri(image.Uri))
                 {
                     Logger?.Warning(LogCode.EmbedSlow);
-                    var data = await DataUri.DecodeDataUriAsync(image.uri, DeferAgent, cancellationToken);
+                    var data = await DataUri.DecodeDataUriAsync(image.Uri, DeferAgent, cancellationToken);
                     if (data is null)
                     {
                         Logger?.Error(LogCode.EmbedImageLoadFailed);
@@ -1182,7 +1182,7 @@ namespace GLTFast
                     return data;
                 }
 
-                var uri = UriHelper.GetUriString(image.uri, BaseUri);
+                var uri = UriHelper.GetUriString(image.Uri, BaseUri);
                 if (!uri.IsAbsoluteUri && BaseUri == null)
                 {
                     Logger?.Error(
@@ -1652,11 +1652,11 @@ namespace GLTFast
                     void SetTextureGamma(TextureInfo textureInfo)
                     {
                         if (
-                            textureInfo is { index: >= 0 } &&
-                            textureInfo.index < Root.Textures.Count
+                            textureInfo is { Index: >= 0 } &&
+                            textureInfo.Index < Root.Textures.Count
                         )
                         {
-                            textureGamma[textureInfo.index] = true;
+                            textureGamma[textureInfo.Index] = true;
                         }
                     }
 
@@ -1698,9 +1698,9 @@ namespace GLTFast
                         // Determine which images need to be readable, because they
                         // are applied using different samplers.
                         SamplerKey key;
-                        if (txt.sampler >= 0)
+                        if (txt.Sampler >= 0)
                         {
-                            var sampler = Root.Samplers[txt.sampler];
+                            var sampler = Root.Samplers[txt.Sampler];
                             key = new SamplerKey(sampler);
                         }
                         else
@@ -1797,13 +1797,13 @@ namespace GLTFast
                         continue;
                     }
 
-                    if (!string.IsNullOrEmpty(img.uri) && !DataUri.IsDataUri(img.uri))
+                    if (!string.IsNullOrEmpty(img.Uri) && !DataUri.IsDataUri(img.Uri))
                     {
                         // Load from URI
                         // Detect format based on mimeType or URI file extension.
-                        var imgFormat = string.IsNullOrEmpty(img.mimeType)
-                            ? UriHelper.GetImageFormatFromUri(img.uri)
-                            : ImageFormatExtensions.FromMimeType(img.mimeType);
+                        var imgFormat = string.IsNullOrEmpty(img.MimeType)
+                            ? UriHelper.GetImageFormatFromUri(img.Uri)
+                            : ImageFormatExtensions.FromMimeType(img.MimeType);
 
                         if (imgFormat is ImageFormat.Jpeg or ImageFormat.Png)
                         {
@@ -1842,7 +1842,7 @@ namespace GLTFast
                                 );
                             if (!loadFromBytes)
                             {
-                                var uri = UriHelper.GetUriString(img.uri, BaseUri);
+                                var uri = UriHelper.GetUriString(img.Uri, BaseUri);
                                 m_TextureLoadTasks[textureIndex] = ImageConversionImageLoader.LoadAsync(
                                     m_Context, uri, readable, cancellationToken);
                                 continue;
@@ -2727,16 +2727,16 @@ namespace GLTFast
                     if (originalTexture.isReadable)
                     {
                         Sampler sampler = null;
-                        if (Root.Samplers != null && txt.sampler >= 0 && txt.sampler < Root.Samplers.Count)
+                        if (Root.Samplers != null && txt.Sampler >= 0 && txt.Sampler < Root.Samplers.Count)
                         {
-                            sampler = Root.Samplers[txt.sampler];
+                            sampler = Root.Samplers[txt.Sampler];
                         }
 
                         sampler ??= new Sampler();
 
                         var texture = UnityEngine.Object.Instantiate(originalTexture);
 #if DEBUG
-                        texture.name = $"{originalTexture.name}_sampler{txt.sampler}";
+                        texture.name = $"{originalTexture.name}_sampler{txt.Sampler}";
                         Logger?.Warning(LogCode.ImageMultipleSamplers, GetImageIndexFromTexture(txt, textureIndex).ToString());
 #endif
                         sampler.Apply(texture, m_Settings.DefaultMinFilterMode, m_Settings.DefaultMagFilterMode);
@@ -2747,7 +2747,7 @@ namespace GLTFast
                     {
                         Logger?.Warning(
                             LogCode.TextureSamplerNotApplied,
-                            txt.sampler >= 0 ? $"#{txt.sampler}" : "default",
+                            txt.Sampler >= 0 ? $"#{txt.Sampler}" : "default",
                             textureIndex.ToString(),
                             txt.GetImageIndex().ToString()
                         );

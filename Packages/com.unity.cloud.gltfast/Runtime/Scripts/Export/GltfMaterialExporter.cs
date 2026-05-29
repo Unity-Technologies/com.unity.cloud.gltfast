@@ -81,8 +81,8 @@ namespace GLTFast.Export
                 {
                     var textureInfo = new TextureInfo
                     {
-                        index = textureId,
-                        texCoord = GetValue(unityMaterial, MaterialProperty.BaseColorTextureTexCoord)
+                        Index = textureId,
+                        TexCoord = GetValue(unityMaterial, MaterialProperty.BaseColorTextureTexCoord)
                     };
 
                     material.PbrMetallicRoughness.BaseColorTexture = textureInfo;
@@ -97,7 +97,7 @@ namespace GLTFast.Export
                     {
                         material.PbrMetallicRoughness.BaseColorTexture.Extensions = new TextureInfoExtensions
                         {
-                            KHR_texture_transform = textureTransform
+                            TextureTransform = textureTransform
                         };
                     }
                 }
@@ -123,8 +123,8 @@ namespace GLTFast.Export
             {
                 var textureInfo = new TextureInfo
                 {
-                    index = textureId,
-                    texCoord = GetValue(unityMaterial, MaterialProperty.MetallicRoughnessMapTexCoord)
+                    Index = textureId,
+                    TexCoord = GetValue(unityMaterial, MaterialProperty.MetallicRoughnessMapTexCoord)
                 };
 
                 if (TryCreateTextureTransform(
@@ -137,7 +137,7 @@ namespace GLTFast.Export
                 {
                     textureInfo.Extensions = new TextureInfoExtensions
                     {
-                        KHR_texture_transform = textureTransform
+                        TextureTransform = textureTransform
                     };
                 }
 
@@ -175,9 +175,9 @@ namespace GLTFast.Export
             TryGetValue(unityMaterial, MaterialProperty.NormalTextureScale, out float normalScale);
             var textureInfo = new NormalTextureInfo
             {
-                index = textureId,
-                texCoord = GetValue(unityMaterial, MaterialProperty.NormalTextureTexCoord),
-                scale = normalScale
+                Index = textureId,
+                TexCoord = GetValue(unityMaterial, MaterialProperty.NormalTextureTexCoord),
+                Scale = normalScale
             };
 
             material.NormalTexture = textureInfo;
@@ -192,7 +192,7 @@ namespace GLTFast.Export
             {
                 material.NormalTexture.Extensions = new TextureInfoExtensions
                 {
-                    KHR_texture_transform = textureTransform
+                    TextureTransform = textureTransform
                 };
             }
 
@@ -217,9 +217,9 @@ namespace GLTFast.Export
             TryGetValue(unityMaterial, MaterialProperty.OcclusionTextureStrength, out float occlusionStrength);
             var info = new OcclusionTextureInfo
             {
-                index = textureId,
-                texCoord = GetValue(unityMaterial, MaterialProperty.OcclusionTextureTexCoord),
-                strength = occlusionStrength
+                Index = textureId,
+                TexCoord = GetValue(unityMaterial, MaterialProperty.OcclusionTextureTexCoord),
+                Strength = occlusionStrength
             };
 
             material.OcclusionTexture = info;
@@ -234,7 +234,7 @@ namespace GLTFast.Export
             {
                 material.OcclusionTexture.Extensions = new TextureInfoExtensions
                 {
-                    KHR_texture_transform = textureTransform
+                    TextureTransform = textureTransform
                 };
             }
 
@@ -252,8 +252,8 @@ namespace GLTFast.Export
                 {
                     var info = new TextureInfo
                     {
-                        index = textureId,
-                        texCoord = GetValue(unityMaterial, MaterialProperty.EmissiveTextureTexCoord)
+                        Index = textureId,
+                        TexCoord = GetValue(unityMaterial, MaterialProperty.EmissiveTextureTexCoord)
                     };
 
                     material.EmissiveTexture = info;
@@ -268,7 +268,7 @@ namespace GLTFast.Export
                     {
                         material.EmissiveTexture.Extensions = new TextureInfoExtensions
                         {
-                            KHR_texture_transform = textureTransform
+                            TextureTransform = textureTransform
                         };
                     }
                 }
@@ -302,7 +302,7 @@ namespace GLTFast.Export
             if (math.abs(st.z) >= float.Epsilon || math.abs(st.w) >= float.Epsilon)
             {
                 result ??= new TextureTransform();
-                result.offset = new[] { st.z, st.w };
+                result.Offset = new[] { st.z, st.w };
             }
 
             var uvTransform = UvTransform.FromMatrix(new float2x2(st.x, st.y, r.x, r.y));
@@ -310,14 +310,14 @@ namespace GLTFast.Export
             if (math.abs(uvTransform.rotation) > float.Epsilon)
             {
                 result ??= new TextureTransform();
-                result.rotation = uvTransform.rotation;
+                result.Rotation = uvTransform.rotation;
             }
 
             if (math.abs(uvTransform.scale.x - 1) > math.EPSILON
                 || math.abs(uvTransform.scale.y - 1) > math.EPSILON)
             {
                 result ??= new TextureTransform();
-                result.scale = new[] { uvTransform.scale[0], uvTransform.scale[1] };
+                result.Scale = new[] { uvTransform.scale[0], uvTransform.scale[1] };
             }
 
             if (result != null)

@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: 2023 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
+using Unity.Gltfast.Text.Json.Serialization;
 using Unity.Mathematics;
 
 namespace GLTFast.Schema
@@ -8,7 +9,6 @@ namespace GLTFast.Schema
     /// <summary>
     /// Normal map specific texture info
     /// </summary>
-    [System.Serializable]
     public class NormalTextureInfo : TextureInfo
     {
 
@@ -17,15 +17,16 @@ namespace GLTFast.Schema
         /// This value is ignored if normalTexture is not specified.
         /// This value is linear.
         /// </summary>
-        public float scale = 1.0f;
+        [JsonPropertyName("scale")]
+        public float Scale { get; set; } = 1.0f;
 
         internal override void GltfSerialize(JsonWriter writer)
         {
             writer.AddObject();
             GltfSerializeTextureInfo(writer);
-            if (math.abs(scale - 1f) > Constants.epsilon)
+            if (math.abs(Scale - 1f) > Constants.epsilon)
             {
-                writer.AddProperty("scale", scale);
+                writer.AddProperty("scale", Scale);
             }
             writer.Close();
         }

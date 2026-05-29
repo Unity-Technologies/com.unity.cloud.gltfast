@@ -268,7 +268,7 @@ namespace GLTFast.Export
                             {
                                 pbr.MetallicRoughnessTexture = new TextureInfo
                                 {
-                                    index = ormTextureId
+                                    Index = ormTextureId
                                 };
                                 ExportTextureTransform(pbr.MetallicRoughnessTexture, uMaterial, k_MaskMap, gltf);
                             }
@@ -281,8 +281,8 @@ namespace GLTFast.Export
                                 // texture info if not.
                                 material.OcclusionTexture = new OcclusionTextureInfo
                                 {
-                                    index = ormTextureId,
-                                    strength = occStrength
+                                    Index = ormTextureId,
+                                    Strength = occStrength
                                 };
                                 ExportTextureTransform(
                                     material.OcclusionTexture,

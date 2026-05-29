@@ -11,7 +11,6 @@ namespace GLTFast.Schema
     /// <summary>
     /// Image data used to create a texture.
     /// </summary>
-    [System.Serializable]
     public class Image : NamedObject, IGltfObject
     {
         /// <summary>
@@ -19,24 +18,29 @@ namespace GLTFast.Schema
         /// Instead of referencing an external file, the uri can also be a data-uri.
         /// The image format must be jpg, png, bmp, or gif.
         /// </summary>
-        public string uri;
+        [JsonPropertyName("uri")]
+        public string Uri { get; set; }
 
         /// <summary>
         /// The image's MIME type.
         /// </summary>
-        public string mimeType;
+        [JsonPropertyName("mimeType")]
+        public string MimeType { get; set; }
 
         /// <summary>
         /// The index of the bufferView that contains the image.
         /// Use this instead of the image's uri property.
         /// </summary>
-        public int bufferView = -1;
+        [JsonPropertyName("bufferView")]
+        public int BufferView { get; set; } = -1;
 
-        /// <inheritdoc cref="Asset.extensions"/>
-        public UnclassifiedData extensions;
+        /// <inheritdoc cref="Asset.Extensions"/>
+        [JsonPropertyName("extensions")]
+        public UnclassifiedData Extensions { get; set; }
 
-        /// <inheritdoc cref="Root.extras"/>
-        public UnclassifiedData extras;
+        /// <inheritdoc cref="Root.Extras"/>
+        [JsonPropertyName("extras")]
+        public UnclassifiedData Extras { get; set; }
 
         /// <summary>JSON properties without a matching member.</summary>
         [JsonExtensionData, JsonInclude] internal Dictionary<string, JsonElement> ExtensionsData { get; set; }
@@ -51,17 +55,17 @@ namespace GLTFast.Schema
         {
             writer.AddObject();
             GltfSerializeName(writer);
-            if (!string.IsNullOrEmpty(uri))
+            if (!string.IsNullOrEmpty(Uri))
             {
-                writer.AddPropertySafe("uri", uri);
+                writer.AddPropertySafe("uri", Uri);
             }
-            if (!string.IsNullOrEmpty(mimeType))
+            if (!string.IsNullOrEmpty(MimeType))
             {
-                writer.AddProperty("mimeType", mimeType);
+                writer.AddProperty("mimeType", MimeType);
             }
-            if (bufferView >= 0)
+            if (BufferView >= 0)
             {
-                writer.AddProperty("bufferView", bufferView);
+                writer.AddProperty("bufferView", BufferView);
             }
             writer.Close();
         }

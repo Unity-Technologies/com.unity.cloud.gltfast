@@ -7,19 +7,18 @@ using Unity.Gltfast.Text.Json.Serialization;
 
 namespace GLTFast.Schema
 {
-
     /// <summary>
     /// Texture extensions
     /// </summary>
-    [System.Serializable]
     public class TextureExtensions : IGltfObject
     {
         /// <inheritdoc cref="Extension.TextureBasisUniversal"/>
-        // ReSharper disable once InconsistentNaming
-        public TextureBasisUniversal KHR_texture_basisu;
+        [JsonPropertyName("KHR_texture_basisu")]
+        public TextureBasisUniversal BasisU { get; set; }
 
-        /// <inheritdoc cref="Root.extras"/>
-        public UnclassifiedData extras;
+        /// <inheritdoc cref="Root.Extras"/>
+        [JsonPropertyName("extras")]
+        public UnclassifiedData Extras { get; set; }
 
         /// <summary>JSON properties without a matching member.</summary>
         [JsonExtensionData, JsonInclude] internal Dictionary<string, JsonElement> ExtensionsData { get; set; }
@@ -34,20 +33,5 @@ namespace GLTFast.Schema
         {
             throw new System.NotImplementedException($"GltfSerialize missing on {GetType()}");
         }
-    }
-
-    /// <summary>
-    /// Basis Universal texture extension
-    /// </summary>
-    /// <seealso cref="Extension.TextureBasisUniversal"/>
-    [System.Serializable]
-    public class TextureBasisUniversal
-    {
-
-        /// <summary>
-        /// Index of the image which defines a reference to the KTX v2 image
-        /// with Basis Universal super-compression.
-        /// </summary>
-        public int source = -1;
     }
 }

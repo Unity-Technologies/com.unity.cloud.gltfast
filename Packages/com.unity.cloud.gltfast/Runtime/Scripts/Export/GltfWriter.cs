@@ -416,7 +416,7 @@ namespace GLTFast.Export
             var image = new Image
             {
                 Name = imageExport.FileName,
-                mimeType = imageExport.MimeType
+                MimeType = imageExport.MimeType
             };
 
             imageExport.JpgQuality = m_Settings.JpgQuality;
@@ -439,8 +439,8 @@ namespace GLTFast.Export
 
             var texture = new Texture
             {
-                source = imageId,
-                sampler = samplerId
+                Source = imageId,
+                Sampler = samplerId
             };
 
             var index = m_Textures.FindIndex(i => TextureComparer.Equals(i, texture));
@@ -1851,7 +1851,7 @@ namespace GLTFast.Export
                         var imageBytes = imageExport.GetData();
                         if (imageBytes != null)
                         {
-                            m_Images[imageId].bufferView = WriteBufferViewToBuffer(imageBytes, BufferViewTarget.None);
+                            m_Images[imageId].BufferView = WriteBufferViewToBuffer(imageBytes, BufferViewTarget.None);
                         }
                     }
                     else if (imageDest == ImageDestination.SeparateFile)
@@ -1862,7 +1862,7 @@ namespace GLTFast.Export
                         }
                         if (imageExport.Write(Path.Combine(directory, fileName), overwrite))
                         {
-                            m_Images[imageId].uri = fileName;
+                            m_Images[imageId].Uri = fileName;
                         }
                         else
                         {

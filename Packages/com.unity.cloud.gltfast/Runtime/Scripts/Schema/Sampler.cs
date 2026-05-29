@@ -1,7 +1,6 @@
 // SPDX-FileCopyrightText: 2023 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
-using System;
 using System.Collections.Generic;
 using Unity.Gltfast.Text.Json;
 using Unity.Gltfast.Text.Json.Serialization;
@@ -12,7 +11,6 @@ namespace GLTFast.Schema
     /// <summary>
     /// Texture sampler properties for filtering and wrapping modes.
     /// </summary>
-    [Serializable]
     public class Sampler : NamedObject, IGltfObject
     {
         /// <summary>
@@ -20,8 +18,8 @@ namespace GLTFast.Schema
         /// </summary>
         public enum MagFilterMode
         {
-            /// <summary>No value</summary>
-            None = 0,
+            /// <summary>Undefined</summary>
+            Undefined = 0,
             /// <summary>Nearest pixel sampling</summary>
             Nearest = 9728,
             /// <summary>Linear pixel interpolation sampling</summary>
@@ -33,8 +31,8 @@ namespace GLTFast.Schema
         /// </summary>
         public enum MinFilterMode
         {
-            /// <summary>No value</summary>
-            None = 0,
+            /// <summary>Undefined</summary>
+            Undefined = 0,
             /// <summary>Nearest pixel sampling</summary>
             Nearest = 9728,
             /// <summary>Linear pixel interpolation sampling</summary>
@@ -54,8 +52,8 @@ namespace GLTFast.Schema
         /// </summary>
         public enum WrapMode
         {
-            /// <summary>No value</summary>
-            None = 0,
+            /// <summary>Undefined</summary>
+            Undefined = 0,
             /// <summary>Clamp to edge</summary>
             ClampToEdge = 33071,
             /// <summary>Mirrored repeat</summary>
@@ -68,28 +66,34 @@ namespace GLTFast.Schema
         /// Magnification filter.
         /// Valid values correspond to WebGL enums: `9728` (NEAREST) and `9729` (LINEAR).
         /// </summary>
-        public MagFilterMode magFilter = MagFilterMode.None;
+        [JsonPropertyName("magFilter")]
+        public MagFilterMode MagFilter { get; set; } = MagFilterMode.Undefined;
 
         /// <summary>
         /// Minification filter. All valid values correspond to WebGL enums.
         /// </summary>
-        public MinFilterMode minFilter = MinFilterMode.None;
+        [JsonPropertyName("minFilter")]
+        public MinFilterMode MinFilter { get; set; } = MinFilterMode.Undefined;
 
         /// <summary>
         /// s wrapping mode.  All valid values correspond to WebGL enums.
         /// </summary>
-        public WrapMode wrapS = WrapMode.Repeat;
+        [JsonPropertyName("wrapS")]
+        public WrapMode WrapS { get; set; } = WrapMode.Repeat;
 
         /// <summary>
         /// t wrapping mode.  All valid values correspond to WebGL enums.
         /// </summary>
-        public WrapMode wrapT = WrapMode.Repeat;
+        [JsonPropertyName("wrapT")]
+        public WrapMode WrapT { get; set; } = WrapMode.Repeat;
 
-        /// <inheritdoc cref="Asset.extensions"/>
-        public UnclassifiedData extensions;
+        /// <inheritdoc cref="Asset.Extensions"/>
+        [JsonPropertyName("extensions")]
+        public UnclassifiedData Extensions { get; set; }
 
-        /// <inheritdoc cref="Root.extras"/>
-        public UnclassifiedData extras;
+        /// <inheritdoc cref="Root.Extras"/>
+        [JsonPropertyName("extras")]
+        public UnclassifiedData Extras { get; set; }
 
         /// <summary>JSON properties without a matching member.</summary>
         [JsonExtensionData, JsonInclude] internal Dictionary<string, JsonElement> ExtensionsData { get; set; }
@@ -102,21 +106,21 @@ namespace GLTFast.Schema
 
         /// <summary>
         /// Unity filter mode, derived from glTF's
-        /// <see cref="minFilter"/> and <see cref="magFilter"/>.
+        /// <see cref="MinFilter"/> and <see cref="MagFilter"/>.
         /// </summary>
-        public FilterMode FilterMode => ConvertFilterMode(minFilter, magFilter);
+        public FilterMode FilterMode => ConvertFilterMode(MinFilter, MagFilter);
 
         /// <summary>
         /// Unity texture wrap mode (horizontal), derived from glTF's
-        /// <see cref="wrapS"/> value.
+        /// <see cref="WrapS"/> value.
         /// </summary>
-        public TextureWrapMode WrapU => ConvertWrapMode(wrapS);
+        public TextureWrapMode WrapU => ConvertWrapMode(WrapS);
 
         /// <summary>
         /// Unity texture wrap mode (vertical), derived from glTF's
-        /// <see cref="wrapT"/> value.
+        /// <see cref="WrapT"/> value.
         /// </summary>
-        public TextureWrapMode WrapV => ConvertWrapMode(wrapT);
+        public TextureWrapMode WrapV => ConvertWrapMode(WrapT);
 
         static FilterMode ConvertFilterMode(MinFilterMode minFilterToConvert, MagFilterMode magFilterToConvert)
         {
@@ -142,7 +146,7 @@ namespace GLTFast.Schema
         {
             switch (wrapMode)
             {
-                case WrapMode.None:
+                case WrapMode.Undefined:
                 case WrapMode.Repeat:
                 default:
                     return TextureWrapMode.Repeat;
@@ -185,21 +189,21 @@ namespace GLTFast.Schema
             switch (filterMode)
             {
                 case FilterMode.Point:
-                    magFilter = MagFilterMode.Nearest;
-                    minFilter = MinFilterMode.Nearest;
+                    MagFilter = MagFilterMode.Nearest;
+                    MinFilter = MinFilterMode.Nearest;
                     break;
                 case FilterMode.Bilinear:
-                    magFilter = MagFilterMode.Linear;
-                    minFilter = MinFilterMode.Linear;
+                    MagFilter = MagFilterMode.Linear;
+                    MinFilter = MinFilterMode.Linear;
                     break;
                 case FilterMode.Trilinear:
-                    magFilter = MagFilterMode.Linear;
-                    minFilter = MinFilterMode.LinearMipmapLinear;
+                    MagFilter = MagFilterMode.Linear;
+                    MinFilter = MinFilterMode.LinearMipmapLinear;
                     break;
             }
 
-            wrapS = ConvertWrapMode(wrapModeU);
-            wrapT = ConvertWrapMode(wrapModeV);
+            WrapS = ConvertWrapMode(wrapModeU);
+            WrapT = ConvertWrapMode(wrapModeV);
         }
 
         /// <summary>
@@ -218,8 +222,8 @@ namespace GLTFast.Schema
 
             // Use the default filtering mode for textures that have no such specification in data
             image.filterMode = ConvertFilterMode(
-                minFilter == MinFilterMode.None ? defaultMinFilter : minFilter,
-                magFilter == MagFilterMode.None ? defaultMagFilter : magFilter
+                MinFilter == MinFilterMode.Undefined ? defaultMinFilter : MinFilter,
+                MagFilter == MagFilterMode.Undefined ? defaultMagFilter : MagFilter
             );
         }
 
@@ -229,23 +233,23 @@ namespace GLTFast.Schema
             GltfSerializeName(writer);
             // Assuming MagFilterMode.Linear is the project's default, only
             // serialize valid, non-default values
-            if (magFilter == MagFilterMode.Nearest)
+            if (MagFilter == MagFilterMode.Nearest)
             {
-                writer.AddProperty("magFilter", (int)magFilter);
+                writer.AddProperty("magFilter", (int)MagFilter);
             }
             // Assuming MinFilterMode.Linear is the project's default, only
             // serialize valid, non-default values
-            if (minFilter != MinFilterMode.None && minFilter != MinFilterMode.Linear)
+            if (MinFilter != MinFilterMode.Undefined && MinFilter != MinFilterMode.Linear)
             {
-                writer.AddProperty("minFilter", (int)minFilter);
+                writer.AddProperty("minFilter", (int)MinFilter);
             }
-            if (wrapS != WrapMode.None && wrapS != WrapMode.Repeat)
+            if (WrapS != WrapMode.Undefined && WrapS != WrapMode.Repeat)
             {
-                writer.AddProperty("wrapS", (int)wrapS);
+                writer.AddProperty("wrapS", (int)WrapS);
             }
-            if (wrapT != WrapMode.None && wrapT != WrapMode.Repeat)
+            if (WrapT != WrapMode.Undefined && WrapT != WrapMode.Repeat)
             {
-                writer.AddProperty("wrapT", (int)wrapT);
+                writer.AddProperty("wrapT", (int)WrapT);
             }
             writer.Close();
         }

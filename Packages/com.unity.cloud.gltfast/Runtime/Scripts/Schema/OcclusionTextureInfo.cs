@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: 2023 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
+using Unity.Gltfast.Text.Json.Serialization;
 using Unity.Mathematics;
 
 namespace GLTFast.Schema
@@ -8,7 +9,6 @@ namespace GLTFast.Schema
     /// <summary>
     /// Occlusion map specific texture info
     /// </summary>
-    [System.Serializable]
     public class OcclusionTextureInfo : TextureInfo
     {
         /// <summary>
@@ -18,15 +18,16 @@ namespace GLTFast.Schema
         /// This value is ignored if the corresponding texture is not specified.
         /// This value is linear.
         /// </summary>
-        public float strength = 1.0f;
+        [JsonPropertyName("strength")]
+        public float Strength { get; set; } = 1.0f;
 
         internal override void GltfSerialize(JsonWriter writer)
         {
             writer.AddObject();
             GltfSerializeTextureInfo(writer);
-            if (math.abs(strength - 1f) > Constants.epsilon)
+            if (math.abs(Strength - 1f) > Constants.epsilon)
             {
-                writer.AddProperty("strength", strength);
+                writer.AddProperty("strength", Strength);
             }
             writer.Close();
         }

@@ -236,13 +236,13 @@ namespace GLTFast.Export
                 {
                     if (material.PbrMetallicRoughness.MetallicRoughnessTexture != null)
                     {
-                        material.PbrMetallicRoughness.MetallicRoughnessTexture.index = ormTextureId;
+                        material.PbrMetallicRoughness.MetallicRoughnessTexture.Index = ormTextureId;
                         ExportTextureTransform(material.PbrMetallicRoughness.MetallicRoughnessTexture, uMaterial, mainTexProperty, gltf);
                     }
 
                     if (ormImageExport.HasOcclusion)
                     {
-                        material.OcclusionTexture.index = ormTextureId;
+                        material.OcclusionTexture.Index = ormTextureId;
                     }
                 }
 #if UNITY_IMAGECONVERSION
@@ -257,7 +257,7 @@ namespace GLTFast.Export
             {
                 if (uMaterial.HasProperty(k_OcclusionStrength))
                 {
-                    material.OcclusionTexture.strength = uMaterial.GetFloat(k_OcclusionStrength);
+                    material.OcclusionTexture.Strength = uMaterial.GetFloat(k_OcclusionStrength);
                 }
             }
 
@@ -461,7 +461,7 @@ namespace GLTFast.Export
             {
                 return new OcclusionTextureInfo
                 {
-                    index = textureId
+                    Index = textureId
                 };
             }
             return null;

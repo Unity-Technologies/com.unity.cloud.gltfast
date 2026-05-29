@@ -21,8 +21,8 @@ namespace GLTFast.Export
             if (ReferenceEquals(x, y)) return true;
             if (x is null) return false;
             if (y is null) return false;
-            return x.sampler == y.sampler
-                && x.source == y.source;
+            return x.Sampler == y.Sampler
+                && x.Source == y.Source;
         }
     }
 }

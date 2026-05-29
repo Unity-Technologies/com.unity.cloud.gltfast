@@ -8,50 +8,53 @@ namespace GLTFast.Schema
 {
 
     /// <inheritdoc cref="Extension.TextureTransform"/>
-    [System.Serializable]
     public class TextureTransform
     {
 
         /// <summary>
         /// The offset of the UV coordinate origin as a factor of the texture dimensions.
         /// </summary>
+        [JsonPropertyName("offset")]
         [JsonConverter(typeof(Float2ArrayConverter))]
-        public float[] offset = { 0, 0 };
+        public float[] Offset { get; set; } = { 0, 0 };
 
         /// <summary>
         /// Rotate the UVs by this many radians counter-clockwise around the origin. This is equivalent to a similar rotation of the image clockwise.
         /// </summary>
-        public float rotation;
+        [JsonPropertyName("rotation")]
+        public float Rotation { get; set; }
 
         /// <summary>
         /// The scale factor applied to the components of the UV coordinates.
         /// </summary>
+        [JsonPropertyName("scale")]
         [JsonConverter(typeof(Float2ArrayConverter))]
-        public float[] scale = { 1, 1 };
+        public float[] Scale { get; set; } = { 1, 1 };
 
         /// <summary>
         /// Overrides the textureInfo texCoord value if supplied, and if this extension is supported.
         /// </summary>
-        public int texCoord = -1;
+        [JsonPropertyName("texCoord")]
+        public int TexCoord { get; set; } = -1;
 
         internal void GltfSerialize(JsonWriter writer)
         {
             writer.AddObject();
-            if (offset != null)
+            if (Offset != null)
             {
-                writer.AddArrayProperty("offset", offset);
+                writer.AddArrayProperty("offset", Offset);
             }
-            if (scale != null)
+            if (Scale != null)
             {
-                writer.AddArrayProperty("scale", scale);
+                writer.AddArrayProperty("scale", Scale);
             }
-            if (math.abs(rotation) >= float.Epsilon)
+            if (math.abs(Rotation) >= float.Epsilon)
             {
-                writer.AddProperty("rotation", rotation);
+                writer.AddProperty("rotation", Rotation);
             }
-            if (texCoord >= 0)
+            if (TexCoord >= 0)
             {
-                writer.AddProperty("texCoord", texCoord);
+                writer.AddProperty("texCoord", TexCoord);
             }
             writer.Close();
         }

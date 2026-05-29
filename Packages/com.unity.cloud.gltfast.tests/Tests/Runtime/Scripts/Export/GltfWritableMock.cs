@@ -97,8 +97,8 @@ namespace GLTFast.Tests.Export
 
             var texture = new Texture
             {
-                source = imageId,
-                sampler = samplerId
+                Source = imageId,
+                Sampler = samplerId
             };
 
             var index = textures.FindIndex(i => TextureComparer.Equals(i, texture));

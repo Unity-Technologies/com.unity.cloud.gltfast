@@ -341,9 +341,9 @@ namespace GLTFast.Materials
             int uvChannelPropertyId = -1
             )
         {
-            if (textureInfo != null && textureInfo.index >= 0)
+            if (textureInfo is { Index: >= 0 })
             {
-                int textureIndex = textureInfo.index;
+                int textureIndex = textureInfo.Index;
                 var srcTexture = gltf.GetSourceTexture(textureIndex);
                 if (srcTexture != null)
                 {
@@ -401,31 +401,31 @@ namespace GLTFast.Materials
                 0, 0 // translation
                 );
 
-            var texCoord = textureInfo.texCoord;
+            var texCoord = textureInfo.TexCoord;
 
-            if (textureInfo.Extensions?.KHR_texture_transform != null)
+            if (textureInfo.Extensions?.TextureTransform != null)
             {
                 hasTransform = true;
-                var tt = textureInfo.Extensions.KHR_texture_transform;
-                if (tt.texCoord >= 0)
+                var tt = textureInfo.Extensions.TextureTransform;
+                if (tt.TexCoord >= 0)
                 {
-                    texCoord = tt.texCoord;
+                    texCoord = tt.TexCoord;
                 }
 
-                if (tt.offset != null)
+                if (tt.Offset != null)
                 {
-                    textureScaleTranslation.z = tt.offset[0];
-                    textureScaleTranslation.w = 1 - tt.offset[1];
+                    textureScaleTranslation.z = tt.Offset[0];
+                    textureScaleTranslation.w = 1 - tt.Offset[1];
                 }
-                if (tt.scale != null)
+                if (tt.Scale != null)
                 {
-                    textureScaleTranslation.x = tt.scale[0];
-                    textureScaleTranslation.y = tt.scale[1];
+                    textureScaleTranslation.x = tt.Scale[0];
+                    textureScaleTranslation.y = tt.Scale[1];
                 }
-                if (math.abs(tt.rotation) >= float.Epsilon)
+                if (math.abs(tt.Rotation) >= float.Epsilon)
                 {
-                    var cos = math.cos(tt.rotation);
-                    var sin = math.sin(tt.rotation);
+                    var cos = math.cos(tt.Rotation);
+                    var sin = math.sin(tt.Rotation);
 
                     var newRot = new Vector2(textureScaleTranslation.x * sin, textureScaleTranslation.y * -sin);
 

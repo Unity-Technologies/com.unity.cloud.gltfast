@@ -10,28 +10,30 @@ namespace GLTFast.Schema
     /// <summary>
     /// Reference to a texture.
     /// </summary>
-    [System.Serializable]
     public class TextureInfo : IGltfObject
     {
 
         /// <summary>
         /// The index of the texture.
         /// </summary>
-        public int index = -1;
+        [JsonPropertyName("index")]
+        public int Index { get; set; } = -1;
 
         /// <summary>
         /// This integer value is used to construct a string in the format
         /// TEXCOORD_&lt;set index&gt; which is a reference to a key in
         /// mesh.primitives.attributes (e.g. A value of 0 corresponds to TEXCOORD_0).
         /// </summary>
-        public int texCoord;
+        [JsonPropertyName("texCoord")]
+        public int TexCoord { get; set; }
 
         /// <inheritdoc cref="TextureInfoExtensions"/>
         [JsonPropertyName("extensions")]
         public TextureInfoExtensions Extensions { get; set; }
 
-        /// <inheritdoc cref="Root.extras"/>
-        public UnclassifiedData extras;
+        /// <inheritdoc cref="Root.Extras"/>
+        [JsonPropertyName("extras")]
+        public UnclassifiedData Extras { get; set; }
 
         /// <summary>JSON properties without a matching member.</summary>
         [JsonExtensionData, JsonInclude] internal Dictionary<string, JsonElement> ExtensionsData { get; set; }
@@ -44,24 +46,24 @@ namespace GLTFast.Schema
 
         /// <summary>
         /// Applies a texture transform by initializing <see cref="Extensions" /> (if required) and setting its
-        /// <see cref="TextureInfoExtensions.KHR_texture_transform" /> field.
+        /// <see cref="TextureInfoExtensions.TextureTransform" /> field.
         /// </summary>
         /// <param name="textureTransform">Texture transform to apply.</param>
         internal void SetTextureTransform(TextureTransform textureTransform)
         {
             Extensions ??= new TextureInfoExtensions();
-            Extensions.KHR_texture_transform = textureTransform;
+            Extensions.TextureTransform = textureTransform;
         }
 
         internal void GltfSerializeTextureInfo(JsonWriter writer)
         {
-            if (index >= 0)
+            if (Index >= 0)
             {
-                writer.AddProperty("index", index);
+                writer.AddProperty("index", Index);
             }
-            if (texCoord > 0)
+            if (TexCoord > 0)
             {
-                writer.AddProperty("texCoord", texCoord);
+                writer.AddProperty("texCoord", TexCoord);
             }
 
             if (Extensions != null)

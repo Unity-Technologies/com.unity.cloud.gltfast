@@ -161,13 +161,13 @@ namespace GLTFast.Tests.JsonParsing
                 sheenRoughnessFactor = .42f,
                 sheenColorTexture = new TextureInfo
                 {
-                    index = 42,
-                    texCoord = 1,
+                    Index = 42,
+                    TexCoord = 1,
                 },
                 sheenRoughnessTexture = new TextureInfo
                 {
-                    index = 43,
-                    texCoord = 2,
+                    Index = 43,
+                    TexCoord = 2,
                 }
             };
 
@@ -194,14 +194,14 @@ namespace GLTFast.Tests.JsonParsing
                 specularFactor = .42f,
                 specularTexture = new TextureInfo
                 {
-                    index = 42,
-                    texCoord = 1,
+                    Index = 42,
+                    TexCoord = 1,
                 },
                 SpecularColor = specularColor,
                 specularColorTexture = new TextureInfo
                 {
-                    index = 43,
-                    texCoord = 2,
+                    Index = 43,
+                    TexCoord = 2,
                 }
             };
 

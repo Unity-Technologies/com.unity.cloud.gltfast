@@ -11,15 +11,15 @@ namespace GLTFast.Schema
     /// <summary>
     /// TextureInfo extensions
     /// </summary>
-    [System.Serializable]
     public class TextureInfoExtensions : IGltfObject
     {
         /// <inheritdoc cref="Extension.TextureTransform"/>
-        // ReSharper disable once InconsistentNaming
-        public TextureTransform KHR_texture_transform;
+        [JsonPropertyName("KHR_texture_transform")]
+        public TextureTransform TextureTransform { get; set; }
 
-        /// <inheritdoc cref="Root.extras"/>
-        public UnclassifiedData extras;
+        /// <inheritdoc cref="Root.Extras"/>
+        [JsonPropertyName("extras")]
+        public UnclassifiedData Extras { get; set; }
 
         /// <summary>JSON properties without a matching member.</summary>
         [JsonExtensionData, JsonInclude] internal Dictionary<string, JsonElement> ExtensionsData { get; set; }
@@ -32,11 +32,11 @@ namespace GLTFast.Schema
 
         internal void GltfSerialize(JsonWriter writer)
         {
-            if (KHR_texture_transform != null)
+            if (TextureTransform != null)
             {
                 writer.AddObject();
                 writer.AddProperty("KHR_texture_transform");
-                KHR_texture_transform.GltfSerialize(writer);
+                TextureTransform.GltfSerialize(writer);
                 writer.Close();
             }
         }
