@@ -131,7 +131,14 @@ namespace GLTFast
                 var isLegacyAnimation = animationClips.Length > 0 && animationClips[0].legacy;
                 if (isLegacyAnimation)
                 {
-                    var animation = SceneTransform.gameObject.AddComponent<Animation>();
+                    var go = SceneTransform.gameObject;
+                    var animation = go.AddComponent<Animation>();
+
+                    if (animation == null)
+                    {
+                        m_Logger?.Error(LogCode.AnimationComponentFail);
+                        return;
+                    }
 
                     for (var index = 0; index < animationClips.Length; index++)
                     {
