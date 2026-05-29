@@ -142,7 +142,7 @@ namespace GLTFast
         unsafe JobHandle? GetUvsJob(
             void* input,
             int count,
-            GltfComponentType inputType,
+            AccessorDataType inputType,
             int inputByteStride,
             float2* output,
             int outputByteStride,
@@ -154,7 +154,7 @@ namespace GLTFast
 
             switch (inputType)
             {
-                case GltfComponentType.Float:
+                case AccessorDataType.Float:
                 {
                     var jobUv = new Jobs.ConvertUVsFloatToFloatInterleavedJob
                     {
@@ -166,7 +166,7 @@ namespace GLTFast
                     jobHandle = jobUv.ScheduleBatch(count, GltfImport.DefaultBatchCount);
                 }
                 break;
-                case GltfComponentType.UnsignedByte:
+                case AccessorDataType.UnsignedByte:
                     if (normalized)
                     {
                         var jobUv = new Jobs.ConvertUVsUInt8ToFloatInterleavedNormalizedJob
@@ -190,7 +190,7 @@ namespace GLTFast
                         jobHandle = jobUv.ScheduleBatch(count, GltfImport.DefaultBatchCount);
                     }
                     break;
-                case GltfComponentType.UnsignedShort:
+                case AccessorDataType.UnsignedShort:
                     if (normalized)
                     {
                         var jobUv = new Jobs.ConvertUVsUInt16ToFloatInterleavedNormalizedJob
@@ -214,7 +214,7 @@ namespace GLTFast
                         jobHandle = jobUv.ScheduleBatch(count, GltfImport.DefaultBatchCount);
                     }
                     break;
-                case GltfComponentType.Short:
+                case AccessorDataType.Short:
                     if (normalized)
                     {
                         var job = new Jobs.ConvertUVsInt16ToFloatInterleavedNormalizedJob
@@ -238,7 +238,7 @@ namespace GLTFast
                         jobHandle = job.ScheduleBatch(count, GltfImport.DefaultBatchCount);
                     }
                     break;
-                case GltfComponentType.Byte:
+                case AccessorDataType.Byte:
                     if (normalized)
                     {
                         var jobInt8 = new Jobs.ConvertUVsInt8ToFloatInterleavedNormalizedJob

@@ -318,8 +318,8 @@ namespace GLTFast.Tests.Jobs
         [Test]
         public unsafe void ConvertPositionsSparseJob()
         {
-            const GltfComponentType indexType = GltfComponentType.UnsignedInt;
-            const GltfComponentType valueType = GltfComponentType.Float;
+            const AccessorDataType indexType = AccessorDataType.UnsignedInt;
+            const AccessorDataType valueType = AccessorDataType.Float;
             const bool normalized = false;
 
             var job = new GLTFast.Jobs.ConvertVector3SparseJob

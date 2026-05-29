@@ -13,10 +13,10 @@ namespace GLTFast.Tests
         [Test]
         public void GetAccessorAttributeType()
         {
-            Assert.AreEqual(GltfAccessorAttributeType.SCALAR, Accessor.GetAccessorAttributeType(1));
-            Assert.AreEqual(GltfAccessorAttributeType.VEC2, Accessor.GetAccessorAttributeType(2));
-            Assert.AreEqual(GltfAccessorAttributeType.VEC3, Accessor.GetAccessorAttributeType(3));
-            Assert.AreEqual(GltfAccessorAttributeType.VEC4, Accessor.GetAccessorAttributeType(4));
+            Assert.AreEqual(AccessorType.Scalar, Accessor.GetAccessorAttributeType(1));
+            Assert.AreEqual(AccessorType.Vector2, Accessor.GetAccessorAttributeType(2));
+            Assert.AreEqual(AccessorType.Vector3, Accessor.GetAccessorAttributeType(3));
+            Assert.AreEqual(AccessorType.Vector4, Accessor.GetAccessorAttributeType(4));
 
             Assert.That(() => Accessor.GetAccessorAttributeType(0),
                 Throws.TypeOf<ArgumentOutOfRangeException>());
@@ -28,15 +28,15 @@ namespace GLTFast.Tests
         [Test]
         public void GetAccessorAttributeTypeLength()
         {
-            Assert.AreEqual(1, Accessor.GetAccessorAttributeTypeLength(GltfAccessorAttributeType.SCALAR));
-            Assert.AreEqual(2, Accessor.GetAccessorAttributeTypeLength(GltfAccessorAttributeType.VEC2));
-            Assert.AreEqual(3, Accessor.GetAccessorAttributeTypeLength(GltfAccessorAttributeType.VEC3));
-            Assert.AreEqual(4, Accessor.GetAccessorAttributeTypeLength(GltfAccessorAttributeType.VEC4));
-            Assert.AreEqual(4, Accessor.GetAccessorAttributeTypeLength(GltfAccessorAttributeType.MAT2));
-            Assert.AreEqual(9, Accessor.GetAccessorAttributeTypeLength(GltfAccessorAttributeType.MAT3));
-            Assert.AreEqual(16, Accessor.GetAccessorAttributeTypeLength(GltfAccessorAttributeType.MAT4));
+            Assert.AreEqual(1, Accessor.GetAccessorAttributeTypeLength(AccessorType.Scalar));
+            Assert.AreEqual(2, Accessor.GetAccessorAttributeTypeLength(AccessorType.Vector2));
+            Assert.AreEqual(3, Accessor.GetAccessorAttributeTypeLength(AccessorType.Vector3));
+            Assert.AreEqual(4, Accessor.GetAccessorAttributeTypeLength(AccessorType.Vector4));
+            Assert.AreEqual(4, Accessor.GetAccessorAttributeTypeLength(AccessorType.Matrix2x2));
+            Assert.AreEqual(9, Accessor.GetAccessorAttributeTypeLength(AccessorType.Matrix3x3));
+            Assert.AreEqual(16, Accessor.GetAccessorAttributeTypeLength(AccessorType.Matrix4x4));
 
-            Assert.That(() => Accessor.GetAccessorAttributeTypeLength(GltfAccessorAttributeType.Undefined),
+            Assert.That(() => Accessor.GetAccessorAttributeTypeLength(AccessorType.Undefined),
                 Throws.TypeOf<ArgumentOutOfRangeException>());
         }
     }

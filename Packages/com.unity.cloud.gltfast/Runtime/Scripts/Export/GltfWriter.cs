@@ -1118,7 +1118,7 @@ namespace GLTFast.Export
                     ComponentType = Accessor.GetComponentType(attribute.format),
                     Count = vertexCount,
                 };
-                accessor.SetAttributeType(Accessor.GetAccessorAttributeType(attribute.dimension));
+                accessor.Type = Accessor.GetAccessorAttributeType(attribute.dimension);
 
                 var accessorId = AddAccessor(accessor);
 
@@ -1176,7 +1176,7 @@ namespace GLTFast.Export
                         break;
                     case VertexAttribute.BlendIndices:
                         attributes.JOINTS_0 = accessorId;
-                        accessor.ComponentType = GltfComponentType.UnsignedShort;
+                        accessor.ComponentType = AccessorDataType.UnsignedShort;
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
@@ -1193,7 +1193,7 @@ namespace GLTFast.Export
                 streamCount = stream + 1;
             }
 
-            var indexComponentType = uMesh.indexFormat == IndexFormat.UInt16 ? GltfComponentType.UnsignedShort : GltfComponentType.UnsignedInt;
+            var indexComponentType = uMesh.indexFormat == IndexFormat.UInt16 ? AccessorDataType.UnsignedShort : AccessorDataType.UnsignedInt;
             mesh.Primitives = new List<MeshPrimitive>(meshData.subMeshCount);
             var indexAccessors = new Accessor[meshData.subMeshCount];
             var indexOffset = 0;
@@ -1226,7 +1226,7 @@ namespace GLTFast.Export
                     // min = new []{}, // TODO
                     // max = new []{}, // TODO
                 };
-                indexAccessor.SetAttributeType(GltfAccessorAttributeType.SCALAR);
+                indexAccessor.Type = AccessorType.Scalar;
 
                 if (subMeshTopology == MeshTopology.Quads)
                 {
@@ -1541,10 +1541,10 @@ namespace GLTFast.Export
                 var accessor = new Accessor
                 {
                     ByteOffset = 0,
-                    ComponentType = GltfComponentType.Float,
+                    ComponentType = AccessorDataType.Float,
                     Count = bindposes.Length
                 };
-                accessor.SetAttributeType(GltfAccessorAttributeType.MAT4);
+                accessor.Type = AccessorType.Matrix4x4;
 
                 var accessorId = AddAccessor(accessor);
                 m_MeshBindPoses ??= new Dictionary<int, int>();
@@ -1626,12 +1626,12 @@ namespace GLTFast.Export
                     var accessor = new Accessor
                     {
                         ComponentType = vertexAttribute == VertexAttribute.BlendIndices
-                            ? GltfComponentType.UnsignedShort
-                            : GltfComponentType.Float,
+                            ? AccessorDataType.UnsignedShort
+                            : AccessorDataType.Float,
                         Count = (int)encodeResult.vertexCount
                     };
                     var attributeType = Accessor.GetAccessorAttributeType(attribute.dimensions);
-                    accessor.SetAttributeType(attributeType);
+                    accessor.Type = attributeType;
 
                     var accessorId = AddAccessor(accessor);
 
@@ -1665,10 +1665,10 @@ namespace GLTFast.Export
 
                 var indexAccessor = new Accessor
                 {
-                    ComponentType = GltfComponentType.UnsignedInt,
+                    ComponentType = AccessorDataType.UnsignedInt,
                     Count = (int)encodeResult.indexCount
                 };
-                indexAccessor.SetAttributeType(GltfAccessorAttributeType.SCALAR);
+                indexAccessor.Type = AccessorType.Scalar;
 
                 var indicesId = AddAccessor(indexAccessor);
 

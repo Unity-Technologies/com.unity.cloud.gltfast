@@ -51,7 +51,7 @@ namespace GLTFast.Schema
         /// i.e., the accessor is only referenced by `primitive.indices`.
         /// </summary>
         [JsonPropertyName("componentType")]
-        public GltfComponentType ComponentType { get; set; }
+        public AccessorDataType ComponentType { get; set; }
 
         /// <summary>
         /// Specifies whether integer data values should be normalized
@@ -69,14 +69,9 @@ namespace GLTFast.Schema
         [JsonPropertyName("count")]
         public int Count { get; set; }
 
-        /// <summary>
-        /// Specifies if the attribute is a scalar, vector, or matrix,
-        /// and the number of elements in the vector or matrix.
-        /// </summary>
-        // Property is public for unified serialization only. Warn via Obsolete attribute.
-        [Obsolete("Use GetAttributeType and SetAttributeType for access.")]
+        /// <inheritdoc cref="AccessorType"/>
         [JsonPropertyName("type")]
-        public string Type { get; set; }
+        public AccessorType Type { get; set; }
 
         /// <inheritdoc cref="Root.Extras"/>
         [JsonPropertyName("extras")]
@@ -93,42 +88,6 @@ namespace GLTFast.Schema
         public bool TryGetValue<T>(string key, out T value)
         {
             return ExtensionsData.TryGetValue(key, out value);
-        }
-
-        GltfAccessorAttributeType m_TypeEnum = GltfAccessorAttributeType.Undefined;
-
-        /// <summary>
-        /// <see cref="GltfAccessorAttributeType"/> typed/cached getter from the <see cref="Type"/> string.
-        /// </summary>
-        /// <returns>The Accessor's attribute type, if it could be retrieved correctly. <see cref="GltfAccessorAttributeType.Undefined"/> otherwise</returns>
-        public GltfAccessorAttributeType GetAttributeType()
-        {
-            if (m_TypeEnum != GltfAccessorAttributeType.Undefined)
-                return m_TypeEnum;
-
-#pragma warning disable CS0618 // Type or member is obsolete
-            if (Enum.TryParse(Type, true, out m_TypeEnum))
-            {
-                Type = null;
-                return m_TypeEnum;
-            }
-
-            Type = null;
-#pragma warning restore CS0618 // Type or member is obsolete
-
-            return GltfAccessorAttributeType.Undefined;
-        }
-
-        /// <summary>
-        /// <see cref="GltfAccessorAttributeType"/> typed setter for the <see cref="Type"/> string.
-        /// </summary>
-        /// <param name="attributeType">Attribute type</param>
-        public void SetAttributeType(GltfAccessorAttributeType attributeType)
-        {
-            m_TypeEnum = attributeType;
-#pragma warning disable CS0618 // Type or member is obsolete
-            Type = null;
-#pragma warning restore CS0618 // Type or member is obsolete
         }
 
         /// <summary>
@@ -172,18 +131,18 @@ namespace GLTFast.Schema
         /// <param name="componentType">glTF component type</param>
         /// <returns>Component size in bytes</returns>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when value of <see cref="ComponentType"/> is unknown</exception>
-        public static int GetComponentTypeSize(GltfComponentType componentType)
+        public static int GetComponentTypeSize(AccessorDataType componentType)
         {
             switch (componentType)
             {
-                case GltfComponentType.Byte:
-                case GltfComponentType.UnsignedByte:
+                case AccessorDataType.Byte:
+                case AccessorDataType.UnsignedByte:
                     return 1;
-                case GltfComponentType.Short:
-                case GltfComponentType.UnsignedShort:
+                case AccessorDataType.Short:
+                case AccessorDataType.UnsignedShort:
                     return 2;
-                case GltfComponentType.Float:
-                case GltfComponentType.UnsignedInt:
+                case AccessorDataType.Float:
+                case AccessorDataType.UnsignedInt:
                     return 4;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(componentType), componentType, null);
@@ -196,28 +155,28 @@ namespace GLTFast.Schema
         /// <param name="format">vertex attribute format</param>
         /// <returns>glTF component type</returns>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when the value of <see cref="format"/> is unknown.</exception>
-        public static GltfComponentType GetComponentType(VertexAttributeFormat format)
+        public static AccessorDataType GetComponentType(VertexAttributeFormat format)
         {
             switch (format)
             {
                 case VertexAttributeFormat.Float32:
                 case VertexAttributeFormat.Float16:
-                    return GltfComponentType.Float;
+                    return AccessorDataType.Float;
                 case VertexAttributeFormat.UNorm8:
                 case VertexAttributeFormat.UInt8:
-                    return GltfComponentType.UnsignedByte;
+                    return AccessorDataType.UnsignedByte;
                 case VertexAttributeFormat.SNorm8:
                 case VertexAttributeFormat.SInt8:
-                    return GltfComponentType.Byte;
+                    return AccessorDataType.Byte;
                 case VertexAttributeFormat.UNorm16:
                 case VertexAttributeFormat.UInt16:
-                    return GltfComponentType.UnsignedShort;
+                    return AccessorDataType.UnsignedShort;
                 case VertexAttributeFormat.SNorm16:
                 case VertexAttributeFormat.SInt16:
-                    return GltfComponentType.Short;
+                    return AccessorDataType.Short;
                 case VertexAttributeFormat.UInt32:
                 case VertexAttributeFormat.SInt32:
-                    return GltfComponentType.UnsignedInt;
+                    return AccessorDataType.UnsignedInt;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(format), format, null);
             }
@@ -230,13 +189,13 @@ namespace GLTFast.Schema
         /// <param name="dimension">Number of components per element</param>
         /// <returns>Corresponding one-dimensional glTF attribute type</returns>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when <see cref="dimension"/> is not between 1 and 4.</exception>
-        public static GltfAccessorAttributeType GetAccessorAttributeType(int dimension)
+        public static AccessorType GetAccessorAttributeType(int dimension)
         {
-            if (dimension < 1 || dimension > 4)
+            if (dimension is < 1 or > 4)
             {
                 throw new ArgumentOutOfRangeException(nameof(dimension), dimension, null);
             }
-            return (GltfAccessorAttributeType)dimension;
+            return (AccessorType)dimension;
         }
 
         /// <summary>
@@ -245,22 +204,22 @@ namespace GLTFast.Schema
         /// <param name="type">glTF attribute type</param>
         /// <returns>Number of components</returns>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when the value of <see cref="type"/> is unknown.</exception>
-        public static int GetAccessorAttributeTypeLength(GltfAccessorAttributeType type)
+        public static int GetAccessorAttributeTypeLength(AccessorType type)
         {
             switch (type)
             {
-                case GltfAccessorAttributeType.SCALAR:
+                case AccessorType.Scalar:
                     return 1;
-                case GltfAccessorAttributeType.VEC2:
+                case AccessorType.Vector2:
                     return 2;
-                case GltfAccessorAttributeType.VEC3:
+                case AccessorType.Vector3:
                     return 3;
-                case GltfAccessorAttributeType.VEC4:
-                case GltfAccessorAttributeType.MAT2:
+                case AccessorType.Vector4:
+                case AccessorType.Matrix2x2:
                     return 4;
-                case GltfAccessorAttributeType.MAT3:
+                case AccessorType.Matrix3x3:
                     return 9;
-                case GltfAccessorAttributeType.MAT4:
+                case AccessorType.Matrix4x4:
                     return 16;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
@@ -273,7 +232,7 @@ namespace GLTFast.Schema
         /// <returns>Bounding box enclosing the minimum and maximum values</returns>
         public Bounds? TryGetBounds()
         {
-            Assert.AreEqual(GltfAccessorAttributeType.VEC3, GetAttributeType());
+            Assert.AreEqual(AccessorType.Vector3, Type);
             if (Min != null && Min.Length > 2 && Max != null && Max.Length > 2)
             {
                 var maxBounds = new float3(-Min[0], Max[1], Max[2]);
@@ -282,23 +241,23 @@ namespace GLTFast.Schema
                 {
                     switch (ComponentType)
                     {
-                        case GltfComponentType.Byte:
+                        case AccessorDataType.Byte:
                             maxBounds = math.max(maxBounds / sbyte.MaxValue, -1);
                             minBounds = math.max(minBounds / sbyte.MaxValue, -1);
                             break;
-                        case GltfComponentType.UnsignedByte:
+                        case AccessorDataType.UnsignedByte:
                             maxBounds /= byte.MaxValue;
                             minBounds /= byte.MaxValue;
                             break;
-                        case GltfComponentType.Short:
+                        case AccessorDataType.Short:
                             maxBounds = math.max(maxBounds / short.MaxValue, -1);
                             minBounds = math.max(minBounds / short.MaxValue, -1);
                             break;
-                        case GltfComponentType.UnsignedShort:
+                        case AccessorDataType.UnsignedShort:
                             maxBounds /= ushort.MaxValue;
                             minBounds /= ushort.MaxValue;
                             break;
-                        case GltfComponentType.UnsignedInt:
+                        case AccessorDataType.UnsignedInt:
                             maxBounds /= uint.MaxValue;
                             minBounds /= uint.MaxValue;
                             break;
@@ -321,7 +280,7 @@ namespace GLTFast.Schema
         /// <summary>
         /// Byte size of one element
         /// </summary>
-        public int ElementByteSize => GetAccessorAttributeTypeLength(GetAttributeType()) * GetComponentTypeSize(ComponentType);
+        public int ElementByteSize => GetAccessorAttributeTypeLength(Type) * GetComponentTypeSize(ComponentType);
 
         /// <summary>
         /// Overall, byte size.
@@ -338,8 +297,9 @@ namespace GLTFast.Schema
             }
             writer.AddProperty("componentType", (int)ComponentType);
             writer.AddProperty("count", Count);
-            Assert.AreNotEqual(GltfAccessorAttributeType.Undefined, m_TypeEnum);
-            writer.AddProperty("type", m_TypeEnum.ToString());
+            Assert.AreNotEqual(AccessorType.Undefined, Type);
+            var type = JsonSerializer.Serialize(Type, GltfRootSourceGenerator.Default.AccessorType);
+            writer.AddProperty("type", type.AsSpan(1, type.Length - 2));
             if (ByteOffset > 0)
             {
                 writer.AddProperty("byteOffset", ByteOffset);

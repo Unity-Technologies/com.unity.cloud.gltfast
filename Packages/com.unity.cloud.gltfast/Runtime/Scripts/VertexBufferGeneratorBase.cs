@@ -82,7 +82,7 @@ namespace GLTFast
             JobHandle? jobHandle;
 
             Profiler.BeginSample("GetVector3Job");
-            if (accessor.ComponentType == GltfComponentType.Float)
+            if (accessor.ComponentType == AccessorDataType.Float)
             {
                 var input = buffers.GetStridedAccessorData<float3>(
                     accessor.BufferView,
@@ -97,7 +97,7 @@ namespace GLTFast
                 };
                 jobHandle = job.ScheduleBatch(accessor.Count, GltfImport.DefaultBatchCount);
             }
-            else if (accessor.ComponentType == GltfComponentType.UnsignedShort)
+            else if (accessor.ComponentType == AccessorDataType.UnsignedShort)
             {
                 var input = buffers.GetStridedAccessorData<ushort3>(
                     accessor.BufferView,
@@ -125,7 +125,7 @@ namespace GLTFast
                     jobHandle = job.ScheduleBatch(accessor.Count, GltfImport.DefaultBatchCount);
                 }
             }
-            else if (accessor.ComponentType == GltfComponentType.Short)
+            else if (accessor.ComponentType == AccessorDataType.Short)
             {
                 var input = buffers.GetStridedAccessorData<short3>(
                     accessor.BufferView,
@@ -167,7 +167,7 @@ namespace GLTFast
                     jobHandle = job.ScheduleBatch(accessor.Count, GltfImport.DefaultBatchCount);
                 }
             }
-            else if (accessor.ComponentType == GltfComponentType.Byte)
+            else if (accessor.ComponentType == AccessorDataType.Byte)
             {
                 var input = buffers.GetStridedAccessorData<sbyte3>(
                     accessor.BufferView,
@@ -209,7 +209,7 @@ namespace GLTFast
                     jobHandle = job.ScheduleBatch(accessor.Count, GltfImport.DefaultBatchCount);
                 }
             }
-            else if (accessor.ComponentType == GltfComponentType.UnsignedByte)
+            else if (accessor.ComponentType == AccessorDataType.UnsignedByte)
             {
                 var input = buffers.GetStridedAccessorData<byte3>(
                     accessor.BufferView,
@@ -250,7 +250,7 @@ namespace GLTFast
         protected unsafe JobHandle? GetTangentsJob(
             void* input,
             int count,
-            GltfComponentType inputType,
+            AccessorDataType inputType,
             int inputByteStride,
             float4* output,
             int outputByteStride,
@@ -261,7 +261,7 @@ namespace GLTFast
             JobHandle? jobHandle;
             switch (inputType)
             {
-                case GltfComponentType.Float:
+                case AccessorDataType.Float:
                 {
                     var jobTangent = new ConvertTangentsFloatToFloatInterleavedJob
                     {
@@ -273,7 +273,7 @@ namespace GLTFast
                     jobHandle = jobTangent.ScheduleBatch(count, GltfImport.DefaultBatchCount);
                     break;
                 }
-                case GltfComponentType.Short:
+                case AccessorDataType.Short:
                 {
                     Assert.IsTrue(normalized);
                     var jobTangent = new ConvertTangentsInt16ToFloatInterleavedNormalizedJob
@@ -286,7 +286,7 @@ namespace GLTFast
                     jobHandle = jobTangent.ScheduleBatch(count, GltfImport.DefaultBatchCount);
                     break;
                 }
-                case GltfComponentType.Byte:
+                case AccessorDataType.Byte:
                 {
                     Assert.IsTrue(normalized);
                     var jobTangent = new ConvertTangentsInt8ToFloatInterleavedNormalizedJob
@@ -313,8 +313,8 @@ namespace GLTFast
             void* indexBuffer,
             void* valueBuffer,
             int sparseCount,
-            GltfComponentType indexType,
-            GltfComponentType valueType,
+            AccessorDataType indexType,
+            AccessorDataType valueType,
             float3* output,
             int outputByteStride,
             ref JobHandle? dependsOn,

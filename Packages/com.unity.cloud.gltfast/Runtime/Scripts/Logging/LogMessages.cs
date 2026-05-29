@@ -23,7 +23,7 @@ namespace GLTFast.Logging
         /// </summary>
         None,
         /// <summary>
-        /// Unknown GLTFAccessorAttributeType
+        /// Unknown accessor type
         /// </summary>
         AccessorAttributeTypeUnknown,
         /// <summary>
@@ -279,7 +279,7 @@ namespace GLTFast.Logging
 
         static readonly Dictionary<LogCode, string> k_FullMessages = new Dictionary<LogCode, string>() {
             { LogCode.AccessorAccessFailed, "Could not provide data for accessor {0}" },
-            { LogCode.AccessorAttributeTypeUnknown, "Unknown GLTFAccessorAttributeType" },
+            { LogCode.AccessorAttributeTypeUnknown, "Unknown accessor type" },
             { LogCode.AccessorInconsistentUsage, "Inconsistent accessor usage {0} != {1}" },
             { LogCode.AccessorsShared, @"glTF file uses certain vertex attributes/accessors across multiple meshes!
 This may result in low performance and high memory usage. Try optimizing the glTF file.

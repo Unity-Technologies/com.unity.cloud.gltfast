@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: 2023 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -134,6 +135,11 @@ namespace GLTFast.Schema
 
         public void AddProperty(string name, string value)
         {
+            AddProperty(name, value.AsSpan());
+        }
+
+        public void AddProperty(string name, ReadOnlySpan<char> value)
+        {
             CertifyValidJsonString(name);
             CertifyValidJsonString(value);
             Separate();
@@ -212,7 +218,7 @@ namespace GLTFast.Schema
         }
 
         [Conditional("DEBUG")]
-        static void CertifyValidJsonString(string value)
+        static void CertifyValidJsonString(ReadOnlySpan<char> value)
         {
 #if DEBUG
             var invalidChars = new[]

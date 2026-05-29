@@ -212,7 +212,7 @@ namespace GLTFast
                 if (primitive.Indices >= 0)
                 {
                     var accessor = buffers.GetAccessor(primitive.Indices);
-                    if (accessor.ComponentType == GltfComponentType.UnsignedInt)
+                    if (accessor.ComponentType == AccessorDataType.UnsignedInt)
                     {
                         indexFormat = IndexFormat.UInt32;
                         break;
@@ -279,7 +279,7 @@ namespace GLTFast
                         accessor.ByteSize
                     );
 
-                    Assert.AreEqual(accessor.GetAttributeType(), GltfAccessorAttributeType.SCALAR);
+                    Assert.AreEqual(accessor.Type, AccessorType.Scalar);
                     if (accessor.IsSparse)
                     {
                         logger?.Error(LogCode.SparseAccessor, "indices");
@@ -568,7 +568,7 @@ namespace GLTFast
             Profiler.BeginSample("GetIndicesUInt16Job");
             switch (accessor.ComponentType)
             {
-                case GltfComponentType.UnsignedByte:
+                case AccessorDataType.UnsignedByte:
                 {
                     if (flip)
                     {
@@ -590,7 +590,7 @@ namespace GLTFast
                     }
                     break;
                 }
-                case GltfComponentType.UnsignedShort:
+                case AccessorDataType.UnsignedShort:
                 {
                     if (flip)
                     {
@@ -636,7 +636,7 @@ namespace GLTFast
             Profiler.BeginSample("GetIndicesUInt32Job");
             switch (accessor.ComponentType)
             {
-                case GltfComponentType.UnsignedByte:
+                case AccessorDataType.UnsignedByte:
                 {
                     if (flip)
                     {
@@ -658,7 +658,7 @@ namespace GLTFast
                     }
                     break;
                 }
-                case GltfComponentType.UnsignedShort:
+                case AccessorDataType.UnsignedShort:
                 {
                     if (flip)
                     {
@@ -680,7 +680,7 @@ namespace GLTFast
                     }
                     break;
                 }
-                case GltfComponentType.UnsignedInt:
+                case AccessorDataType.UnsignedInt:
                 {
                     if (flip)
                     {

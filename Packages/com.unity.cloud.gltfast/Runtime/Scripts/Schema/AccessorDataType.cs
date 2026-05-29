@@ -6,10 +6,10 @@ using System;
 namespace GLTFast.Schema
 {
     /// <summary>
-    /// The datatype of an accessor's components
+    /// The datatype of the <see cref="Accessor"/>'s components.
     /// </summary>
     /// <seealso href="https://www.khronos.org/registry/glTF/specs/2.0/glTF-2.0.html#accessor-data-types"/>
-    public enum GltfComponentType
+    public enum AccessorDataType
     {
         /// <summary>
         /// Signed byte (8-bit integer)

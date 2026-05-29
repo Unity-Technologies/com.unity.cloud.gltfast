@@ -127,33 +127,32 @@ namespace GLTFast.Tests.JsonParsing
         }
 
         [Test]
-        public void AccessorTypeEnumCasting()
+        public void AccessorTypeDeserialization()
         {
-#pragma warning disable CS0618 // Type or member is obsolete
-            var accessor = new Accessor
-            {
-                Type = null
-            };
-            Assert.AreEqual(GltfAccessorAttributeType.Undefined, accessor.GetAttributeType());
-            Assert.IsNull(accessor.Type);
+            Assert.AreEqual(AccessorType.Scalar,
+                JsonSerializer.Deserialize(@"""SCALAR""", GltfRootSourceGenerator.Default.AccessorType));
 
-            accessor.Type = "MAT3";
-            Assert.AreEqual(GltfAccessorAttributeType.MAT3, accessor.GetAttributeType());
-            Assert.IsNull(accessor.Type);
-            accessor.SetAttributeType(GltfAccessorAttributeType.Undefined);
-            Assert.IsNull(accessor.Type);
+            Assert.AreEqual(AccessorType.Vector2,
+                JsonSerializer.Deserialize(@"""VEC2""", GltfRootSourceGenerator.Default.AccessorType));
 
-            accessor.Type = "Nonsense";
-            Assert.AreEqual(GltfAccessorAttributeType.Undefined, accessor.GetAttributeType());
-            Assert.IsNull(accessor.Type);
+            Assert.AreEqual(AccessorType.Vector3,
+                JsonSerializer.Deserialize(@"""VEC3""", GltfRootSourceGenerator.Default.AccessorType));
 
-            accessor.Type = "";
-            Assert.AreEqual(GltfAccessorAttributeType.Undefined, accessor.GetAttributeType());
-            Assert.IsNull(accessor.Type);
-#pragma warning restore CS0618 // Type or member is obsolete
+            Assert.AreEqual(AccessorType.Vector4,
+                JsonSerializer.Deserialize(@"""VEC4""", GltfRootSourceGenerator.Default.AccessorType));
+
+            Assert.AreEqual(AccessorType.Matrix2x2,
+                JsonSerializer.Deserialize(@"""MAT2""", GltfRootSourceGenerator.Default.AccessorType));
+
+            Assert.AreEqual(AccessorType.Matrix3x3,
+                JsonSerializer.Deserialize(@"""MAT3""", GltfRootSourceGenerator.Default.AccessorType));
+
+            Assert.AreEqual(AccessorType.Matrix4x4,
+                JsonSerializer.Deserialize(@"""MAT4""", GltfRootSourceGenerator.Default.AccessorType));
+
+            Assert.Throws<JsonException>(() =>
+                JsonSerializer.Deserialize(@"""foo""", GltfRootSourceGenerator.Default.AccessorType));
         }
-
-
 
         [Test]
         public void AnimationChannelTargetEnumCasting()
@@ -319,8 +318,8 @@ namespace GLTFast.Tests.JsonParsing
             Assert.NotNull(gltf);
             Assert.NotNull(gltf.Accessors);
             Assert.AreEqual(1, gltf.Accessors.Count);
-            Assert.AreEqual(GltfComponentType.UnsignedShort, gltf.Accessors[0].ComponentType);
-            Assert.AreEqual(GltfAccessorAttributeType.MAT3, gltf.Accessors[0].GetAttributeType());
+            Assert.AreEqual(AccessorDataType.UnsignedShort, gltf.Accessors[0].ComponentType);
+            Assert.AreEqual(AccessorType.Matrix3x3, gltf.Accessors[0].Type);
         }
 
 #if UNITY_ANIMATION

@@ -457,7 +457,7 @@ namespace GLTFast.Tests.JsonParsing
             Assert.NotNull(sparse.Sparse.Indices);
             Assert.AreEqual(2, sparse.Sparse.Indices.BufferView);
             Assert.AreEqual(0, sparse.Sparse.Indices.ByteOffset);
-            Assert.AreEqual(GltfComponentType.UnsignedShort, sparse.Sparse.Indices.ComponentType);
+            Assert.AreEqual(AccessorDataType.UnsignedShort, sparse.Sparse.Indices.ComponentType);
             Assert.NotNull(sparse.Sparse.Values);
             Assert.AreEqual(3, sparse.Sparse.Values.BufferView);
             Assert.AreEqual(0, sparse.Sparse.Values.ByteOffset);

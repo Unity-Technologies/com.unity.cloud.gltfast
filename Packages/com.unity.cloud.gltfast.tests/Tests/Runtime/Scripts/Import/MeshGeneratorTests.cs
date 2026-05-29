@@ -181,10 +181,10 @@ namespace GLTFast.Tests.Import
                     {
                         BufferView = 0,
                         ByteOffset = 0,
-                        ComponentType = GltfComponentType.Float,
+                        ComponentType = AccessorDataType.Float,
                         Count = 3
                     };
-                    accessor.SetAttributeType(GltfAccessorAttributeType.VEC3);
+                    accessor.Type = AccessorType.Vector3;
                     return accessor;
                 }
                 case 1:
@@ -193,10 +193,10 @@ namespace GLTFast.Tests.Import
                     {
                         BufferView = 0,
                         ByteOffset = 0,
-                        ComponentType = GltfComponentType.UnsignedShort,
+                        ComponentType = AccessorDataType.UnsignedShort,
                         Count = 2
                     };
-                    accessor.SetAttributeType(GltfAccessorAttributeType.SCALAR);
+                    accessor.Type = AccessorType.Scalar;
                     return accessor;
                 }
             }

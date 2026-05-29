@@ -34,7 +34,7 @@ namespace GLTFast.Schema
         /// `5125` (UNSIGNED_INT)
         /// </summary>
         [JsonPropertyName("componentType")]
-        public GltfComponentType ComponentType { get; set; }
+        public AccessorDataType ComponentType { get; set; }
 
         /// <inheritdoc cref="Asset.Extensions"/>
         [JsonPropertyName("extensions")]
