@@ -5,13 +5,8 @@ using System.IO;
 using System.Text;
 using GLTFast.Schema;
 using NUnit.Framework;
-#if UNITY_6000_5_OR_NEWER
-using System.Text.Json;
-using System.Text.Json.Serialization;
-#else
 using Unity.Gltfast.Text.Json;
 using Unity.Gltfast.Text.Json.Serialization;
-#endif
 using UnityEngine;
 
 namespace GLTFast.Tests.JsonParsing

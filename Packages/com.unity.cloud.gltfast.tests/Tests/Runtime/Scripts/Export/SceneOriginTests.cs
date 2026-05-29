@@ -8,11 +8,7 @@ using GLTFast.Export;
 using GLTFast.Logging;
 using GLTFast.Schema;
 using NUnit.Framework;
-#if UNITY_6000_5_OR_NEWER
-using System.Text.Json;
-#else
 using Unity.Gltfast.Text.Json;
-#endif
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.TestTools;

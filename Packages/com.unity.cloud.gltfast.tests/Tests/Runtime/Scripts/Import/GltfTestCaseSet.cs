@@ -18,11 +18,7 @@ using System.Threading.Tasks;
 #if UNITY_EDITOR
 using System.Threading;
 using GLTFast.Schema;
-#if UNITY_6000_5_OR_NEWER
-using System.Text.Json;
-#else
 using Unity.Gltfast.Text.Json;
-#endif
 using UnityEditor;
 #endif
 using UnityEngine;
