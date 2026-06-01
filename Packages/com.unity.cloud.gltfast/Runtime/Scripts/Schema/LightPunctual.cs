@@ -4,7 +4,6 @@
 using System;
 using Unity.Gltfast.Text.Json.Serialization;
 
-using UnityEngine;
 using UnityEngine.Assertions;
 
 namespace GLTFast.Schema
@@ -12,48 +11,32 @@ namespace GLTFast.Schema
     /// <summary>
     /// Light
     /// </summary>
-    [Serializable]
     public class LightPunctual : NamedObject
     {
-
-        /// <summary>
-        /// Light type
-        /// </summary>
-        public enum Type
-        {
-            /// <summary>Unknown light type</summary>
-            Unknown,
-            /// <summary>Spot light</summary>
-            Spot,
-            /// <summary>Directional light</summary>
-            Directional,
-            /// <summary>Point light</summary>
-            Point,
-        }
-
         /// <summary>
         /// RGB values for light's color in linear space
         /// </summary>
-        // Field is public for unified serialization only. Warn via Obsolete attribute.
+        // Property is public for unified serialization only. Warn via Obsolete attribute.
         [Obsolete("Use LightColor for access.")]
+        [JsonPropertyName("color")]
         [JsonConverter(typeof(Float3ArrayConverter))]
-        public float[] color = { 1, 1, 1 };
+        public float[] Color { get; set; } = { 1, 1, 1 };
 
         /// <summary>
         /// Light's color in linear space
         /// </summary>
-        public Color LightColor
+        public UnityEngine.Color LightColor
         {
 #pragma warning disable CS0618 // Type or member is obsolete
             get =>
-                new Color(
-                    color[0],
-                    color[1],
-                    color[2]
+                new UnityEngine.Color(
+                    Color[0],
+                    Color[1],
+                    Color[2]
                 );
             set
             {
-                color = new[] { value.r, value.g, value.b };
+                Color = new[] { value.r, value.g, value.b };
             }
 #pragma warning restore CS0618 // Type or member is obsolete
         }
@@ -64,7 +47,8 @@ namespace GLTFast.Schema
         /// candela (lm/sr) while directional lights use illuminance
         /// in lux (lm/m2)
         /// </summary>
-        public float intensity = 1;
+        [JsonPropertyName("intensity")]
+        public float Intensity { get; set; } = 1;
 
         /// <summary>
         /// Hint defining a distance cutoff at which the light's intensity may
@@ -72,76 +56,43 @@ namespace GLTFast.Schema
         /// spot lights. Must be > 0. When undefined, range is assumed to be
         /// infinite.
         /// </summary>
-        public float range = -1;
+        [JsonPropertyName("range")]
+        public float Range { get; set; } = -1;
 
         /// <summary>
         /// Spot light properties (only set on spot lights).
         /// </summary>
-        public SpotLight spot;
+        [JsonPropertyName("spot")]
+        public SpotLight Spot { get; set; }
 
-        /// <inheritdoc cref="Type"/>
-        // Field is public for unified serialization only. Warn via Obsolete attribute.
-        [Obsolete("Use GetLightType and SetLightType for access.")]
-        public string type;
-
-        [NonSerialized]
-        Type m_TypeEnum = Type.Unknown;
-
-        /// <summary>
-        /// Returns the type of the light
-        /// It converts the <see cref="type"/> string and caches it.
-        /// </summary>
-        /// <returns>Light type, if it was retrieved correctly. <see cref="Type.Unknown"/> otherwise</returns>
-        public Type GetLightType()
-        {
-            if (m_TypeEnum != Type.Unknown)
-            {
-                return m_TypeEnum;
-            }
-
-#pragma warning disable CS0618 // Type or member is obsolete
-            Enum.TryParse(type, true, out m_TypeEnum);
-            type = null;
-#pragma warning restore CS0618 // Type or member is obsolete
-            return m_TypeEnum;
-        }
-
-        /// <summary>
-        /// Sets the type of the light
-        /// </summary>
-        /// <param name="lightType">Light type</param>
-        public void SetLightType(Type lightType)
-        {
-            m_TypeEnum = lightType;
-#pragma warning disable CS0618 // Type or member is obsolete
-            type = null;
-#pragma warning restore CS0618 // Type or member is obsolete
-        }
+        /// <inheritdoc cref="LightType"/>
+        [JsonPropertyName("type")]
+        public LightType Type { get; set; }
 
         internal void GltfSerialize(JsonWriter writer)
         {
             writer.AddObject();
-            Assert.AreNotEqual(Type.Unknown, m_TypeEnum);
-            writer.AddProperty("type", m_TypeEnum.ToString().ToLowerInvariant());
+            Assert.AreNotEqual(LightType.Undefined, Type);
+            writer.AddProperty("type", Type.ToString().ToLowerInvariant());
             GltfSerializeName(writer);
-            if (LightColor != Color.white)
+            if (LightColor != UnityEngine.Color.white)
             {
 #pragma warning disable CS0618 // Type or member is obsolete
-                writer.AddArrayProperty("color", color);
+                writer.AddArrayProperty("color", Color);
 #pragma warning restore CS0618 // Type or member is obsolete
             }
-            if (Math.Abs(intensity - 1.0) > Constants.epsilon)
+            if (Math.Abs(Intensity - 1.0) > Constants.epsilon)
             {
-                writer.AddProperty("intensity", intensity);
+                writer.AddProperty("intensity", Intensity);
             }
-            if (range > 0 && GetLightType() != Type.Directional)
+            if (Range > 0 && Type != LightType.Directional)
             {
-                writer.AddProperty("range", range);
+                writer.AddProperty("range", Range);
             }
-            if (spot != null)
+            if (Spot != null)
             {
                 writer.AddProperty("spot");
-                spot.GltfSerialize(writer);
+                Spot.GltfSerialize(writer);
             }
             writer.Close();
         }

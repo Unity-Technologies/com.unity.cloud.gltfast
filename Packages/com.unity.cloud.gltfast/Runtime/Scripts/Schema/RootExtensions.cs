@@ -16,9 +16,9 @@ namespace GLTFast.Schema
     public class RootExtensions : IGltfObject
     {
 
-        /// <inheritdoc cref="LightsPunctual"/>
-        // ReSharper disable once InconsistentNaming
-        public LightsPunctual KHR_lights_punctual;
+        /// <inheritdoc cref="Schema.LightsPunctual"/>
+        [JsonPropertyName("KHR_lights_punctual")]
+        public LightsPunctual LightsPunctual { get; set; }
 
         /// <inheritdoc cref="MaterialsVariantsRootExtension"/>
         // ReSharper disable once InconsistentNaming
@@ -38,10 +38,10 @@ namespace GLTFast.Schema
         internal void GltfSerialize(JsonWriter writer)
         {
             writer.AddObject();
-            if (KHR_lights_punctual != null)
+            if (LightsPunctual != null)
             {
                 writer.AddProperty("KHR_lights_punctual");
-                KHR_lights_punctual.GltfSerialize(writer);
+                LightsPunctual.GltfSerialize(writer);
             }
             if (KHR_materials_variants != null)
             {

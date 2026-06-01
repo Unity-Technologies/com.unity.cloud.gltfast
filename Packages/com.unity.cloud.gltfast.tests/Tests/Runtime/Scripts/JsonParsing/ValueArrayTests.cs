@@ -93,7 +93,7 @@ namespace GLTFast.Tests.JsonParsing
 
         static void CheckResultLightPunctualColor(Root gltf)
         {
-            var lights = gltf?.Extensions?.KHR_lights_punctual?.lights;
+            var lights = gltf?.Extensions?.LightsPunctual?.Lights;
             Assert.NotNull(lights);
             Assert.AreEqual(1, lights.Length);
             Assert.AreEqual(new Color(.1f, .2f, .3f), lights[0].LightColor);

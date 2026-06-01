@@ -163,12 +163,12 @@ namespace GLTFast.Schema
 
         /// <inheritdoc cref="MeshGpuInstancing"/>
         public MeshGpuInstancing EXT_mesh_gpu_instancing { get; set; }
-        /// <inheritdoc cref="LightsPunctual"/>
-        public NodeLightsPunctual KHR_lights_punctual { get; set; }
-
         // Whenever an extension is added, the JsonParser
         // (specifically step four of JsonParser.ParseJson)
         // needs to be updated!
+        /// <inheritdoc cref="Schema.LightsPunctual"/>
+        [JsonPropertyName("KHR_lights_punctual")]
+        public NodeLightsPunctual LightsPunctual { get; set; }
 
         /// <summary>JSON properties without a matching member.</summary>
         [JsonExtensionData, JsonInclude] internal Dictionary<string, JsonElement> ExtensionsData { get; set; }
@@ -188,10 +188,10 @@ namespace GLTFast.Schema
                 writer.AddProperty("EXT_mesh_gpu_instancing");
                 EXT_mesh_gpu_instancing.GltfSerialize(writer);
             }
-            if (KHR_lights_punctual != null)
+            if (LightsPunctual != null)
             {
                 writer.AddProperty("KHR_lights_punctual");
-                KHR_lights_punctual.GltfSerialize(writer);
+                LightsPunctual.GltfSerialize(writer);
             }
             writer.Close();
         }

@@ -10,6 +10,7 @@ using NUnit.Framework;
 using Unity.Gltfast.Text.Json;
 using UnityEngine;
 using Camera = GLTFast.Schema.Camera;
+using LightType = GLTFast.Schema.LightType;
 using Material = GLTFast.Schema.Material;
 
 namespace GLTFast.Tests.JsonParsing
@@ -270,25 +271,22 @@ namespace GLTFast.Tests.JsonParsing
 
 
         [Test]
-        public void LightPunctualEnumCasting()
+        public void LightTypeDeserialization()
         {
-#pragma warning disable CS0618 // Type or member is obsolete
-            var obj = new LightPunctual
-            {
-                type = "Directional"
-            };
-            Assert.AreEqual(LightPunctual.Type.Directional, obj.GetLightType());
-            Assert.IsNull(obj.type);
-            // Second time to test cached value
-            Assert.AreEqual(LightPunctual.Type.Directional, obj.GetLightType());
+            var light = JsonSerializer.Deserialize(
+                "{\"type\":\"spot\"}", GltfRootSourceGenerator.Default.LightPunctual);
+            Assert.AreEqual(LightType.Spot, light.Type);
 
-            obj = new LightPunctual
-            {
-                type = "Nonsense"
-            };
-            Assert.AreEqual(LightPunctual.Type.Unknown, obj.GetLightType());
-            Assert.IsNull(obj.type);
-#pragma warning restore CS0618 // Type or member is obsolete
+            light = JsonSerializer.Deserialize(
+                "{\"type\":\"directional\"}", GltfRootSourceGenerator.Default.LightPunctual);
+            Assert.AreEqual(LightType.Directional, light.Type);
+
+            light = JsonSerializer.Deserialize(
+                "{\"type\":\"point\"}", GltfRootSourceGenerator.Default.LightPunctual);
+            Assert.AreEqual(LightType.Point, light.Type);
+
+            Assert.Throws<JsonException>(() =>
+                JsonSerializer.Deserialize("{\"type\":\"foo\"}", GltfRootSourceGenerator.Default.LightPunctual));
         }
 
         [Test]
@@ -361,10 +359,10 @@ namespace GLTFast.Tests.JsonParsing
         {
             Assert.NotNull(gltf);
             Assert.NotNull(gltf.Extensions);
-            Assert.NotNull(gltf.Extensions.KHR_lights_punctual);
-            Assert.NotNull(gltf.Extensions.KHR_lights_punctual.lights);
-            Assert.AreEqual(1, gltf.Extensions.KHR_lights_punctual.lights.Length);
-            Assert.AreEqual(LightPunctual.Type.Directional, gltf.Extensions.KHR_lights_punctual.lights[0].GetLightType());
+            Assert.NotNull(gltf.Extensions.LightsPunctual);
+            Assert.NotNull(gltf.Extensions.LightsPunctual.Lights);
+            Assert.AreEqual(1, gltf.Extensions.LightsPunctual.Lights.Length);
+            Assert.AreEqual(LightType.Directional, gltf.Extensions.LightsPunctual.Lights[0].Type);
         }
 
         static void CheckResultMaterials(Root gltf)
@@ -420,7 +418,7 @@ namespace GLTFast.Tests.JsonParsing
     ""extensions"": {
         ""KHR_lights_punctual"": {
             ""lights"":[{
-                ""type"": ""Directional""
+                ""type"": ""directional""
             }]
         }
     },

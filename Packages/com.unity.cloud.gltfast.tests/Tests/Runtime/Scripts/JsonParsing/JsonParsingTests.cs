@@ -595,14 +595,14 @@ namespace GLTFast.Tests.JsonParsing
             Assert.NotNull(node3.Extensions.EXT_mesh_gpu_instancing);
             Assert.NotNull(node3.Extensions.EXT_mesh_gpu_instancing.attributes);
             Assert.AreEqual(42, node3.Extensions.EXT_mesh_gpu_instancing.attributes.TRANSLATION);
-            Assert.IsNull(node3.Extensions.KHR_lights_punctual);
+            Assert.IsNull(node3.Extensions.LightsPunctual);
 
             var node4 = gltf.Nodes[4];
             Assert.NotNull(node4);
             Assert.NotNull(node4.Extensions);
             Assert.IsNull(node4.Extensions.EXT_mesh_gpu_instancing);
-            Assert.NotNull(node4.Extensions.KHR_lights_punctual);
-            Assert.AreEqual(42, node4.Extensions.KHR_lights_punctual.light);
+            Assert.NotNull(node4.Extensions.LightsPunctual);
+            Assert.AreEqual(42, node4.Extensions.LightsPunctual.Light);
 
             var node5 = gltf.Nodes[5];
             Assert.NotNull(node5);
@@ -610,8 +610,8 @@ namespace GLTFast.Tests.JsonParsing
             Assert.NotNull(node5.Extensions.EXT_mesh_gpu_instancing);
             Assert.NotNull(node5.Extensions.EXT_mesh_gpu_instancing.attributes);
             Assert.AreEqual(13, node5.Extensions.EXT_mesh_gpu_instancing.attributes.TRANSLATION);
-            Assert.NotNull(node5.Extensions.KHR_lights_punctual);
-            Assert.AreEqual(42, node5.Extensions.KHR_lights_punctual.light);
+            Assert.NotNull(node5.Extensions.LightsPunctual);
+            Assert.AreEqual(42, node5.Extensions.LightsPunctual.Light);
         }
 
         static void AssertUnknownTextureExtensionResult(Root gltf)

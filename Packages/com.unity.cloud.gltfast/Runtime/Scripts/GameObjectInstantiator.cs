@@ -12,6 +12,7 @@ using UnityEngine.Profiling;
 using Animation = UnityEngine.Animation;
 #endif
 using Camera = UnityEngine.Camera;
+using LightType = GLTFast.Schema.LightType;
 using Material = UnityEngine.Material;
 using Mesh = UnityEngine.Mesh;
 
@@ -504,7 +505,7 @@ namespace GLTFast
             var lightGameObject = m_Nodes[nodeIndex];
             var lightSource = m_Gltf.GetSourceLightPunctual(lightIndex);
 
-            if (lightSource.GetLightType() != LightPunctual.Type.Point)
+            if (lightSource.Type != LightType.Point)
             {
                 // glTF lights' direction is flipped, compared with Unity's, so
                 // we're adding a rotated child GameObject to counteract.

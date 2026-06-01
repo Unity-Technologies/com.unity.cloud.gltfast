@@ -1009,9 +1009,9 @@ namespace GLTFast
         /// <inheritdoc />
         public LightPunctual GetSourceLightPunctual(uint index)
         {
-            if (Root?.Extensions?.KHR_lights_punctual.lights != null && index < Root.Extensions.KHR_lights_punctual.lights.Length)
+            if (Root?.Extensions?.LightsPunctual?.Lights != null && index < Root.Extensions.LightsPunctual.Lights.Length)
             {
-                return Root.Extensions.KHR_lights_punctual.lights[index];
+                return Root.Extensions.LightsPunctual.Lights[index];
             }
             return null;
         }
@@ -3133,10 +3133,10 @@ namespace GLTFast
                     instantiator.AddCamera(nodeIndex, (uint)node.Camera);
                 }
 
-                if (node.Extensions?.KHR_lights_punctual != null && Root.Extensions?.KHR_lights_punctual?.lights != null)
+                if (node.Extensions?.LightsPunctual != null && Root.Extensions?.LightsPunctual?.Lights != null)
                 {
-                    var lightIndex = node.Extensions.KHR_lights_punctual.light;
-                    if (lightIndex < Root.Extensions.KHR_lights_punctual.lights.Length)
+                    var lightIndex = node.Extensions.LightsPunctual.Light;
+                    if (lightIndex >= 0 && lightIndex < Root.Extensions.LightsPunctual.Lights.Length)
                     {
                         instantiator.AddLightPunctual(nodeIndex, (uint)lightIndex);
                     }

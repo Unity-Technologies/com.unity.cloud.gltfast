@@ -24,6 +24,7 @@ using UnityEngine.Rendering;
 using Buffer = GLTFast.Schema.Buffer;
 using Camera = GLTFast.Schema.Camera;
 using Debug = UnityEngine.Debug;
+using LightType = GLTFast.Schema.LightType;
 using Material = GLTFast.Schema.Material;
 using Mesh = GLTFast.Schema.Mesh;
 using Sampler = GLTFast.Schema.Sampler;
@@ -297,7 +298,7 @@ namespace GLTFast.Export
             }
             CertifyNotDisposed();
             var light = KhrLightsPunctual.ConvertToLight(uLight);
-            light.intensity *= m_Settings.LightIntensityFactor;
+            light.Intensity *= m_Settings.LightIntensityFactor;
 
             if (m_Lights == null)
             {
@@ -328,7 +329,7 @@ namespace GLTFast.Export
             CertifyNotDisposed();
             var node = m_Nodes[nodeId];
             var light = m_Lights[lightId];
-            if (light.GetLightType() != LightPunctual.Type.Point)
+            if (light.Type != LightType.Point)
             {
                 // glTF lights face in the opposite direction, so we create a
                 // helper node that applies the correct rotation.
@@ -338,9 +339,9 @@ namespace GLTFast.Export
                 node = AddChildNode(nodeId, rotation: Mathematics.RotateY(math.PI_DBL), name: $"{node.Name}_Orientation");
             }
             node.Extensions = node.Extensions ?? new NodeExtensions();
-            node.Extensions.KHR_lights_punctual = new NodeLightsPunctual
+            node.Extensions.LightsPunctual = new NodeLightsPunctual
             {
-                light = lightId
+                Light = lightId
             };
         }
 
@@ -797,9 +798,9 @@ namespace GLTFast.Export
             if (m_Lights != null && m_Lights.Count > 0)
             {
                 RegisterExtensionUsage(Extension.LightsPunctual);
-                m_Gltf.Extensions = m_Gltf.Extensions ?? new Schema.RootExtensions();
-                m_Gltf.Extensions.KHR_lights_punctual = m_Gltf.Extensions.KHR_lights_punctual ?? new LightsPunctual();
-                m_Gltf.Extensions.KHR_lights_punctual.lights = m_Lights.ToArray();
+                m_Gltf.Extensions ??= new RootExtensions();
+                m_Gltf.Extensions.LightsPunctual ??= new LightsPunctual();
+                m_Gltf.Extensions.LightsPunctual.Lights = m_Lights.ToArray();
             }
 
             m_Gltf.Asset = new Asset

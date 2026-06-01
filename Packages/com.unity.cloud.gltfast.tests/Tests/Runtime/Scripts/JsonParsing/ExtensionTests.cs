@@ -7,6 +7,7 @@ using GLTFast.Schema;
 using NUnit.Framework;
 using Unity.Gltfast.Text.Json;
 using UnityEngine;
+using LightType = GLTFast.Schema.LightType;
 
 namespace GLTFast.Tests.JsonParsing
 {
@@ -78,7 +79,7 @@ $@"
         ""KHR_lights_punctual"":
         {{
             ""lights"":[{{
-                ""type"": ""Directional""
+                ""type"": ""directional""
             }}]
         }}
     }}
@@ -118,7 +119,7 @@ $@"
                     ""KHR_lights_punctual"":
                     {
                         ""lights"":[{
-                            ""type"": ""Directional""
+                            ""type"": ""directional""
                         }]
                     }
                 }
@@ -127,10 +128,10 @@ $@"
             var gltf = JsonSerializer.Deserialize(json, GltfRootSourceGenerator.Default.Root);
             Assert.NotNull(gltf);
             Assert.NotNull(gltf.Extensions);
-            Assert.NotNull(gltf.Extensions.KHR_lights_punctual);
-            Assert.NotNull(gltf.Extensions.KHR_lights_punctual.lights);
-            Assert.AreEqual(1, gltf.Extensions.KHR_lights_punctual.lights.Length);
-            Assert.AreEqual(LightPunctual.Type.Directional, gltf.Extensions.KHR_lights_punctual.lights[0].GetLightType());
+            Assert.NotNull(gltf.Extensions.LightsPunctual);
+            Assert.NotNull(gltf.Extensions.LightsPunctual.Lights);
+            Assert.AreEqual(1, gltf.Extensions.LightsPunctual.Lights.Length);
+            Assert.AreEqual(LightType.Directional, gltf.Extensions.LightsPunctual.Lights[0].Type);
             Assert.IsFalse(gltf.Extensions.TryGetValue<MyExtension>("CUSTOM_my_extension", out var ext));
             Assert.IsNull(ext);
         }
@@ -148,7 +149,7 @@ $@"
             var gltf = JsonSerializer.Deserialize(json, GltfRootSourceGenerator.Default.Root);
             Assert.NotNull(gltf);
             Assert.NotNull(gltf.Extensions);
-            Assert.IsNull(gltf.Extensions.KHR_lights_punctual);
+            Assert.IsNull(gltf.Extensions.LightsPunctual);
             Assert.IsTrue(gltf.Extensions.TryGetValue<MyExtension>("CUSTOM_my_extension", out var ext));
             CertifyCustomExtensions(gltf.Extensions);
         }
@@ -159,10 +160,10 @@ $@"
             var gltf = JsonSerializer.Deserialize(k_CustomExtensionJson, GltfRootSourceGenerator.Default.Root);
             Assert.NotNull(gltf);
             Assert.NotNull(gltf.Extensions);
-            Assert.NotNull(gltf.Extensions.KHR_lights_punctual);
-            Assert.NotNull(gltf.Extensions.KHR_lights_punctual.lights);
-            Assert.AreEqual(1, gltf.Extensions.KHR_lights_punctual.lights.Length);
-            Assert.AreEqual(LightPunctual.Type.Directional, gltf.Extensions.KHR_lights_punctual.lights[0].GetLightType());
+            Assert.NotNull(gltf.Extensions.LightsPunctual);
+            Assert.NotNull(gltf.Extensions.LightsPunctual.Lights);
+            Assert.AreEqual(1, gltf.Extensions.LightsPunctual.Lights.Length);
+            Assert.AreEqual(LightType.Directional, gltf.Extensions.LightsPunctual.Lights[0].Type);
         }
 
         [Test]
@@ -171,10 +172,10 @@ $@"
             var gltf = JsonSerializer.Deserialize(k_CustomExtensionJson, GltfRootSourceGenerator.Default.Root);
             Assert.NotNull(gltf);
             Assert.NotNull(gltf.Extensions);
-            Assert.NotNull(gltf.Extensions.KHR_lights_punctual);
-            Assert.NotNull(gltf.Extensions.KHR_lights_punctual.lights);
-            Assert.AreEqual(1, gltf.Extensions.KHR_lights_punctual.lights.Length);
-            Assert.AreEqual(LightPunctual.Type.Directional, gltf.Extensions.KHR_lights_punctual.lights[0].GetLightType());
+            Assert.NotNull(gltf.Extensions.LightsPunctual);
+            Assert.NotNull(gltf.Extensions.LightsPunctual.Lights);
+            Assert.AreEqual(1, gltf.Extensions.LightsPunctual.Lights.Length);
+            Assert.AreEqual(LightType.Directional, gltf.Extensions.LightsPunctual.Lights[0].Type);
             Assert.IsTrue(gltf.Extensions.TryGetValue<MyExtension>("CUSTOM_my_extension", out var ext));
             CertifyCustomExtensions(gltf.Extensions);
         }
