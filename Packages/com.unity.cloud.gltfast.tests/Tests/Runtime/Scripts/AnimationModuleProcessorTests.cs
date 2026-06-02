@@ -16,58 +16,58 @@ namespace GLTFast.Tests
         [Test]
         public void AddRotationCurvesWithDefaultValuesLinear()
         {
-            AddRotationCurvesWithDefaultValues(InterpolationType.Linear);
+            AddRotationCurvesWithDefaultValues(Interpolation.Linear);
         }
 
         [Test]
         public void AddRotationCurvesWithDefaultValuesCubicSpline()
         {
-            AddRotationCurvesWithDefaultValues(InterpolationType.CubicSpline);
+            AddRotationCurvesWithDefaultValues(Interpolation.CubicSpline);
         }
 
         [Test]
         public void AddRotationCurvesWithDefaultValuesStep()
         {
-            AddRotationCurvesWithDefaultValues(InterpolationType.Step);
+            AddRotationCurvesWithDefaultValues(Interpolation.Step);
         }
 
         [Test]
         public void AddVec3CurvesWithDefaultValuesLinear()
         {
-            AddVec3CurvesWithDefaultValues(InterpolationType.Linear);
+            AddVec3CurvesWithDefaultValues(Interpolation.Linear);
         }
 
         [Test]
         public void AddVec3CurvesWithDefaultValuesCubicSpline()
         {
-            AddVec3CurvesWithDefaultValues(InterpolationType.CubicSpline);
+            AddVec3CurvesWithDefaultValues(Interpolation.CubicSpline);
         }
 
         [Test]
         public void AddVec3CurvesWithDefaultValuesStep()
         {
-            AddVec3CurvesWithDefaultValues(InterpolationType.Step);
+            AddVec3CurvesWithDefaultValues(Interpolation.Step);
         }
 
         [Test]
         public void AddMorphTargetWeightCurvesWithDefaultValuesLinear()
         {
-            AddMorphTargetWeightCurvesWithDefaultValues(InterpolationType.Linear);
+            AddMorphTargetWeightCurvesWithDefaultValues(Interpolation.Linear);
         }
 
         [Test]
         public void AddMorphTargetWeightCurvesWithDefaultValuesCubicSpline()
         {
-            AddMorphTargetWeightCurvesWithDefaultValues(InterpolationType.CubicSpline);
+            AddMorphTargetWeightCurvesWithDefaultValues(Interpolation.CubicSpline);
         }
 
         [Test]
         public void AddMorphTargetWeightCurvesWithDefaultValuesStep()
         {
-            AddMorphTargetWeightCurvesWithDefaultValues(InterpolationType.Step);
+            AddMorphTargetWeightCurvesWithDefaultValues(Interpolation.Step);
         }
 
-        static void AddRotationCurvesWithDefaultValues(InterpolationType interpolationType)
+        static void AddRotationCurvesWithDefaultValues(Interpolation interpolation)
         {
 #if UNITY_ANIMATION
             using var times = new NativeArray<float>(new[] { 0f, 1f }, Allocator.Temp);
@@ -76,7 +76,7 @@ namespace GLTFast.Tests
 
             using var anim = new AnimationModuleProcessor(1, true);
             anim.AddClip(0, "TestClip");
-            anim.AddRotationCurves(0, 0, hierarchy, times.AsReadOnly(), values, interpolationType);
+            anim.AddRotationCurves(0, 0, hierarchy, times.AsReadOnly(), values, interpolation);
 
             var clip = anim.AnimationClips[0];
             Assert.IsFalse(clip.empty, "Expected rotation curves to be registered on the clip.");
@@ -93,7 +93,7 @@ namespace GLTFast.Tests
 #endif
         }
 
-        static void AddVec3CurvesWithDefaultValues(InterpolationType interpolationType)
+        static void AddVec3CurvesWithDefaultValues(Interpolation interpolation)
         {
 #if UNITY_ANIMATION
             using var times = new NativeArray<float>(new[] { 0f, 1f }, Allocator.Temp);
@@ -102,8 +102,8 @@ namespace GLTFast.Tests
 
             using var anim = new AnimationModuleProcessor(1, true);
             anim.AddClip(0, "TestClip");
-            anim.AddTranslationCurves(0, 0, hierarchy, times.AsReadOnly(), values, interpolationType);
-            anim.AddScaleCurves(0, 0, hierarchy, times.AsReadOnly(), values, interpolationType);
+            anim.AddTranslationCurves(0, 0, hierarchy, times.AsReadOnly(), values, interpolation);
+            anim.AddScaleCurves(0, 0, hierarchy, times.AsReadOnly(), values, interpolation);
 
             var clip = anim.AnimationClips[0];
             Assert.IsFalse(clip.empty, "Expected translation curves to be registered on the clip.");
@@ -121,7 +121,7 @@ namespace GLTFast.Tests
 #endif
         }
 
-        static void AddMorphTargetWeightCurvesWithDefaultValues(InterpolationType interpolationType)
+        static void AddMorphTargetWeightCurvesWithDefaultValues(Interpolation interpolation)
         {
 #if UNITY_ANIMATION
             // With default (uncreated) values, morph target count must come from morphTargetNames
@@ -136,9 +136,9 @@ namespace GLTFast.Tests
             using var anim = new AnimationModuleProcessor(1, true);
             anim.AddClip(0, "TestClip");
             anim.AddMorphTargetWeightCurves(
-                0, 0, 0, null, hierarchy, times.AsReadOnly(), values, interpolationType, morphTargetNames);
+                0, 0, 0, null, hierarchy, times.AsReadOnly(), values, interpolation, morphTargetNames);
             anim.AddMorphTargetWeightCurves(
-                0, 0, 0, "Submesh", hierarchy, times.AsReadOnly(), values, interpolationType, morphTargetNames);
+                0, 0, 0, "Submesh", hierarchy, times.AsReadOnly(), values, interpolation, morphTargetNames);
 
             var clip = anim.AnimationClips[0];
             Assert.IsFalse(clip.empty, "Expected morph target weight curves to be registered on the clip.");

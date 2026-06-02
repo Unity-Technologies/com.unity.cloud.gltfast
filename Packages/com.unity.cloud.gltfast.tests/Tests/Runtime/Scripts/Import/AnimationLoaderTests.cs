@@ -92,14 +92,14 @@ namespace GLTFast.Tests.Import
             INodeHierarchyInfo nodeHierarchyInfo,
             NativeArray<float>.ReadOnly times,
             NativeArray<float3>.ReadOnly values,
-            InterpolationType interpolationType
+            Interpolation interpolation
             )
         {
             m_Clips[clipIndex].AddTranslationCurve(
                 targetNode,
                 times,
                 values,
-                interpolationType
+                interpolation
                 );
         }
 
@@ -109,14 +109,14 @@ namespace GLTFast.Tests.Import
             INodeHierarchyInfo nodeHierarchyInfo,
             NativeArray<float>.ReadOnly times,
             NativeArray<quaternion>.ReadOnly values,
-            InterpolationType interpolationType
+            Interpolation interpolation
             )
         {
             m_Clips[clipIndex].AddRotationCurve(
                 targetNode,
                 times,
                 values,
-                interpolationType
+                interpolation
                 );
         }
 
@@ -126,13 +126,13 @@ namespace GLTFast.Tests.Import
             INodeHierarchyInfo nodeHierarchyInfo,
             NativeArray<float>.ReadOnly times,
             NativeArray<float3>.ReadOnly values,
-            InterpolationType interpolationType)
+            Interpolation interpolation)
         {
             m_Clips[clipIndex].AddScaleCurve(
                 targetNode,
                 times,
                 values,
-                interpolationType);
+                interpolation);
         }
 
         public void AddMorphTargetWeightCurves(
@@ -143,9 +143,9 @@ namespace GLTFast.Tests.Import
             INodeHierarchyInfo nodeHierarchyInfo,
             NativeArray<float>.ReadOnly times,
             NativeArray<float>.ReadOnly values,
-            InterpolationType interpolationType, string[] morphTargetNames = null)
+            Interpolation interpolation, string[] morphTargetNames = null)
         {
-            m_Clips[clipIndex].AddMorphTargetWeightCurve(targetNode, times, values, interpolationType);
+            m_Clips[clipIndex].AddMorphTargetWeightCurve(targetNode, times, values, interpolation);
         }
 
         public void Dispose() { }
@@ -206,40 +206,40 @@ namespace GLTFast.Tests.Import
             int targetNode,
             NativeArray<float>.ReadOnly times,
             NativeArray<float3>.ReadOnly values,
-            InterpolationType interpolationType
+            Interpolation interpolation
             )
         {
-            TranslationCurves.Add(new MyCurve<float3>(targetNode, times, values, interpolationType));
+            TranslationCurves.Add(new MyCurve<float3>(targetNode, times, values, interpolation));
         }
 
         public void AddScaleCurve(
             int targetNode,
             NativeArray<float>.ReadOnly times,
             NativeArray<float3>.ReadOnly values,
-            InterpolationType interpolationType
+            Interpolation interpolation
             )
         {
-            ScaleCurves.Add(new MyCurve<float3>(targetNode, times, values, interpolationType));
+            ScaleCurves.Add(new MyCurve<float3>(targetNode, times, values, interpolation));
         }
 
         public void AddRotationCurve(
             int targetNode,
             NativeArray<float>.ReadOnly times,
             NativeArray<quaternion>.ReadOnly values,
-            InterpolationType interpolationType
+            Interpolation interpolation
             )
         {
-            RotationCurves.Add(new MyCurve<quaternion>(targetNode, times, values, interpolationType));
+            RotationCurves.Add(new MyCurve<quaternion>(targetNode, times, values, interpolation));
         }
 
         public void AddMorphTargetWeightCurve(
             int targetNode,
             NativeArray<float>.ReadOnly times,
             NativeArray<float>.ReadOnly values,
-            InterpolationType interpolationType
+            Interpolation interpolation
             )
         {
-            MorphTargetWeightCurves.Add(new MyCurve<float>(targetNode, times, values, interpolationType));
+            MorphTargetWeightCurves.Add(new MyCurve<float>(targetNode, times, values, interpolation));
         }
     }
 
@@ -248,19 +248,19 @@ namespace GLTFast.Tests.Import
         public int TargetNode { get; }
         public NativeArray<float>.ReadOnly Times { get; }
         public NativeArray<T>.ReadOnly Values { get; }
-        public InterpolationType InterpolationType { get; }
+        public Interpolation Interpolation { get; }
 
         public MyCurve(
             int targetNode,
             NativeArray<float>.ReadOnly times,
             NativeArray<T>.ReadOnly values,
-            InterpolationType interpolationType
+            Interpolation interpolation
             )
         {
             TargetNode = targetNode;
             Times = times;
             Values = values;
-            InterpolationType = interpolationType;
+            this.Interpolation = interpolation;
         }
     }
 }

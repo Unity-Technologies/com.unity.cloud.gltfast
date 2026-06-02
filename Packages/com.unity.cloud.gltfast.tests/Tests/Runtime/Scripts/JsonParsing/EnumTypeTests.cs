@@ -156,52 +156,58 @@ namespace GLTFast.Tests.JsonParsing
         }
 
         [Test]
-        public void AnimationChannelTargetEnumCasting()
+        public void AnimationPathDeserialization()
         {
 #if UNITY_ANIMATION
-#pragma warning disable CS0618 // Type or member is obsolete
-            var obj = new AnimationChannelTarget
-            {
-                path = null
-            };
-            Assert.AreEqual(AnimationChannel.Path.Invalid, obj.GetPath());
-            Assert.IsNull(obj.path);
-            // Second time to test cached value
-            Assert.AreEqual(AnimationChannel.Path.Invalid, obj.GetPath());
+            var target = JsonSerializer.Deserialize(
+                "{\"path\":\"pointer\"}", GltfRootSourceGenerator.Default.AnimationChannelTarget);
+            Assert.AreEqual(AnimationPath.Pointer, target.Path);
 
-            obj = new AnimationChannelTarget
-            {
-                path = "Pointer"
-            };
-            Assert.AreEqual(AnimationChannel.Path.Pointer, obj.GetPath());
-            Assert.IsNull(obj.path);
-#pragma warning restore CS0618 // Type or member is obsolete
+            target = JsonSerializer.Deserialize(
+                "{\"path\":\"translation\"}", GltfRootSourceGenerator.Default.AnimationChannelTarget);
+            Assert.AreEqual(AnimationPath.Translation, target.Path);
+
+            target = JsonSerializer.Deserialize(
+                "{\"path\":\"rotation\"}", GltfRootSourceGenerator.Default.AnimationChannelTarget);
+            Assert.AreEqual(AnimationPath.Rotation, target.Path);
+
+            target = JsonSerializer.Deserialize(
+                "{\"path\":\"scale\"}", GltfRootSourceGenerator.Default.AnimationChannelTarget);
+            Assert.AreEqual(AnimationPath.Scale, target.Path);
+
+            target = JsonSerializer.Deserialize(
+                "{\"path\":\"weights\"}", GltfRootSourceGenerator.Default.AnimationChannelTarget);
+            Assert.AreEqual(AnimationPath.Weights, target.Path);
+
+            Assert.Throws<JsonException>(() =>
+                JsonSerializer.Deserialize("{\"path\":\"foo\"}", GltfRootSourceGenerator.Default.AnimationChannelTarget));
 #else
             Assert.Ignore("Requires Animation module to be enabled.");
 #endif
         }
 
         [Test]
-        public void AnimationSamplerEnumCasting()
+        [TestCase(null, Interpolation.Linear)]
+        [TestCase("LINEAR", Interpolation.Linear)]
+        [TestCase("STEP", Interpolation.Step)]
+        [TestCase("CUBICSPLINE", Interpolation.CubicSpline)]
+        public void InterpolationDeserialization(string value, Interpolation expected)
         {
 #if UNITY_ANIMATION
-#pragma warning disable CS0618 // Type or member is obsolete
-            var obj = new AnimationSampler
-            {
-                interpolation = null
-            };
-            Assert.AreEqual(InterpolationType.Linear, obj.GetInterpolationType());
-            Assert.IsNull(obj.interpolation);
-            // Second time to test cached value
-            Assert.AreEqual(InterpolationType.Linear, obj.GetInterpolationType());
+            var json = value == null ? "{}" : $@"{{""interpolation"":""{value}""}}";
+            Assert.AreEqual(expected,
+                JsonSerializer.Deserialize(json, GltfRootSourceGenerator.Default.AnimationSampler).Interpolation);
+#else
+            Assert.Ignore("Requires Animation module to be enabled.");
+#endif
+        }
 
-            obj = new AnimationSampler
-            {
-                interpolation = "CubicSpline"
-            };
-            Assert.AreEqual(InterpolationType.CubicSpline, obj.GetInterpolationType());
-            Assert.IsNull(obj.interpolation);
-#pragma warning restore CS0618 // Type or member is obsolete
+        [Test]
+        public void InterpolationDeserializationException()
+        {
+#if UNITY_ANIMATION
+            Assert.Throws<JsonException>(() =>
+                JsonSerializer.Deserialize(@"""foo""", GltfRootSourceGenerator.Default.AnimationSampler));
 #else
             Assert.Ignore("Requires Animation module to be enabled.");
 #endif
@@ -329,10 +335,10 @@ namespace GLTFast.Tests.JsonParsing
             Assert.NotNull(gltf.Animations[0].Channels);
             Assert.AreEqual(1, gltf.Animations[0].Channels.Count);
             Assert.NotNull(gltf.Animations[0].Channels[0].Target);
-            Assert.AreEqual(AnimationChannel.Path.Weights, gltf.Animations[0].Channels[0].Target.GetPath());
+            Assert.AreEqual(AnimationPath.Weights, gltf.Animations[0].Channels[0].Target.Path);
             Assert.NotNull(gltf.Animations[0].Samplers);
             Assert.AreEqual(1, gltf.Animations[0].Samplers.Count);
-            Assert.AreEqual(InterpolationType.CubicSpline, gltf.Animations[0].Samplers[0].GetInterpolationType());
+            Assert.AreEqual(Interpolation.CubicSpline, gltf.Animations[0].Samplers[0].Interpolation);
         }
 #endif
 
@@ -397,11 +403,11 @@ namespace GLTFast.Tests.JsonParsing
     ""animations"": [{
         ""channels"": [{
             ""target"": {
-                ""path"": ""Weights""
+                ""path"": ""weights""
             }
         }],
         ""samplers"": [{
-            ""interpolation"": ""CubicSpline""
+            ""interpolation"": ""CUBICSPLINE""
         }]
     }],
     ""bufferViews"": [{

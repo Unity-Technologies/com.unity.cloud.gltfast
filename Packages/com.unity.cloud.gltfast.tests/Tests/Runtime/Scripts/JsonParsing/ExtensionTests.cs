@@ -363,20 +363,20 @@ $@"
 
 #if UNITY_ANIMATION
             CertifyCustomData(gltf.Animations[0], 43);
-            CertifyCustomExtensions(gltf.Animations[0].extensions);
-            CertifyCustomExtras(gltf.Animations[0].extras);
+            CertifyCustomExtensions(gltf.Animations[0].Extensions);
+            CertifyCustomExtras(gltf.Animations[0].Extras);
 
             CertifyCustomData(gltf.Animations[0].Channels[0], 430);
-            CertifyCustomExtensions(gltf.Animations[0].Channels[0].extensions);
-            CertifyCustomExtras(gltf.Animations[0].Channels[0].extras);
+            CertifyCustomExtensions(gltf.Animations[0].Channels[0].Extensions);
+            CertifyCustomExtras(gltf.Animations[0].Channels[0].Extras);
 
             CertifyCustomData(gltf.Animations[0].Channels[0].Target, 4300);
-            CertifyCustomExtensions(gltf.Animations[0].Channels[0].Target.extensions);
-            CertifyCustomExtras(gltf.Animations[0].Channels[0].Target.extras);
+            CertifyCustomExtensions(gltf.Animations[0].Channels[0].Target.Extensions);
+            CertifyCustomExtras(gltf.Animations[0].Channels[0].Target.Extras);
 
             CertifyCustomData(gltf.Animations[0].Samplers[0], 431);
-            CertifyCustomExtensions(gltf.Animations[0].Samplers[0].extensions);
-            CertifyCustomExtras(gltf.Animations[0].Samplers[0].extras);
+            CertifyCustomExtensions(gltf.Animations[0].Samplers[0].Extensions);
+            CertifyCustomExtras(gltf.Animations[0].Samplers[0].Extras);
 #endif
 
             CertifyCustomData(gltf.Asset, 44);
@@ -552,8 +552,8 @@ $@"
             Assert.IsNull(gltf.Accessors[0].Extensions);
 
 #if UNITY_ANIMATION
-            Assert.IsNull(gltf.Animations[0].extras);
-            Assert.IsNull(gltf.Animations[0].extensions);
+            Assert.IsNull(gltf.Animations[0].Extras);
+            Assert.IsNull(gltf.Animations[0].Extensions);
 #endif
 
             Assert.IsNull(gltf.Asset.extras);

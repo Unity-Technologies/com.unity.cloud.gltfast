@@ -17,7 +17,6 @@ namespace GLTFast.Schema
     /// A keyframe animation.
     /// </summary>
     /// <seealso href="https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html#reference-animation"/>
-    [Serializable]
     public class Animation : NamedObject, IGltfObject
     {
         /// <summary>
@@ -35,11 +34,13 @@ namespace GLTFast.Schema
         [JsonPropertyName("samplers")]
         public List<AnimationSampler> Samplers { get; set; }
 
-        /// <inheritdoc cref="Asset.extensions"/>
-        public UnclassifiedData extensions;
+        /// <inheritdoc cref="Asset.Extensions"/>
+        [JsonPropertyName("extensions")]
+        public UnclassifiedData Extensions { get; set; }
 
-        /// <inheritdoc cref="Root.extras"/>
-        public UnclassifiedData extras;
+        /// <inheritdoc cref="Root.Extras"/>
+        [JsonPropertyName("extras")]
+        public UnclassifiedData Extras { get; set; }
 
         /// <summary>JSON properties without a matching member.</summary>
         [JsonExtensionData, JsonInclude] internal Dictionary<string, JsonElement> ExtensionsData { get; set; }

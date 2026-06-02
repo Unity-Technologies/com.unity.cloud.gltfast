@@ -2,22 +2,25 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
+using Unity.Gltfast.Text.Json.Serialization;
 
 namespace GLTFast.Schema
 {
     /// <summary>
-    /// glTF animation interpolation algorithm type.
+    /// glTF animation interpolation algorithm.
     /// </summary>
     /// <seealso href="https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html#_animation_sampler_interpolation"/>
-    public enum InterpolationType
+    [JsonConverter(typeof(JsonStringEnumConverter<Interpolation>))]
+    public enum Interpolation
     {
-        /// <summary>Unknown</summary>
-        Unknown,
         /// <summary>The animated values are linearly interpolated between keyframes.</summary>
+        [JsonStringEnumMemberName("LINEAR")]
         Linear,
         /// <summary>The animated values remain constant to the output of the first keyframe, until the next keyframe.</summary>
+        [JsonStringEnumMemberName("STEP")]
         Step,
         /// <summary>The animation’s interpolation is computed using a cubic spline with specified tangents.</summary>
+        [JsonStringEnumMemberName("CUBICSPLINE")]
         CubicSpline
     }
 }

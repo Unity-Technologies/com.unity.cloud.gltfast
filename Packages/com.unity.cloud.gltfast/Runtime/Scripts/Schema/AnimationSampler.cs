@@ -10,7 +10,6 @@ using Unity.Gltfast.Text.Json.Serialization;
 
 namespace GLTFast.Schema
 {
-    [Serializable]
     public class AnimationSampler : IGltfObject
     {
         /// <summary>
@@ -19,7 +18,8 @@ namespace GLTFast.Schema
         /// seconds with `time[0] >= 0.0`, and strictly increasing values,
         /// i.e., `time[n + 1] > time[n]`
         /// </summary>
-        public int input;
+        [JsonPropertyName("input")]
+        public int Input { get; set; }
 
         /// <summary>
         /// Interpolation algorithm. When an animation targets a node's rotation,
@@ -28,42 +28,24 @@ namespace GLTFast.Schema
         /// interpolation is `\"STEP\"`, animated value remains constant to the value
         /// of the first point of the timeframe, until the next timeframe.
         /// </summary>
-        // Field is public for unified serialization only. Warn via Obsolete attribute.
-        [Obsolete("Use GetInterpolationType for access.")]
-        public string interpolation;
-
-        InterpolationType m_Interpolation;
-
-        public InterpolationType GetInterpolationType()
-        {
-            if (m_Interpolation != InterpolationType.Unknown)
-            {
-                return m_Interpolation;
-            }
-
-#pragma warning disable CS0618 // Type or member is obsolete
-            if (!Enum.TryParse(interpolation, true, out m_Interpolation))
-            {
-                m_Interpolation = InterpolationType.Linear;
-            }
-            interpolation = null;
-#pragma warning restore CS0618 // Type or member is obsolete
-
-            return m_Interpolation;
-        }
+        [JsonPropertyName("interpolation")]
+        public Interpolation Interpolation { get; set; }
 
         /// <summary>
         /// The index of an accessor, containing keyframe output values. Output and input
         /// accessors must have the same `count`. When sampler is used with TRS target,
         /// output accessor's componentType must be `FLOAT`.
         /// </summary>
-        public int output;
+        [JsonPropertyName("output")]
+        public int Output { get; set; }
 
-        /// <inheritdoc cref="Asset.extensions"/>
-        public UnclassifiedData extensions;
+        /// <inheritdoc cref="Asset.Extensions"/>
+        [JsonPropertyName("extensions")]
+        public UnclassifiedData Extensions { get; set; }
 
-        /// <inheritdoc cref="Root.extras"/>
-        public UnclassifiedData extras;
+        /// <inheritdoc cref="Root.Extras"/>
+        [JsonPropertyName("extras")]
+        public UnclassifiedData Extras { get; set; }
 
         /// <summary>JSON properties without a matching member.</summary>
         [JsonExtensionData, JsonInclude] internal Dictionary<string, JsonElement> ExtensionsData { get; set; }

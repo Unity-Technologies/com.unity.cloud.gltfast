@@ -10,25 +10,14 @@ using Unity.Gltfast.Text.Json.Serialization;
 
 namespace GLTFast.Schema
 {
-    [Serializable]
     public class AnimationChannel : IGltfObject
     {
-        public enum Path
-        {
-            Unknown,
-            Invalid,
-            Translation,
-            Rotation,
-            Scale,
-            Weights,
-            Pointer
-        }
-
         /// <summary>
         /// The index of a sampler in this animation used to compute the value for the
         /// target, e.g., a node's translation, rotation, or scale (TRS).
         /// </summary>
-        public int sampler;
+        [JsonPropertyName("sampler")]
+        public int Sampler { get; set; }
 
         /// <summary>
         /// The index of the node and TRS property to target.
@@ -36,11 +25,13 @@ namespace GLTFast.Schema
         [JsonPropertyName("target")]
         public AnimationChannelTarget Target { get; set; }
 
-        /// <inheritdoc cref="Asset.extensions"/>
-        public UnclassifiedData extensions;
+        /// <inheritdoc cref="Asset.Extensions"/>
+        [JsonPropertyName("extensions")]
+        public UnclassifiedData Extensions { get; set; }
 
-        /// <inheritdoc cref="Root.extras"/>
-        public UnclassifiedData extras;
+        /// <inheritdoc cref="Root.Extras"/>
+        [JsonPropertyName("extras")]
+        public UnclassifiedData Extras { get; set; }
 
         /// <summary>JSON properties without a matching member.</summary>
         [JsonExtensionData, JsonInclude] internal Dictionary<string, JsonElement> ExtensionsData { get; set; }

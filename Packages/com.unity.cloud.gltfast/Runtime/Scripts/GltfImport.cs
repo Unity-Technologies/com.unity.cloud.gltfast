@@ -2460,41 +2460,41 @@ namespace GLTFast
                 for (var j = 0; j < animation.Channels.Count; j++)
                 {
                     var channel = animation.Channels[j];
-                    if (channel.sampler < 0 || channel.sampler >= animation.Samplers.Count)
+                    if (channel.Sampler < 0 || channel.Sampler >= animation.Samplers.Count)
                     {
                         Logger?.Error(LogCode.AnimationChannelSamplerInvalid, j.ToString());
                         continue;
                     }
-                    var sampler = animation.Samplers[channel.sampler];
-                    if (sampler == null || sampler.output < 0 || sampler.output >= Root.Accessors.Count)
+                    var sampler = animation.Samplers[channel.Sampler];
+                    if (sampler == null || sampler.Output < 0 || sampler.Output >= Root.Accessors.Count)
                     {
                         Logger?.Error(LogCode.AnimationChannelSamplerInvalid, j.ToString());
                         continue;
                     }
-                    if (channel.Target.node < 0 || channel.Target.node >= Root.Nodes.Count)
+                    if (channel.Target.Node < 0 || channel.Target.Node >= Root.Nodes.Count)
                     {
                         Logger?.Error(LogCode.AnimationChannelNodeInvalid, j.ToString());
                         continue;
                     }
 
-                    var targetNode = channel.Target.node;
+                    var targetNode = channel.Target.Node;
                     var nodeHierarchyInfo = new NodeHierarchyInfo(m_NodeNames, parentIndex);
-                    var times = GetAccessorData<float>(sampler.input);
+                    var times = GetAccessorData<float>(sampler.Input);
                     if (!times.IsCreated)
                     {
-                        Logger?.Error(LogCode.AccessorAccessFailed, sampler.input.ToString());
+                        Logger?.Error(LogCode.AccessorAccessFailed, sampler.Input.ToString());
                         continue;
                     }
-                    var interpolationType = sampler.GetInterpolationType();
+                    var interpolation = sampler.Interpolation;
 
-                    switch (channel.Target.GetPath())
+                    switch (channel.Target.Path)
                     {
-                        case AnimationChannel.Path.Translation:
+                        case AnimationPath.Translation:
                         {
-                            var values = GetAccessorData<float3>(sampler.output);
+                            var values = GetAccessorData<float3>(sampler.Output);
                             if (!values.IsCreated)
                             {
-                                Logger?.Error(LogCode.AccessorAccessFailed, sampler.output.ToString());
+                                Logger?.Error(LogCode.AccessorAccessFailed, sampler.Output.ToString());
                                 continue;
                             }
                             animationAddons.AddTranslationCurves(
@@ -2503,16 +2503,16 @@ namespace GLTFast
                                 nodeHierarchyInfo,
                                 times,
                                 values,
-                                interpolationType
+                                interpolation
                             );
                             break;
                         }
-                        case AnimationChannel.Path.Rotation:
+                        case AnimationPath.Rotation:
                         {
-                            var values = GetAccessorData<quaternion>(sampler.output);
+                            var values = GetAccessorData<quaternion>(sampler.Output);
                             if (!values.IsCreated)
                             {
-                                Logger?.Error(LogCode.AccessorAccessFailed, sampler.output.ToString());
+                                Logger?.Error(LogCode.AccessorAccessFailed, sampler.Output.ToString());
                                 continue;
                             }
                             animationAddons.AddRotationCurves(
@@ -2521,16 +2521,16 @@ namespace GLTFast
                                 nodeHierarchyInfo,
                                 times,
                                 values,
-                                interpolationType
+                                interpolation
                             );
                             break;
                         }
-                        case AnimationChannel.Path.Scale:
+                        case AnimationPath.Scale:
                         {
-                            var values = GetAccessorData<float3>(sampler.output);
+                            var values = GetAccessorData<float3>(sampler.Output);
                             if (!values.IsCreated)
                             {
-                                Logger?.Error(LogCode.AccessorAccessFailed, sampler.output.ToString());
+                                Logger?.Error(LogCode.AccessorAccessFailed, sampler.Output.ToString());
                                 continue;
                             }
                             animationAddons.AddScaleCurves(
@@ -2539,22 +2539,22 @@ namespace GLTFast
                                 nodeHierarchyInfo,
                                 times,
                                 values,
-                                interpolationType
+                                interpolation
                             );
                             break;
                         }
-                        case AnimationChannel.Path.Weights:
+                        case AnimationPath.Weights:
                         {
-                            var node = Root.Nodes[channel.Target.node];
+                            var node = Root.Nodes[channel.Target.Node];
                             if (node.Mesh < 0 || node.Mesh >= Root.Meshes.Count)
                             {
                                 break;
                             }
                             var mesh = Root.Meshes[node.Mesh];
-                            var values = GetAccessorData<float>(sampler.output);
+                            var values = GetAccessorData<float>(sampler.Output);
                             if (!values.IsCreated)
                             {
-                                Logger?.Error(LogCode.AccessorAccessFailed, sampler.output.ToString());
+                                Logger?.Error(LogCode.AccessorAccessFailed, sampler.Output.ToString());
                                 continue;
                             }
                             animationAddons.AddMorphTargetWeightCurves(
@@ -2565,7 +2565,7 @@ namespace GLTFast
                                 nodeHierarchyInfo,
                                 times,
                                 values,
-                                interpolationType,
+                                interpolation,
                                 mesh.Extras?.TargetNames
                             );
 
@@ -2588,20 +2588,19 @@ namespace GLTFast
                                     nodeHierarchyInfo,
                                     times,
                                     values,
-                                    interpolationType,
+                                    interpolation,
                                     mesh.Extras?.TargetNames
                                 );
                             }
                             // HACK END
                             break;
                         }
-                        case AnimationChannel.Path.Pointer:
-                            Logger?.Warning(LogCode.AnimationTargetPathUnsupported, channel.Target.GetPath().ToString());
+                        case AnimationPath.Pointer:
+                            Logger?.Warning(LogCode.AnimationTargetPathUnsupported, channel.Target.Path.ToString());
                             break;
-                        case AnimationChannel.Path.Unknown:
-                        case AnimationChannel.Path.Invalid:
+                        case AnimationPath.Undefined:
                         default:
-                            Logger?.Error(LogCode.AnimationTargetPathUnsupported, channel.Target.GetPath().ToString());
+                            Logger?.Error(LogCode.AnimationTargetPathUnsupported, channel.Target.Path.ToString());
                             break;
                     }
                 }
@@ -3473,24 +3472,24 @@ namespace GLTFast
                 {
                     foreach (var sampler in animation.Samplers)
                     {
-                        SetAccessorUsage(sampler.input, AccessorUsage.AnimationTimes);
+                        SetAccessorUsage(sampler.Input, AccessorUsage.AnimationTimes);
                     }
 
                     foreach (var channel in animation.Channels)
                     {
-                        var accessorIndex = animation.Samplers[channel.sampler].output;
-                        switch (channel.Target.GetPath())
+                        var accessorIndex = animation.Samplers[channel.Sampler].Output;
+                        switch (channel.Target.Path)
                         {
-                            case AnimationChannel.Path.Translation:
+                            case AnimationPath.Translation:
                                 SetAccessorUsage(accessorIndex, AccessorUsage.Translation);
                                 break;
-                            case AnimationChannel.Path.Rotation:
+                            case AnimationPath.Rotation:
                                 SetAccessorUsage(accessorIndex, AccessorUsage.Rotation);
                                 break;
-                            case AnimationChannel.Path.Scale:
+                            case AnimationPath.Scale:
                                 SetAccessorUsage(accessorIndex, AccessorUsage.Scale);
                                 break;
-                            case AnimationChannel.Path.Weights:
+                            case AnimationPath.Weights:
                                 SetAccessorUsage(accessorIndex, AccessorUsage.Weight);
                                 break;
                         }
