@@ -115,9 +115,10 @@ namespace GLTFast.Documentation.Examples
         public async Task SceneInstanceAccess()
         {
             #region SceneInstanceAccess
-            var gltfImport = new GltfImport();
+            var logger = new ConsoleLogger();
+            var gltfImport = new GltfImport(logger: logger);
             await gltfImport.Load(filePath);
-            var instantiator = new GameObjectInstantiator(gltfImport, transform);
+            var instantiator = new GameObjectInstantiator(gltfImport, transform, logger: logger);
             var success = await gltfImport.InstantiateMainSceneAsync(instantiator);
             if (success)
             {

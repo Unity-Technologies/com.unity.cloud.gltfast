@@ -664,16 +664,17 @@ namespace GLTFast.Tests.Export
             );
             export.AddScene(new[] { gameObject }, gameObject.name);
             var extension = binary ? GltfGlobals.GlbExt : GltfGlobals.GltfExt;
-            var fileName = $"{gameObject.name}{extension}";
+            var suffix = toStream ? "-stream" : string.Empty;
+            var fileName = $"{gameObject.name}{suffix}{extension}";
             var path = Path.Combine(Application.persistentDataPath, fileName);
 
             bool success;
             if (toStream)
             {
-                var glbStream = new MemoryStream();
+                await using var glbStream = new FileStream(path, FileMode.Create, FileAccess.Write);
                 success = await export.SaveToStreamAndDispose(glbStream);
                 Assert.Greater(glbStream.Length, 20);
-                glbStream.Close();
+                await glbStream.FlushAsync();
             }
             else
             {

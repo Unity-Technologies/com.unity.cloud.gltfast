@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- `LogCode.AnimationComponentFail`
 - Support for high precision node transforms.
 - `JsonWriter.AddProperty` overload that accepts `ReadOnlySpan<char>`.
 
@@ -23,6 +24,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Clarified [IDeferAgent.ShouldDefer](xref:GLTFast.IDeferAgent.ShouldDefer) documentation to note that it must eventually return `false`, otherwise imports may stall indefinitely without raising an error.
 
 ### Fixed
+- Fixed false positives in export to stream tests because it actually validated results from non-stream tests.
+- Prevent exception when Animation component was not created successfully.
 
 ### Removed
 - JsonUtility dependency and related code.
