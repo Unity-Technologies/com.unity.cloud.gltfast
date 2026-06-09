@@ -89,14 +89,24 @@ namespace GLTFast.Tests.Import
             var before = new List<Object>();
             var after = new List<Object>();
 
-            before.AddRange(Object.FindObjectsByType<Object>(FindObjectsInactive.Include, FindObjectsSortMode.InstanceID));
+            before.AddRange(Object.FindObjectsByType<Object>(
+                FindObjectsInactive.Include
+#if !UNITY_6000_4_OR_NEWER
+                , FindObjectsSortMode.InstanceID
+#endif
+                ));
 
             yield return test;
 
             GC.Collect();
             yield return null;
 
-            after.AddRange(Object.FindObjectsByType<Object>(FindObjectsInactive.Include, FindObjectsSortMode.InstanceID));
+            after.AddRange(Object.FindObjectsByType<Object>(
+                FindObjectsInactive.Include
+#if !UNITY_6000_4_OR_NEWER
+                , FindObjectsSortMode.InstanceID
+#endif
+                ));
 
             if (expectEqual)
                 CollectionAssert.AreEquivalent(before, after);
