@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Fixed false positives in export to stream tests because it actually validated results from non-stream tests.
 - Prevent exception when Animation component was not created successfully.
+- Removed useless `SerializeFieldAttribute` from `MaterialsVariantsComponent.Control` to avoid compiler warning in Unity 6.6 and newer.
 - Removed usage of obsolete `FindObjectsByType` overloads.
 
 ### Removed
