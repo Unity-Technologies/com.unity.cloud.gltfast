@@ -61,7 +61,6 @@ namespace GLTFast.Documentation.Examples
         }
     }
 
-    [Serializable]
     struct TextureWebpExtension
     {
         public int source;

@@ -13,7 +13,6 @@ namespace GLTFast.Editor.Tests
 {
     class PackageCoherenceTests
     {
-        [Serializable]
         struct Package
         {
             public string version { get; set; }

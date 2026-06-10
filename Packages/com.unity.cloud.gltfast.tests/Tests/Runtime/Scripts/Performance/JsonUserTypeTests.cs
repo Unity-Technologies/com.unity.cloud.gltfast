@@ -101,7 +101,6 @@ namespace GLTFast.Tests.Performance
         }
     }
 
-    [Serializable]
     struct HeavyExtension
     {
         public float value;

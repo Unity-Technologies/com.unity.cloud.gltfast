@@ -85,13 +85,11 @@ $@"
     }}
 }}";
 
-        [Serializable]
         class MyExtension : SubClass
         {
             public SubClass subObject;
         }
 
-        [Serializable]
         class SubClass
         {
             public float floatProp;
@@ -101,13 +99,6 @@ $@"
             public int[] intArrayProp;
             public float[] rotation;
             public float[] color;
-        }
-
-        [Serializable]
-        class NotMatchingExtension
-        {
-            // ReSharper disable once NotAccessedField.Local
-            public string noMatch;
         }
 
         [Test]
