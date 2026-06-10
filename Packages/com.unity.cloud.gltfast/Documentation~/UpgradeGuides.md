@@ -18,6 +18,20 @@ https://github.com/Unity-Technologies/com.unity.cloud.gltfast.git?path=/Packages
 
 You can do this by manually editing the URL in the [project manifest][ProjectManifest].
 
+## Upgrade to 7.0
+
+The `glTFast.Newtonsoft` assembly will be removed when 7.0 leaves the experimental phase. Migrate to the main `glTFast` assembly now to avoid breakage at that cutover.
+
+| Before | After |
+|--------|-------|
+| `using GLTFast.Newtonsoft;` | `using GLTFast;` |
+| `GLTFast.Newtonsoft.GltfImport` | `GLTFast.GltfImport` |
+| `using GLTFast.Newtonsoft.Schema;` | `using GLTFast.Schema;` |
+| `GLTFast.Newtonsoft.Schema.Accessor`, `…Asset`, `…Material`, `…Node`, `…Root`, `…Mesh`, etc. | `GLTFast.Schema.Accessor`, `…Asset`, `…Material`, `…Node`, `…Root`, `…Mesh`, etc. |
+| `GLTFast.Newtonsoft.Schema.IJsonObject` interface | `GLTFast.Schema.IGltfObject` interface (note: the interface itself was renamed) |
+
+If your assembly definition referenced `glTFast.Newtonsoft`, replace the reference with `glTFast`.
+
 ## Upgrade to 6.0
 
 Use Unity 2021.3.46f1 or newer only.
