@@ -4,10 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [Unreleased Preview]
 
 ### Added
-- `LogCode.AnimationComponentFail`
 - Support for high precision node transforms.
 - `JsonWriter.AddProperty` overload that accepts `ReadOnlySpan<char>`.
 
@@ -28,15 +27,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - `Material.AlphaMode` ⇒ `AlphaMode`
     - `MeshGpuInstancing.Attributes` ⇒ `InstancesAttributes`
 - Node transforms (translation, rotation, scale or matrix) are now in double precision throughout the API.
+
+### Removed
+- JsonUtility dependency and related code.
+- Newtonsoft JSON dependency.
+
+### Deprecated
+
+### Security
+
+## [Unreleased]
+
+### Added
+- `LogCode.AnimationComponentFail`
+
+### Changed
 - Clarified [IDeferAgent.ShouldDefer](xref:GLTFast.IDeferAgent.ShouldDefer) documentation to note that it must eventually return `false`, otherwise imports may stall indefinitely without raising an error.
 
 ### Fixed
 - Fixed false positives in export to stream tests because it actually validated results from non-stream tests.
 - Prevent exception when Animation component was not created successfully.
+- Removed useless `SerializeFieldAttribute` from `MaterialsVariantsComponent.Control` to avoid compiler warning in Unity 6.6 and newer.
+- Removed usage of obsolete `FindObjectsByType` overloads.
 
 ### Removed
-- JsonUtility dependency and related code.
-- Newtonsoft JSON dependency.
 
 ### Deprecated
 

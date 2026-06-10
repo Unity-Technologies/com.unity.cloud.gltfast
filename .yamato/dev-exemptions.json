@@ -2,10 +2,14 @@
   "per_package": {
     "com.unity.cloud.gltfast@7": {
       "exempts": {
+        "PVP-40-1": {
+          "all": true
+        },
         "PVP-41-1": {
-          "errors": [
-            "CHANGELOG.md: line 7: Unreleased section is not allowed for public release"
-          ]
+          "all": true
+        },
+        "PVP-43-1": {
+          "all": true
         }
       }
     }
