@@ -2282,8 +2282,8 @@ namespace GLTFast
                             meshopt.Count,
                             meshopt.ByteStride,
                             origBufferView.AsNativeArrayReadOnly(),
-                            meshopt.GetMode(),
-                            meshopt.GetFilter()
+                            meshopt.Mode.ToMeshoptimizerMode(),
+                            meshopt.Filter.ToMeshoptimizerFilter()
                         );
                         jobHandlesList.Add(jobHandle);
                         m_MeshoptBufferViews[i] = arr;

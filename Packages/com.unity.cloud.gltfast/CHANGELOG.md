@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Support for high precision node transforms.
 - `JsonWriter.AddProperty` overload that accepts `ReadOnlySpan<char>`.
+- [MeshoptFilter](xref:GLTFast.Schema.MeshoptFilter) and [MeshoptMode](xref:GLTFast.Schema.MeshoptMode) for custom JSON serialization of `Meshoptimizer.Filter` and `Meshoptimizer.Mode`.
 
 ### Changed
 - JSON de-serialization is performed by [System.Text.Json](https://www.nuget.org/packages/system.text.json/) (or `Unity.Gltfast.Text.Json`, a copy of it for Unity 6.4 and older to avoid conflicts).

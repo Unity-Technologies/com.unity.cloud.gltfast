@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2026 Unity Technologies and the glTFast authors
+// SPDX-License-Identifier: Apache-2.0
+
 using System;
 using Unity.Gltfast.Text.Json.Serialization;
 using UnityEngine;

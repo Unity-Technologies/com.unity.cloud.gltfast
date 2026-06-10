@@ -164,39 +164,67 @@ namespace GLTFast.Tests.JsonParsing
 #endif
         }
 
-#if MESHOPT_IS_RECENT
         [Test]
-        public void BufferViewEnumCasting()
+        [TestCase(MeshoptMode.Attributes, "ATTRIBUTES")]
+        [TestCase(MeshoptMode.Triangles, "TRIANGLES")]
+        [TestCase(MeshoptMode.Indices, "INDICES")]
+        [TestCase(MeshoptMode.Undefined, "foo")]
+        public void MeshoptModeDeserialization(MeshoptMode expected, string value)
         {
-#pragma warning disable CS0618 // Type or member is obsolete
-            var obj = new BufferViewMeshoptExtension
-            {
-                Filter = "Octahedral",
-                Mode = "Nonsense"
-            };
-
-            Assert.AreEqual(Filter.Octahedral, obj.GetFilter());
-            Assert.IsNull(obj.Filter);
-            // Second time to test cached value
-            Assert.AreEqual(Filter.Octahedral, obj.GetFilter());
-
-            Assert.AreEqual(Mode.Undefined, obj.GetMode());
-            Assert.IsNull(obj.Mode);
-            obj.Mode = "Indices";
-            Assert.AreEqual(Mode.Indices, obj.GetMode());
-            Assert.IsNull(obj.Mode);
-            // Second time to test cached value
-            Assert.AreEqual(Mode.Indices, obj.GetMode());
-
-            obj = new BufferViewMeshoptExtension
-            {
-                Filter = "Nonsense"
-            };
-            Assert.AreEqual(Filter.None, obj.GetFilter());
-            Assert.IsNull(obj.Filter);
-#pragma warning restore CS0618 // Type or member is obsolete
-        }
+#if MESHOPT_IS_RECENT
+            Assert.AreEqual(expected, JsonSerializer.Deserialize($@"{{""mode"":""{value}""}}",
+                GltfRootSourceGenerator.Default.BufferViewMeshoptExtension).Mode);
+#else
+            Assert.Ignore("Requires meshoptimizer decompression for Unity package to be installed.");
 #endif
+        }
+
+        [Test]
+        [TestCase(@"{""mode"":""ATTRIBUTES""}", MeshoptMode.Attributes)]
+        [TestCase(@"{""mode"":""TRIANGLES""}", MeshoptMode.Triangles)]
+        [TestCase(@"{""mode"":""INDICES""}", MeshoptMode.Indices)]
+        [TestCase("{}", MeshoptMode.Undefined)]
+        public void MeshoptModeSerialization(string expected, MeshoptMode mode)
+        {
+#if MESHOPT_IS_RECENT
+            Assert.AreEqual(expected,
+                JsonSerializer.Serialize(new BufferViewMeshoptExtension { Mode = mode },
+                    GltfRootSourceGenerator.Default.BufferViewMeshoptExtension));
+#else
+            Assert.Ignore("Requires meshoptimizer decompression for Unity package to be installed.");
+#endif
+        }
+
+        [Test]
+        [TestCase(MeshoptFilter.Octahedral, "OCTAHEDRAL")]
+        [TestCase(MeshoptFilter.Quaternion, "QUATERNION")]
+        [TestCase(MeshoptFilter.Exponential, "EXPONENTIAL")]
+        [TestCase(MeshoptFilter.None, "foo")]
+        public void MeshoptFilterDeserialization(MeshoptFilter expected, string value)
+        {
+#if MESHOPT_IS_RECENT
+            Assert.AreEqual(expected, JsonSerializer.Deserialize($@"{{""filter"":""{value}""}}",
+                GltfRootSourceGenerator.Default.BufferViewMeshoptExtension).Filter);
+#else
+            Assert.Ignore("Requires meshoptimizer decompression for Unity package to be installed.");
+#endif
+        }
+
+        [Test]
+        [TestCase(@"{""filter"":""OCTAHEDRAL""}", MeshoptFilter.Octahedral)]
+        [TestCase(@"{""filter"":""QUATERNION""}", MeshoptFilter.Quaternion)]
+        [TestCase(@"{""filter"":""EXPONENTIAL""}", MeshoptFilter.Exponential)]
+        [TestCase("{}", MeshoptFilter.None)]
+        public void MeshoptFilterSerialization(string expected, MeshoptFilter value)
+        {
+#if MESHOPT_IS_RECENT
+            Assert.AreEqual(expected,
+                JsonSerializer.Serialize(new BufferViewMeshoptExtension { Filter = value },
+                    GltfRootSourceGenerator.Default.BufferViewMeshoptExtension));
+#else
+            Assert.Ignore("Requires meshoptimizer decompression for Unity package to be installed.");
+#endif
+        }
 
         [Test]
         public void CameraTypeSerialization()
@@ -297,8 +325,8 @@ namespace GLTFast.Tests.JsonParsing
             Assert.NotNull(gltf.BufferViews);
             Assert.AreEqual(1, gltf.BufferViews.Count);
             Assert.NotNull(gltf.BufferViews[0].Extensions?.ExtMeshoptCompression);
-            Assert.AreEqual(Mode.Triangles, gltf.BufferViews[0].Extensions?.ExtMeshoptCompression.GetMode());
-            Assert.AreEqual(Filter.Exponential, gltf.BufferViews[0].Extensions?.ExtMeshoptCompression.GetFilter());
+            Assert.AreEqual(MeshoptMode.Triangles, gltf.BufferViews[0].Extensions?.ExtMeshoptCompression.Mode);
+            Assert.AreEqual(MeshoptFilter.Exponential, gltf.BufferViews[0].Extensions?.ExtMeshoptCompression.Filter);
         }
 #endif
         static void CheckResultRootExtensions(Root gltf)
@@ -353,8 +381,8 @@ namespace GLTFast.Tests.JsonParsing
     ""bufferViews"": [{
         ""extensions"": {
             ""EXT_meshopt_compression"": {
-                ""mode"": ""Triangles"",
-                ""filter"": ""Exponential""
+                ""mode"": ""TRIANGLES"",
+                ""filter"": ""EXPONENTIAL""
             }
         }
     }],
