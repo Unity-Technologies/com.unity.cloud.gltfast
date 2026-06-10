@@ -16,6 +16,7 @@ This monorepo's main components:
 - Prefer state return values over C# exceptions (that may not work in Web builds)
 - Once code modifications are complete, ensure correct code format (as depicted by `.editorconfig`) by running `dotnet format Projects/glTFast-Test/glTFast-Test.sln`
 - Follow the .NET Framework Design Guidelines
+- `Unity.Gltfast.Text.Json` is a copy of `System.Text.Json` version 10 used as a drop-in replacement for JSON deserialization.
 
 ### Performance
 
