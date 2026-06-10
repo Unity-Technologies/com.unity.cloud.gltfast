@@ -3,6 +3,7 @@
 
 using System;
 using GLTFast.Materials;
+using GLTFast.Schema;
 using UnityEngine;
 using UnityEngine.Rendering;
 using GltfMaterial = GLTFast.Schema.Material;
@@ -16,7 +17,7 @@ namespace GLTFast.Export
     public class GltfBuiltInShaderMaterialExporter : GltfMaterialExporter
     {
         /// <inheritdoc />
-        protected override GltfMaterial.AlphaMode GetAlphaMode(Material material)
+        protected override AlphaMode GetAlphaMode(Material material)
         {
             if (TryGetValue(material, MaterialProperty.Mode, out int modeInt))
             {
@@ -24,13 +25,13 @@ namespace GLTFast.Export
                 switch (mode)
                 {
                     case StandardShaderMode.Cutout:
-                        return GltfMaterial.AlphaMode.Mask;
+                        return AlphaMode.Mask;
                     case StandardShaderMode.Fade:
                     case StandardShaderMode.Transparent:
-                        return GltfMaterial.AlphaMode.Blend;
+                        return AlphaMode.Blend;
                 }
             }
-            return GltfMaterial.AlphaMode.Opaque;
+            return AlphaMode.Opaque;
         }
 
         /// <inheritdoc />

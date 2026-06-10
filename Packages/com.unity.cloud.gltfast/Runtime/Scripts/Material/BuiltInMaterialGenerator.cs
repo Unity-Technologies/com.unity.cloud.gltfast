@@ -7,6 +7,7 @@
 
 #if GLTFAST_BUILTIN_RP || UNITY_EDITOR
 
+using GLTFast.Schema;
 using UnityEngine;
 #if UNITY_EDITOR
 using UnityEditor;
@@ -18,7 +19,7 @@ namespace GLTFast.Materials
 {
 
     using Logging;
-    using AlphaMode = Schema.Material.AlphaMode;
+    using AlphaMode = AlphaMode;
 
     /// <summary>
     /// Converts glTF materials to Unity materials for the Built-in Render Pipeline
@@ -194,19 +195,19 @@ namespace GLTFast.Materials
         {
             Material material;
 
-            var isUnlit = gltfMaterial.Extensions?.KHR_materials_unlit != null;
+            var isUnlit = gltfMaterial.Extensions?.Unlit != null;
 
-            if (gltfMaterial.Extensions?.KHR_materials_pbrSpecularGlossiness != null)
+            if (gltfMaterial.Extensions?.PbrSpecularGlossiness != null)
             {
-                material = GetPbrSpecularGlossinessMaterial(gltfMaterial.doubleSided);
+                material = GetPbrSpecularGlossinessMaterial(gltfMaterial.DoubleSided);
             }
             else if (isUnlit)
             {
-                material = GetUnlitMaterial(gltfMaterial.doubleSided);
+                material = GetUnlitMaterial(gltfMaterial.DoubleSided);
             }
             else
             {
-                material = GetPbrMetallicRoughnessMaterial(gltfMaterial.doubleSided);
+                material = GetPbrMetallicRoughnessMaterial(gltfMaterial.DoubleSided);
             }
 
             if (material == null) return null;
@@ -221,12 +222,12 @@ namespace GLTFast.Materials
             StandardShaderMode shaderMode = StandardShaderMode.Opaque;
             Color baseColorLinear = Color.white;
 
-            if (gltfMaterial.GetAlphaMode() == AlphaMode.Mask)
+            if (gltfMaterial.AlphaMode == AlphaMode.Mask)
             {
-                material.SetFloat(MaterialProperty.AlphaCutoff, gltfMaterial.alphaCutoff);
+                material.SetFloat(MaterialProperty.AlphaCutoff, gltfMaterial.AlphaCutoff);
                 shaderMode = StandardShaderMode.Cutout;
             }
-            else if (gltfMaterial.GetAlphaMode() == AlphaMode.Blend)
+            else if (gltfMaterial.AlphaMode == AlphaMode.Blend)
             {
                 SetAlphaModeBlend(material);
                 shaderMode = StandardShaderMode.Fade;
@@ -235,15 +236,15 @@ namespace GLTFast.Materials
             if (gltfMaterial.Extensions != null)
             {
                 // Specular glossiness
-                Schema.PbrSpecularGlossiness specGloss = gltfMaterial.Extensions.KHR_materials_pbrSpecularGlossiness;
+                Schema.PbrSpecularGlossiness specGloss = gltfMaterial.Extensions.PbrSpecularGlossiness;
                 if (specGloss != null)
                 {
                     baseColorLinear = specGloss.DiffuseColor;
                     material.SetVector(MaterialProperty.SpecularFactor, specGloss.SpecularColor);
-                    material.SetFloat(MaterialProperty.GlossinessFactor, specGloss.glossinessFactor);
+                    material.SetFloat(MaterialProperty.GlossinessFactor, specGloss.GlossinessFactor);
 
                     TrySetTexture(
-                        specGloss.diffuseTexture,
+                        specGloss.DiffuseTexture,
                         material,
                         gltf,
                         MaterialProperty.BaseColorTexture,
@@ -253,7 +254,7 @@ namespace GLTFast.Materials
                         );
 
                     if (TrySetTexture(
-                        specGloss.specularGlossinessTexture,
+                        specGloss.SpecularGlossinessTexture,
                         material,
                         gltf,
                         MaterialProperty.SpecularGlossinessTexture,
@@ -270,11 +271,11 @@ namespace GLTFast.Materials
             if (gltfMaterial.PbrMetallicRoughness != null
                 // If there's a specular-glossiness extension, ignore metallic-roughness
                 // (according to extension specification)
-                && gltfMaterial.Extensions?.KHR_materials_pbrSpecularGlossiness == null)
+                && gltfMaterial.Extensions?.PbrSpecularGlossiness == null)
             {
                 baseColorLinear = gltfMaterial.PbrMetallicRoughness.BaseColor;
-                material.SetFloat(MaterialProperty.Metallic, gltfMaterial.PbrMetallicRoughness.metallicFactor);
-                material.SetFloat(MaterialProperty.RoughnessFactor, gltfMaterial.PbrMetallicRoughness.roughnessFactor);
+                material.SetFloat(MaterialProperty.Metallic, gltfMaterial.PbrMetallicRoughness.MetallicFactor);
+                material.SetFloat(MaterialProperty.RoughnessFactor, gltfMaterial.PbrMetallicRoughness.RoughnessFactor);
 
                 TrySetTexture(
                     gltfMaterial.PbrMetallicRoughness.BaseColorTexture,
@@ -345,7 +346,7 @@ namespace GLTFast.Materials
             {
 
                 // Transmission - Approximation
-                var transmission = gltfMaterial.Extensions.KHR_materials_transmission;
+                var transmission = gltfMaterial.Extensions.Transmission;
                 if (transmission != null)
                 {
 #if UNITY_EDITOR
@@ -353,9 +354,9 @@ namespace GLTFast.Materials
 #endif
                     // Correct transmission is not supported in Built-In renderer
                     // This is an approximation for some corner cases
-                    if (transmission.transmissionFactor > 0f
-                        && (transmission.transmissionTexture == null
-                           || transmission.transmissionTexture.Index < 0)
+                    if (transmission.TransmissionFactor > 0f
+                        && (transmission.TransmissionTexture == null
+                           || transmission.TransmissionTexture.Index < 0)
                         )
                     {
                         var premultiply = TransmissionWorkaroundShaderMode(transmission, ref baseColorLinear);
@@ -417,7 +418,7 @@ namespace GLTFast.Materials
         /// <param name="gltfMaterial">Source material</param>
         static void SetAlphaModeMask(Material material, Schema.Material gltfMaterial)
         {
-            SetAlphaModeMask(material, gltfMaterial.alphaCutoff);
+            SetAlphaModeMask(material, gltfMaterial.AlphaCutoff);
         }
 
         /// <summary>

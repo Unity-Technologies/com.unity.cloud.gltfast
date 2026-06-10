@@ -1,7 +1,6 @@
 // SPDX-FileCopyrightText: 2023 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
-using System;
 using System.Collections.Generic;
 using Unity.Gltfast.Text.Json;
 using Unity.Gltfast.Text.Json.Serialization;
@@ -12,7 +11,6 @@ namespace GLTFast.Schema
     /// <summary>
     /// glTF root extensions
     /// </summary>
-    [System.Serializable]
     public class RootExtensions : IGltfObject
     {
 
@@ -21,8 +19,8 @@ namespace GLTFast.Schema
         public LightsPunctual LightsPunctual { get; set; }
 
         /// <inheritdoc cref="MaterialsVariantsRootExtension"/>
-        // ReSharper disable once InconsistentNaming
-        public MaterialsVariantsRootExtension KHR_materials_variants;
+        [JsonPropertyName("KHR_materials_variants")]
+        public MaterialsVariantsRootExtension MaterialsVariants { get; set; }
 
         /// <summary>
         /// JSON properties without a matching member.
@@ -43,10 +41,10 @@ namespace GLTFast.Schema
                 writer.AddProperty("KHR_lights_punctual");
                 LightsPunctual.GltfSerialize(writer);
             }
-            if (KHR_materials_variants != null)
+            if (MaterialsVariants != null)
             {
                 writer.AddProperty("KHR_materials_variants");
-                KHR_materials_variants.GltfSerialize(writer);
+                MaterialsVariants.GltfSerialize(writer);
             }
             writer.Close();
         }

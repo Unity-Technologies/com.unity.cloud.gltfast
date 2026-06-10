@@ -130,9 +130,9 @@ namespace GLTFast
                     hash.Add(0);
                     continue;
                 }
-                hash.Add(target.POSITION);
-                hash.Add(target.NORMAL);
-                hash.Add(target.TANGENT);
+                hash.Add(target.Position);
+                hash.Add(target.Normal);
+                hash.Add(target.Tangent);
             }
             return hash.ToHashCode();
 #else
@@ -169,9 +169,9 @@ namespace GLTFast
         {
             if (ReferenceEquals(x, y)) return true;
             if (x == null || y == null) return false;
-            return x.POSITION == y.POSITION
-                && x.NORMAL == y.NORMAL
-                && x.TANGENT == y.TANGENT;
+            return x.Position == y.Position
+                && x.Normal == y.Normal
+                && x.Tangent == y.Tangent;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

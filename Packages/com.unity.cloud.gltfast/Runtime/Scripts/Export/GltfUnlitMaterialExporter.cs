@@ -31,13 +31,13 @@ namespace GLTFast.Export
                 Name = unityMaterial.name,
                 Extensions = new MaterialExtensions
                 {
-                    KHR_materials_unlit = new MaterialUnlit()
+                    Unlit = new MaterialUnlit()
                 }
             };
 
             if (GltfMaterialExporter.TryGetValue(unityMaterial, MaterialProperty.Cull, out int cull))
             {
-                material.doubleSided = cull.Equals((int)CullMode.Off);
+                material.DoubleSided = cull.Equals((int)CullMode.Off);
             }
 
             material = HandlePbrMetallicRoughness(gltf, material, unityMaterial);

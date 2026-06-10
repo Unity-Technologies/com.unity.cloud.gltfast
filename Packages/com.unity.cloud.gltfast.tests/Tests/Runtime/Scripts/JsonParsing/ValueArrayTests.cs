@@ -113,11 +113,11 @@ namespace GLTFast.Tests.JsonParsing
             CheckFloatArray(transform.Offset, 2, 1, 2);
             CheckFloatArray(transform.Scale, 2, 3, 4);
             var ext = mat.Extensions;
-            Assert.NotNull(ext?.KHR_materials_sheen);
-            Assert.AreEqual(new Color(.1f, .2f, .3f), ext.KHR_materials_sheen.SheenColor);
-            Assert.NotNull(ext.KHR_materials_pbrSpecularGlossiness);
-            Assert.AreEqual(new Color(.1f, .2f, .3f, .4f), ext.KHR_materials_pbrSpecularGlossiness.DiffuseColor);
-            Assert.AreEqual(new Color(.1f, .2f, .3f), ext.KHR_materials_pbrSpecularGlossiness.SpecularColor);
+            Assert.NotNull(ext?.Sheen);
+            Assert.AreEqual(new Color(.1f, .2f, .3f), ext.Sheen.SheenColor);
+            Assert.NotNull(ext.PbrSpecularGlossiness);
+            Assert.AreEqual(new Color(.1f, .2f, .3f, .4f), ext.PbrSpecularGlossiness.DiffuseColor);
+            Assert.AreEqual(new Color(.1f, .2f, .3f), ext.PbrSpecularGlossiness.SpecularColor);
         }
 
         static void CheckResultMeshWeights(Root gltf)

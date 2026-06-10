@@ -11,35 +11,40 @@ namespace GLTFast.Schema
     /// <summary>
     /// Metadata about the glTF asset.
     /// </summary>
-    [System.Serializable]
     public class Asset : NamedObject, IGltfObject
     {
         /// <summary>
         /// A copyright message suitable for display to credit the content creator.
         /// </summary>
-        public string copyright;
+        [JsonPropertyName("copyright")]
+        public string Copyright { get; set; }
 
         /// <summary>
         /// Tool that generated this glTF model. Useful for debugging.
         /// </summary>
-        public string generator;
+        [JsonPropertyName("generator")]
+        public string Generator { get; set; }
 
         /// <summary>
         /// The glTF version.
         /// </summary>
-        public string version;
+        [JsonPropertyName("version")]
+        public string Version { get; set; }
 
         /// <summary>
         /// The minimum glTF version that this asset targets.
         /// </summary>
-        public string minVersion;
+        [JsonPropertyName("minVersion")]
+        public string MinVersion { get; set; }
 
         /// <summary>JSON object with extension-specific objects.</summary>
         /// <seealso href="https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html#reference-extension"/>
-        public UnclassifiedData extensions;
+        [JsonPropertyName("extensions")]
+        public UnclassifiedData Extensions { get; set; }
 
-        /// <inheritdoc cref="Root.extras"/>
-        public UnclassifiedData extras;
+        /// <inheritdoc cref="Root.Extras"/>
+        [JsonPropertyName("extras")]
+        public UnclassifiedData Extras { get; set; }
 
         /// <summary>JSON properties without a matching member.</summary>
         [JsonExtensionData, JsonInclude] internal Dictionary<string, JsonElement> ExtensionsData { get; set; }
@@ -53,21 +58,21 @@ namespace GLTFast.Schema
         internal void GltfSerialize(JsonWriter writer)
         {
             writer.OpenBrackets();
-            if (!string.IsNullOrEmpty(version))
+            if (!string.IsNullOrEmpty(Version))
             {
-                writer.AddProperty("version", version);
+                writer.AddProperty("version", Version);
             }
-            if (!string.IsNullOrEmpty(generator))
+            if (!string.IsNullOrEmpty(Generator))
             {
-                writer.AddPropertySafe("generator", generator);
+                writer.AddPropertySafe("generator", Generator);
             }
-            if (!string.IsNullOrEmpty(copyright))
+            if (!string.IsNullOrEmpty(Copyright))
             {
-                writer.AddPropertySafe("copyright", copyright);
+                writer.AddPropertySafe("copyright", Copyright);
             }
-            if (!string.IsNullOrEmpty(minVersion))
+            if (!string.IsNullOrEmpty(MinVersion))
             {
-                writer.AddProperty("minVersion", minVersion);
+                writer.AddProperty("minVersion", MinVersion);
             }
             writer.Close();
         }

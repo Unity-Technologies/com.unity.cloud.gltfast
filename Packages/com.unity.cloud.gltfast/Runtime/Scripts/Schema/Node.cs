@@ -66,7 +66,7 @@ namespace GLTFast.Schema
         public float[] Weights { get; set; }
 
         /// <summary>
-        /// The index of the skin (in <see cref="Root.Skins"/> referenced by this node.
+        /// The index of the skin (in <see cref="Root.Skins"/>) referenced by this node.
         /// </summary>
         [JsonPropertyName("skin")]
         public int Skin { get; set; } = -1;
@@ -157,15 +157,10 @@ namespace GLTFast.Schema
     /// </summary>
     public class NodeExtensions : IGltfObject
     {
-        // Names are identical to glTF specified properties, that's why
-        // inconsistent names are ignored.
-        // ReSharper disable InconsistentNaming
+        /// <inheritdoc cref="Schema.MeshGpuInstancing"/>
+        [JsonPropertyName("EXT_mesh_gpu_instancing")]
+        public MeshGpuInstancing MeshGpuInstancing { get; set; }
 
-        /// <inheritdoc cref="MeshGpuInstancing"/>
-        public MeshGpuInstancing EXT_mesh_gpu_instancing { get; set; }
-        // Whenever an extension is added, the JsonParser
-        // (specifically step four of JsonParser.ParseJson)
-        // needs to be updated!
         /// <inheritdoc cref="Schema.LightsPunctual"/>
         [JsonPropertyName("KHR_lights_punctual")]
         public NodeLightsPunctual LightsPunctual { get; set; }
@@ -179,14 +174,13 @@ namespace GLTFast.Schema
             return ExtensionsData.TryGetValue(key, out value);
         }
 
-        // ReSharper restore InconsistentNaming
         internal void GltfSerialize(JsonWriter writer)
         {
             writer.AddObject();
-            if (EXT_mesh_gpu_instancing != null)
+            if (MeshGpuInstancing != null)
             {
                 writer.AddProperty("EXT_mesh_gpu_instancing");
-                EXT_mesh_gpu_instancing.GltfSerialize(writer);
+                MeshGpuInstancing.GltfSerialize(writer);
             }
             if (LightsPunctual != null)
             {

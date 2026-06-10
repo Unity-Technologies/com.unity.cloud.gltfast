@@ -1,7 +1,6 @@
 // SPDX-FileCopyrightText: 2023 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
-using System;
 using System.Collections.Generic;
 using Unity.Gltfast.Text.Json;
 using Unity.Gltfast.Text.Json.Serialization;
@@ -14,7 +13,6 @@ namespace GLTFast.Schema
     /// A set of parameter values that are used to define the metallic-roughness
     /// material model from Physically-Based Rendering (PBR) methodology.
     /// </summary>
-    [Serializable]
     public class PbrMetallicRoughness : IGltfObject
     {
         /// <summary>
@@ -43,7 +41,8 @@ namespace GLTFast.Schema
         /// The fourth component (A) is the opacity of the material.
         /// These values are linear.
         /// </summary>
-        public float[] baseColorFactor = { 1, 1, 1, 1 };
+        [JsonPropertyName("baseColorFactor")]
+        public float[] BaseColorFactor { get; set; } = { 1, 1, 1, 1 };
 
         /// <summary>
         /// Base color of the material in linear color space.
@@ -52,14 +51,14 @@ namespace GLTFast.Schema
         {
             get =>
                 new Color(
-                    baseColorFactor[0],
-                    baseColorFactor[1],
-                    baseColorFactor[2],
-                    baseColorFactor[3]
+                    BaseColorFactor[0],
+                    BaseColorFactor[1],
+                    BaseColorFactor[2],
+                    BaseColorFactor[3]
                 );
             set
             {
-                baseColorFactor = new[] { value.r, value.g, value.b, value.a };
+                BaseColorFactor = new[] { value.r, value.g, value.b, value.a };
             }
         }
 
@@ -71,7 +70,8 @@ namespace GLTFast.Schema
         /// dirty metallic surfaces.
         /// This value is linear.
         /// </summary>
-        public float metallicFactor = 1;
+        [JsonPropertyName("metallicFactor")]
+        public float MetallicFactor { get; set; } = 1;
 
         /// <summary>
         /// The roughness of the material.
@@ -79,13 +79,16 @@ namespace GLTFast.Schema
         /// A value of 0.0 means the material is completely smooth.
         /// This value is linear.
         /// </summary>
-        public float roughnessFactor = 1;
+        [JsonPropertyName("roughnessFactor")]
+        public float RoughnessFactor { get; set; } = 1;
 
-        /// <inheritdoc cref="Asset.extensions"/>
-        public UnclassifiedData extensions;
+        /// <inheritdoc cref="Asset.Extensions"/>
+        [JsonPropertyName("extensions")]
+        public UnclassifiedData Extensions { get; set; }
 
-        /// <inheritdoc cref="Root.extras"/>
-        public UnclassifiedData extras;
+        /// <inheritdoc cref="Root.Extras"/>
+        [JsonPropertyName("extras")]
+        public UnclassifiedData Extras { get; set; }
 
         /// <summary>JSON properties without a matching member.</summary>
         [JsonExtensionData, JsonInclude] internal Dictionary<string, JsonElement> ExtensionsData { get; set; }
@@ -99,23 +102,23 @@ namespace GLTFast.Schema
         internal void GltfSerialize(JsonWriter writer)
         {
             writer.AddObject();
-            if (baseColorFactor != null && (
-                math.abs(baseColorFactor[0] - 1f) > Constants.epsilon ||
-                math.abs(baseColorFactor[1] - 1f) > Constants.epsilon ||
-                math.abs(baseColorFactor[2] - 1f) > Constants.epsilon ||
-                math.abs(baseColorFactor[3] - 1f) > Constants.epsilon
+            if (BaseColorFactor != null && (
+                math.abs(BaseColorFactor[0] - 1f) > Constants.epsilon ||
+                math.abs(BaseColorFactor[1] - 1f) > Constants.epsilon ||
+                math.abs(BaseColorFactor[2] - 1f) > Constants.epsilon ||
+                math.abs(BaseColorFactor[3] - 1f) > Constants.epsilon
                 ))
             {
-                writer.AddArrayProperty("baseColorFactor", baseColorFactor);
+                writer.AddArrayProperty("baseColorFactor", BaseColorFactor);
             }
 
-            if (metallicFactor < 1f)
+            if (MetallicFactor < 1f)
             {
-                writer.AddProperty("metallicFactor", metallicFactor);
+                writer.AddProperty("metallicFactor", MetallicFactor);
             }
-            if (roughnessFactor < 1f)
+            if (RoughnessFactor < 1f)
             {
-                writer.AddProperty("roughnessFactor", roughnessFactor);
+                writer.AddProperty("roughnessFactor", RoughnessFactor);
             }
             if (BaseColorTexture != null)
             {

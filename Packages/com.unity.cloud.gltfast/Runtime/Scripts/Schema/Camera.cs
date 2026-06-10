@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using Unity.Gltfast.Text.Json;
 using Unity.Gltfast.Text.Json.Serialization;
-using UnityEngine;
 
 namespace GLTFast.Schema
 {
@@ -13,7 +12,6 @@ namespace GLTFast.Schema
     /// <summary>
     /// A camera’s projection
     /// </summary>
-    [Serializable]
     public class Camera : NamedObject, IGltfObject
     {
         /// <inheritdoc cref="CameraOrthographic"/>
@@ -24,70 +22,20 @@ namespace GLTFast.Schema
         [JsonPropertyName("perspective")]
         public CameraPerspective Perspective { get; set; }
 
-        /// <summary>
-        /// Camera projection type
-        /// </summary>
-        public enum Type
-        {
-            /// <summary>
-            /// Orthogonal projection
-            /// </summary>
-            Orthographic,
-            /// <summary>
-            ///  Perspective projection
-            /// </summary>
-            Perspective
-        }
+        /// <inheritdoc cref="CameraType"/>
+        [JsonPropertyName("type")]
+        public CameraType Type =>
+            Perspective != null
+                ? CameraType.Perspective
+                : Orthographic != null ? CameraType.Orthographic : CameraType.Undefined;
 
-        /// <inheritdoc cref="Type"/>
-        // Field is public for unified serialization only. Warn via Obsolete attribute.
-        [Obsolete("Use GetCameraType and SetCameraType for access.")]
-        public string type;
+        /// <inheritdoc cref="Asset.Extensions"/>
+        [JsonPropertyName("extensions")]
+        public UnclassifiedData Extensions { get; set; }
 
-        Type? m_TypeEnum;
-
-        /// <summary>
-        /// <see cref="Type"/> typed and cached getter onto <see cref="type"/> string.
-        /// </summary>
-        /// <returns>Camera type, if it was retrieved correctly. <see cref="Type.Perspective"/> otherwise</returns>
-        public Type GetCameraType()
-        {
-            if (m_TypeEnum.HasValue)
-            {
-                return m_TypeEnum.Value;
-            }
-
-#pragma warning disable CS0618 // Type or member is obsolete
-            if (Enum.TryParse<Type>(type, true, out var typeEnum))
-            {
-                m_TypeEnum = typeEnum;
-                type = null;
-                return m_TypeEnum.Value;
-            }
-#pragma warning restore CS0618 // Type or member is obsolete
-
-            if (Orthographic != null) m_TypeEnum = Type.Orthographic;
-            if (Perspective != null) m_TypeEnum = Type.Perspective;
-            return m_TypeEnum ?? Type.Perspective;
-        }
-
-        /// <summary>
-        /// <see cref="Type"/> typed setter for <see cref="type"/> string.
-        /// </summary>
-        /// <param name="cameraType">Camera type</param>
-        public void SetCameraType(Type cameraType)
-        {
-#pragma warning disable CS0618 // Type or member is obsolete
-            type = null;
-#pragma warning restore CS0618 // Type or member is obsolete
-            m_TypeEnum = cameraType;
-        }
-
-        /// <inheritdoc cref="Asset.extensions"/>
-        public UnclassifiedData extensions;
-
-        /// <inheritdoc cref="Root.extras"/>
-        public UnclassifiedData extras;
+        /// <inheritdoc cref="Root.Extras"/>
+        [JsonPropertyName("extras")]
+        public UnclassifiedData Extras { get; set; }
 
         /// <summary>JSON properties without a matching member.</summary>
         [JsonExtensionData, JsonInclude] internal Dictionary<string, JsonElement> ExtensionsData { get; set; }
@@ -102,7 +50,7 @@ namespace GLTFast.Schema
         {
             writer.AddObject();
             GltfSerializeName(writer);
-            writer.AddProperty("type", m_TypeEnum.ToString().ToLowerInvariant());
+            writer.AddProperty("type", Type.ToString().ToLowerInvariant());
             if (Perspective != null)
             {
                 writer.AddProperty("perspective");
@@ -113,129 +61,6 @@ namespace GLTFast.Schema
                 writer.AddProperty("orthographic");
                 Orthographic.GltfSerialize(writer);
             }
-            writer.Close();
-        }
-    }
-
-    /// <summary>
-    /// An orthographic camera containing properties to create an orthographic projection matrix.
-    /// </summary>
-    [Serializable]
-    public class CameraOrthographic : IGltfObject
-    {
-        /// <summary>
-        /// The floating-point horizontal magnification of the view. Must not be zero.
-        /// </summary>
-        // ReSharper disable once IdentifierTypo
-        public float xmag;
-
-        /// <summary>
-        /// The floating-point vertical magnification of the view. Must not be zero.
-        /// </summary>
-        // ReSharper disable once IdentifierTypo
-        public float ymag;
-
-        /// <summary>
-        /// The floating-point distance to the far clipping plane.
-        /// <see cref="zfar"/> must be greater than <see cref="znear"/>.
-        /// </summary>
-        // ReSharper disable once IdentifierTypo
-        public float zfar;
-
-        /// <summary>
-        /// The floating-point distance to the near clipping plane.
-        /// </summary>
-        // ReSharper disable once IdentifierTypo
-        public float znear;
-
-        /// <inheritdoc cref="Asset.extensions"/>
-        public UnclassifiedData extensions;
-
-        /// <inheritdoc cref="Root.extras"/>
-        public UnclassifiedData extras;
-
-        /// <summary>JSON properties without a matching member.</summary>
-        [JsonExtensionData, JsonInclude] internal Dictionary<string, JsonElement> ExtensionsData { get; set; }
-
-        /// <inheritdoc/>
-        public bool TryGetValue<T>(string key, out T value)
-        {
-            return ExtensionsData.TryGetValue(key, out value);
-        }
-
-        internal void GltfSerialize(JsonWriter writer)
-        {
-            writer.AddObject();
-            // ReSharper disable StringLiteralTypo
-            writer.AddProperty("xmag", xmag);
-            writer.AddProperty("ymag", ymag);
-            writer.AddProperty("zfar", zfar);
-            writer.AddProperty("znear", znear);
-            // ReSharper restore StringLiteralTypo
-            writer.Close();
-        }
-    }
-
-    /// <summary>
-    /// A perspective camera containing properties to create a perspective projection matrix.
-    /// </summary>
-    [Serializable]
-    public class CameraPerspective : IGltfObject
-    {
-
-        /// <summary>
-        /// The floating-point aspect ratio of the field of view.
-        /// </summary>
-        public float aspectRatio = -1;
-
-        /// <summary>
-        /// The floating-point vertical field of view in radians.
-        /// </summary>
-        // ReSharper disable once IdentifierTypo
-        public float yfov;
-
-        /// <summary>
-        /// The floating-point distance to the far clipping plane.
-        /// </summary>
-        // ReSharper disable once IdentifierTypo
-        public float zfar = -1f;
-
-        /// <summary>
-        /// The floating-point distance to the near clipping plane.
-        /// </summary>
-        // ReSharper disable once IdentifierTypo
-        public float znear;
-
-        /// <inheritdoc cref="Asset.extensions"/>
-        public UnclassifiedData extensions;
-
-        /// <inheritdoc cref="Root.extras"/>
-        public UnclassifiedData extras;
-
-        /// <summary>JSON properties without a matching member.</summary>
-        [JsonExtensionData, JsonInclude] internal Dictionary<string, JsonElement> ExtensionsData { get; set; }
-
-        /// <inheritdoc/>
-        public bool TryGetValue<T>(string key, out T value)
-        {
-            return ExtensionsData.TryGetValue(key, out value);
-        }
-
-        internal void GltfSerialize(JsonWriter writer)
-        {
-            writer.AddObject();
-            if (aspectRatio > 0)
-            {
-                writer.AddProperty("aspectRatio", aspectRatio);
-            }
-            // ReSharper disable StringLiteralTypo
-            writer.AddProperty("yfov", yfov);
-            if (zfar < float.MaxValue)
-            {
-                writer.AddProperty("zfar", zfar);
-            }
-            writer.AddProperty("znear", znear);
-            // ReSharper restore StringLiteralTypo
             writer.Close();
         }
     }

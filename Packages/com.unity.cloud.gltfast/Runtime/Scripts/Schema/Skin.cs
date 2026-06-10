@@ -11,30 +11,34 @@ namespace GLTFast.Schema
     /// <summary>
     /// Joints and matrices defining a skinned mesh.
     /// </summary>
-    [System.Serializable]
     public class Skin : NamedObject, IGltfObject
     {
         /// <summary>
         /// The index of the accessor containing the
         /// floating-point 4x4 inverse-bind matrices.
         /// </summary>
-        public int inverseBindMatrices = -1;
+        [JsonPropertyName("inverseBindMatrices")]
+        public int InverseBindMatrices { get; set; } = -1;
 
         /// <summary>
         /// The index of the node used as a skeleton root.
         /// </summary>
-        public int skeleton = -1;
+        [JsonPropertyName("skeleton")]
+        public int Skeleton { get; set; } = -1;
 
         /// <summary>
         /// Indices of skeleton nodes, used as joints in this skin.
         /// </summary>
-        public uint[] joints;
+        [JsonPropertyName("joints")]
+        public uint[] Joints { get; set; }
 
-        /// <inheritdoc cref="Asset.extensions"/>
-        public UnclassifiedData extensions;
+        /// <inheritdoc cref="Asset.Extensions"/>
+        [JsonPropertyName("extensions")]
+        public UnclassifiedData Extensions { get; set; }
 
-        /// <inheritdoc cref="Root.extras"/>
-        public UnclassifiedData extras;
+        /// <inheritdoc cref="Root.Extras"/>
+        [JsonPropertyName("extras")]
+        public UnclassifiedData Extras { get; set; }
 
         /// <summary>JSON properties without a matching member.</summary>
         [JsonExtensionData, JsonInclude] internal Dictionary<string, JsonElement> ExtensionsData { get; set; }
@@ -50,19 +54,19 @@ namespace GLTFast.Schema
             writer.AddObject();
             GltfSerializeName(writer);
 
-            if (inverseBindMatrices != -1)
+            if (InverseBindMatrices != -1)
             {
-                writer.AddProperty("inverseBindMatrices", inverseBindMatrices);
+                writer.AddProperty("inverseBindMatrices", InverseBindMatrices);
             }
 
-            if (skeleton != -1)
+            if (Skeleton != -1)
             {
-                writer.AddProperty("skeleton", skeleton);
+                writer.AddProperty("skeleton", Skeleton);
             }
 
-            if (joints != null)
+            if (Joints != null)
             {
-                writer.AddArrayProperty("joints", joints);
+                writer.AddArrayProperty("joints", Joints);
             }
 
             writer.Close();

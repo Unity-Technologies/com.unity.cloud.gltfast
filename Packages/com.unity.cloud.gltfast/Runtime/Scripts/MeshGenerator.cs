@@ -122,9 +122,9 @@ namespace GLTFast
             for (var i = 0; i < SubMeshCount; i++)
             {
                 var primitive = GetSubMesh(i);
-                if (primitive.Mode == DrawMode.Triangles
-                    || primitive.Mode == DrawMode.TriangleFan
-                    || primitive.Mode == DrawMode.TriangleStrip)
+                if (primitive.Mode == PrimitiveMode.Triangles
+                    || primitive.Mode == PrimitiveMode.TriangleFan
+                    || primitive.Mode == PrimitiveMode.TriangleStrip)
                 {
                     if (primitive.Material < 0)
                     {
@@ -149,23 +149,23 @@ namespace GLTFast
             return mainBufferType;
         }
 
-        bool SetTopology(DrawMode drawMode)
+        bool SetTopology(PrimitiveMode primitiveMode)
         {
-            switch (drawMode)
+            switch (primitiveMode)
             {
-                case DrawMode.Triangles:
-                case DrawMode.TriangleStrip:
-                case DrawMode.TriangleFan:
+                case PrimitiveMode.Triangles:
+                case PrimitiveMode.TriangleStrip:
+                case PrimitiveMode.TriangleFan:
                     m_Topology = MeshTopology.Triangles;
                     break;
-                case DrawMode.Points:
+                case PrimitiveMode.Points:
                     m_Topology = MeshTopology.Points;
                     break;
-                case DrawMode.Lines:
+                case PrimitiveMode.Lines:
                     m_Topology = MeshTopology.Lines;
                     break;
-                case DrawMode.LineLoop:
-                case DrawMode.LineStrip:
+                case PrimitiveMode.LineLoop:
+                case PrimitiveMode.LineStrip:
                     m_Topology = MeshTopology.LineStrip;
                     break;
                 default:
@@ -237,24 +237,24 @@ namespace GLTFast
                 var primitive = GetSubMesh(subMeshIndex);
                 if (primitive.Indices >= 0)
                 {
-                    var flip = primitive.Mode == DrawMode.Triangles;
+                    var flip = primitive.Mode == PrimitiveMode.Triangles;
                     var accessor = buffers.GetAccessor(primitive.Indices);
 
                     var minIndexCount = 3;
                     var indexCount = accessor.Count;
                     switch (primitive.Mode)
                     {
-                        case DrawMode.TriangleStrip or DrawMode.TriangleFan:
+                        case PrimitiveMode.TriangleStrip or PrimitiveMode.TriangleFan:
                             indexCount = (accessor.Count - 2) * 3;
                             break;
-                        case DrawMode.LineLoop:
+                        case PrimitiveMode.LineLoop:
                             minIndexCount = 2;
                             indexCount = accessor.Count + 1;
                             break;
-                        case DrawMode.Lines or DrawMode.LineStrip:
+                        case PrimitiveMode.Lines or PrimitiveMode.LineStrip:
                             minIndexCount = 2;
                             break;
-                        case DrawMode.Points:
+                        case PrimitiveMode.Points:
                             minIndexCount = 1;
                             break;
                     }
@@ -305,7 +305,7 @@ namespace GLTFast
 
                     switch (primitive.Mode)
                     {
-                        case DrawMode.LineLoop:
+                        case PrimitiveMode.LineLoop:
                         {
                             // Wait for indices to be ready.
                             while (!getIndicesJob.Value.IsCompleted)
@@ -327,7 +327,7 @@ namespace GLTFast
 
                             break;
                         }
-                        case DrawMode.TriangleStrip:
+                        case PrimitiveMode.TriangleStrip:
                         {
                             JobHandle job;
                             if (indexFormat == IndexFormat.UInt16)
@@ -347,7 +347,7 @@ namespace GLTFast
                             tmpList.Add(job);
                             break;
                         }
-                        case DrawMode.TriangleFan:
+                        case PrimitiveMode.TriangleFan:
                         {
                             JobHandle job;
                             if (indexFormat == IndexFormat.UInt16)
@@ -377,8 +377,8 @@ namespace GLTFast
                     var vertexCount = buffers.GetAccessor(primitive.Attributes.POSITION).Count;
                     var indexCount = primitive.Mode switch
                     {
-                        DrawMode.TriangleStrip or DrawMode.TriangleFan => (vertexCount - 2) * 3,
-                        DrawMode.LineLoop => vertexCount + 1,
+                        PrimitiveMode.TriangleStrip or PrimitiveMode.TriangleFan => (vertexCount - 2) * 3,
+                        PrimitiveMode.LineLoop => vertexCount + 1,
                         _ => vertexCount
                     };
 
@@ -725,7 +725,7 @@ namespace GLTFast
             // No indices: calculate them
             switch (primitive.Mode)
             {
-                case DrawMode.LineLoop:
+                case PrimitiveMode.LineLoop:
                 {
                     // Set the last index to the first vertex
                     indices[^1] = 0;
@@ -736,7 +736,7 @@ namespace GLTFast
                     jobHandle = job.Schedule(indices.Length - 1, GltfImport.DefaultBatchCount);
                     break;
                 }
-                case DrawMode.Triangles:
+                case PrimitiveMode.Triangles:
                 {
                     var job = new CreateIndicesUInt16FlippedJob
                     {
@@ -745,7 +745,7 @@ namespace GLTFast
                     jobHandle = job.Schedule(indices.Length, GltfImport.DefaultBatchCount);
                     break;
                 }
-                case DrawMode.TriangleStrip:
+                case PrimitiveMode.TriangleStrip:
                 {
                     var job = new CreateIndicesForTriangleStripUInt16Job
                     {
@@ -754,7 +754,7 @@ namespace GLTFast
                     jobHandle = job.Schedule(indices.Length, GltfImport.DefaultBatchCount);
                     break;
                 }
-                case DrawMode.TriangleFan:
+                case PrimitiveMode.TriangleFan:
                     var triangleFanJob = new CreateIndicesForTriangleFanUInt16Job
                     {
                         result = indices
@@ -784,7 +784,7 @@ namespace GLTFast
             // No indices: calculate them
             switch (primitive.Mode)
             {
-                case DrawMode.LineLoop:
+                case PrimitiveMode.LineLoop:
                 {
                     // Set the last index to the first vertex
                     indices[^1] = 0;
@@ -795,7 +795,7 @@ namespace GLTFast
                     jobHandle = job.Schedule(indices.Length - 1, GltfImport.DefaultBatchCount);
                     break;
                 }
-                case DrawMode.Triangles:
+                case PrimitiveMode.Triangles:
                 {
                     var job = new CreateIndicesUInt32FlippedJob
                     {
@@ -804,7 +804,7 @@ namespace GLTFast
                     jobHandle = job.Schedule(indices.Length, GltfImport.DefaultBatchCount);
                     break;
                 }
-                case DrawMode.TriangleStrip:
+                case PrimitiveMode.TriangleStrip:
                 {
                     var job = new CreateIndicesForTriangleStripUInt32Job
                     {
@@ -813,7 +813,7 @@ namespace GLTFast
                     jobHandle = job.Schedule(indices.Length, GltfImport.DefaultBatchCount);
                     break;
                 }
-                case DrawMode.TriangleFan:
+                case PrimitiveMode.TriangleFan:
                     var triangleFanJob = new CreateIndicesForTriangleFanUInt32Job
                     {
                         result = indices

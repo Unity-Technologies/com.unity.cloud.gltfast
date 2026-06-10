@@ -21,7 +21,7 @@ namespace GLTFast
             {
                 foreach (var skin in root.Skins)
                 {
-                    if (skin.skeleton < 0) return true;
+                    if (skin.Skeleton < 0) return true;
                 }
             }
             return false;

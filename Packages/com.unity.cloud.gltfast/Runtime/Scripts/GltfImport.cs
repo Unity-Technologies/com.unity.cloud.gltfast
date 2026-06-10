@@ -1068,7 +1068,7 @@ namespace GLTFast
             foreach (var primitiveIndex in meshResult.primitives)
             {
                 var primitive = GetSourceMeshPrimitive(meshIndex, primitiveIndex);
-                if (primitive.Extensions?.KHR_materials_variants?.mappings != null)
+                if (primitive.Extensions?.MaterialsVariants?.Mappings != null)
                 {
                     materialSlots ??= new List<IMaterialsVariantsSlot>();
                     materialSlots.Add(primitive);
@@ -1118,7 +1118,7 @@ namespace GLTFast
             }
 
             var skin = Root.Skins[skinId];
-            var result = new Matrix4x4[skin.joints.Length];
+            var result = new Matrix4x4[skin.Joints.Length];
             for (var i = 0; i < result.Length; i++)
             {
                 result[i] = Matrix4x4.identity;
@@ -1669,12 +1669,12 @@ namespace GLTFast
                                 SetTextureGamma(material.PbrMetallicRoughness.BaseColorTexture);
                             }
                             SetTextureGamma(material.EmissiveTexture);
-                            if (material.Extensions?.KHR_materials_pbrSpecularGlossiness != null)
+                            if (material.Extensions?.PbrSpecularGlossiness != null)
                             {
                                 SetTextureGamma(
-                                    material.Extensions.KHR_materials_pbrSpecularGlossiness.diffuseTexture);
+                                    material.Extensions.PbrSpecularGlossiness.DiffuseTexture);
                                 SetTextureGamma(
-                                    material.Extensions.KHR_materials_pbrSpecularGlossiness.specularGlossinessTexture);
+                                    material.Extensions.PbrSpecularGlossiness.SpecularGlossinessTexture);
                             }
                         }
                     }
@@ -2093,9 +2093,9 @@ namespace GLTFast
         {
             var bufferView = Root.BufferViews[bufferViewIndex];
 #if MESHOPT_IS_ENABLED
-            if (bufferView.Extensions?.EXT_meshopt_compression != null)
+            if (bufferView.Extensions?.ExtMeshoptCompression != null)
             {
-                byteStride = bufferView.Extensions.EXT_meshopt_compression.ByteStride;
+                byteStride = bufferView.Extensions.ExtMeshoptCompression.ByteStride;
                 var entireBuffer = m_MeshoptBufferViews[bufferViewIndex];
                 if (offset == 0 && length <= 0)
                 {
@@ -2123,7 +2123,7 @@ namespace GLTFast
         {
             var bufferView = Root.BufferViews[bufferViewIndex];
 #if MESHOPT_IS_ENABLED
-            if (bufferView.Extensions?.EXT_meshopt_compression != null)
+            if (bufferView.Extensions?.ExtMeshoptCompression != null)
             {
                 var fullSlice = m_MeshoptBufferViews[bufferViewIndex];
                 if (offset == 0 && (count <= 0 || count * UnsafeUtility.SizeOf(typeof(T)) == fullSlice.Length))
@@ -2147,7 +2147,7 @@ namespace GLTFast
         {
             var bufferView = Root.BufferViews[bufferViewIndex];
 #if MESHOPT_IS_ENABLED
-            if (bufferView.Extensions?.EXT_meshopt_compression != null)
+            if (bufferView.Extensions?.ExtMeshoptCompression != null)
             {
                 unsafe
                 {
@@ -2262,9 +2262,9 @@ namespace GLTFast
                 for (var i = 0; i < Root.BufferViews.Count; i++)
                 {
                     var bufferView = Root.BufferViews[i];
-                    if (bufferView.Extensions?.EXT_meshopt_compression != null)
+                    if (bufferView.Extensions?.ExtMeshoptCompression != null)
                     {
-                        var meshopt = bufferView.Extensions.EXT_meshopt_compression;
+                        var meshopt = bufferView.Extensions.ExtMeshoptCompression;
                         if (jobHandlesList == null)
                         {
                             m_MeshoptBufferViews = new Dictionary<int, NativeArray<byte>>();
@@ -2272,14 +2272,14 @@ namespace GLTFast
                             m_MeshoptReturnValues = new NativeArray<int>(Root.BufferViews.Count, Allocator.TempJob);
                         }
 
-                        var arr = new NativeArray<byte>(meshopt.count * meshopt.ByteStride, Allocator.Persistent);
+                        var arr = new NativeArray<byte>(meshopt.Count * meshopt.ByteStride, Allocator.Persistent);
 
                         var origBufferView = GetBufferView(meshopt);
 
                         var jobHandle = Decode.DecodeGltfBuffer(
                             m_MeshoptReturnValues.GetSubArray(i, 1),
                             arr,
-                            meshopt.count,
+                            meshopt.Count,
                             meshopt.ByteStride,
                             origBufferView.AsNativeArrayReadOnly(),
                             meshopt.GetMode(),
@@ -2615,9 +2615,9 @@ namespace GLTFast
         {
             foreach (var skin in Root.Skins)
             {
-                if (skin.skeleton < 0)
+                if (skin.Skeleton < 0)
                 {
-                    skin.skeleton = GetLowestCommonAncestorNode(skin.joints, parentIndex);
+                    skin.Skeleton = GetLowestCommonAncestorNode(skin.Joints, parentIndex);
                 }
             }
         }
@@ -3040,11 +3040,11 @@ namespace GLTFast
                                 var skin = Root.Skins[node.Skin];
                                 // TODO: see if this can be moved to mesh creation phase / before instantiation
                                 mesh.bindposes = GetBindPoses(node.Skin);
-                                if (skin.skeleton >= 0)
+                                if (skin.Skeleton >= 0)
                                 {
-                                    rootJoint = (uint)skin.skeleton;
+                                    rootJoint = (uint)skin.Skeleton;
                                 }
-                                joints = skin.joints;
+                                joints = skin.Joints;
                             }
                             else
                             {
@@ -3052,7 +3052,7 @@ namespace GLTFast
                             }
                         }
 
-                        var meshInstancing = node.Extensions?.EXT_mesh_gpu_instancing;
+                        var meshInstancing = node.Extensions?.MeshGpuInstancing;
 
                         var meshResultName =
                             meshNumeration > 0
@@ -3081,9 +3081,9 @@ namespace GLTFast
                         else
                         {
 
-                            var hasTranslations = meshInstancing.attributes.TRANSLATION > -1;
-                            var hasRotations = meshInstancing.attributes.ROTATION > -1;
-                            var hasScales = meshInstancing.attributes.SCALE > -1;
+                            var hasTranslations = meshInstancing.Attributes.Translation > -1;
+                            var hasRotations = meshInstancing.Attributes.Rotation > -1;
+                            var hasScales = meshInstancing.Attributes.Scale > -1;
 
                             NativeArray<Vector3>? positions = null;
                             NativeArray<Quaternion>? rotations = null;
@@ -3092,19 +3092,19 @@ namespace GLTFast
 
                             if (hasTranslations)
                             {
-                                positions = ((NativeArray<float3>)m_AccessorData[meshInstancing.attributes.TRANSLATION]).Reinterpret<Vector3>();
+                                positions = ((NativeArray<float3>)m_AccessorData[meshInstancing.Attributes.Translation]).Reinterpret<Vector3>();
                                 instanceCount = (uint)positions.Value.Length;
                             }
 
                             if (hasRotations)
                             {
-                                rotations = ((NativeArray<quaternion>)m_AccessorData[meshInstancing.attributes.ROTATION]).Reinterpret<Quaternion>();
+                                rotations = ((NativeArray<quaternion>)m_AccessorData[meshInstancing.Attributes.Rotation]).Reinterpret<Quaternion>();
                                 instanceCount = (uint)rotations.Value.Length;
                             }
 
                             if (hasScales)
                             {
-                                scales = ((NativeArray<float3>)m_AccessorData[meshInstancing.attributes.SCALE]).Reinterpret<Vector3>();
+                                scales = ((NativeArray<float3>)m_AccessorData[meshInstancing.Attributes.Scale]).Reinterpret<Vector3>();
                                 instanceCount = (uint)scales.Value.Length;
                             }
 
@@ -3355,7 +3355,7 @@ namespace GLTFast
                         else
 #endif
                         {
-                            usage = primitive.Mode == DrawMode.Triangles
+                            usage = primitive.Mode == PrimitiveMode.Triangles
                                 ? AccessorUsage.IndexFlipped
                                 : AccessorUsage.Index;
                         }
@@ -3364,14 +3364,14 @@ namespace GLTFast
 
                     if (primitive.Material >= 0)
                     {
-                        if (Root.Materials != null && primitive.Mode == DrawMode.Points)
+                        if (Root.Materials != null && primitive.Mode == PrimitiveMode.Points)
                         {
                             SetMaterialPointsSupport(primitive.Material);
                         }
                     }
                     else
                     {
-                        m_DefaultMaterialPointsSupport |= primitive.Mode == DrawMode.Points;
+                        m_DefaultMaterialPointsSupport |= primitive.Mode == PrimitiveMode.Points;
                     }
                 }
 
@@ -3425,9 +3425,9 @@ namespace GLTFast
                 m_SkinsInverseBindMatrices = new Matrix4x4[Root.Skins.Count][];
                 foreach (var skin in Root.Skins)
                 {
-                    if (skin.inverseBindMatrices >= 0)
+                    if (skin.InverseBindMatrices >= 0)
                     {
-                        SetAccessorUsage(skin.inverseBindMatrices, AccessorUsage.InverseBindMatrix);
+                        SetAccessorUsage(skin.InverseBindMatrices, AccessorUsage.InverseBindMatrix);
                     }
                 }
             }
@@ -3436,20 +3436,20 @@ namespace GLTFast
             {
                 foreach (var node in Root.Nodes)
                 {
-                    var attr = node.Extensions?.EXT_mesh_gpu_instancing?.attributes;
+                    var attr = node.Extensions?.MeshGpuInstancing?.Attributes;
                     if (attr != null)
                     {
-                        if (attr.TRANSLATION >= 0)
+                        if (attr.Translation >= 0)
                         {
-                            SetAccessorUsage(attr.TRANSLATION, AccessorUsage.Translation | AccessorUsage.RequiredForInstantiation);
+                            SetAccessorUsage(attr.Translation, AccessorUsage.Translation | AccessorUsage.RequiredForInstantiation);
                         }
-                        if (attr.ROTATION >= 0)
+                        if (attr.Rotation >= 0)
                         {
-                            SetAccessorUsage(attr.ROTATION, AccessorUsage.Rotation | AccessorUsage.RequiredForInstantiation);
+                            SetAccessorUsage(attr.Rotation, AccessorUsage.Rotation | AccessorUsage.RequiredForInstantiation);
                         }
-                        if (attr.SCALE >= 0)
+                        if (attr.Scale >= 0)
                         {
-                            SetAccessorUsage(attr.SCALE, AccessorUsage.Scale | AccessorUsage.RequiredForInstantiation);
+                            SetAccessorUsage(attr.Scale, AccessorUsage.Scale | AccessorUsage.RequiredForInstantiation);
                         }
                     }
                 }
@@ -3687,10 +3687,10 @@ namespace GLTFast
 
                     Profiler.BeginSample("AssignAllAccessorData.Skin");
                     var skin = Root.Skins[s];
-                    if (skin.inverseBindMatrices >= 0)
+                    if (skin.InverseBindMatrices >= 0)
                     {
                         m_SkinsInverseBindMatrices[s] =
-                            ((NativeArray<float4x4>)m_AccessorData[skin.inverseBindMatrices])
+                            ((NativeArray<float4x4>)m_AccessorData[skin.InverseBindMatrices])
                             .Reinterpret<Matrix4x4>().ToArray();
                     }
                     Profiler.EndSample();
@@ -3993,7 +3993,7 @@ namespace GLTFast
             }
             var bufferView = Root.BufferViews[accessor.BufferView];
 #if MESHOPT_IS_ENABLED
-            var meshopt = bufferView.Extensions?.EXT_meshopt_compression;
+            var meshopt = bufferView.Extensions?.ExtMeshoptCompression;
             if (meshopt != null)
             {
                 byteStride = meshopt.ByteStride;
@@ -4023,7 +4023,7 @@ namespace GLTFast
         {
             var bufferView = Root.BufferViews[(int)sparseIndices.BufferView];
 #if MESHOPT_IS_ENABLED
-            var meshopt = bufferView.Extensions?.EXT_meshopt_compression;
+            var meshopt = bufferView.Extensions?.ExtMeshoptCompression;
             if (meshopt != null)
             {
                 data = (byte*)m_MeshoptBufferViews[(int)sparseIndices.BufferView].GetUnsafeReadOnlyPtr() + sparseIndices.ByteOffset;
@@ -4047,7 +4047,7 @@ namespace GLTFast
         {
             var bufferView = Root.BufferViews[(int)sparseValues.BufferView];
 #if MESHOPT_IS_ENABLED
-            var meshopt = bufferView.Extensions?.EXT_meshopt_compression;
+            var meshopt = bufferView.Extensions?.ExtMeshoptCompression;
             if (meshopt != null)
             {
                 data = (byte*)m_MeshoptBufferViews[(int)sparseValues.BufferView].GetUnsafeReadOnlyPtr() + sparseValues.ByteOffset;

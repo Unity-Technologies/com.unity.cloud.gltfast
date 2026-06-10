@@ -321,7 +321,7 @@ namespace GLTFast.Schema
         /// Number of materials variants.
         /// </summary>
         /// <seealso href="https://github.com/KhronosGroup/glTF/tree/main/extensions/2.0/Khronos/KHR_materials_variants"/>
-        public int MaterialsVariantsCount => Extensions?.KHR_materials_variants?.variants?.Count ?? 0;
+        public int MaterialsVariantsCount => Extensions?.MaterialsVariants?.Variants?.Count ?? 0;
 
         /// <summary>
         /// Gets the name of a specific materials variant.
@@ -331,7 +331,7 @@ namespace GLTFast.Schema
         /// <seealso href="https://github.com/KhronosGroup/glTF/tree/main/extensions/2.0/Khronos/KHR_materials_variants"/>
         public string GetMaterialsVariantName(int index)
         {
-            var variants = Extensions?.KHR_materials_variants?.variants;
+            var variants = Extensions?.MaterialsVariants?.Variants;
             if (variants != null && index >= 0 && index < variants.Count)
             {
                 return variants[index].Name;

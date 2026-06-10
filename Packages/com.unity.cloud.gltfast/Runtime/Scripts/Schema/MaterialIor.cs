@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2024 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
-using System;
+using Unity.Gltfast.Text.Json.Serialization;
 using Unity.Mathematics;
 
 namespace GLTFast.Schema
@@ -12,7 +12,6 @@ namespace GLTFast.Schema
     /// sapphire or diamond. This extension allows users to set the index of refraction to a certain value.
     /// </summary>
     /// <seealso href="https://github.com/KhronosGroup/glTF/tree/main/extensions/2.0/Khronos/KHR_materials_ior"/>
-    [Serializable]
     public class MaterialIor
     {
         /// <summary>
@@ -24,14 +23,15 @@ namespace GLTFast.Schema
         /// <summary>
         /// The index of refraction.
         /// </summary>
-        public float ior = defaultIndexOfRefraction;
+        [JsonPropertyName("ior")]
+        public float Ior { get; set; } = defaultIndexOfRefraction;
 
         internal void GltfSerialize(JsonWriter writer)
         {
             writer.AddObject();
-            if (math.abs(ior - defaultIndexOfRefraction) > Constants.epsilon)
+            if (math.abs(Ior - defaultIndexOfRefraction) > Constants.epsilon)
             {
-                writer.AddProperty("ior", ior);
+                writer.AddProperty("ior", Ior);
             }
             writer.Close();
         }

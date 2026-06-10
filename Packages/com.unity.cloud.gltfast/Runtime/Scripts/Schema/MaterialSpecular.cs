@@ -12,38 +12,40 @@ namespace GLTFast.Schema
     /// This extension allows configuring the specular reflection.
     /// </summary>
     /// <seealso href="https://github.com/KhronosGroup/glTF/tree/main/extensions/2.0/Khronos/KHR_materials_specular"/>
-    [Serializable]
     public class MaterialSpecular
     {
         /// <summary>
         /// The strength of the specular reflection.
         /// </summary>
-        public float specularFactor = 1f;
+        [JsonPropertyName("specularFactor")]
+        public float SpecularFactor { get; set; } = 1f;
 
         /// <summary>
         /// A texture that defines the strength of the specular reflection, stored in the alpha (A) channel.
         /// This will be multiplied by specularFactor.
         /// </summary>
-        public TextureInfo specularTexture;
+        [JsonPropertyName("specularTexture")]
+        public TextureInfo SpecularTexture { get; set; }
 
         /// <summary>
         /// The F0 color of the specular reflection (linear RGB).
         /// </summary>
+        [JsonPropertyName("specularColorFactor")]
         [JsonConverter(typeof(Float3ArrayConverter))]
-        public float[] specularColorFactor = { 1, 1, 1 };
+        public float[] SpecularColorFactor { get; set; } = { 1, 1, 1 };
 
-        /// <inheritdoc cref="specularColorFactor"/>
+        /// <inheritdoc cref="SpecularColorFactor"/>
         public Color SpecularColor
         {
             get =>
                 new Color(
-                    specularColorFactor[0],
-                    specularColorFactor[1],
-                    specularColorFactor[2]
+                    SpecularColorFactor[0],
+                    SpecularColorFactor[1],
+                    SpecularColorFactor[2]
                 );
             set
             {
-                specularColorFactor = new[] { value.r, value.g, value.b };
+                SpecularColorFactor = new[] { value.r, value.g, value.b };
             }
         }
 
@@ -51,32 +53,33 @@ namespace GLTFast.Schema
         /// A texture that defines the F0 color of the specular reflection, stored in the RGB channels and encoded in
         /// sRGB. This texture will be multiplied by specularColorFactor.
         /// </summary>
-        public TextureInfo specularColorTexture;
+        [JsonPropertyName("specularColorTexture")]
+        public TextureInfo SpecularColorTexture { get; set; }
 
         internal void GltfSerialize(JsonWriter writer)
         {
             writer.AddObject();
-            if (math.abs(specularFactor - 1f) > Constants.epsilon)
+            if (math.abs(SpecularFactor - 1f) > Constants.epsilon)
             {
-                writer.AddProperty("specularFactor", specularFactor);
+                writer.AddProperty("specularFactor", SpecularFactor);
             }
-            if (specularTexture != null)
+            if (SpecularTexture != null)
             {
                 writer.AddProperty("specularTexture");
-                specularTexture.GltfSerialize(writer);
+                SpecularTexture.GltfSerialize(writer);
             }
-            if (specularColorFactor != null && specularColorFactor.Length > 2 && (
-                    math.abs(specularColorFactor[0] - 1f) > Constants.epsilon ||
-                    math.abs(specularColorFactor[1] - 1f) > Constants.epsilon ||
-                    math.abs(specularColorFactor[2] - 1f) > Constants.epsilon
+            if (SpecularColorFactor != null && SpecularColorFactor.Length > 2 && (
+                    math.abs(SpecularColorFactor[0] - 1f) > Constants.epsilon ||
+                    math.abs(SpecularColorFactor[1] - 1f) > Constants.epsilon ||
+                    math.abs(SpecularColorFactor[2] - 1f) > Constants.epsilon
                 ))
             {
-                writer.AddArrayProperty("specularColorFactor", specularColorFactor);
+                writer.AddArrayProperty("specularColorFactor", SpecularColorFactor);
             }
-            if (specularColorTexture != null)
+            if (SpecularColorTexture != null)
             {
                 writer.AddProperty("specularColorTexture");
-                specularColorTexture.GltfSerialize(writer);
+                SpecularColorTexture.GltfSerialize(writer);
             }
             writer.Close();
         }

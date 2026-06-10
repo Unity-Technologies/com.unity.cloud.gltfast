@@ -111,17 +111,17 @@ namespace GLTFast.Tests
                 Material = seed == 0 ? -1 : seed,
                 Extensions = new MeshPrimitiveExtensions
                 {
-                    KHR_materials_variants = new MaterialsVariantsMeshPrimitiveExtension
+                    MaterialsVariants = new MaterialsVariantsMeshPrimitiveExtension
                     {
-                        mappings = new List<MaterialVariantsMapping>()
+                        Mappings = new List<MaterialVariantsMapping>()
                     }
                 }
             };
 
             for (var variant = 0; variant < variantsCount + 2; variant += 3)
             {
-                result.Extensions.KHR_materials_variants.mappings.Add(
-                    new MaterialVariantsMapping { material = seed + (variant + 3) / 3 * 100, variants = new[] { variant, variant + 1 } }
+                result.Extensions.MaterialsVariants.Mappings.Add(
+                    new MaterialVariantsMapping { Material = seed + (variant + 3) / 3 * 100, Variants = new[] { variant, variant + 1 } }
                     );
             }
 
@@ -135,9 +135,9 @@ namespace GLTFast.Tests
             {
                 Extensions = new RootExtensions
                 {
-                    KHR_materials_variants = new MaterialsVariantsRootExtension
+                    MaterialsVariants = new MaterialsVariantsRootExtension
                     {
-                        variants = new List<MaterialsVariant>
+                        Variants = new List<MaterialsVariant>
                         {
                             new MaterialsVariant { Name = "One" },
                             new MaterialsVariant { Name = "Two" },

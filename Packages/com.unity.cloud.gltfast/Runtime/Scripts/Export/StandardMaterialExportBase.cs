@@ -52,8 +52,8 @@ namespace GLTFast.Export
                 Name = uMaterial.name,
                 PbrMetallicRoughness = new PbrMetallicRoughness
                 {
-                    metallicFactor = 0,
-                    roughnessFactor = 1.0f
+                    MetallicFactor = 0,
+                    RoughnessFactor = 1.0f
                 }
             };
 
@@ -68,7 +68,7 @@ namespace GLTFast.Export
             }
 
             SetAlphaModeAndCutoff(uMaterial, material);
-            material.doubleSided = IsDoubleSided(uMaterial, MaterialProperty.Cull);
+            material.DoubleSided = IsDoubleSided(uMaterial, MaterialProperty.Cull);
 
             if (uMaterial.IsKeywordEnabled(k_KeywordEmission))
             {
@@ -173,8 +173,8 @@ namespace GLTFast.Export
                 var mainTex = uMaterial.GetTexture(mainTexProperty);
                 material.PbrMetallicRoughness = new PbrMetallicRoughness
                 {
-                    metallicFactor = 0,
-                    roughnessFactor = 1.0f,
+                    MetallicFactor = 0,
+                    RoughnessFactor = 1.0f,
                     BaseColor = uMaterial.HasProperty(BaseColorProperty)
                         ? uMaterial.GetColor(BaseColorProperty).linear
                         : Color.white
@@ -293,7 +293,7 @@ namespace GLTFast.Export
             metalGlossTexture = null;
             smoothnessTexture = null;
             var success = true;
-            var pbr = new PbrMetallicRoughness { metallicFactor = 0, roughnessFactor = 1.0f };
+            var pbr = new PbrMetallicRoughness { MetallicFactor = 0, RoughnessFactor = 1.0f };
 
             var hasAlphaSmoothness = uMaterial.IsKeywordEnabled(k_KeywordSmoothnessTextureAlbedoChannelA);
 
@@ -353,7 +353,7 @@ namespace GLTFast.Export
 
             if (uMaterial.HasProperty(MetallicProperty) && !HasMetallicGlossMap(uMaterial))
             {
-                pbr.metallicFactor = uMaterial.GetFloat(MetallicProperty);
+                pbr.MetallicFactor = uMaterial.GetFloat(MetallicProperty);
             }
 
             metalGlossTexture = GetMetallicGlossMap(uMaterial);
@@ -368,12 +368,12 @@ namespace GLTFast.Export
                 {
                     hasSmoothnessTexture = true;
                     // smoothness channel * smoothnessFactor will be baked into ORM texture.
-                    pbr.roughnessFactor = 1f;
+                    pbr.RoughnessFactor = 1f;
                 }
                 pbr.MetallicRoughnessTexture ??= new TextureInfo();
                 if (HasMetallicGlossMap(uMaterial))
                 {
-                    pbr.metallicFactor = 1.0f;
+                    pbr.MetallicFactor = 1.0f;
                 }
                 ExportTextureTransform(pbr.MetallicRoughnessTexture, uMaterial, k_MetallicGlossMap, gltf);
             }
@@ -381,7 +381,7 @@ namespace GLTFast.Export
             if (smoothnessSourceAlbedoAlpha && uMaterial.GetTexture(mainTexProperty) is Texture2D smoothnessTex)
             {
                 // smoothnessFactor will be baked into ORM texture
-                pbr.roughnessFactor = 1f;
+                pbr.RoughnessFactor = 1f;
                 pbr.MetallicRoughnessTexture ??= new TextureInfo();
                 smoothnessTexture = smoothnessTex;
                 ExportTextureTransform(pbr.MetallicRoughnessTexture, uMaterial, mainTexProperty, gltf);
@@ -395,7 +395,7 @@ namespace GLTFast.Export
                 smoothnessFactor = uMaterial.GetFloat(smoothnessProperty);
                 if (!hasSmoothnessTexture)
                 {
-                    pbr.roughnessFactor = 1f - smoothnessFactor;
+                    pbr.RoughnessFactor = 1f - smoothnessFactor;
                 }
             }
 

@@ -158,13 +158,13 @@ namespace GLTFast.Tests.JsonParsing
             var ext = new Sheen
             {
                 SheenColor = sheenColor,
-                sheenRoughnessFactor = .42f,
-                sheenColorTexture = new TextureInfo
+                SheenRoughnessFactor = .42f,
+                SheenColorTexture = new TextureInfo
                 {
                     Index = 42,
                     TexCoord = 1,
                 },
-                sheenRoughnessTexture = new TextureInfo
+                SheenRoughnessTexture = new TextureInfo
                 {
                     Index = 43,
                     TexCoord = 2,
@@ -191,14 +191,14 @@ namespace GLTFast.Tests.JsonParsing
             var specularColor = new Color(.2f, .5f, .7f);
             var ext = new MaterialSpecular()
             {
-                specularFactor = .42f,
-                specularTexture = new TextureInfo
+                SpecularFactor = .42f,
+                SpecularTexture = new TextureInfo
                 {
                     Index = 42,
                     TexCoord = 1,
                 },
                 SpecularColor = specularColor,
-                specularColorTexture = new TextureInfo
+                SpecularColorTexture = new TextureInfo
                 {
                     Index = 43,
                     TexCoord = 2,
@@ -224,7 +224,7 @@ namespace GLTFast.Tests.JsonParsing
         {
             var ext = new MaterialIor()
             {
-                ior = 1.42f
+                Ior = 1.42f
             };
 
             var json = CreateJsonTest(writer =>
@@ -244,17 +244,17 @@ namespace GLTFast.Tests.JsonParsing
         {
             var ext = new MaterialExtensions
             {
-                KHR_materials_sheen = new Sheen
+                Sheen = new Sheen
                 {
-                    sheenRoughnessFactor = .42f
+                    SheenRoughnessFactor = .42f
                 },
-                KHR_materials_specular = new MaterialSpecular
+                Specular = new MaterialSpecular
                 {
-                    specularFactor = .43f
+                    SpecularFactor = .43f
                 },
-                KHR_materials_ior = new MaterialIor
+                IndexOfRefraction = new MaterialIor
                 {
-                    ior = 1.42f
+                    Ior = 1.42f
                 },
             };
 

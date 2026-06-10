@@ -7,8 +7,8 @@ using GLTFast.Materials;
 using GLTFast.Schema;
 using Unity.Mathematics;
 using UnityEngine;
-using Material = UnityEngine.Material;
 using GltfMaterial = GLTFast.Schema.Material;
+using Material = UnityEngine.Material;
 
 namespace GLTFast.Export
 {
@@ -28,14 +28,13 @@ namespace GLTFast.Export
             {
                 Name = unityMaterial.name,
                 PbrMetallicRoughness = new PbrMetallicRoughness(),
-                doubleSided = IsDoubleSided(unityMaterial)
+                DoubleSided = IsDoubleSided(unityMaterial)
             };
 
-            var alphaMode = GetAlphaMode(unityMaterial);
-            material.SetAlphaMode(alphaMode);
-            if (alphaMode == GltfMaterial.AlphaMode.Mask)
+            material.AlphaMode = GetAlphaMode(unityMaterial);
+            if (material.AlphaMode == AlphaMode.Mask)
             {
-                material.alphaCutoff = GetAlphaCutoff(unityMaterial);
+                material.AlphaCutoff = GetAlphaCutoff(unityMaterial);
             }
 
             material = HandlePbrMetallicRoughness(gltf, material, unityMaterial);
@@ -52,7 +51,7 @@ namespace GLTFast.Export
         /// <seealso href="https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html#_material_alphamode"/>
         /// <param name="material">Unity material.</param>
         /// <returns>glTF alpha mode.</returns>
-        protected abstract GltfMaterial.AlphaMode GetAlphaMode(Material material);
+        protected abstract AlphaMode GetAlphaMode(Material material);
 
         /// <summary>
         /// Returns that material's alpha cutoff threshold.
@@ -146,12 +145,12 @@ namespace GLTFast.Export
 
             if (TryGetValue(unityMaterial, MaterialProperty.Metallic, out float metallicFactor))
             {
-                material.PbrMetallicRoughness.metallicFactor = metallicFactor;
+                material.PbrMetallicRoughness.MetallicFactor = metallicFactor;
             }
 
             if (TryGetValue(unityMaterial, MaterialProperty.RoughnessFactor, out float roughnessFactor))
             {
-                material.PbrMetallicRoughness.roughnessFactor = roughnessFactor;
+                material.PbrMetallicRoughness.RoughnessFactor = roughnessFactor;
             }
 
             return material;

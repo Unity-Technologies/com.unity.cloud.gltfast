@@ -260,7 +260,7 @@ namespace GLTFast.Tests.Import
             TargetNode = targetNode;
             Times = times;
             Values = values;
-            this.Interpolation = interpolation;
+            Interpolation = interpolation;
         }
     }
 }

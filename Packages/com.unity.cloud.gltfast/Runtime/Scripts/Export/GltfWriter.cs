@@ -246,7 +246,6 @@ namespace GLTFast.Export
 
             if (uCamera.orthographic)
             {
-                camera.SetCameraType(Camera.Type.Orthographic);
                 var oSize = uCamera.orthographicSize;
                 float aspectRatio;
                 var targetTexture = uCamera.targetTexture;
@@ -260,22 +259,21 @@ namespace GLTFast.Export
                 }
                 camera.Orthographic = new CameraOrthographic
                 {
-                    ymag = oSize,
-                    xmag = oSize * aspectRatio,
+                    Ymag = oSize,
+                    Xmag = oSize * aspectRatio,
                     // TODO: Check if local scale should be applied to near/far
-                    znear = uCamera.nearClipPlane,
-                    zfar = uCamera.farClipPlane
+                    Znear = uCamera.nearClipPlane,
+                    Zfar = uCamera.farClipPlane
                 };
             }
             else
             {
-                camera.SetCameraType(Camera.Type.Perspective);
                 camera.Perspective = new CameraPerspective
                 {
-                    yfov = uCamera.fieldOfView * Mathf.Deg2Rad,
+                    Yfov = uCamera.fieldOfView * Mathf.Deg2Rad,
                     // TODO: Check if local scale should be applied to near/far
-                    znear = uCamera.nearClipPlane,
-                    zfar = uCamera.farClipPlane
+                    Znear = uCamera.nearClipPlane,
+                    Zfar = uCamera.farClipPlane
                 };
             }
 
@@ -798,15 +796,15 @@ namespace GLTFast.Export
             if (m_Lights != null && m_Lights.Count > 0)
             {
                 RegisterExtensionUsage(Extension.LightsPunctual);
-                m_Gltf.Extensions ??= new RootExtensions();
-                m_Gltf.Extensions.LightsPunctual ??= new LightsPunctual();
+                m_Gltf.Extensions = m_Gltf.Extensions ?? new Schema.RootExtensions();
+                m_Gltf.Extensions.LightsPunctual = m_Gltf.Extensions.LightsPunctual ?? new LightsPunctual();
                 m_Gltf.Extensions.LightsPunctual.Lights = m_Lights.ToArray();
             }
 
             m_Gltf.Asset = new Asset
             {
-                version = "2.0",
-                generator = $"Unity {Application.unityVersion} glTFast {Constants.version}"
+                Version = "2.0",
+                Generator = $"Unity {Application.unityVersion} glTFast {Constants.version}"
             };
 
             BakeExtensions();
@@ -857,7 +855,7 @@ namespace GLTFast.Export
             {
                 var meshId = m_SkinMesh[skinId];
                 var inverseBindMatricesAccessor = m_MeshBindPoses[meshId];
-                m_Skins[skinId].inverseBindMatrices = inverseBindMatricesAccessor;
+                m_Skins[skinId].InverseBindMatrices = inverseBindMatricesAccessor;
             }
 
             m_SkinMesh = null;
@@ -1215,7 +1213,7 @@ namespace GLTFast.Export
                 if (!mode.HasValue)
                 {
                     m_Logger?.Error(LogCode.TopologyUnsupported, subMeshTopology.ToString());
-                    mode = DrawMode.Points;
+                    mode = PrimitiveMode.Points;
                 }
 
                 var indexAccessor = new Accessor
@@ -1577,7 +1575,7 @@ namespace GLTFast.Export
             }
             job.Complete();
             bufferViewId = WriteBufferViewToBuffer(
-                matrices.Reinterpret<byte>(sizeof(float) * 4 * 4), BufferViewTarget.None, byteAlignment: 4
+                matrices.Reinterpret<byte>(sizeof(float) * 4 * 4), BufferViewTarget.Undefined, byteAlignment: 4
             );
 
             nativeBindPoses.Dispose();
@@ -1615,7 +1613,7 @@ namespace GLTFast.Export
             for (var submesh = 0; submesh < results.Length; submesh++)
             {
                 var encodeResult = results[submesh];
-                var bufferViewId = WriteBufferViewToBuffer(encodeResult.data, BufferViewTarget.None);
+                var bufferViewId = WriteBufferViewToBuffer(encodeResult.data, BufferViewTarget.Undefined);
 
                 var attributes = new Attributes();
                 var dracoAttributes = new Attributes();
@@ -1677,7 +1675,7 @@ namespace GLTFast.Export
                 {
                     Extensions = new MeshPrimitiveExtensions
                     {
-                        KHR_draco_mesh_compression = new MeshPrimitiveDracoExtension
+                        DracoMeshCompression = new MeshPrimitiveDracoExtension
                         {
                             BufferView = bufferViewId,
                             Attributes = dracoAttributes
@@ -1852,7 +1850,7 @@ namespace GLTFast.Export
                         var imageBytes = imageExport.GetData();
                         if (imageBytes != null)
                         {
-                            m_Images[imageId].BufferView = WriteBufferViewToBuffer(imageBytes, BufferViewTarget.None);
+                            m_Images[imageId].BufferView = WriteBufferViewToBuffer(imageBytes, BufferViewTarget.Undefined);
                         }
                     }
                     else if (imageDest == ImageDestination.SeparateFile)
@@ -2164,20 +2162,20 @@ namespace GLTFast.Export
             return job;
         }
 
-        static DrawMode? GetDrawMode(MeshTopology topology)
+        static PrimitiveMode? GetDrawMode(MeshTopology topology)
         {
             switch (topology)
             {
                 case MeshTopology.Quads:
-                    return DrawMode.Triangles;
+                    return PrimitiveMode.Triangles;
                 case MeshTopology.Triangles:
-                    return DrawMode.Triangles;
+                    return PrimitiveMode.Triangles;
                 case MeshTopology.Lines:
-                    return DrawMode.Lines;
+                    return PrimitiveMode.Lines;
                 case MeshTopology.LineStrip:
-                    return DrawMode.LineStrip;
+                    return PrimitiveMode.LineStrip;
                 case MeshTopology.Points:
-                    return DrawMode.Points;
+                    return PrimitiveMode.Points;
                 default:
                     return null;
             }
@@ -2271,7 +2269,7 @@ namespace GLTFast.Export
             var skinId = m_Skins.Count;
             var newSkin = new Skin
             {
-                joints = joints
+                Joints = joints
             };
             m_Skins.Add(newSkin);
             m_SkinMesh.Add(meshId);

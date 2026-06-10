@@ -1,8 +1,8 @@
 // SPDX-FileCopyrightText: 2024 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
-using System;
 using System.Collections.Generic;
+using Unity.Gltfast.Text.Json.Serialization;
 
 namespace GLTFast.Schema
 {
@@ -10,19 +10,19 @@ namespace GLTFast.Schema
     /// KHR_materials_variants extension.
     /// </summary>
     /// <seealso href="https://github.com/KhronosGroup/glTF/tree/main/extensions/2.0/Khronos/KHR_materials_variants">KHR_materials_variants extension</seealso>
-    [Serializable]
     public class MaterialsVariantsRootExtension
     {
         /// <summary>
         /// Collection of material variants
         /// </summary>
-        public List<MaterialsVariant> variants;
+        [JsonPropertyName("variants")]
+        public List<MaterialsVariant> Variants { get; set; }
 
         internal void GltfSerialize(JsonWriter writer)
         {
             writer.AddObject();
             writer.AddArray("variants");
-            foreach (var variant in variants)
+            foreach (var variant in Variants)
             {
                 variant.GltfSerialize(writer);
             }
@@ -35,7 +35,6 @@ namespace GLTFast.Schema
     /// Named materials variant.
     /// </summary>
     /// <seealso href="https://github.com/KhronosGroup/glTF/tree/main/extensions/2.0/Khronos/KHR_materials_variants">KHR_materials_variants extension</seealso>
-    [Serializable]
     public class MaterialsVariant : NamedObject
     {
         internal void GltfSerialize(JsonWriter writer)
@@ -48,13 +47,13 @@ namespace GLTFast.Schema
     /// Mesh primitive level KHR_materials_variants extension.
     /// </summary>
     /// <seealso href="https://github.com/KhronosGroup/glTF/tree/main/extensions/2.0/Khronos/KHR_materials_variants">KHR_materials_variants extension</seealso>
-    [Serializable]
     public class MaterialsVariantsMeshPrimitiveExtension
     {
         /// <summary>
         /// List of material to variants mapping.
         /// </summary>
-        public List<MaterialVariantsMapping> mappings;
+        [JsonPropertyName("mappings")]
+        public List<MaterialVariantsMapping> Mappings { get; set; }
 
         /// <summary>
         /// Retrieves the index of the material that corresponds to a material variant.
@@ -66,13 +65,13 @@ namespace GLTFast.Schema
         /// <returns>True if there's a matching mapping with the provided variant index. False otherwise.</returns>
         public bool TryGetMaterialIndex(int variantIndex, out int materialIndex)
         {
-            foreach (var mapping in mappings)
+            foreach (var mapping in Mappings)
             {
-                foreach (var i in mapping.variants)
+                foreach (var i in mapping.Variants)
                 {
                     if (variantIndex == i)
                     {
-                        materialIndex = mapping.material;
+                        materialIndex = mapping.Material;
                         return true;
                     }
                 }
@@ -86,7 +85,7 @@ namespace GLTFast.Schema
         {
             writer.AddObject();
             writer.AddArray("mappings");
-            foreach (var mapping in mappings)
+            foreach (var mapping in Mappings)
             {
                 mapping.GltfSerialize(writer);
             }
@@ -98,20 +97,21 @@ namespace GLTFast.Schema
     /// <summary>
     /// Maps a material index to one or more materials variants indices.
     /// </summary>
-    [Serializable]
     public class MaterialVariantsMapping
     {
         /// <summary>Material index.</summary>
-        public int material;
+        [JsonPropertyName("material")]
+        public int Material { get; set; }
 
         /// <summary>Materials variants indices.</summary>
-        public int[] variants;
+        [JsonPropertyName("variants")]
+        public int[] Variants { get; set; }
 
         internal void GltfSerialize(JsonWriter writer)
         {
             writer.AddObject();
-            writer.AddProperty("material", material);
-            writer.AddArrayProperty("variants", variants);
+            writer.AddProperty("material", Material);
+            writer.AddArrayProperty("variants", Variants);
             writer.Close();
         }
     }

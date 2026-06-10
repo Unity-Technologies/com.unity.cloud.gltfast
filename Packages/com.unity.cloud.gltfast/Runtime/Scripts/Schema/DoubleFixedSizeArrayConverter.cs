@@ -7,10 +7,10 @@ using Unity.Gltfast.Text.Json.Serialization;
 
 namespace GLTFast.Schema
 {
-    class Double2ArrayConverter : DoubleFixedSizeArrayConverter { public Double2ArrayConverter() : base(2) {} }
-    class Double3ArrayConverter : DoubleFixedSizeArrayConverter { public Double3ArrayConverter() : base(3) {} }
-    class Double4ArrayConverter : DoubleFixedSizeArrayConverter { public Double4ArrayConverter() : base(4) {} }
-    class Double16ArrayConverter : DoubleFixedSizeArrayConverter { public Double16ArrayConverter() : base(16) {} }
+    class Double2ArrayConverter : DoubleFixedSizeArrayConverter { public Double2ArrayConverter() : base(2) { } }
+    class Double3ArrayConverter : DoubleFixedSizeArrayConverter { public Double3ArrayConverter() : base(3) { } }
+    class Double4ArrayConverter : DoubleFixedSizeArrayConverter { public Double4ArrayConverter() : base(4) { } }
+    class Double16ArrayConverter : DoubleFixedSizeArrayConverter { public Double16ArrayConverter() : base(16) { } }
 
     class DoubleFixedSizeArrayConverter : JsonConverter<double[]>
     {

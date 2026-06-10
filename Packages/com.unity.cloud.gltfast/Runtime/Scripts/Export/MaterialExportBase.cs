@@ -74,16 +74,16 @@ namespace GLTFast.Export
                 case "TransparentCutout":
                     if (uMaterial.HasProperty(CutoffProperty))
                     {
-                        material.alphaCutoff = uMaterial.GetFloat(CutoffProperty);
+                        material.AlphaCutoff = uMaterial.GetFloat(CutoffProperty);
                     }
-                    material.SetAlphaMode(Material.AlphaMode.Mask);
+                    material.AlphaMode = AlphaMode.Mask;
                     break;
                 case "Transparent":
                 case "Fade":
-                    material.SetAlphaMode(Material.AlphaMode.Blend);
+                    material.AlphaMode = AlphaMode.Blend;
                     break;
                 default:
-                    material.SetAlphaMode(Material.AlphaMode.Opaque);
+                    material.AlphaMode = AlphaMode.Opaque;
                     break;
             }
         }
@@ -129,7 +129,7 @@ namespace GLTFast.Export
 
             gltf.RegisterExtensionUsage(Extension.MaterialsUnlit);
             material.Extensions = material.Extensions ?? new MaterialExtensions();
-            material.Extensions.KHR_materials_unlit = new MaterialUnlit();
+            material.Extensions.Unlit = new MaterialUnlit();
 
             var pbr = material.PbrMetallicRoughness ?? new PbrMetallicRoughness();
 

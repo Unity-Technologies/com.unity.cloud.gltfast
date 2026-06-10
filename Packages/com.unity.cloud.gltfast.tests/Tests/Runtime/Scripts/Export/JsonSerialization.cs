@@ -21,9 +21,9 @@ namespace GLTFast.Tests.Export
             {
                 Extensions = new RootExtensions
                 {
-                    KHR_materials_variants = new MaterialsVariantsRootExtension
+                    MaterialsVariants = new MaterialsVariantsRootExtension
                     {
-                        variants = new List<MaterialsVariant>
+                        Variants = new List<MaterialsVariant>
                         {
                             new() { Name = "red" },
                             new() { Name = "green" },
@@ -41,13 +41,13 @@ namespace GLTFast.Tests.Export
                             {
                                 Extensions = new MeshPrimitiveExtensions
                                 {
-                                    KHR_materials_variants = new MaterialsVariantsMeshPrimitiveExtension
+                                    MaterialsVariants = new MaterialsVariantsMeshPrimitiveExtension
                                     {
-                                        mappings = new List<MaterialVariantsMapping>
+                                        Mappings = new List<MaterialVariantsMapping>
                                         {
-                                            new() {material = 0, variants = new [] { 0 }},
-                                            new() {material = 1, variants = new [] { 1 }},
-                                            new() {material = 2, variants = new [] { 2 }},
+                                            new() {Material = 0, Variants = new [] { 0 }},
+                                            new() {Material = 1, Variants = new [] { 1 }},
+                                            new() {Material = 2, Variants = new [] { 2 }},
                                         }
                                     }
                                 }

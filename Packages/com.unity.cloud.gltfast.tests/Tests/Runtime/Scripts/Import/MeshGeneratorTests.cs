@@ -34,7 +34,7 @@ namespace GLTFast.Tests.Import
         {
             var primitives = new[] { new MeshPrimitive
             {
-                Mode = DrawMode.TriangleFan,
+                Mode = PrimitiveMode.TriangleFan,
                 Attributes = new Attributes
                 {
                     POSITION = 0

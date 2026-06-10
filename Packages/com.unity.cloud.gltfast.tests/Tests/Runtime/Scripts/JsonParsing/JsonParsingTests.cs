@@ -6,6 +6,8 @@ using GLTFast.Schema;
 using NUnit.Framework;
 using Unity.Gltfast.Text.Json;
 using UnityEngine;
+using CameraType = GLTFast.Schema.CameraType;
+using Material = GLTFast.Schema.Material;
 
 namespace GLTFast.Tests.JsonParsing
 {
@@ -272,6 +274,28 @@ namespace GLTFast.Tests.JsonParsing
 ";
 
         [Test]
+        public void MaterialAlphaMode()
+        {
+            var material = JsonSerializer.Deserialize("{}", GltfRootSourceGenerator.Default.Material);
+            Assert.AreEqual(AlphaMode.Opaque, material.AlphaMode);
+
+            material = JsonSerializer.Deserialize(@"{""alphaMode"":""BLEND""}", GltfRootSourceGenerator.Default.Material);
+            Assert.AreEqual(AlphaMode.Blend, material.AlphaMode);
+
+            material = JsonSerializer.Deserialize(@"{""alphaMode"":""MASK""}", GltfRootSourceGenerator.Default.Material);
+            Assert.AreEqual(AlphaMode.Mask, material.AlphaMode);
+
+            material = JsonSerializer.Deserialize(@"{""alphaMode"":""OPAQUE""}", GltfRootSourceGenerator.Default.Material);
+            Assert.AreEqual(AlphaMode.Opaque, material.AlphaMode);
+
+            Assert.Throws<JsonException>(() =>
+            {
+                material = JsonSerializer.Deserialize(@"{""alphaMode"":""Invalid""}",
+                    GltfRootSourceGenerator.Default.Material);
+            });
+        }
+
+        [Test]
         public void MaterialExtensions()
         {
             Parse(k_MaterialExtensionGltf, AssertMaterialExtensionResult);
@@ -314,6 +338,18 @@ namespace GLTFast.Tests.JsonParsing
             Assert.Throws<JsonException>(() => Parse("garbage", Assert.IsNull));
         }
 
+        [Test]
+        public void Camera()
+        {
+            var camera = JsonSerializer.Deserialize(
+                @"{""perspective"":{},""type"":""perspective""}", GltfRootSourceGenerator.Default.Camera);
+            Assert.AreEqual(null, camera.Perspective.Zfar);
+
+            camera = JsonSerializer.Deserialize(
+                @"{""perspective"":{""zfar"":42},""type"":""perspective""}", GltfRootSourceGenerator.Default.Camera);
+            Assert.AreEqual(42f, camera.Perspective.Zfar);
+        }
+
         static void Parse(string gltf, Action<Root> validationCallback)
         {
             var root = JsonSerializer.Deserialize(gltf, GltfRootSourceGenerator.Default.Root);
@@ -335,108 +371,108 @@ namespace GLTFast.Tests.JsonParsing
             Assert.NotNull(empty);
             Assert.AreEqual("emptyExtension", empty.Name);
             Assert.NotNull(empty.Extensions);
-            Assert.IsNull(empty.Extensions.KHR_materials_unlit);
-            Assert.IsNull(empty.Extensions.KHR_materials_pbrSpecularGlossiness);
-            Assert.IsNull(empty.Extensions.KHR_materials_clearcoat);
-            Assert.IsNull(empty.Extensions.KHR_materials_sheen);
-            Assert.IsNull(empty.Extensions.KHR_materials_transmission);
-            Assert.IsNull(empty.Extensions.KHR_materials_ior);
-            Assert.IsNull(empty.Extensions.KHR_materials_specular);
+            Assert.IsNull(empty.Extensions.Unlit);
+            Assert.IsNull(empty.Extensions.PbrSpecularGlossiness);
+            Assert.IsNull(empty.Extensions.Clearcoat);
+            Assert.IsNull(empty.Extensions.Sheen);
+            Assert.IsNull(empty.Extensions.Transmission);
+            Assert.IsNull(empty.Extensions.IndexOfRefraction);
+            Assert.IsNull(empty.Extensions.Specular);
 
             var unlit = gltf.Materials[2];
             Assert.NotNull(unlit);
             Assert.AreEqual("unlit", unlit.Name);
             Assert.NotNull(unlit.Extensions);
-            Assert.NotNull(unlit.Extensions.KHR_materials_unlit);
-            Assert.IsNull(unlit.Extensions.KHR_materials_pbrSpecularGlossiness);
-            Assert.IsNull(unlit.Extensions.KHR_materials_clearcoat);
-            Assert.IsNull(unlit.Extensions.KHR_materials_sheen);
-            Assert.IsNull(unlit.Extensions.KHR_materials_transmission);
-            Assert.IsNull(unlit.Extensions.KHR_materials_ior);
-            Assert.IsNull(unlit.Extensions.KHR_materials_specular);
+            Assert.NotNull(unlit.Extensions.Unlit);
+            Assert.IsNull(unlit.Extensions.PbrSpecularGlossiness);
+            Assert.IsNull(unlit.Extensions.Clearcoat);
+            Assert.IsNull(unlit.Extensions.Sheen);
+            Assert.IsNull(unlit.Extensions.Transmission);
+            Assert.IsNull(unlit.Extensions.IndexOfRefraction);
+            Assert.IsNull(unlit.Extensions.Specular);
 
             var specGloss = gltf.Materials[3];
             Assert.NotNull(specGloss);
             Assert.AreEqual("specularGlossiness", specGloss.Name);
             Assert.NotNull(specGloss.Extensions);
-            Assert.IsNull(specGloss.Extensions.KHR_materials_unlit);
-            Assert.NotNull(specGloss.Extensions.KHR_materials_pbrSpecularGlossiness);
-            Assert.IsNull(specGloss.Extensions.KHR_materials_clearcoat);
-            Assert.IsNull(specGloss.Extensions.KHR_materials_sheen);
-            Assert.IsNull(specGloss.Extensions.KHR_materials_transmission);
-            Assert.IsNull(specGloss.Extensions.KHR_materials_ior);
-            Assert.IsNull(specGloss.Extensions.KHR_materials_specular);
+            Assert.IsNull(specGloss.Extensions.Unlit);
+            Assert.NotNull(specGloss.Extensions.PbrSpecularGlossiness);
+            Assert.IsNull(specGloss.Extensions.Clearcoat);
+            Assert.IsNull(specGloss.Extensions.Sheen);
+            Assert.IsNull(specGloss.Extensions.Transmission);
+            Assert.IsNull(specGloss.Extensions.IndexOfRefraction);
+            Assert.IsNull(specGloss.Extensions.Specular);
 
             var transmission = gltf.Materials[4];
             Assert.NotNull(transmission);
             Assert.AreEqual("transmission", transmission.Name);
             Assert.NotNull(transmission.Extensions);
-            Assert.IsNull(transmission.Extensions.KHR_materials_unlit);
-            Assert.IsNull(transmission.Extensions.KHR_materials_pbrSpecularGlossiness);
-            Assert.IsNull(transmission.Extensions.KHR_materials_clearcoat);
-            Assert.IsNull(transmission.Extensions.KHR_materials_sheen);
-            Assert.NotNull(transmission.Extensions.KHR_materials_transmission);
-            Assert.IsNull(transmission.Extensions.KHR_materials_ior);
-            Assert.IsNull(transmission.Extensions.KHR_materials_specular);
+            Assert.IsNull(transmission.Extensions.Unlit);
+            Assert.IsNull(transmission.Extensions.PbrSpecularGlossiness);
+            Assert.IsNull(transmission.Extensions.Clearcoat);
+            Assert.IsNull(transmission.Extensions.Sheen);
+            Assert.NotNull(transmission.Extensions.Transmission);
+            Assert.IsNull(transmission.Extensions.IndexOfRefraction);
+            Assert.IsNull(transmission.Extensions.Specular);
 
             var clearcoat = gltf.Materials[5];
             Assert.NotNull(clearcoat);
             Assert.AreEqual("clearcoat", clearcoat.Name);
             Assert.NotNull(clearcoat.Extensions);
-            Assert.IsNull(clearcoat.Extensions.KHR_materials_unlit);
-            Assert.IsNull(clearcoat.Extensions.KHR_materials_pbrSpecularGlossiness);
-            Assert.NotNull(clearcoat.Extensions.KHR_materials_clearcoat);
-            Assert.IsNull(clearcoat.Extensions.KHR_materials_sheen);
-            Assert.IsNull(clearcoat.Extensions.KHR_materials_transmission);
-            Assert.IsNull(clearcoat.Extensions.KHR_materials_ior);
-            Assert.IsNull(clearcoat.Extensions.KHR_materials_specular);
+            Assert.IsNull(clearcoat.Extensions.Unlit);
+            Assert.IsNull(clearcoat.Extensions.PbrSpecularGlossiness);
+            Assert.NotNull(clearcoat.Extensions.Clearcoat);
+            Assert.IsNull(clearcoat.Extensions.Sheen);
+            Assert.IsNull(clearcoat.Extensions.Transmission);
+            Assert.IsNull(clearcoat.Extensions.IndexOfRefraction);
+            Assert.IsNull(clearcoat.Extensions.Specular);
 
             var sheen = gltf.Materials[6];
             Assert.NotNull(sheen);
             Assert.AreEqual("sheen", sheen.Name);
             Assert.NotNull(sheen.Extensions);
-            Assert.IsNull(sheen.Extensions.KHR_materials_unlit);
-            Assert.IsNull(sheen.Extensions.KHR_materials_pbrSpecularGlossiness);
-            Assert.IsNull(sheen.Extensions.KHR_materials_clearcoat);
-            Assert.NotNull(sheen.Extensions.KHR_materials_sheen);
-            Assert.IsNull(sheen.Extensions.KHR_materials_transmission);
-            Assert.IsNull(sheen.Extensions.KHR_materials_ior);
-            Assert.IsNull(sheen.Extensions.KHR_materials_specular);
+            Assert.IsNull(sheen.Extensions.Unlit);
+            Assert.IsNull(sheen.Extensions.PbrSpecularGlossiness);
+            Assert.IsNull(sheen.Extensions.Clearcoat);
+            Assert.NotNull(sheen.Extensions.Sheen);
+            Assert.IsNull(sheen.Extensions.Transmission);
+            Assert.IsNull(sheen.Extensions.IndexOfRefraction);
+            Assert.IsNull(sheen.Extensions.Specular);
 
 
             var ior = gltf.Materials[7];
             Assert.NotNull(ior);
             Assert.AreEqual("ior", ior.Name);
             Assert.NotNull(ior.Extensions);
-            Assert.IsNull(ior.Extensions.KHR_materials_unlit);
-            Assert.IsNull(ior.Extensions.KHR_materials_pbrSpecularGlossiness);
-            Assert.IsNull(ior.Extensions.KHR_materials_clearcoat);
-            Assert.IsNull(ior.Extensions.KHR_materials_sheen);
-            Assert.IsNull(ior.Extensions.KHR_materials_transmission);
-            Assert.NotNull(ior.Extensions.KHR_materials_ior);
-            Assert.IsNull(ior.Extensions.KHR_materials_specular);
+            Assert.IsNull(ior.Extensions.Unlit);
+            Assert.IsNull(ior.Extensions.PbrSpecularGlossiness);
+            Assert.IsNull(ior.Extensions.Clearcoat);
+            Assert.IsNull(ior.Extensions.Sheen);
+            Assert.IsNull(ior.Extensions.Transmission);
+            Assert.NotNull(ior.Extensions.IndexOfRefraction);
+            Assert.IsNull(ior.Extensions.Specular);
 
             var specular = gltf.Materials[8];
             Assert.NotNull(specular);
             Assert.AreEqual("specular", specular.Name);
             Assert.NotNull(specular.Extensions);
-            Assert.IsNull(specular.Extensions.KHR_materials_unlit);
-            Assert.IsNull(specular.Extensions.KHR_materials_pbrSpecularGlossiness);
-            Assert.IsNull(specular.Extensions.KHR_materials_clearcoat);
-            Assert.IsNull(specular.Extensions.KHR_materials_sheen);
-            Assert.IsNull(specular.Extensions.KHR_materials_transmission);
-            Assert.IsNull(specular.Extensions.KHR_materials_ior);
-            Assert.NotNull(specular.Extensions.KHR_materials_specular);
+            Assert.IsNull(specular.Extensions.Unlit);
+            Assert.IsNull(specular.Extensions.PbrSpecularGlossiness);
+            Assert.IsNull(specular.Extensions.Clearcoat);
+            Assert.IsNull(specular.Extensions.Sheen);
+            Assert.IsNull(specular.Extensions.Transmission);
+            Assert.IsNull(specular.Extensions.IndexOfRefraction);
+            Assert.NotNull(specular.Extensions.Specular);
 
             var all = gltf.Materials[9];
             Assert.NotNull(all);
             Assert.AreEqual("all", all.Name);
             Assert.NotNull(all.Extensions);
-            Assert.NotNull(all.Extensions.KHR_materials_unlit);
-            Assert.NotNull(all.Extensions.KHR_materials_pbrSpecularGlossiness);
-            Assert.NotNull(all.Extensions.KHR_materials_clearcoat);
-            Assert.NotNull(all.Extensions.KHR_materials_sheen);
-            Assert.NotNull(all.Extensions.KHR_materials_transmission);
+            Assert.NotNull(all.Extensions.Unlit);
+            Assert.NotNull(all.Extensions.PbrSpecularGlossiness);
+            Assert.NotNull(all.Extensions.Clearcoat);
+            Assert.NotNull(all.Extensions.Sheen);
+            Assert.NotNull(all.Extensions.Transmission);
         }
 
         static void AssertSparseAccessorsResult(Root gltf)
@@ -592,24 +628,24 @@ namespace GLTFast.Tests.JsonParsing
             var node3 = gltf.Nodes[3];
             Assert.NotNull(node3);
             Assert.NotNull(node3.Extensions);
-            Assert.NotNull(node3.Extensions.EXT_mesh_gpu_instancing);
-            Assert.NotNull(node3.Extensions.EXT_mesh_gpu_instancing.attributes);
-            Assert.AreEqual(42, node3.Extensions.EXT_mesh_gpu_instancing.attributes.TRANSLATION);
+            Assert.NotNull(node3.Extensions.MeshGpuInstancing);
+            Assert.NotNull(node3.Extensions.MeshGpuInstancing.Attributes);
+            Assert.AreEqual(42, node3.Extensions.MeshGpuInstancing.Attributes.Translation);
             Assert.IsNull(node3.Extensions.LightsPunctual);
 
             var node4 = gltf.Nodes[4];
             Assert.NotNull(node4);
             Assert.NotNull(node4.Extensions);
-            Assert.IsNull(node4.Extensions.EXT_mesh_gpu_instancing);
+            Assert.IsNull(node4.Extensions.MeshGpuInstancing);
             Assert.NotNull(node4.Extensions.LightsPunctual);
             Assert.AreEqual(42, node4.Extensions.LightsPunctual.Light);
 
             var node5 = gltf.Nodes[5];
             Assert.NotNull(node5);
             Assert.NotNull(node5.Extensions);
-            Assert.NotNull(node5.Extensions.EXT_mesh_gpu_instancing);
-            Assert.NotNull(node5.Extensions.EXT_mesh_gpu_instancing.attributes);
-            Assert.AreEqual(13, node5.Extensions.EXT_mesh_gpu_instancing.attributes.TRANSLATION);
+            Assert.NotNull(node5.Extensions.MeshGpuInstancing);
+            Assert.NotNull(node5.Extensions.MeshGpuInstancing.Attributes);
+            Assert.AreEqual(13, node5.Extensions.MeshGpuInstancing.Attributes.Translation);
             Assert.NotNull(node5.Extensions.LightsPunctual);
             Assert.AreEqual(42, node5.Extensions.LightsPunctual.Light);
         }

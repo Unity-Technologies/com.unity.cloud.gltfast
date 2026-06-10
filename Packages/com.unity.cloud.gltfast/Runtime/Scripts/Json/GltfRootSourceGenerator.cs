@@ -5,12 +5,10 @@ using UnityEngine;
 namespace GLTFast.Schema
 {
     [JsonSourceGenerationOptions(
-        IncludeFields = true
-
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault
         // // Potentially a lot quicker, but not supported yet!
         // , GenerationMode = JsonSourceGenerationMode.Serialization
         )]
     [JsonSerializable(typeof(Root))]
-    [JsonSerializable(typeof(MeshGpuInstancing.Attributes), TypeInfoPropertyName = "MeshGpuInstancingAttributes")]
     partial class GltfRootSourceGenerator : JsonSerializerContext { }
 }

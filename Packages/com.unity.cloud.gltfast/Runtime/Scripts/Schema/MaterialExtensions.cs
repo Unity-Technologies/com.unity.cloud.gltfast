@@ -7,40 +7,42 @@ using Unity.Gltfast.Text.Json.Serialization;
 
 namespace GLTFast.Schema
 {
-
     /// <summary>
     /// Material extensions.
     /// </summary>
-    [System.Serializable]
     public class MaterialExtensions : IGltfObject
     {
-        // Names are identical to glTF specified property names, that's why
-        // inconsistent names are ignored.
-        // ReSharper disable InconsistentNaming
-
-        /// <inheritdoc cref="PbrSpecularGlossiness"/>
-        public PbrSpecularGlossiness KHR_materials_pbrSpecularGlossiness;
+        /// <inheritdoc cref="Schema.PbrSpecularGlossiness"/>
+        [JsonPropertyName("KHR_materials_pbrSpecularGlossiness")]
+        public PbrSpecularGlossiness PbrSpecularGlossiness { get; set; }
 
         /// <inheritdoc cref="MaterialUnlit"/>
-        public MaterialUnlit KHR_materials_unlit;
+        [JsonPropertyName("KHR_materials_unlit")]
+        public MaterialUnlit Unlit { get; set; }
 
-        /// <inheritdoc cref="Transmission"/>
-        public Transmission KHR_materials_transmission;
+        /// <inheritdoc cref="Schema.Transmission"/>
+        [JsonPropertyName("KHR_materials_transmission")]
+        public Transmission Transmission { get; set; }
 
         /// <inheritdoc cref="ClearCoat"/>
-        public ClearCoat KHR_materials_clearcoat;
+        [JsonPropertyName("KHR_materials_clearcoat")]
+        public ClearCoat Clearcoat { get; set; }
 
-        /// <inheritdoc cref="Sheen"/>
-        public Sheen KHR_materials_sheen;
+        /// <inheritdoc cref="Schema.Sheen"/>
+        [JsonPropertyName("KHR_materials_sheen")]
+        public Sheen Sheen { get; set; }
 
         /// <inheritdoc cref="MaterialSpecular"/>
-        public MaterialSpecular KHR_materials_specular;
+        [JsonPropertyName("KHR_materials_specular")]
+        public MaterialSpecular Specular { get; set; }
 
         /// <inheritdoc cref="MaterialIor"/>
-        public MaterialIor KHR_materials_ior;
+        [JsonPropertyName("KHR_materials_ior")]
+        public MaterialIor IndexOfRefraction { get; set; }
 
-        /// <inheritdoc cref="Root.extras"/>
-        public UnclassifiedData extras;
+        /// <inheritdoc cref="Root.Extras"/>
+        [JsonPropertyName("extras")]
+        public UnclassifiedData Extras { get; set; }
 
         /// <summary>JSON properties without a matching member.</summary>
         [JsonExtensionData, JsonInclude] internal Dictionary<string, JsonElement> ExtensionsData { get; set; }
@@ -51,45 +53,43 @@ namespace GLTFast.Schema
             return ExtensionsData.TryGetValue(key, out value);
         }
 
-        // ReSharper restore InconsistentNaming
-
         internal void GltfSerialize(JsonWriter writer)
         {
             writer.AddObject();
-            if (KHR_materials_pbrSpecularGlossiness != null)
+            if (PbrSpecularGlossiness != null)
             {
                 writer.AddProperty("KHR_materials_pbrSpecularGlossiness");
-                KHR_materials_pbrSpecularGlossiness.GltfSerialize(writer);
+                PbrSpecularGlossiness.GltfSerialize(writer);
             }
-            if (KHR_materials_unlit != null)
+            if (Unlit != null)
             {
                 writer.AddProperty("KHR_materials_unlit");
-                KHR_materials_unlit.GltfSerialize(writer);
+                Unlit.GltfSerialize(writer);
             }
-            if (KHR_materials_transmission != null)
+            if (Transmission != null)
             {
                 writer.AddProperty("KHR_materials_transmission");
-                KHR_materials_transmission.GltfSerialize(writer);
+                Transmission.GltfSerialize(writer);
             }
-            if (KHR_materials_clearcoat != null)
+            if (Clearcoat != null)
             {
                 writer.AddProperty("KHR_materials_clearcoat");
-                KHR_materials_clearcoat.GltfSerialize(writer);
+                Clearcoat.GltfSerialize(writer);
             }
-            if (KHR_materials_sheen != null)
+            if (Sheen != null)
             {
                 writer.AddProperty("KHR_materials_sheen");
-                KHR_materials_sheen.GltfSerialize(writer);
+                Sheen.GltfSerialize(writer);
             }
-            if (KHR_materials_specular != null)
+            if (Specular != null)
             {
                 writer.AddProperty("KHR_materials_specular");
-                KHR_materials_specular.GltfSerialize(writer);
+                Specular.GltfSerialize(writer);
             }
-            if (KHR_materials_ior != null)
+            if (IndexOfRefraction != null)
             {
                 writer.AddProperty("KHR_materials_ior");
-                KHR_materials_ior.GltfSerialize(writer);
+                IndexOfRefraction.GltfSerialize(writer);
             }
             writer.Close();
         }

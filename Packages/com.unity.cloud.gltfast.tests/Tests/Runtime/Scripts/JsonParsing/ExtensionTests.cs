@@ -380,8 +380,8 @@ $@"
 #endif
 
             CertifyCustomData(gltf.Asset, 44);
-            CertifyCustomExtensions(gltf.Asset.extensions);
-            CertifyCustomExtras(gltf.Asset.extras);
+            CertifyCustomExtensions(gltf.Asset.Extensions);
+            CertifyCustomExtras(gltf.Asset.Extras);
 
             CertifyCustomData(gltf.Buffers[0], 45);
             CertifyCustomExtensions(gltf.Buffers[0].Extensions);
@@ -392,16 +392,16 @@ $@"
             CertifyCustomExtras(gltf.BufferViews[0].Extras);
 
             CertifyCustomData(gltf.Cameras[0], 47);
-            CertifyCustomExtensions(gltf.Cameras[0].extensions);
-            CertifyCustomExtras(gltf.Cameras[0].extras);
+            CertifyCustomExtensions(gltf.Cameras[0].Extensions);
+            CertifyCustomExtras(gltf.Cameras[0].Extras);
 
             CertifyCustomData(gltf.Cameras[0].Orthographic, 470);
-            CertifyCustomExtensions(gltf.Cameras[0].Orthographic.extensions);
-            CertifyCustomExtras(gltf.Cameras[0].Orthographic.extras);
+            CertifyCustomExtensions(gltf.Cameras[0].Orthographic.Extensions);
+            CertifyCustomExtras(gltf.Cameras[0].Orthographic.Extras);
 
             CertifyCustomData(gltf.Cameras[0].Perspective, 471);
-            CertifyCustomExtensions(gltf.Cameras[0].Perspective.extensions);
-            CertifyCustomExtras(gltf.Cameras[0].Perspective.extras);
+            CertifyCustomExtensions(gltf.Cameras[0].Perspective.Extensions);
+            CertifyCustomExtras(gltf.Cameras[0].Perspective.Extras);
 
             CertifyCustomData(gltf.Images[0], 49);
             CertifyCustomExtensions(gltf.Images[0].Extensions);
@@ -409,11 +409,11 @@ $@"
 
             CertifyCustomData(gltf.Materials[0], 50);
             CertifyCustomExtensions(gltf.Materials[0].Extensions);
-            CertifyCustomExtras(gltf.Materials[0].extras);
+            CertifyCustomExtras(gltf.Materials[0].Extras);
 
             CertifyCustomData(gltf.Materials[0].PbrMetallicRoughness, 500);
-            CertifyCustomExtensions(gltf.Materials[0].PbrMetallicRoughness.extensions);
-            CertifyCustomExtras(gltf.Materials[0].PbrMetallicRoughness.extras);
+            CertifyCustomExtensions(gltf.Materials[0].PbrMetallicRoughness.Extensions);
+            CertifyCustomExtras(gltf.Materials[0].PbrMetallicRoughness.Extras);
 
             CertifyCustomData(gltf.Materials[0].PbrMetallicRoughness.BaseColorTexture, 5000);
             CertifyCustomExtensions(gltf.Materials[0].PbrMetallicRoughness.BaseColorTexture.Extensions);
@@ -456,8 +456,8 @@ $@"
             CertifyCustomExtras(gltf.Scenes[0].Extras);
 
             CertifyCustomData(gltf.Skins[0], 55);
-            CertifyCustomExtensions(gltf.Skins[0].extensions);
-            CertifyCustomExtras(gltf.Skins[0].extras);
+            CertifyCustomExtensions(gltf.Skins[0].Extensions);
+            CertifyCustomExtras(gltf.Skins[0].Extras);
 
             CertifyCustomData(gltf.Textures[0], 56);
             CertifyCustomExtensions(gltf.Textures[0].Extensions);
@@ -556,8 +556,8 @@ $@"
             Assert.IsNull(gltf.Animations[0].Extensions);
 #endif
 
-            Assert.IsNull(gltf.Asset.extras);
-            Assert.IsNull(gltf.Asset.extensions);
+            Assert.IsNull(gltf.Asset.Extras);
+            Assert.IsNull(gltf.Asset.Extensions);
 
             Assert.IsNull(gltf.Buffers[0].Extras);
             Assert.IsNull(gltf.Buffers[0].Extensions);
@@ -565,13 +565,13 @@ $@"
             Assert.IsNull(gltf.BufferViews[0].Extras);
             Assert.IsNull(gltf.BufferViews[0].Extensions);
 
-            Assert.IsNull(gltf.Cameras[0].extras);
-            Assert.IsNull(gltf.Cameras[0].extensions);
+            Assert.IsNull(gltf.Cameras[0].Extras);
+            Assert.IsNull(gltf.Cameras[0].Extensions);
 
             Assert.IsNull(gltf.Images[0].Extras);
             Assert.IsNull(gltf.Images[0].Extensions);
 
-            Assert.IsNull(gltf.Materials[0].extras);
+            Assert.IsNull(gltf.Materials[0].Extras);
             Assert.IsNull(gltf.Materials[0].Extensions);
 
             Assert.IsNull(gltf.Meshes[0].Extras);
@@ -586,8 +586,8 @@ $@"
             Assert.IsNull(gltf.Scenes[0].Extras);
             Assert.IsNull(gltf.Scenes[0].Extensions);
 
-            Assert.IsNull(gltf.Skins[0].extras);
-            Assert.IsNull(gltf.Skins[0].extensions);
+            Assert.IsNull(gltf.Skins[0].Extras);
+            Assert.IsNull(gltf.Skins[0].Extensions);
 
             Assert.IsNull(gltf.Textures[0].Extras);
             Assert.IsNull(gltf.Textures[0].Extensions);

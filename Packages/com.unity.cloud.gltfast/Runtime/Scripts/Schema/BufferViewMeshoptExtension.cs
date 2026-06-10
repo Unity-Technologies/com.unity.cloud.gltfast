@@ -4,84 +4,86 @@
 #if MESHOPT_IS_RECENT
 using System;
 using Meshoptimizer;
+using Unity.Gltfast.Text.Json.Serialization;
 
 namespace GLTFast.Schema
 {
-    [Serializable]
     public class BufferViewMeshoptExtension : IBufferView
     {
 
         /// <summary>
         /// The index of the buffer.
         /// </summary>
-        public int buffer;
+        [JsonPropertyName("buffer")]
+        public int Buffer { get; set; }
 
         /// <summary>
         /// The offset into the buffer in bytes.
         /// </summary>
-        public int byteOffset;
+        [JsonPropertyName("byteOffset")]
+        public int ByteOffset { get; set; }
 
         /// <summary>
         /// The length of the bufferView in bytes.
         /// </summary>
-        public int byteLength;
+        [JsonPropertyName("byteLength")]
+        public int ByteLength { get; set; }
 
         /// <summary>
         /// The stride, in bytes, between vertex attributes or other interleaved data.
         /// When this is zero, data is tightly packed.
         /// </summary>
-        public int byteStride = -1;
+        [JsonPropertyName("byteStride")]
+        public int ByteStride { get; set; } = -1;
 
-        public int count;
+        [JsonPropertyName("count")]
+        public int Count { get; set; }
 
-        // Field is public for unified serialization only. Warn via Obsolete attribute.
+        // Property is public for unified serialization only. Warn via Obsolete attribute.
         [Obsolete("Use GetMode for access.")]
-        public string mode;
+        [JsonPropertyName("mode")]
+        public string Mode { get; set; }
 
-        // Field is public for unified serialization only. Warn via Obsolete attribute.
+        // Property is public for unified serialization only. Warn via Obsolete attribute.
         [Obsolete("Use GetFilter for access.")]
-        public string filter;
+        [JsonPropertyName("filter")]
+        public string Filter { get; set; }
 
-        Mode m_ModeEnum = Mode.Undefined;
-        Filter m_FilterEnum = Filter.Undefined;
-
-        public int Buffer => buffer;
-        public int ByteOffset => byteOffset;
-        public int ByteLength => byteLength;
-        public int ByteStride => byteStride;
+        Mode m_ModeEnum = Meshoptimizer.Mode.Undefined;
+        Filter m_FilterEnum = Meshoptimizer.Filter.Undefined;
 
         public Mode GetMode()
         {
-            if (m_ModeEnum != Mode.Undefined)
+            if (m_ModeEnum != Meshoptimizer.Mode.Undefined)
             {
                 return m_ModeEnum;
             }
 
 #pragma warning disable CS0618 // Type or member is obsolete
-            if (!Enum.TryParse(mode, true, out m_ModeEnum))
+            if (!Enum.TryParse(Mode, true, out m_ModeEnum))
             {
-                m_ModeEnum = Mode.Undefined;
+                m_ModeEnum = Meshoptimizer.Mode.Undefined;
             }
 
-            mode = null;
+            Mode = null;
 #pragma warning restore CS0618 // Type or member is obsolete
             return m_ModeEnum;
         }
 
         public Filter GetFilter()
         {
-            if (m_FilterEnum != Filter.Undefined)
+            if (m_FilterEnum != Meshoptimizer.Filter.Undefined)
             {
                 return m_FilterEnum;
             }
 
 #pragma warning disable CS0618 // Type or member is obsolete
-            if (!Enum.TryParse(filter, true, out m_FilterEnum))
+            if (!Enum.TryParse(Filter, true, out m_FilterEnum))
             {
-                m_FilterEnum = Filter.None;
+                m_FilterEnum = Meshoptimizer.Filter.None;
             }
 
-            filter = null;
+            Filter = null;
 #pragma warning restore CS0618 // Type or member is obsolete
             return m_FilterEnum;
         }

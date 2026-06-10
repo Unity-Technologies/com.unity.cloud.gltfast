@@ -123,8 +123,8 @@ namespace GLTFast
                 primitives.Count,
                 morphTargets.Length,
                 morphTargetNames,
-                morphTargets[0].NORMAL >= 0,
-                morphTargets[0].TANGENT >= 0,
+                morphTargets[0].Normal >= 0,
+                morphTargets[0].Tangent >= 0,
                 buffers,
                 deferAgent
             );
@@ -151,7 +151,7 @@ namespace GLTFast
 
             for (var index = 0; index < primitives.Count; index++)
             {
-                var dracoExt = primitives[index].Extensions.KHR_draco_mesh_compression;
+                var dracoExt = primitives[index].Extensions.DracoMeshCompression;
                 bufferViews[index] = buffers.GetBufferView(dracoExt.BufferView, out _).AsNativeArrayReadOnly();
                 attributesArray[index] = dracoExt.Attributes;
             }

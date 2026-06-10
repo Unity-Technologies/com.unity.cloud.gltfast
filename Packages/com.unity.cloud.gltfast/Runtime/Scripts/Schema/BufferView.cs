@@ -7,21 +7,6 @@ using Unity.Gltfast.Text.Json.Serialization;
 
 namespace GLTFast.Schema
 {
-    /// <summary>
-    /// GPU buffer type.
-    /// Relates to WebGL's bindBuffer.
-    /// </summary>
-    /// <seealso href="https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html#_bufferview_target"/>
-    public enum BufferViewTarget
-    {
-        /// <summary>No target.</summary>
-        None = 0,
-        /// <summary>ARRAY_BUFFER</summary>
-        ArrayBuffer = 34962,
-        /// <summary>ELEMENT_ARRAY_BUFFER</summary>
-        ElementArrayBuffer = 34963,
-    }
-
     /// <inheritdoc cref="IBufferView"/>
     public class BufferView : NamedObject, IBufferView, IGltfObject
     {

@@ -493,7 +493,7 @@ namespace GLTFast.Materials
                 // R/G/B components don't diverge too much
                 // -> white/grey/black-ish color
                 // -> Approximation via Transparent mode should be close to real transmission
-                baseColorLinear.a *= 1 - transmission.transmissionFactor;
+                baseColorLinear.a *= 1 - transmission.TransmissionFactor;
                 return true;
             }
             else
@@ -502,7 +502,7 @@ namespace GLTFast.Materials
                 // -> Fallback to Blend mode
                 // -> Dial down transmissionFactor by 50% to avoid material completely disappearing
                 // Shows at least some color tinting
-                baseColorLinear.a *= 1 - transmission.transmissionFactor * 0.5f;
+                baseColorLinear.a *= 1 - transmission.TransmissionFactor * 0.5f;
 
                 // Premultiply color? Decided not to. I preferred vivid (but too bright) colors over desaturation effect.
                 // baseColorLinear.r *= baseColorLinear.a;

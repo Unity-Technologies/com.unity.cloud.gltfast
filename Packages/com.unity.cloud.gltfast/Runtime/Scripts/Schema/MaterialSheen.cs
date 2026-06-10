@@ -15,15 +15,15 @@ namespace GLTFast.Schema
     /// materials, for example.
     /// </summary>
     /// <seealso href="https://github.com/KhronosGroup/glTF/tree/main/extensions/2.0/Khronos/KHR_materials_sheen"/>
-    [System.Serializable]
     public class Sheen
     {
 
         /// <summary>
         /// The sheen color red, green and blue components in linear space.
         /// </summary>
+        [JsonPropertyName("sheenColorFactor")]
         [JsonConverter(typeof(Float3ArrayConverter))]
-        public float[] sheenColorFactor = { 1, 1, 1 };
+        public float[] SheenColorFactor { get; set; } = { 1, 1, 1 };
 
         /// <summary>
         /// The sheen color in linear space.
@@ -32,55 +32,58 @@ namespace GLTFast.Schema
         {
             get =>
                 new Color(
-                    sheenColorFactor[0],
-                    sheenColorFactor[1],
-                    sheenColorFactor[2]
+                    SheenColorFactor[0],
+                    SheenColorFactor[1],
+                    SheenColorFactor[2]
                 );
             set
             {
-                sheenColorFactor = new[] { value.r, value.g, value.b };
+                SheenColorFactor = new[] { value.r, value.g, value.b };
             }
         }
 
         /// <summary>
         /// The sheen color texture.
         /// </summary>
-        public TextureInfo sheenColorTexture;
+        [JsonPropertyName("sheenColorTexture")]
+        public TextureInfo SheenColorTexture { get; set; }
 
         /// <summary>
         /// The sheen roughness.
         /// </summary>
-        public float sheenRoughnessFactor;
+        [JsonPropertyName("sheenRoughnessFactor")]
+        public float SheenRoughnessFactor { get; set; }
 
         /// <summary>
         /// The sheen roughness (Alpha) texture.
         /// </summary>
-        public TextureInfo sheenRoughnessTexture;
+        [JsonPropertyName("sheenRoughnessTexture")]
+        public TextureInfo SheenRoughnessTexture { get; set; }
 
         internal void GltfSerialize(JsonWriter writer)
         {
             writer.AddObject();
-            if (sheenColorFactor != null && sheenColorFactor.Length > 2 && (
-                    math.abs(sheenColorFactor[0] - 1f) > Constants.epsilon ||
-                    math.abs(sheenColorFactor[1] - 1f) > Constants.epsilon ||
-                    math.abs(sheenColorFactor[2] - 1f) > Constants.epsilon
+            if (SheenColorFactor != null && SheenColorFactor.Length > 2 && (
+                    math.abs(SheenColorFactor[0] - 1f) > Constants.epsilon ||
+                    math.abs(SheenColorFactor[1] - 1f) > Constants.epsilon ||
+                    math.abs(SheenColorFactor[2] - 1f) > Constants.epsilon
                 ))
             {
-                writer.AddArrayProperty("sheenColorFactor", sheenColorFactor);
+                writer.AddArrayProperty("sheenColorFactor", SheenColorFactor);
             }
-            if (sheenColorTexture != null)
+            if (SheenColorTexture != null)
             {
                 writer.AddProperty("sheenColorTexture");
-                sheenColorTexture.GltfSerialize(writer);
+                SheenColorTexture.GltfSerialize(writer);
             }
-            if (sheenRoughnessFactor > 0)
+            if (SheenRoughnessFactor > 0)
             {
-                writer.AddProperty("sheenRoughnessFactor", sheenRoughnessFactor);
+                writer.AddProperty("sheenRoughnessFactor", SheenRoughnessFactor);
             }
-            if (sheenRoughnessTexture != null)
+            if (SheenRoughnessTexture != null)
             {
                 writer.AddProperty("sheenRoughnessTexture");
-                sheenRoughnessTexture.GltfSerialize(writer);
+                SheenRoughnessTexture.GltfSerialize(writer);
             }
             writer.Close();
         }

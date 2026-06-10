@@ -80,7 +80,7 @@ namespace GLTFast.Materials
             material.SetShaderPassEnabled(MotionVectorsPass, false);
 
 
-            if (gltfMaterial.Extensions?.KHR_materials_unlit != null)
+            if (gltfMaterial.Extensions?.Unlit != null)
             {
                 material.EnableKeyword(SurfaceTypeTransparentKeyword);
                 material.EnableKeyword(DisableSsrTransparentKeyword);

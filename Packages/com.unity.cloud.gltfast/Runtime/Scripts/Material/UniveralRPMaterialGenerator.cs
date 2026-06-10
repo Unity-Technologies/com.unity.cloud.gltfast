@@ -110,8 +110,8 @@ namespace GLTFast.Materials
                 return base.ApplyTransmissionShaderFeatures(gltfMaterial);
             }
 
-            if (gltfMaterial?.Extensions?.KHR_materials_transmission != null
-                && gltfMaterial.Extensions.KHR_materials_transmission.transmissionFactor > 0f)
+            if (gltfMaterial?.Extensions?.Transmission != null
+                && gltfMaterial.Extensions.Transmission.TransmissionFactor > 0f)
             {
                 return ShaderMode.Blend;
             }
@@ -130,13 +130,13 @@ namespace GLTFast.Materials
         {
             if (m_SupportsCameraOpaqueTexture)
             {
-                if (transmission.transmissionFactor > 0f)
+                if (transmission.TransmissionFactor > 0f)
                 {
                     material.EnableKeyword(k_TransmissionKeyword);
-                    material.SetFloat(TransmissionFactorProperty, transmission.transmissionFactor);
+                    material.SetFloat(TransmissionFactorProperty, transmission.TransmissionFactor);
                     renderQueue = RenderQueue.Transparent;
                     if (TrySetTexture(
-                        transmission.transmissionTexture,
+                        transmission.TransmissionTexture,
                         material,
                         gltf,
                         TransmissionTextureProperty

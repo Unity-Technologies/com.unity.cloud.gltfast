@@ -7,8 +7,8 @@ using System;
 using GLTFast.Materials;
 using GLTFast.Schema;
 using UnityEngine;
-using Material = UnityEngine.Material;
 using GltfMaterial = GLTFast.Schema.Material;
+using Material = UnityEngine.Material;
 
 namespace GLTFast.Export
 {
@@ -26,22 +26,22 @@ namespace GLTFast.Export
             return false;
         }
 
-        protected override GltfMaterial.AlphaMode GetAlphaMode(Material material)
+        protected override AlphaMode GetAlphaMode(Material material)
         {
             if (TryGetValue(material, MaterialProperty.AlphaCutoffEnable, out int alphaClip)
                 && alphaClip == 1)
             {
-                return GltfMaterial.AlphaMode.Mask;
+                return AlphaMode.Mask;
             }
 
             if (TryGetValue(material, MaterialProperty.SurfaceType, out int surface))
             {
                 return surface == 0
-                    ? GltfMaterial.AlphaMode.Opaque
-                    : GltfMaterial.AlphaMode.Blend;
+                    ? AlphaMode.Opaque
+                    : AlphaMode.Blend;
             }
 
-            return GltfMaterial.AlphaMode.Opaque;
+            return AlphaMode.Opaque;
         }
     }
 }

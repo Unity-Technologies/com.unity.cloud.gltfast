@@ -13,7 +13,6 @@ namespace GLTFast.Schema
     /// <summary>
     /// The material appearance of a primitive.
     /// </summary>
-    [Serializable]
     public class Material : NamedObject, IGltfObject
     {
         /// <summary>
@@ -52,43 +51,16 @@ namespace GLTFast.Schema
         [JsonPropertyName("emissiveTexture")]
         public TextureInfo EmissiveTexture { get; set; }
 
-
-        /// <summary>
-        /// The material’s alpha rendering mode enumeration specifying the
-        /// interpretation of the alpha value of the base color.
-        /// </summary>
-        public enum AlphaMode
-        {
-            /// <summary>
-            /// The alpha value is ignored, and the rendered output is fully
-            /// opaque.
-            /// </summary>
-            Opaque,
-
-            /// <summary>
-            /// The rendered output is either fully opaque or fully transparent
-            /// depending on the alpha value and the specified alphaCutoff
-            /// value
-            /// </summary>
-            Mask,
-
-            /// <summary>
-            /// The alpha value is used to composite the source and destination
-            /// areas. The rendered output is combined with the background
-            /// using the normal painting operation.
-            /// </summary>
-            Blend
-        }
-
         /// <summary>
         /// The RGB components of the emissive color of the material.
         /// If an emissiveTexture is specified, this value is multiplied with the texel
         /// values.
         /// </summary>
-        // Field is public for unified serialization only. Warn via Obsolete attribute.
+        // Property is public for unified serialization only. Warn via Obsolete attribute.
         [Obsolete("Use Emissive for access.")]
+        [JsonPropertyName("emissiveFactor")]
         [JsonConverter(typeof(Float3ArrayConverter))]
-        public float[] emissiveFactor = { 0, 0, 0 };
+        public float[] EmissiveFactor { get; set; } = { 0, 0, 0 };
 
         /// <summary>
         /// Emissive color of the material.
@@ -97,11 +69,11 @@ namespace GLTFast.Schema
         {
 #pragma warning disable CS0618 // Type or member is obsolete
             get => new Color(
-                emissiveFactor[0],
-                emissiveFactor[1],
-                emissiveFactor[2]
+                EmissiveFactor[0],
+                EmissiveFactor[1],
+                EmissiveFactor[2]
                 );
-            set => emissiveFactor = new[] { value.r, value.g, value.b };
+            set => EmissiveFactor = new[] { value.r, value.g, value.b };
 #pragma warning restore CS0618 // Type or member is obsolete
         }
 
@@ -114,50 +86,16 @@ namespace GLTFast.Schema
         /// the source and destination areas. The rendered output is combined with the background
         /// using the normal painting operation (i.e. the Porter and Duff over operator).
         /// </summary>
-        // Field is public for unified serialization only. Warn via Obsolete attribute.
-        [Obsolete("Use GetAlphaMode and SetAlphaMode for access.")]
-        public string alphaMode;
-
-        AlphaMode? m_AlphaModeEnum;
-
-        /// <summary>
-        /// <see cref="AlphaMode"/> typed and cached getter for <see cref="alphaMode"/> string.
-        /// </summary>
-        /// <returns>Alpha mode if it was retrieved correctly. <see cref="AlphaMode.Opaque"/> otherwise</returns>
-        public AlphaMode GetAlphaMode()
-        {
-            if (m_AlphaModeEnum.HasValue)
-            {
-                return m_AlphaModeEnum.Value;
-            }
-
-#pragma warning disable CS0618 // Type or member is obsolete
-            m_AlphaModeEnum = Enum.TryParse<AlphaMode>(alphaMode, true, out var alphaModeEnum)
-                ? alphaModeEnum
-                : AlphaMode.Opaque;
-            alphaMode = null;
-#pragma warning restore CS0618 // Type or member is obsolete
-            return m_AlphaModeEnum.Value;
-        }
-
-        /// <summary>
-        /// <see cref="AlphaMode"/> typed setter for <see cref="alphaMode"/> string.
-        /// </summary>
-        /// <param name="mode">Alpha mode</param>
-        public void SetAlphaMode(AlphaMode mode)
-        {
-            m_AlphaModeEnum = mode;
-#pragma warning disable CS0618 // Type or member is obsolete
-            alphaMode = null;
-#pragma warning restore CS0618 // Type or member is obsolete
-        }
+        [JsonPropertyName("alphaMode")]
+        public AlphaMode AlphaMode { get; set; }
 
         /// <summary>
         /// Specifies the cutoff threshold when in `MASK` mode. If the alpha value is greater than
         /// or equal to this value then it is rendered as fully opaque, otherwise, it is rendered
         /// as fully transparent. This value is ignored for other modes.
         /// </summary>
-        public float alphaCutoff = 0.5f;
+        [JsonPropertyName("alphaCutoff")]
+        public float AlphaCutoff { get; set; } = 0.5f;
 
         /// <summary>
         /// Specifies whether the material is double sided. When this value is false, back-face
@@ -165,10 +103,12 @@ namespace GLTFast.Schema
         /// sided lighting is enabled. The back-face must have its normals reversed before the
         /// lighting equation is evaluated.
         /// </summary>
-        public bool doubleSided;
+        [JsonPropertyName("doubleSided")]
+        public bool DoubleSided { get; set; }
 
-        /// <inheritdoc cref="Root.extras"/>
-        public UnclassifiedData extras;
+        /// <inheritdoc cref="Root.Extras"/>
+        [JsonPropertyName("extras")]
+        public UnclassifiedData Extras { get; set; }
 
         /// <summary>JSON properties without a matching member.</summary>
         [JsonExtensionData, JsonInclude] internal Dictionary<string, JsonElement> ExtensionsData { get; set; }
@@ -182,7 +122,7 @@ namespace GLTFast.Schema
         /// <summary>
         /// True if the material requires the mesh to have normals.
         /// </summary>
-        public bool RequiresNormals => Extensions?.KHR_materials_unlit == null;
+        public bool RequiresNormals => Extensions?.Unlit == null;
 
         /// <summary>
         /// True if the material requires the mesh to have tangents.
@@ -214,27 +154,27 @@ namespace GLTFast.Schema
                 EmissiveTexture.GltfSerialize(writer);
             }
 #pragma warning disable CS0618 // Type or member is obsolete
-            if (emissiveFactor != null
+            if (EmissiveFactor != null
                 && (
-                    emissiveFactor[0] > Constants.epsilon
-                    || emissiveFactor[1] > Constants.epsilon
-                    || emissiveFactor[2] > Constants.epsilon)
+                    EmissiveFactor[0] > Constants.epsilon
+                    || EmissiveFactor[1] > Constants.epsilon
+                    || EmissiveFactor[2] > Constants.epsilon)
                 )
             {
-                writer.AddArrayProperty("emissiveFactor", emissiveFactor);
+                writer.AddArrayProperty("emissiveFactor", EmissiveFactor);
             }
 #pragma warning restore CS0618 // Type or member is obsolete
-            if (m_AlphaModeEnum.HasValue && m_AlphaModeEnum.Value != AlphaMode.Opaque)
+            if (AlphaMode != AlphaMode.Opaque)
             {
-                writer.AddProperty("alphaMode", m_AlphaModeEnum.Value.ToString().ToUpperInvariant());
+                writer.AddProperty("alphaMode", AlphaMode.ToString().ToUpperInvariant());
             }
-            if (math.abs(alphaCutoff - .5f) > Constants.epsilon)
+            if (math.abs(AlphaCutoff - .5f) > Constants.epsilon)
             {
-                writer.AddProperty("alphaCutoff", alphaCutoff);
+                writer.AddProperty("alphaCutoff", AlphaCutoff);
             }
-            if (doubleSided)
+            if (DoubleSided)
             {
-                writer.AddProperty("doubleSided", doubleSided);
+                writer.AddProperty("doubleSided", DoubleSided);
             }
             if (Extensions != null)
             {

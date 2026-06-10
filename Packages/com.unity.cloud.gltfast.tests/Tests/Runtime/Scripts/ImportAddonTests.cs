@@ -90,7 +90,7 @@ namespace GLTFast.Tests
             {
                 var gltf = m_GltfImport.Root;
                 gltf.Asset.Name ??= "My Custom Asset Name";
-                if (string.IsNullOrEmpty(gltf.Asset.copyright))
+                if (string.IsNullOrEmpty(gltf.Asset.Copyright))
                 {
                     m_GltfImport.Logger.Error("Asset copyright is missing.");
                     return false;

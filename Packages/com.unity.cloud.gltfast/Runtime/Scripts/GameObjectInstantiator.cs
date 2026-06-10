@@ -12,6 +12,7 @@ using UnityEngine.Profiling;
 using Animation = UnityEngine.Animation;
 #endif
 using Camera = UnityEngine.Camera;
+using CameraType = GLTFast.Schema.CameraType;
 using LightType = GLTFast.Schema.LightType;
 using Material = UnityEngine.Material;
 using Mesh = UnityEngine.Mesh;
@@ -359,27 +360,27 @@ namespace GLTFast
                 return;
             }
             var camera = m_Gltf.GetSourceCamera(cameraIndex);
-            switch (camera.GetCameraType())
+            switch (camera.Type)
             {
-                case Schema.Camera.Type.Orthographic:
+                case CameraType.Orthographic:
                     var o = camera.Orthographic;
                     AddCameraOrthographic(
                         nodeIndex,
-                        o.znear,
-                        o.zfar >= 0 ? o.zfar : (float?)null,
-                        o.xmag,
-                        o.ymag,
+                        o.Znear,
+                        o.Zfar,
+                        o.Xmag,
+                        o.Ymag,
                         camera.Name
                     );
                     break;
-                case Schema.Camera.Type.Perspective:
+                case CameraType.Perspective:
                     var p = camera.Perspective;
                     AddCameraPerspective(
                         nodeIndex,
-                        p.yfov,
-                        p.znear,
-                        p.zfar,
-                        p.aspectRatio > 0 ? p.aspectRatio : (float?)null,
+                        p.Yfov,
+                        p.Znear,
+                        p.Zfar,
+                        p.AspectRatio > 0 ? p.AspectRatio : (float?)null,
                         camera.Name
                     );
                     break;
@@ -390,19 +391,20 @@ namespace GLTFast
             uint nodeIndex,
             float verticalFieldOfView,
             float nearClipPlane,
-            float farClipPlane,
+            float? farClipPlane,
             // ReSharper disable once UnusedParameter.Local
             float? aspectRatio,
             string cameraName
         )
         {
             var cam = CreateCamera(nodeIndex, cameraName, out var localScale);
+            var farValue = farClipPlane ?? float.MaxValue;
 
             cam.orthographic = false;
 
             cam.fieldOfView = verticalFieldOfView * Mathf.Rad2Deg;
             cam.nearClipPlane = nearClipPlane * localScale;
-            cam.farClipPlane = farClipPlane * localScale;
+            cam.farClipPlane = farValue * localScale;
 
             // // If the aspect ratio is given and does not match the
             // // screen's aspect ratio, the viewport rect is reduced

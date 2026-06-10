@@ -1,6 +1,8 @@
 // SPDX-FileCopyrightText: 2023 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
+using Unity.Gltfast.Text.Json.Serialization;
+
 namespace GLTFast.Schema
 {
 
@@ -9,61 +11,65 @@ namespace GLTFast.Schema
     /// existing glTF material definition.
     /// </summary>
     /// <seealso href="https://github.com/KhronosGroup/glTF/blob/main/extensions/2.0/Khronos/KHR_materials_clearcoat/README.md"/>
-    [System.Serializable]
     public class ClearCoat
     {
 
         /// <summary>
         /// The clearcoat layer intensity.
         /// </summary>
-        public float clearcoatFactor;
+        [JsonPropertyName("clearcoatFactor")]
+        public float ClearcoatFactor { get; set; }
 
         /// <summary>
         /// The clearcoat layer intensity texture.
         /// </summary>
-        public TextureInfo clearcoatTexture;
+        [JsonPropertyName("clearcoatTexture")]
+        public TextureInfo ClearcoatTexture { get; set; }
 
         /// <summary>
         /// The clearcoat layer roughness.
         /// </summary>
-        public float clearcoatRoughnessFactor;
+        [JsonPropertyName("clearcoatRoughnessFactor")]
+        public float ClearcoatRoughnessFactor { get; set; }
 
         /// <summary>
         /// The clearcoat layer roughness texture.
         /// </summary>
-        public TextureInfo clearcoatRoughnessTexture;
+        [JsonPropertyName("clearcoatRoughnessTexture")]
+        public TextureInfo ClearcoatRoughnessTexture { get; set; }
 
         /// <summary>
         /// The clearcoat normal map texture.
         /// </summary>
-        public NormalTextureInfo clearcoatNormalTexture;
+        [JsonPropertyName("clearcoatNormalTexture")]
+        public NormalTextureInfo ClearcoatNormalTexture { get; set; }
 
         internal void GltfSerialize(JsonWriter writer)
         {
             writer.AddObject();
 
-            if (clearcoatFactor > 0)
+            if (ClearcoatFactor > 0)
             {
-                writer.AddProperty("clearcoatFactor", clearcoatFactor);
+                writer.AddProperty("clearcoatFactor", ClearcoatFactor);
             }
-            if (clearcoatTexture != null)
+            if (ClearcoatTexture != null)
             {
                 writer.AddProperty("clearcoatTexture");
-                clearcoatTexture.GltfSerialize(writer);
+                ClearcoatTexture.GltfSerialize(writer);
             }
-            if (clearcoatRoughnessFactor > 0)
+            if (ClearcoatRoughnessFactor > 0)
             {
-                writer.AddProperty("clearcoatRoughnessFactor", clearcoatRoughnessFactor);
+                writer.AddProperty("clearcoatRoughnessFactor", ClearcoatRoughnessFactor);
             }
-            if (clearcoatRoughnessTexture != null)
+            if (ClearcoatRoughnessTexture != null)
             {
                 writer.AddProperty("clearcoatRoughnessTexture");
-                clearcoatRoughnessTexture.GltfSerialize(writer);
+                ClearcoatRoughnessTexture.GltfSerialize(writer);
             }
-            if (clearcoatNormalTexture != null)
+            if (ClearcoatNormalTexture != null)
             {
                 writer.AddProperty("clearcoatNormalTexture");
-                clearcoatNormalTexture.GltfSerialize(writer);
+                ClearcoatNormalTexture.GltfSerialize(writer);
             }
 
             writer.Close();

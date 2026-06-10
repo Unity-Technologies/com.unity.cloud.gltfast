@@ -121,7 +121,7 @@ namespace GLTFast
         unsafe JobHandle? GetColors32Job(
             void* input,
             AccessorDataType inputType,
-            AccessorType attributeType,
+            AccessorType type,
             int inputByteStride,
             NativeArray<float4> output
             )
@@ -129,7 +129,7 @@ namespace GLTFast
             Profiler.BeginSample("PrepareColors32");
             JobHandle? jobHandle = null;
 
-            if (attributeType == AccessorType.Vector3)
+            if (type == AccessorType.Vector3)
             {
                 switch (inputType)
                 {
@@ -167,11 +167,11 @@ namespace GLTFast
                     }
                     break;
                     default:
-                        m_Logger?.Error(LogCode.ColorFormatUnsupported, attributeType.ToString());
+                        m_Logger?.Error(LogCode.ColorFormatUnsupported, type.ToString());
                         break;
                 }
             }
-            else if (attributeType == AccessorType.Vector4)
+            else if (type == AccessorType.Vector4)
             {
                 switch (inputType)
                 {
@@ -222,7 +222,7 @@ namespace GLTFast
                     }
                     break;
                     default:
-                        m_Logger?.Error(LogCode.ColorFormatUnsupported, attributeType.ToString());
+                        m_Logger?.Error(LogCode.ColorFormatUnsupported, type.ToString());
                         break;
                 }
             }

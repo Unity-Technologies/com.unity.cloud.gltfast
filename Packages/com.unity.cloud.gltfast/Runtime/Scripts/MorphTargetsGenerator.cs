@@ -128,7 +128,7 @@ namespace GLTFast
             Profiler.BeginSample("ScheduleMorphTargetJobs");
 
             buffers.GetAccessorAndData(
-                morphTarget.POSITION,
+                morphTarget.Position,
                 out var posAcc,
                 out var posData,
                 out _
@@ -142,9 +142,9 @@ namespace GLTFast
             void* nrmInput = null;
             var nrmInputByteStride = 0;
 
-            if (morphTarget.NORMAL >= 0)
+            if (morphTarget.Normal >= 0)
             {
-                buffers.GetAccessorAndData(morphTarget.NORMAL, out nrmAcc, out nrmInput, out nrmInputByteStride);
+                buffers.GetAccessorAndData(morphTarget.Normal, out nrmAcc, out nrmInput, out nrmInputByteStride);
                 jobCount += nrmAcc.IsSparse && nrmAcc.BufferView >= 0 ? 2 : 1;
             }
 
@@ -152,9 +152,9 @@ namespace GLTFast
             void* tanInput = null;
             var tanInputByteStride = 0;
 
-            if (morphTarget.TANGENT >= 0)
+            if (morphTarget.Tangent >= 0)
             {
-                buffers.GetAccessorAndData(morphTarget.TANGENT, out tanAcc, out tanInput, out tanInputByteStride);
+                buffers.GetAccessorAndData(morphTarget.Tangent, out tanAcc, out tanInput, out tanInputByteStride);
                 jobCount += tanAcc.IsSparse && tanAcc.BufferView >= 0 ? 2 : 1;
             }
 

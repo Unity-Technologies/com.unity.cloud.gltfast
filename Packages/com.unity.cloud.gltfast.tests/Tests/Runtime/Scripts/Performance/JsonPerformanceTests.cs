@@ -87,10 +87,10 @@ namespace GLTFast.Tests.Performance
         static void CheckFlatHierarchy(Root gltf)
         {
             Assert.NotNull(gltf?.Asset);
-            Assert.AreEqual("2.0", gltf.Asset.version);
-            Assert.IsFalse(string.IsNullOrEmpty(gltf.Asset.generator));
-            Assert.IsTrue(gltf.Asset.generator.StartsWith("Unity"));
-            Assert.IsTrue(gltf.Asset.generator.Contains("glTFast"));
+            Assert.AreEqual("2.0", gltf.Asset.Version);
+            Assert.IsFalse(string.IsNullOrEmpty(gltf.Asset.Generator));
+            Assert.IsTrue(gltf.Asset.Generator.StartsWith("Unity"));
+            Assert.IsTrue(gltf.Asset.Generator.Contains("glTFast"));
             Assert.AreEqual(0, gltf.Scene);
             Assert.AreEqual(10_000, gltf.Nodes.Count);
             Assert.AreEqual("Node-20-14-11", gltf.Nodes[9999].Name);

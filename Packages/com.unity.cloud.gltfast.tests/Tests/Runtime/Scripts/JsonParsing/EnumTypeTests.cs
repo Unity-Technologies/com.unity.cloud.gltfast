@@ -10,6 +10,7 @@ using NUnit.Framework;
 using Unity.Gltfast.Text.Json;
 using UnityEngine;
 using Camera = GLTFast.Schema.Camera;
+using CameraType = GLTFast.Schema.CameraType;
 using LightType = GLTFast.Schema.LightType;
 using Material = GLTFast.Schema.Material;
 
@@ -34,23 +35,7 @@ namespace GLTFast.Tests.JsonParsing
         }
 
         [Test]
-        public void AccessorExtended()
-        {
-            CheckResultAccessor(m_Gltf);
-        }
-
-        [Test]
         public void Animation()
-        {
-#if UNITY_ANIMATION
-            CheckResultAnimation(m_Gltf);
-#else
-            Assert.Ignore("Requires Animation module to be enabled.");
-#endif
-        }
-
-        [Test]
-        public void AnimationExtended()
         {
 #if UNITY_ANIMATION
             CheckResultAnimation(m_Gltf);
@@ -66,23 +51,7 @@ namespace GLTFast.Tests.JsonParsing
         }
 
         [Test]
-        public void CameraExtended()
-        {
-            CheckResultCamera(m_Gltf);
-        }
-
-        [Test]
         public void Meshopt()
-        {
-#if MESHOPT_IS_RECENT
-            CheckResultMeshopt(m_Gltf);
-#else
-            Assert.Ignore("Requires meshoptimizer decompression for Unity package to be installed.");
-#endif
-        }
-
-        [Test]
-        public void MeshoptExtended()
         {
 #if MESHOPT_IS_RECENT
             CheckResultMeshopt(m_Gltf);
@@ -98,31 +67,13 @@ namespace GLTFast.Tests.JsonParsing
         }
 
         [Test]
-        public void RootExtensionsExtended()
-        {
-            CheckResultRootExtensions(m_Gltf);
-        }
-
-        [Test]
         public void Materials()
         {
             CheckResultMaterials(m_Gltf);
         }
 
         [Test]
-        public void MaterialsExtended()
-        {
-            CheckResultMaterials(m_Gltf);
-        }
-
-        [Test]
         public void Samplers()
-        {
-            CheckResultSamplers(m_Gltf);
-        }
-
-        [Test]
-        public void SamplersExtended()
         {
             CheckResultSamplers(m_Gltf);
         }
@@ -220,61 +171,72 @@ namespace GLTFast.Tests.JsonParsing
 #pragma warning disable CS0618 // Type or member is obsolete
             var obj = new BufferViewMeshoptExtension
             {
-                filter = "Octahedral",
-                mode = "Nonsense"
+                Filter = "Octahedral",
+                Mode = "Nonsense"
             };
 
             Assert.AreEqual(Filter.Octahedral, obj.GetFilter());
-            Assert.IsNull(obj.filter);
+            Assert.IsNull(obj.Filter);
             // Second time to test cached value
             Assert.AreEqual(Filter.Octahedral, obj.GetFilter());
 
             Assert.AreEqual(Mode.Undefined, obj.GetMode());
-            Assert.IsNull(obj.mode);
-            obj.mode = "Indices";
+            Assert.IsNull(obj.Mode);
+            obj.Mode = "Indices";
             Assert.AreEqual(Mode.Indices, obj.GetMode());
-            Assert.IsNull(obj.mode);
+            Assert.IsNull(obj.Mode);
             // Second time to test cached value
             Assert.AreEqual(Mode.Indices, obj.GetMode());
 
             obj = new BufferViewMeshoptExtension
             {
-                filter = "Nonsense"
+                Filter = "Nonsense"
             };
             Assert.AreEqual(Filter.None, obj.GetFilter());
-            Assert.IsNull(obj.filter);
+            Assert.IsNull(obj.Filter);
 #pragma warning restore CS0618 // Type or member is obsolete
         }
 #endif
 
         [Test]
-        public void CameraEnumCasting()
+        public void CameraTypeSerialization()
         {
-#pragma warning disable CS0618 // Type or member is obsolete
             var obj = new Camera
-            {
-                type = "Orthographic"
-            };
-            Assert.AreEqual(Schema.Camera.Type.Orthographic, obj.GetCameraType());
-            Assert.IsNull(obj.type);
-            // Second time to test cached value
-            Assert.AreEqual(Schema.Camera.Type.Orthographic, obj.GetCameraType());
-
-            obj = new Camera();
-            Assert.AreEqual(Schema.Camera.Type.Perspective, obj.GetCameraType());
-            obj = new Camera
             {
                 Orthographic = new CameraOrthographic()
             };
-            Assert.AreEqual(Schema.Camera.Type.Orthographic, obj.GetCameraType());
+            var json = JsonSerializer.Serialize(obj, GltfRootSourceGenerator.Default.Camera);
+            Assert.AreEqual("{\"orthographic\":{},\"type\":\"orthographic\"}", json);
+
+            obj = new Camera();
+            json = JsonSerializer.Serialize(obj, GltfRootSourceGenerator.Default.Camera);
+            Assert.AreEqual("{}", json);
+
             obj = new Camera
             {
                 Perspective = new CameraPerspective()
             };
-            Assert.AreEqual(Schema.Camera.Type.Perspective, obj.GetCameraType());
-#pragma warning restore CS0618 // Type or member is obsolete
+            json = JsonSerializer.Serialize(obj, GltfRootSourceGenerator.Default.Camera);
+            Assert.AreEqual("{\"perspective\":{},\"type\":\"perspective\"}", json);
         }
 
+        [Test]
+        [TestCase(null, PrimitiveMode.Triangles)]
+        [TestCase(0, PrimitiveMode.Points)]
+        [TestCase(1, PrimitiveMode.Lines)]
+        [TestCase(2, PrimitiveMode.LineLoop)]
+        [TestCase(3, PrimitiveMode.LineStrip)]
+        [TestCase(4, PrimitiveMode.Triangles)]
+        [TestCase(5, PrimitiveMode.TriangleStrip)]
+        [TestCase(6, PrimitiveMode.TriangleFan)]
+        [TestCase(666, (PrimitiveMode)666)]
+        [TestCase(-1, (PrimitiveMode)(-1))]
+        public void PrimitiveModeDeserialization(int? value, PrimitiveMode? expected)
+        {
+            var json = value == null ? "{}" : $@"{{""mode"":{value}}}";
+            var primitive = JsonSerializer.Deserialize(json, GltfRootSourceGenerator.Default.MeshPrimitive);
+            Assert.AreEqual(expected, primitive.Mode);
+        }
 
         [Test]
         public void LightTypeDeserialization()
@@ -293,28 +255,6 @@ namespace GLTFast.Tests.JsonParsing
 
             Assert.Throws<JsonException>(() =>
                 JsonSerializer.Deserialize("{\"type\":\"foo\"}", GltfRootSourceGenerator.Default.LightPunctual));
-        }
-
-        [Test]
-        public void MaterialAlphaModeEnumCasting()
-        {
-#pragma warning disable CS0618 // Type or member is obsolete
-            var obj = new Material
-            {
-                alphaMode = "BLEND"
-            };
-            Assert.AreEqual(Material.AlphaMode.Blend, obj.GetAlphaMode());
-            Assert.IsNull(obj.alphaMode);
-            // Second time to test cached value
-            Assert.AreEqual(Material.AlphaMode.Blend, obj.GetAlphaMode());
-
-            obj = new Material
-            {
-                alphaMode = "Nonsense"
-            };
-            Assert.AreEqual(Material.AlphaMode.Opaque, obj.GetAlphaMode());
-            Assert.IsNull(obj.alphaMode);
-#pragma warning restore CS0618 // Type or member is obsolete
         }
 
         static void CheckResultAccessor(Root gltf)
@@ -347,7 +287,7 @@ namespace GLTFast.Tests.JsonParsing
             Assert.NotNull(gltf);
             Assert.NotNull(gltf.Cameras);
             Assert.AreEqual(1, gltf.Cameras.Count);
-            Assert.AreEqual(Schema.Camera.Type.Orthographic, gltf.Cameras[0].GetCameraType());
+            Assert.AreEqual(CameraType.Orthographic, gltf.Cameras[0].Type);
         }
 
 #if MESHOPT_IS_RECENT
@@ -356,9 +296,9 @@ namespace GLTFast.Tests.JsonParsing
             Assert.NotNull(gltf);
             Assert.NotNull(gltf.BufferViews);
             Assert.AreEqual(1, gltf.BufferViews.Count);
-            Assert.NotNull(gltf.BufferViews[0].Extensions?.EXT_meshopt_compression);
-            Assert.AreEqual(Mode.Triangles, gltf.BufferViews[0].Extensions?.EXT_meshopt_compression.GetMode());
-            Assert.AreEqual(Filter.Exponential, gltf.BufferViews[0].Extensions?.EXT_meshopt_compression.GetFilter());
+            Assert.NotNull(gltf.BufferViews[0].Extensions?.ExtMeshoptCompression);
+            Assert.AreEqual(Mode.Triangles, gltf.BufferViews[0].Extensions?.ExtMeshoptCompression.GetMode());
+            Assert.AreEqual(Filter.Exponential, gltf.BufferViews[0].Extensions?.ExtMeshoptCompression.GetFilter());
         }
 #endif
         static void CheckResultRootExtensions(Root gltf)
@@ -376,12 +316,12 @@ namespace GLTFast.Tests.JsonParsing
             Assert.NotNull(gltf);
             Assert.NotNull(gltf.Materials);
             Assert.AreEqual(1, gltf.Materials.Count);
-            Assert.AreEqual(Material.AlphaMode.Mask, gltf.Materials[0].GetAlphaMode());
+            Assert.AreEqual(AlphaMode.Mask, gltf.Materials[0].AlphaMode);
             Assert.NotNull(gltf.Meshes);
             Assert.AreEqual(1, gltf.Meshes.Count);
             Assert.NotNull(gltf.Meshes[0].Primitives);
             Assert.AreEqual(1, gltf.Meshes[0].Primitives.Count);
-            Assert.AreEqual(DrawMode.LineStrip, gltf.Meshes[0].Primitives[0].Mode);
+            Assert.AreEqual(PrimitiveMode.LineStrip, gltf.Meshes[0].Primitives[0].Mode);
         }
 
         static void CheckResultSamplers(Root gltf)
@@ -419,7 +359,8 @@ namespace GLTFast.Tests.JsonParsing
         }
     }],
     ""cameras"": [{
-        ""type"": ""Orthographic""
+        ""type"": ""orthographic"",
+        ""orthographic"": {}
     }],
     ""extensions"": {
         ""KHR_lights_punctual"": {

@@ -14,9 +14,8 @@ namespace GLTFast.Schema
     public class BufferViewExtensions : IGltfObject
     {
 #if MESHOPT_IS_RECENT
-        // ReSharper disable InconsistentNaming
-        public BufferViewMeshoptExtension EXT_meshopt_compression { get; set; }
-        // ReSharper restore InconsistentNaming
+        [JsonPropertyName("EXT_meshopt_compression")]
+        public BufferViewMeshoptExtension ExtMeshoptCompression { get; set; }
 #endif
         /// <summary>JSON properties without a matching member.</summary>
         [JsonExtensionData, JsonInclude] internal Dictionary<string, JsonElement> ExtensionsData { get; set; }

@@ -8,8 +8,8 @@ using GLTFast.Schema;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools.Utils;
-using Material = UnityEngine.Material;
 using GltfMaterial = GLTFast.Schema.Material;
+using Material = UnityEngine.Material;
 
 namespace GLTFast.Tests.Export
 {
@@ -25,7 +25,7 @@ namespace GLTFast.Tests.Export
             var material = ConvertMaterial("BaseColor", out _, renderPipeline);
 
             Assert.IsNotNull(material.PbrMetallicRoughness);
-            Assert.AreEqual(new[] { .199999973f, .5, .75f, 1 }, material.PbrMetallicRoughness.baseColorFactor);
+            Assert.AreEqual(new[] { .199999973f, .5, .75f, 1 }, material.PbrMetallicRoughness.BaseColorFactor);
         }
 
         protected void BaseColorTextureTest(RenderPipeline renderPipeline)
@@ -90,8 +90,8 @@ namespace GLTFast.Tests.Export
                 out _,
                 renderPipeline,
                 out var material);
-            Assert.AreEqual(GltfMaterial.AlphaMode.Mask, material.GetAlphaMode());
-            Assert.AreEqual(.6f, material.alphaCutoff);
+            Assert.AreEqual(AlphaMode.Mask, material.AlphaMode);
+            Assert.AreEqual(.6f, material.AlphaCutoff);
 #else
             Assert.Ignore("Texture export is disabled! " + LogMessages.GetFullMessage(LogCode.ImageConversionNotEnabled));
 #endif
@@ -105,7 +105,7 @@ namespace GLTFast.Tests.Export
                 out _,
                 renderPipeline,
                 out var material);
-            Assert.AreEqual(GltfMaterial.AlphaMode.Blend, material.GetAlphaMode());
+            Assert.AreEqual(AlphaMode.Blend, material.AlphaMode);
 #else
             Assert.Ignore("Texture export is disabled! " + LogMessages.GetFullMessage(LogCode.ImageConversionNotEnabled));
 #endif
@@ -145,8 +145,8 @@ namespace GLTFast.Tests.Export
             Assert.IsNotNull(mrTexture);
             Assert.IsNull(mrTexture.Extensions);
 
-            Assert.AreEqual(.89f, material.PbrMetallicRoughness.roughnessFactor);
-            Assert.AreEqual(0f, material.PbrMetallicRoughness.metallicFactor);
+            Assert.AreEqual(.89f, material.PbrMetallicRoughness.RoughnessFactor);
+            Assert.AreEqual(0f, material.PbrMetallicRoughness.MetallicFactor);
 #else
             Assert.Ignore("Texture export is disabled! " + LogMessages.GetFullMessage(LogCode.ImageConversionNotEnabled));
 #endif
@@ -156,7 +156,7 @@ namespace GLTFast.Tests.Export
         {
             var material = ConvertMaterial("Metallic", out _, renderPipeline);
             Assert.IsNotNull(material.PbrMetallicRoughness);
-            Assert.AreEqual(.89f, material.PbrMetallicRoughness.metallicFactor);
+            Assert.AreEqual(.89f, material.PbrMetallicRoughness.MetallicFactor);
         }
 
         protected void MetallicTextureTest(RenderPipeline renderPipeline)
@@ -170,7 +170,7 @@ namespace GLTFast.Tests.Export
             Assert.IsInstanceOf<ImageExport>(gltfWriter.imageExports[0]);
 
             Assert.IsNotNull(material.PbrMetallicRoughness);
-            Assert.AreEqual(1f, material.PbrMetallicRoughness.metallicFactor);
+            Assert.AreEqual(1f, material.PbrMetallicRoughness.MetallicFactor);
 
             var mrTexture = material.PbrMetallicRoughness?.MetallicRoughnessTexture;
             Assert.NotNull(mrTexture);
@@ -194,8 +194,8 @@ namespace GLTFast.Tests.Export
             Assert.IsInstanceOf<ImageExport>(gltfWriter.imageExports[0]);
 
             Assert.IsNotNull(material.PbrMetallicRoughness);
-            Assert.AreEqual(1f, material.PbrMetallicRoughness.metallicFactor);
-            Assert.AreEqual(1f, material.PbrMetallicRoughness.roughnessFactor);
+            Assert.AreEqual(1f, material.PbrMetallicRoughness.MetallicFactor);
+            Assert.AreEqual(1f, material.PbrMetallicRoughness.RoughnessFactor);
 
             var mrTexture = material.PbrMetallicRoughness?.MetallicRoughnessTexture;
             Assert.NotNull(mrTexture);
@@ -236,7 +236,7 @@ namespace GLTFast.Tests.Export
             Assert.IsInstanceOf<ImageExport>(gltfWriter.imageExports[0]);
 
             Assert.IsNotNull(material.PbrMetallicRoughness);
-            Assert.AreEqual(0f, material.PbrMetallicRoughness.metallicFactor);
+            Assert.AreEqual(0f, material.PbrMetallicRoughness.MetallicFactor);
 
             var oTexture = material.OcclusionTexture;
             Assert.NotNull(oTexture);
@@ -345,7 +345,7 @@ namespace GLTFast.Tests.Export
             Assert.IsInstanceOf<ImageExport>(gltfWriter.imageExports[0]);
 
             Assert.IsNotNull(material.PbrMetallicRoughness);
-            Assert.AreEqual(new[] { 0.787412345f, 0.603827417f, 0.447988421f, 1 }, material.PbrMetallicRoughness.baseColorFactor);
+            Assert.AreEqual(new[] { 0.787412345f, 0.603827417f, 0.447988421f, 1 }, material.PbrMetallicRoughness.BaseColorFactor);
             var baseColorTexture = material.PbrMetallicRoughness.BaseColorTexture;
             Assert.IsNotNull(baseColorTexture);
             Assert.AreEqual(0, baseColorTexture.Index);
@@ -403,7 +403,7 @@ namespace GLTFast.Tests.Export
         protected void DoubleSidedTest(RenderPipeline renderPipeline)
         {
             var material = ConvertMaterial("DoubleSided", out _, renderPipeline);
-            Assert.AreEqual(true, material.doubleSided);
+            Assert.AreEqual(true, material.DoubleSided);
         }
 
         TextureInfo BaseColorTextureTest(
@@ -421,7 +421,7 @@ namespace GLTFast.Tests.Export
             Assert.IsInstanceOf<ImageExport>(gltfWriter.imageExports[0]);
 
             Assert.IsNotNull(material.PbrMetallicRoughness);
-            Assert.AreEqual(new[] { 0.787412345f, 0.603827417f, 0.447988421f, 1 }, material.PbrMetallicRoughness.baseColorFactor);
+            Assert.AreEqual(new[] { 0.787412345f, 0.603827417f, 0.447988421f, 1 }, material.PbrMetallicRoughness.BaseColorFactor);
             var texture = material.PbrMetallicRoughness.BaseColorTexture;
             Assert.IsNotNull(texture);
             Assert.AreEqual(0, texture.Index);

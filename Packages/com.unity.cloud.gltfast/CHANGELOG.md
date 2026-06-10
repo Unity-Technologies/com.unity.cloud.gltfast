@@ -18,8 +18,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Refactored JSON serialization classes (in namespace `GLTFast.Schema`).
   - Major refactor to align them closer with Microsoft's framework design guidelines and `System.Text.Json` best-practices.
   - CamelCase naming for properties.
-  - Renamed `GltfAccessorAttributeType` ⇒ `AccessorType` and moved into dedicated file.
-  - Renamed `GltfComponentType` ⇒ `AccessorDataType`
+  - Moved many types into dedicated files.
+  - Renamed/Moved
+    - All extension properties to have conformant names (e.g. `Unlit` instead of `KHR_materials_unlit`)
+    - `GltfAccessorAttributeType` ⇒ `AccessorType`
+    - `GltfComponentType` ⇒ `AccessorDataType`
+    - `DrawMode` ⇒ `PrimitiveMode`
+    - `Camera.Type` ⇒ `CameraType`
+    - `Material.AlphaMode` ⇒ `AlphaMode`
+    - `MeshGpuInstancing.Attributes` ⇒ `InstancesAttributes`
 - Node transforms (translation, rotation, scale or matrix) are now in double precision throughout the API.
 - Clarified [IDeferAgent.ShouldDefer](xref:GLTFast.IDeferAgent.ShouldDefer) documentation to note that it must eventually return `false`, otherwise imports may stall indefinitely without raising an error.
 

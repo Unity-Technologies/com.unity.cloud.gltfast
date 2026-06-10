@@ -8,29 +8,6 @@ using Unity.Gltfast.Text.Json.Serialization;
 
 namespace GLTFast.Schema
 {
-
-    /// <summary>
-    /// The topology type of primitives to render
-    /// </summary>
-    /// <seealso href="https://www.khronos.org/registry/glTF/specs/2.0/glTF-2.0.html#_mesh_primitive_mode"/>
-    public enum DrawMode
-    {
-        /// <summary>Points</summary>
-        Points = 0,
-        /// <summary>Lines</summary>
-        Lines = 1,
-        /// <summary>Line loop</summary>
-        LineLoop = 2,
-        /// <summary>Line strip</summary>
-        LineStrip = 3,
-        /// <summary>Triangles</summary>
-        Triangles = 4,
-        /// <summary>Triangle strip</summary>
-        TriangleStrip = 5,
-        /// <summary>Triangle fan</summary>
-        TriangleFan = 6
-    }
-
     /// <summary>
     /// Geometry to be rendered with the given material.
     /// </summary>
@@ -71,7 +48,7 @@ namespace GLTFast.Schema
         /// The type of primitives to render. All valid values correspond to WebGL enums.
         /// </summary>
         [JsonPropertyName("mode")]
-        public DrawMode Mode { get; set; } = DrawMode.Triangles;
+        public PrimitiveMode Mode { get; set; } = PrimitiveMode.Triangles;
 
         /// <summary>
         /// An array of Morph Targets, each  Morph Target is a dictionary mapping
@@ -98,7 +75,7 @@ namespace GLTFast.Schema
         /// <inheritdoc />
         public int GetMaterialIndex(int variantIndex)
         {
-            var mapping = Extensions?.KHR_materials_variants;
+            var mapping = Extensions?.MaterialsVariants;
             if (mapping != null && mapping.TryGetMaterialIndex(variantIndex, out var materialIndex))
             {
                 return materialIndex;
@@ -107,7 +84,7 @@ namespace GLTFast.Schema
         }
 
 #if DRACO_IS_INSTALLED
-        public bool IsDracoCompressed => Extensions != null && Extensions.KHR_draco_mesh_compression != null;
+        public bool IsDracoCompressed => Extensions != null && Extensions.DracoMeshCompression != null;
 #endif
 
         /// <summary>
@@ -158,7 +135,7 @@ namespace GLTFast.Schema
             {
                 writer.AddProperty("material", Material);
             }
-            if (Mode != DrawMode.Triangles)
+            if (Mode != PrimitiveMode.Triangles)
             {
                 writer.AddProperty("mode", (int)Mode);
             }
@@ -348,13 +325,13 @@ namespace GLTFast.Schema
     public class MeshPrimitiveExtensions : IGltfObject
     {
 #if DRACO_IS_INSTALLED
-        // ReSharper disable once InconsistentNaming
-        public MeshPrimitiveDracoExtension KHR_draco_mesh_compression { get; set; }
+        [JsonPropertyName("KHR_draco_mesh_compression")]
+        public MeshPrimitiveDracoExtension DracoMeshCompression { get; set; }
 #endif
 
         /// <inheritdoc cref="MaterialsVariantsMeshPrimitiveExtension"/>
-        // ReSharper disable once InconsistentNaming
-        public MaterialsVariantsMeshPrimitiveExtension KHR_materials_variants { get; set; }
+        [JsonPropertyName("KHR_materials_variants")]
+        public MaterialsVariantsMeshPrimitiveExtension MaterialsVariants { get; set; }
 
         /// <inheritdoc cref="Root.Extras"/>
         [JsonPropertyName("extras")]
@@ -373,16 +350,16 @@ namespace GLTFast.Schema
         {
             writer.AddObject();
 #if DRACO_IS_INSTALLED
-            if (KHR_draco_mesh_compression != null)
+            if (DracoMeshCompression != null)
             {
                 writer.AddProperty("KHR_draco_mesh_compression");
-                KHR_draco_mesh_compression.GltfSerialize(writer);
+                DracoMeshCompression.GltfSerialize(writer);
             }
 #endif
-            if (KHR_materials_variants != null)
+            if (MaterialsVariants != null)
             {
                 writer.AddProperty("KHR_materials_variants");
-                KHR_materials_variants.GltfSerialize(writer);
+                MaterialsVariants.GltfSerialize(writer);
             }
             writer.Close();
         }
@@ -412,18 +389,15 @@ namespace GLTFast.Schema
     /// </summary>
     public class MorphTarget
     {
-        // Names are identical to glTF specified property names, that's why
-        // inconsistent names are ignored.
-        // ReSharper disable InconsistentNaming
-
         /// <summary>Vertex position deviation accessor index.</summary>
-        public int POSITION { get; set; } = -1;
+        [JsonPropertyName("POSITION")]
+        public int Position { get; set; } = -1;
         /// <summary>Vertex normal deviation accessor index.</summary>
-        public int NORMAL { get; set; } = -1;
+        [JsonPropertyName("NORMAL")]
+        public int Normal { get; set; } = -1;
         /// <summary>Vertex tangent deviation accessor index.</summary>
-        public int TANGENT { get; set; } = -1;
-
-        // ReSharper restore InconsistentNaming
+        [JsonPropertyName("TANGENT")]
+        public int Tangent { get; set; } = -1;
 
         /// <summary>
         /// Determines whether two object instances are equal.
@@ -450,9 +424,9 @@ namespace GLTFast.Schema
 
         internal void GltfSerialize(JsonWriter writer)
         {
-            if (POSITION >= 0) writer.AddProperty("POSITION", POSITION);
-            if (NORMAL >= 0) writer.AddProperty("NORMAL", NORMAL);
-            if (TANGENT >= 0) writer.AddProperty("TANGENT", TANGENT);
+            if (Position >= 0) writer.AddProperty("POSITION", Position);
+            if (Normal >= 0) writer.AddProperty("NORMAL", Normal);
+            if (Tangent >= 0) writer.AddProperty("TANGENT", Tangent);
         }
     }
 }
