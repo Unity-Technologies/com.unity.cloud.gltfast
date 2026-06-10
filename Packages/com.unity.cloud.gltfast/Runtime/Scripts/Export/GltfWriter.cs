@@ -1134,47 +1134,47 @@ namespace GLTFast.Export
                         var min = bounds.min;
                         accessor.Min = new[] { -max.x, min.y, min.z };
                         accessor.Max = new[] { -min.x, max.y, max.z };
-                        attributes.POSITION = accessorId;
+                        attributes.Position = accessorId;
                         break;
                     case VertexAttribute.Normal:
-                        attributes.NORMAL = accessorId;
+                        attributes.Normal = accessorId;
                         break;
                     case VertexAttribute.Tangent:
                         Assert.AreEqual(4, attribute.dimension, "Invalid tangent vector dimension");
-                        attributes.TANGENT = accessorId;
+                        attributes.Tangent = accessorId;
                         break;
                     case VertexAttribute.Color:
-                        attributes.COLOR_0 = accessorId;
+                        attributes.Color0 = accessorId;
                         break;
                     case VertexAttribute.TexCoord0:
-                        attributes.TEXCOORD_0 = accessorId;
+                        attributes.TexCoord0 = accessorId;
                         break;
                     case VertexAttribute.TexCoord1:
-                        attributes.TEXCOORD_1 = accessorId;
+                        attributes.TexCoord1 = accessorId;
                         break;
                     case VertexAttribute.TexCoord2:
-                        attributes.TEXCOORD_2 = accessorId;
+                        attributes.TexCoord2 = accessorId;
                         break;
                     case VertexAttribute.TexCoord3:
-                        attributes.TEXCOORD_3 = accessorId;
+                        attributes.TexCoord3 = accessorId;
                         break;
                     case VertexAttribute.TexCoord4:
-                        attributes.TEXCOORD_4 = accessorId;
+                        attributes.TexCoord4 = accessorId;
                         break;
                     case VertexAttribute.TexCoord5:
-                        attributes.TEXCOORD_5 = accessorId;
+                        attributes.TexCoord5 = accessorId;
                         break;
                     case VertexAttribute.TexCoord6:
-                        attributes.TEXCOORD_6 = accessorId;
+                        attributes.TexCoord6 = accessorId;
                         break;
                     case VertexAttribute.TexCoord7:
-                        attributes.TEXCOORD_7 = accessorId;
+                        attributes.TexCoord7 = accessorId;
                         break;
                     case VertexAttribute.BlendWeight:
-                        attributes.WEIGHTS_0 = accessorId;
+                        attributes.Weights0 = accessorId;
                         break;
                     case VertexAttribute.BlendIndices:
-                        attributes.JOINTS_0 = accessorId;
+                        attributes.Joints0 = accessorId;
                         accessor.ComponentType = AccessorDataType.UnsignedShort;
                         break;
                     default:
@@ -1702,60 +1702,60 @@ namespace GLTFast.Export
             switch (type)
             {
                 case VertexAttribute.Position:
-                    attributes.POSITION = accessorId;
-                    dracoAttributes.POSITION = dracoId;
+                    attributes.Position = accessorId;
+                    dracoAttributes.Position = dracoId;
                     break;
                 case VertexAttribute.Normal:
-                    attributes.NORMAL = accessorId;
-                    dracoAttributes.NORMAL = dracoId;
+                    attributes.Normal = accessorId;
+                    dracoAttributes.Normal = dracoId;
                     break;
                 case VertexAttribute.Tangent:
-                    attributes.TANGENT = accessorId;
-                    dracoAttributes.TANGENT = dracoId;
+                    attributes.Tangent = accessorId;
+                    dracoAttributes.Tangent = dracoId;
                     break;
                 case VertexAttribute.Color:
-                    attributes.COLOR_0 = accessorId;
-                    dracoAttributes.COLOR_0 = dracoId;
+                    attributes.Color0 = accessorId;
+                    dracoAttributes.Color0 = dracoId;
                     break;
                 case VertexAttribute.TexCoord0:
-                    attributes.TEXCOORD_0 = accessorId;
-                    dracoAttributes.TEXCOORD_0 = dracoId;
+                    attributes.TexCoord0 = accessorId;
+                    dracoAttributes.TexCoord0 = dracoId;
                     break;
                 case VertexAttribute.TexCoord1:
-                    attributes.TEXCOORD_1 = accessorId;
-                    dracoAttributes.TEXCOORD_1 = dracoId;
+                    attributes.TexCoord1 = accessorId;
+                    dracoAttributes.TexCoord1 = dracoId;
                     break;
                 case VertexAttribute.TexCoord2:
-                    attributes.TEXCOORD_2 = accessorId;
-                    dracoAttributes.TEXCOORD_2 = dracoId;
+                    attributes.TexCoord2 = accessorId;
+                    dracoAttributes.TexCoord2 = dracoId;
                     break;
                 case VertexAttribute.TexCoord3:
-                    attributes.TEXCOORD_3 = accessorId;
-                    dracoAttributes.TEXCOORD_3 = dracoId;
+                    attributes.TexCoord3 = accessorId;
+                    dracoAttributes.TexCoord3 = dracoId;
                     break;
                 case VertexAttribute.TexCoord4:
-                    attributes.TEXCOORD_4 = accessorId;
-                    dracoAttributes.TEXCOORD_4 = dracoId;
+                    attributes.TexCoord4 = accessorId;
+                    dracoAttributes.TexCoord4 = dracoId;
                     break;
                 case VertexAttribute.TexCoord5:
-                    attributes.TEXCOORD_5 = accessorId;
-                    dracoAttributes.TEXCOORD_5 = dracoId;
+                    attributes.TexCoord5 = accessorId;
+                    dracoAttributes.TexCoord5 = dracoId;
                     break;
                 case VertexAttribute.TexCoord6:
-                    attributes.TEXCOORD_6 = accessorId;
-                    dracoAttributes.TEXCOORD_6 = dracoId;
+                    attributes.TexCoord6 = accessorId;
+                    dracoAttributes.TexCoord6 = dracoId;
                     break;
                 case VertexAttribute.TexCoord7:
-                    attributes.TEXCOORD_7 = accessorId;
-                    dracoAttributes.TEXCOORD_7 = dracoId;
+                    attributes.TexCoord7 = accessorId;
+                    dracoAttributes.TexCoord7 = dracoId;
                     break;
                 case VertexAttribute.BlendWeight:
-                    attributes.WEIGHTS_0 = accessorId;
-                    dracoAttributes.WEIGHTS_0 = dracoId;
+                    attributes.Weights0 = accessorId;
+                    dracoAttributes.Weights0 = dracoId;
                     break;
                 case VertexAttribute.BlendIndices:
-                    attributes.JOINTS_0 = accessorId;
-                    dracoAttributes.JOINTS_0 = dracoId;
+                    attributes.Joints0 = accessorId;
+                    dracoAttributes.Joints0 = dracoId;
                     break;
             }
         }

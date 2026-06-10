@@ -37,7 +37,7 @@ namespace GLTFast.Tests.Import
                 Mode = PrimitiveMode.TriangleFan,
                 Attributes = new Attributes
                 {
-                    POSITION = 0
+                    Position = 0
                 },
                 Indices = 1
             } };

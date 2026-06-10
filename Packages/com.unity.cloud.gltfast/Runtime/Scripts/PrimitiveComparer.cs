@@ -40,20 +40,20 @@ namespace GLTFast
         {
             if (ReferenceEquals(x, y)) return true;
             if (x == null || y == null) return false;
-            return x.POSITION == y.POSITION
-                && x.NORMAL == y.NORMAL
-                && x.TANGENT == y.TANGENT
-                && x.TEXCOORD_0 == y.TEXCOORD_0
-                && x.TEXCOORD_1 == y.TEXCOORD_1
-                && x.TEXCOORD_2 == y.TEXCOORD_2
-                && x.TEXCOORD_3 == y.TEXCOORD_3
-                && x.TEXCOORD_4 == y.TEXCOORD_4
-                && x.TEXCOORD_5 == y.TEXCOORD_5
-                && x.TEXCOORD_6 == y.TEXCOORD_6
-                && x.TEXCOORD_7 == y.TEXCOORD_7
-                && x.COLOR_0 == y.COLOR_0
-                && x.JOINTS_0 == y.JOINTS_0
-                && x.WEIGHTS_0 == y.WEIGHTS_0;
+            return x.Position == y.Position
+                && x.Normal == y.Normal
+                && x.Tangent == y.Tangent
+                && x.TexCoord0 == y.TexCoord0
+                && x.TexCoord1 == y.TexCoord1
+                && x.TexCoord2 == y.TexCoord2
+                && x.TexCoord3 == y.TexCoord3
+                && x.TexCoord4 == y.TexCoord4
+                && x.TexCoord5 == y.TexCoord5
+                && x.TexCoord6 == y.TexCoord6
+                && x.TexCoord7 == y.TexCoord7
+                && x.Color0 == y.Color0
+                && x.Joints0 == y.Joints0
+                && x.Weights0 == y.Weights0;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -86,20 +86,20 @@ namespace GLTFast
             if (x == null) return 0;
 #if NET_STANDARD
             var hash = new HashCode();
-            hash.Add(x.POSITION);
-            hash.Add(x.NORMAL);
-            hash.Add(x.TANGENT);
-            hash.Add(x.TEXCOORD_0);
-            hash.Add(x.TEXCOORD_1);
-            hash.Add(x.TEXCOORD_2);
-            hash.Add(x.TEXCOORD_3);
-            hash.Add(x.TEXCOORD_4);
-            hash.Add(x.TEXCOORD_5);
-            hash.Add(x.TEXCOORD_6);
-            hash.Add(x.TEXCOORD_7);
-            hash.Add(x.COLOR_0);
-            hash.Add(x.JOINTS_0);
-            hash.Add(x.WEIGHTS_0);
+            hash.Add(x.Position);
+            hash.Add(x.Normal);
+            hash.Add(x.Tangent);
+            hash.Add(x.TexCoord0);
+            hash.Add(x.TexCoord1);
+            hash.Add(x.TexCoord2);
+            hash.Add(x.TexCoord3);
+            hash.Add(x.TexCoord4);
+            hash.Add(x.TexCoord5);
+            hash.Add(x.TexCoord6);
+            hash.Add(x.TexCoord7);
+            hash.Add(x.Color0);
+            hash.Add(x.Joints0);
+            hash.Add(x.Weights0);
             return hash.ToHashCode();
 #else
             if (x == null) return 0;

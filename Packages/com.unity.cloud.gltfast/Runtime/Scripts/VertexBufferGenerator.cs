@@ -59,7 +59,7 @@ namespace GLTFast
                 bounds = boundsOpt.Value;
                 return true;
             }
-            logger?.Error(LogCode.MeshBoundsMissing, m_Attributes[subMesh].POSITION.ToString());
+            logger?.Error(LogCode.MeshBoundsMissing, m_Attributes[subMesh].Position.ToString());
             bounds = default;
             return false;
         }
@@ -82,7 +82,7 @@ namespace GLTFast
             for (var i = 0; i < m_Attributes.Length; i++)
             {
                 VertexIntervals[i] = vertexCount;
-                m_PositionAccessors[i] = m_Buffers.GetAccessor(m_Attributes[i].POSITION);
+                m_PositionAccessors[i] = m_Buffers.GetAccessor(m_Attributes[i].Position);
                 vertexCount += m_PositionAccessors[i].Count;
             }
             VertexIntervals[m_Attributes.Length] = vertexCount;
@@ -137,14 +137,14 @@ namespace GLTFast
                 };
             }
 
-            m_HasColors = firstAttributes.COLOR_0 >= 0;
+            m_HasColors = firstAttributes.Color0 >= 0;
             if (m_HasColors)
             {
                 jobCount += m_Attributes.Length;
                 m_Colors = new VertexBufferColors(VertexCount, m_Logger);
             }
 
-            m_HasBones = firstAttributes.WEIGHTS_0 >= 0 && firstAttributes.JOINTS_0 >= 0;
+            m_HasBones = firstAttributes.Weights0 >= 0 && firstAttributes.Joints0 >= 0;
             if (m_HasBones)
             {
                 jobCount++;
@@ -160,7 +160,7 @@ namespace GLTFast
                 if (m_PositionAccessors[i].IsSparse && m_PositionAccessors[i].BufferView >= 0)
                     jobCount++;
 
-                if (att.NORMAL >= 0)
+                if (att.Normal >= 0)
                 {
                     jobCount++;
                     m_HasNormals = true;
@@ -168,7 +168,7 @@ namespace GLTFast
 
                 m_HasNormals |= calculateNormals;
 
-                if (att.TANGENT >= 0)
+                if (att.Tangent >= 0)
                 {
                     jobCount++;
                     m_HasTangents = true;
@@ -187,12 +187,12 @@ namespace GLTFast
                 if (!SchedulePositionsJobs(i, vDataPtr, outputByteStride, handles, ref handleIndex))
                     return null;
 
-                if (att.NORMAL >= 0
+                if (att.Normal >= 0
                     && !ScheduleNormalsJobs(att, vDataPtr, outputByteStride, i, handles, ref handleIndex)
                     )
                     return null;
 
-                if (att.TANGENT >= 0
+                if (att.Tangent >= 0
                     && !ScheduleTangentsJobs(att, vDataPtr, outputByteStride, i, handles, ref handleIndex)
                    )
                     return null;
@@ -273,7 +273,7 @@ namespace GLTFast
         unsafe bool ScheduleNormalsJobs(Attributes att, byte* vDataPtr, int outputByteStride, int i, NativeArray<JobHandle> handles, ref int handleIndex)
         {
             m_Buffers.GetAccessorAndData(
-                att.NORMAL,
+                att.Normal,
                 out var nrmAcc,
                 out var input,
                 out var inputByteStride
@@ -309,7 +309,7 @@ namespace GLTFast
         unsafe bool ScheduleTangentsJobs(Attributes att, byte* vDataPtr, int outputByteStride, int i, NativeArray<JobHandle> handles, ref int handleIndex)
         {
             m_Buffers.GetAccessorAndData(
-                att.TANGENT,
+                att.Tangent,
                 out var tanAcc,
                 out var input,
                 out var inputByteStride
@@ -361,7 +361,7 @@ namespace GLTFast
         bool ScheduleColorsJobs(Attributes att, int i, NativeArray<JobHandle> handles, ref int handleIndex)
         {
             var success = m_Colors.ScheduleVertexColorJob(
-                att.COLOR_0,
+                att.Color0,
                 VertexIntervals[i],
                 handles.GetSubArray(handleIndex, 1),
                 m_Buffers
@@ -403,8 +403,8 @@ namespace GLTFast
                 var att = attributes[i];
 
                 var h = m_Bones.ScheduleVertexBonesJob(
-                    att.WEIGHTS_0,
-                    att.JOINTS_0,
+                    att.Weights0,
+                    att.Joints0,
                     VertexIntervals[i],
                     m_Buffers
                 );

@@ -163,43 +163,66 @@ namespace GLTFast.Schema
     /// </summary>
     public class Attributes
     {
-
-        // Names are identical to glTF specified property names, that's why
-        // inconsistent names are ignored.
-        // ReSharper disable InconsistentNaming
-
         /// <summary>Vertex position accessor index.</summary>
-        public int POSITION { get; set; } = -1;
-        /// <summary>Vertex normals accessor index.</summary>
-        public int NORMAL { get; set; } = -1;
-        /// <summary>Vertex tangents accessor index.</summary>
-        public int TANGENT { get; set; } = -1;
-        /// <summary>Texture coordinates accessor index.</summary>
-        public int TEXCOORD_0 { get; set; } = -1;
-        /// <summary>Texture coordinates accessor index (second UV set).</summary>
-        public int TEXCOORD_1 { get; set; } = -1;
-        /// <summary>Texture coordinates accessor index (third UV set).</summary>
-        public int TEXCOORD_2 { get; set; } = -1;
-        /// <summary>Texture coordinates accessor index (fourth UV set).</summary>
-        public int TEXCOORD_3 { get; set; } = -1;
-        /// <summary>Texture coordinates accessor index (fifth UV set).</summary>
-        public int TEXCOORD_4 { get; set; } = -1;
-        /// <summary>Texture coordinates accessor index (sixth UV set).</summary>
-        public int TEXCOORD_5 { get; set; } = -1;
-        /// <summary>Texture coordinates accessor index (seventh UV set).</summary>
-        public int TEXCOORD_6 { get; set; } = -1;
-        /// <summary>Texture coordinates accessor index (eighth UV set).</summary>
-        public int TEXCOORD_7 { get; set; } = -1;
-        /// <summary>Texture coordinates accessor index (ninth UV set).</summary>
-        public int TEXCOORD_8 { get; set; } = -1;
-        /// <summary>Vertex color accessor index.</summary>
-        public int COLOR_0 { get; set; } = -1;
-        /// <summary>Bone joints accessor index.</summary>
-        public int JOINTS_0 { get; set; } = -1;
-        /// <summary>Bone weights accessor index.</summary>
-        public int WEIGHTS_0 { get; set; } = -1;
+        [JsonPropertyName("POSITION")]
+        public int Position { get; set; } = -1;
 
-        // ReSharper restore InconsistentNaming
+        /// <summary>Vertex normals accessor index.</summary>
+        [JsonPropertyName("NORMAL")]
+        public int Normal { get; set; } = -1;
+
+        /// <summary>Vertex tangents accessor index.</summary>
+        [JsonPropertyName("TANGENT")]
+        public int Tangent { get; set; } = -1;
+
+        /// <summary>Texture coordinates accessor index.</summary>
+        [JsonPropertyName("TEXCOORD_0")]
+        public int TexCoord0 { get; set; } = -1;
+
+        /// <summary>Texture coordinates accessor index (second UV set).</summary>
+        [JsonPropertyName("TEXCOORD_1")]
+        public int TexCoord1 { get; set; } = -1;
+
+        /// <summary>Texture coordinates accessor index (third UV set).</summary>
+        [JsonPropertyName("TEXCOORD_2")]
+        public int TexCoord2 { get; set; } = -1;
+
+        /// <summary>Texture coordinates accessor index (fourth UV set).</summary>
+        [JsonPropertyName("TEXCOORD_3")]
+        public int TexCoord3 { get; set; } = -1;
+
+        /// <summary>Texture coordinates accessor index (fifth UV set).</summary>
+        [JsonPropertyName("TEXCOORD_4")]
+        public int TexCoord4 { get; set; } = -1;
+
+        /// <summary>Texture coordinates accessor index (sixth UV set).</summary>
+        [JsonPropertyName("TEXCOORD_5")]
+        public int TexCoord5 { get; set; } = -1;
+
+        /// <summary>Texture coordinates accessor index (seventh UV set).</summary>
+        [JsonPropertyName("TEXCOORD_6")]
+        public int TexCoord6 { get; set; } = -1;
+
+        /// <summary>Texture coordinates accessor index (eighth UV set).</summary>
+        [JsonPropertyName("TEXCOORD_7")]
+        public int TexCoord7 { get; set; } = -1;
+
+        /// <summary>Texture coordinates accessor index (ninth UV set).</summary>
+        [JsonPropertyName("TEXCOORD_8")]
+        public int TexCoord8 { get; set; } = -1;
+
+        /// <summary>Vertex color accessor index.</summary>
+        [JsonPropertyName("COLOR_0")]
+        public int Color0 { get; set; } = -1;
+
+        /// <summary>Bone joints accessor index.</summary>
+        [JsonPropertyName("JOINTS_0")]
+        public int Joints0 { get; set; } = -1;
+
+        /// <summary>Bone weights accessor index.</summary>
+        [JsonPropertyName("WEIGHTS_0")]
+        public int Weights0 { get; set; } = -1;
+
 
         /// <summary>
         /// Determines whether two object instances are equal.
@@ -230,15 +253,15 @@ namespace GLTFast.Schema
         /// <returns>Texture coordinate set quantity.</returns>
         public int GetTexCoordsCount()
         {
-            if (TEXCOORD_0 < 0) return 0;
-            if (TEXCOORD_1 < 0) return 1;
-            if (TEXCOORD_2 < 0) return 2;
-            if (TEXCOORD_3 < 0) return 3;
-            if (TEXCOORD_4 < 0) return 4;
-            if (TEXCOORD_5 < 0) return 5;
-            if (TEXCOORD_6 < 0) return 6;
-            if (TEXCOORD_7 < 0) return 7;
-            return TEXCOORD_8 < 0 ? 8 : 9;
+            if (TexCoord0 < 0) return 0;
+            if (TexCoord1 < 0) return 1;
+            if (TexCoord2 < 0) return 2;
+            if (TexCoord3 < 0) return 3;
+            if (TexCoord4 < 0) return 4;
+            if (TexCoord5 < 0) return 5;
+            if (TexCoord6 < 0) return 6;
+            if (TexCoord7 < 0) return 7;
+            return TexCoord8 < 0 ? 8 : 9;
         }
 
         /// <summary>
@@ -266,34 +289,34 @@ namespace GLTFast.Schema
             }
 
             uvAccessors = new int[uvCount];
-            uvAccessors[0] = TEXCOORD_0;
+            uvAccessors[0] = TexCoord0;
             if (uvAccessors.Length >= 2)
             {
-                uvAccessors[1] = TEXCOORD_1;
+                uvAccessors[1] = TexCoord1;
             }
             if (uvAccessors.Length >= 3)
             {
-                uvAccessors[2] = TEXCOORD_2;
+                uvAccessors[2] = TexCoord2;
             }
             if (uvAccessors.Length >= 4)
             {
-                uvAccessors[3] = TEXCOORD_3;
+                uvAccessors[3] = TexCoord3;
             }
             if (uvAccessors.Length >= 5)
             {
-                uvAccessors[4] = TEXCOORD_4;
+                uvAccessors[4] = TexCoord4;
             }
             if (uvAccessors.Length >= 6)
             {
-                uvAccessors[5] = TEXCOORD_5;
+                uvAccessors[5] = TexCoord5;
             }
             if (uvAccessors.Length >= 7)
             {
-                uvAccessors[6] = TEXCOORD_6;
+                uvAccessors[6] = TexCoord6;
             }
             if (uvAccessors.Length >= 8)
             {
-                uvAccessors[7] = TEXCOORD_7;
+                uvAccessors[7] = TexCoord7;
             }
             return true;
         }
@@ -301,20 +324,20 @@ namespace GLTFast.Schema
         internal void GltfSerialize(JsonWriter writer)
         {
             writer.AddObject();
-            if (POSITION >= 0) writer.AddProperty("POSITION", POSITION);
-            if (NORMAL >= 0) writer.AddProperty("NORMAL", NORMAL);
-            if (TANGENT >= 0) writer.AddProperty("TANGENT", TANGENT);
-            if (TEXCOORD_0 >= 0) writer.AddProperty("TEXCOORD_0", TEXCOORD_0);
-            if (TEXCOORD_1 >= 0) writer.AddProperty("TEXCOORD_1", TEXCOORD_1);
-            if (TEXCOORD_2 >= 0) writer.AddProperty("TEXCOORD_2", TEXCOORD_2);
-            if (TEXCOORD_3 >= 0) writer.AddProperty("TEXCOORD_3", TEXCOORD_3);
-            if (TEXCOORD_4 >= 0) writer.AddProperty("TEXCOORD_4", TEXCOORD_4);
-            if (TEXCOORD_5 >= 0) writer.AddProperty("TEXCOORD_5", TEXCOORD_5);
-            if (TEXCOORD_6 >= 0) writer.AddProperty("TEXCOORD_6", TEXCOORD_6);
-            if (TEXCOORD_7 >= 0) writer.AddProperty("TEXCOORD_7", TEXCOORD_7);
-            if (COLOR_0 >= 0) writer.AddProperty("COLOR_0", COLOR_0);
-            if (JOINTS_0 >= 0) writer.AddProperty("JOINTS_0", JOINTS_0);
-            if (WEIGHTS_0 >= 0) writer.AddProperty("WEIGHTS_0", WEIGHTS_0);
+            if (Position >= 0) writer.AddProperty("POSITION", Position);
+            if (Normal >= 0) writer.AddProperty("NORMAL", Normal);
+            if (Tangent >= 0) writer.AddProperty("TANGENT", Tangent);
+            if (TexCoord0 >= 0) writer.AddProperty("TEXCOORD_0", TexCoord0);
+            if (TexCoord1 >= 0) writer.AddProperty("TEXCOORD_1", TexCoord1);
+            if (TexCoord2 >= 0) writer.AddProperty("TEXCOORD_2", TexCoord2);
+            if (TexCoord3 >= 0) writer.AddProperty("TEXCOORD_3", TexCoord3);
+            if (TexCoord4 >= 0) writer.AddProperty("TEXCOORD_4", TexCoord4);
+            if (TexCoord5 >= 0) writer.AddProperty("TEXCOORD_5", TexCoord5);
+            if (TexCoord6 >= 0) writer.AddProperty("TEXCOORD_6", TexCoord6);
+            if (TexCoord7 >= 0) writer.AddProperty("TEXCOORD_7", TexCoord7);
+            if (Color0 >= 0) writer.AddProperty("COLOR_0", Color0);
+            if (Joints0 >= 0) writer.AddProperty("JOINTS_0", Joints0);
+            if (Weights0 >= 0) writer.AddProperty("WEIGHTS_0", Weights0);
             writer.Close();
         }
     }

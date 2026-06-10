@@ -109,8 +109,8 @@ namespace GLTFast
         {
             var mainBufferType = MainBufferType.Position;
             var firstAttributes = m_Primitives[0].Attributes;
-            hasNormals = firstAttributes.NORMAL >= 0;
-            hasTangents = firstAttributes.TANGENT >= 0;
+            hasNormals = firstAttributes.Normal >= 0;
+            hasTangents = firstAttributes.Tangent >= 0;
 
             if (hasTangents)
                 mainBufferType = MainBufferType.PosNormTan;
@@ -220,7 +220,7 @@ namespace GLTFast
                 }
                 else
                 {
-                    var vertexCount = buffers.GetAccessor(primitive.Attributes.POSITION).Count;
+                    var vertexCount = buffers.GetAccessor(primitive.Attributes.Position).Count;
                     if (vertexCount > ushort.MaxValue)
                     {
                         indexFormat = IndexFormat.UInt32;
@@ -374,7 +374,7 @@ namespace GLTFast
                 }
                 else
                 {
-                    var vertexCount = buffers.GetAccessor(primitive.Attributes.POSITION).Count;
+                    var vertexCount = buffers.GetAccessor(primitive.Attributes.Position).Count;
                     var indexCount = primitive.Mode switch
                     {
                         PrimitiveMode.TriangleStrip or PrimitiveMode.TriangleFan => (vertexCount - 2) * 3,
