@@ -88,29 +88,6 @@ namespace GLTFast.Schema
 #endif
 
         /// <summary>
-        /// Determines whether two object instances are equal.
-        /// </summary>
-        /// <param name="obj">The object to compare with the current object.</param>
-        /// <returns>true if the specified object is equal to the current object; otherwise, false.</returns>
-        // TODO: Remove upon next major release. This serves no purpose anymore except keeping the API intact.
-        public override bool Equals(object obj)
-        {
-            // ReSharper disable once BaseObjectEqualsIsObjectEquals
-            return base.Equals(obj);
-        }
-
-        /// <summary>
-        /// Default hash function.
-        /// </summary>
-        /// <returns>A hash code for the current object.</returns>
-        // TODO: Remove upon next major release. This serves no purpose anymore except keeping the API intact.
-        public override int GetHashCode()
-        {
-            // ReSharper disable once BaseObjectGetHashCodeCallInGetHashCode
-            return base.GetHashCode();
-        }
-
-        /// <summary>
         /// Clones the object
         /// </summary>
         /// <returns>Member-wise clone</returns>
@@ -222,30 +199,6 @@ namespace GLTFast.Schema
         /// <summary>Bone weights accessor index.</summary>
         [JsonPropertyName("WEIGHTS_0")]
         public int Weights0 { get; set; } = -1;
-
-
-        /// <summary>
-        /// Determines whether two object instances are equal.
-        /// </summary>
-        /// <param name="obj">The object to compare with the current object.</param>
-        /// <returns>true if the specified object is equal to the current object; otherwise, false.</returns>
-        // TODO: Remove upon next major release. This serves no purpose anymore except keeping the API intact.
-        public override bool Equals(object obj)
-        {
-            // ReSharper disable once BaseObjectEqualsIsObjectEquals
-            return base.Equals(obj);
-        }
-
-        /// <summary>
-        /// Default hash function.
-        /// </summary>
-        /// <returns>A hash code for the current object.</returns>
-        // TODO: Remove upon next major release. This serves no purpose anymore except keeping the API intact.
-        public override int GetHashCode()
-        {
-            // ReSharper disable once BaseObjectGetHashCodeCallInGetHashCode
-            return base.GetHashCode();
-        }
 
         /// <summary>
         /// Calculates the texture coordinate set quantity.
@@ -421,29 +374,6 @@ namespace GLTFast.Schema
         /// <summary>Vertex tangent deviation accessor index.</summary>
         [JsonPropertyName("TANGENT")]
         public int Tangent { get; set; } = -1;
-
-        /// <summary>
-        /// Determines whether two object instances are equal.
-        /// </summary>
-        /// <param name="obj">The object to compare with the current object.</param>
-        /// <returns>true if the specified object is equal to the current object; otherwise, false.</returns>
-        // TODO: Remove upon next major release. This serves no purpose anymore except keeping the API intact.
-        public override bool Equals(object obj)
-        {
-            // ReSharper disable once BaseObjectEqualsIsObjectEquals
-            return base.Equals(obj);
-        }
-
-        /// <summary>
-        /// Default hash function.
-        /// </summary>
-        /// <returns>A hash code for the current object.</returns>
-        // TODO: Remove upon next major release. This serves no purpose anymore except keeping the API intact.
-        public override int GetHashCode()
-        {
-            // ReSharper disable once BaseObjectGetHashCodeCallInGetHashCode
-            return base.GetHashCode();
-        }
 
         internal void GltfSerialize(JsonWriter writer)
         {
