@@ -3,7 +3,6 @@
 
 using System.Collections;
 using System.IO;
-using System.Threading.Tasks;
 using GLTFast.Documentation.Examples;
 using GLTFast.Export;
 using GLTFast.Tests;
@@ -18,6 +17,18 @@ namespace GLTFast.DocExamples.Tests
     [Category("DocExamples")]
     class DocExamplesTests : IPrebuildSetup, IPostBuildCleanup
     {
+        [UnityTest]
+        public IEnumerator LoadGltfFile()
+        {
+            var component = new GameObject()
+                .AddComponent<LoadGltfFromMemory>();
+            Assert.NotNull(component);
+            var task = component.LoadGltfFile(
+                TestGltfGenerator.GetAssetPath(TestGltfGenerator.Asset.CylinderWithMaterial));
+            yield return AsyncWrapper.WaitForTask(task);
+            Object.Destroy(component.gameObject);
+        }
+
         [UnityTest]
         public IEnumerator LoadViaComponent()
         {
@@ -51,9 +62,8 @@ namespace GLTFast.DocExamples.Tests
         {
             var component = new GameObject()
                 .AddComponent<LoadGltfFromMemory>();
-            component.filePath = TestGltfGenerator.GetAssetPath(TestGltfGenerator.Asset.CylinderWithMaterial);
             Assert.NotNull(component);
-            var task = component.Instantiation();
+            var task = component.Instantiation(TestGltfGenerator.GetAssetPath(TestGltfGenerator.Asset.CylinderWithMaterial));
             yield return AsyncWrapper.WaitForTask(task);
             Object.Destroy(component.gameObject);
         }
@@ -64,9 +74,8 @@ namespace GLTFast.DocExamples.Tests
             LogAssert.Expect(LogType.Error, "Loading glTF failed!");
             var component = new GameObject()
                 .AddComponent<LoadGltfFromMemory>();
-            component.filePath = Path.Combine(Application.temporaryCachePath, "NonExistingFile.gltf");
             Assert.NotNull(component);
-            var task = component.Instantiation();
+            var task = component.Instantiation(Path.Combine(Application.temporaryCachePath, "NonExistingFile.gltf"));
             yield return AsyncWrapper.WaitForTask(task);
             Object.Destroy(component.gameObject);
         }
@@ -77,9 +86,8 @@ namespace GLTFast.DocExamples.Tests
         {
             var component = new GameObject()
                 .AddComponent<LoadGltfFromMemory>();
-            component.filePath = Path.Combine(testCaseSet.RootPath, testCase.relativeUri);
             Assert.NotNull(component);
-            var task = component.SceneInstanceAccess();
+            var task = component.SceneInstanceAccess(Path.Combine(testCaseSet.RootPath, testCase.relativeUri));
             yield return AsyncWrapper.WaitForTask(task);
             Object.Destroy(component.gameObject);
         }
@@ -90,7 +98,6 @@ namespace GLTFast.DocExamples.Tests
         {
             var component = new GameObject()
                 .AddComponent<LoadGltfFromMemory>();
-            component.filePath = TestGltfGenerator.GetAssetPath(TestGltfGenerator.Asset.CylinderWithMaterial);
             Assert.NotNull(component);
             var task = component.CustomDeferAgent();
             yield return AsyncWrapper.WaitForTask(task);
