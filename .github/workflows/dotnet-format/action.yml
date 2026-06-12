@@ -74,23 +74,23 @@ runs:
         repository: ${{ github.event.pull_request.head.repo.full_name }}
         ref: ${{ github.event.pull_request.head.sha }}
 
-    - name: Restore cached Unity Editor
-      id: cache-unity-restore
-      uses: actions/cache/restore@v5
+    # Cache each test project's Library folder. The dominant cost of the "RegenerateProjectFiles"
+    # editor launch below is a cold asset import + script compile + domain reload; a warm Library
+    # lets the editor reuse that work and open quickly. The key is the editor version plus the
+    # projects' resolved package sets (packages-lock.json) -- Unity reimports whatever changed on
+    # top of a restored Library, so even a near-match (the restore-keys prefix fallback) is a big
+    # win. We do NOT cache the downloaded editor: unity-downloader-cli pulls it from internal
+    # artifactory fast enough that restoring multiple GB from the Actions cache wouldn't pay off.
+    - name: 'Cache Unity project Library folders'
+      if: ${{ inputs.projects != '' }}
+      uses: actions/cache@v5
       with:
-        key: unity-${{ inputs.unityVersion }}
-        path: .Editor
-
-    - name: Restore cached project
-      id: cache-project-restore
-      uses: actions/cache/restore@v5
-      with:
-        key: project-${{ inputs.project }}-${{ hashFiles('Packages/com.unity.cloud.gltfast/package.json') }}
-        restore-keys: |
-          project-${{ inputs.project }}-
         path: |
           Projects/${{ inputs.project }}/Library
           Projects/${{ inputs.project }}/ProjectSettings/*.asset
+        key: unity-library-${{ runner.os }}-${{ inputs.unityVersion }}-${{ inputs.project }}-${{ hashFiles(format('Projects/{0}/Packages/manifest.json', inputs.project)) }}
+        restore-keys: |
+          unity-library-${{ runner.os }}-${{ inputs.unityVersion }}-${{ inputs.project }}-
 
     - id: dotnet-format
       name: 'dotnet format code'
@@ -161,7 +161,9 @@ runs:
           # Install virtual X, which is needed to open Unity via upm-ci
           sudo apt-get install -y xvfb
 
-          # Install upm-ci via npm, as upm-ci is needed to get Unity setup with a valid license
+          # Install upm-ci via npm. upm-ci is needed to get Unity set up with a valid license:
+          # the standalone editor/UTR launch on its own fails with "No ULF license found", whereas
+          # upm-ci performs the licensing handshake correctly.
           sudo apt-get install -y npm
           sudo npm install -g upm-ci-utils@stable --registry https://artifactory.prd.it.unity3d.com/artifactory/api/npm/upm-npm
 
@@ -208,9 +210,19 @@ runs:
           UNITY_PROJECT="$DIR/Projects/$PROJECT"
           SLN="$UNITY_PROJECT/$PROJECT.sln"
 
-          # Start Unity once via upm-ci to activate license
+          # Start Unity once via upm-ci to activate the license. The direct editor launches
+          # below can't acquire a license on their own (they fail with "No ULF license found");
+          # upm-ci performs the licensing handshake, and the lease it establishes is reused by
+          # the subsequent direct launches in this job.
+          #
+          # We run a no-op test pass (a filter that matches nothing, plus --zero-tests-are-ok)
+          # purely as the vehicle for that licensing handshake. "--platform editmode" is the key
+          # detail: without it, upm-ci's package-tests pass hands UTR BOTH "--suite=editor" and
+          # "--suite=playmode" in one invocation, which UTR 2.0.0+ rejects ("Multiple --suite
+          # options are no longer supported"). "--platform editmode" runs editmode tests only, so
+          # upm-ci passes a single "--suite=editor". (See upm-ci docs: project test --platform.)
           upm-ci project pack --project-path "$UNITY_PROJECT"
-          xvfb-run -a upm-ci project test -u "$UNITY_BIN" --project-path "$UNITY_PROJECT" --type package-tests --extra-utr-arg="--testfilter=DoesNotExistOnPurpose --zero-tests-are-ok=1" --extra-editor-arg nographics
+          xvfb-run -a upm-ci project test -u "$UNITY_BIN" --project-path "$UNITY_PROJECT" --type package-tests --platform editmode --extra-utr-arg="--testfilter=DoesNotExistOnPurpose --zero-tests-are-ok=1" --extra-editor-arg nographics
 
           # Open and quit; this triggers import and project files generation. This is also calling a method to regenerate the solution file.
           "$UNITY_BIN" \
@@ -296,20 +308,23 @@ runs:
           fi
         fi
 
-    - name: Save Unity Editor
-      id: cache-unity-save
-      if: always() && steps.cache-unity-restore.outputs.cache-hit != 'true'
-      uses: actions/cache/save@v5
+    # Upload the editor logs as an artifact. The direct "RegenerateProjectFiles" launch already
+    # streams to stdout via "-logFile -", but the upm-ci license warm-up writes its editor log
+    # under upm-ci~/ where it would otherwise be lost. "if: always()" so the logs survive a failed
+    # run -- which is exactly when they're needed.
+    # NOTE: must stay on @v3. This repo runs on GitHub Enterprise Server (github.cds.internal.unity3d.com),
+    # and upload-artifact@v4+ (built on @actions/artifact v2) is not supported on GHES
+    # ("GHESNotSupportedError"). v3 uses the GHES-compatible artifact v1 and takes the same inputs.
+    - name: 'Upload Unity logs'
+      if: always()
+      uses: actions/upload-artifact@v3
       with:
-        key: ${{ steps.cache-unity-restore.outputs.cache-primary-key }}
-        path: .Editor
-
-    - name: Save project
-      id: cache-project-save
-      if: always() && steps.cache-project-restore.outputs.cache-hit != 'true'
-      uses: actions/cache/save@v5
-      with:
-        key: ${{ steps.cache-project-restore.outputs.cache-primary-key }}
+        name: unity-logs
         path: |
-          Projects/glTFast-Test*/Library
-          Projects/glTFast-Test*/ProjectSettings/*.asset
+          upm-ci~/test-results/**
+          upm-ci~/temp/*/Logs/**
+          upm-ci~/temp/*/*.log
+          upm-ci~/**/*.log
+          **/UnityLog.txt
+        if-no-files-found: ignore
+        retention-days: 7
