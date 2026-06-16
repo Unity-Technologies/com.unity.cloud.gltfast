@@ -184,7 +184,7 @@ namespace GLTFast.Tests.Import
                         ComponentType = AccessorDataType.Float,
                         Count = 3
                     };
-                    accessor.Type = AccessorType.Vector3;
+                    accessor.Type = new EnumOrRawValue<AccessorType>(AccessorType.Vector3);
                     return accessor;
                 }
                 case 1:
@@ -196,7 +196,7 @@ namespace GLTFast.Tests.Import
                         ComponentType = AccessorDataType.UnsignedShort,
                         Count = 2
                     };
-                    accessor.Type = AccessorType.Scalar;
+                    accessor.Type = new EnumOrRawValue<AccessorType>(AccessorType.Scalar);
                     return accessor;
                 }
             }

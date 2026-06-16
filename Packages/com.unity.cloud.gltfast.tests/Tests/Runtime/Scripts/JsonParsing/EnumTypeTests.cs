@@ -79,31 +79,57 @@ namespace GLTFast.Tests.JsonParsing
         }
 
         [Test]
-        public void AccessorTypeDeserialization()
+        [TestCase(AccessorType.Scalar, "SCALAR")]
+        [TestCase(AccessorType.Vector2, "VEC2")]
+        [TestCase(AccessorType.Vector3, "VEC3")]
+        [TestCase(AccessorType.Vector4, "VEC4")]
+        [TestCase(AccessorType.Matrix2x2, "MAT2")]
+        [TestCase(AccessorType.Matrix3x3, "MAT3")]
+        [TestCase(AccessorType.Matrix4x4, "MAT4")]
+        public void AccessorTypeDeserialization(AccessorType expected, string value)
         {
-            Assert.AreEqual(AccessorType.Scalar,
-                JsonSerializer.Deserialize(@"""SCALAR""", GltfRootSourceGenerator.Default.AccessorType));
+            var accessor = JsonSerializer.Deserialize($@"{{""type"":""{value}""}}", GltfRootSourceGenerator.Default.Accessor);
+            Assert.AreEqual(expected, accessor.Type.Value);
+            Assert.IsNull(accessor.Type.RawValue);
+        }
 
-            Assert.AreEqual(AccessorType.Vector2,
-                JsonSerializer.Deserialize(@"""VEC2""", GltfRootSourceGenerator.Default.AccessorType));
-
-            Assert.AreEqual(AccessorType.Vector3,
-                JsonSerializer.Deserialize(@"""VEC3""", GltfRootSourceGenerator.Default.AccessorType));
-
-            Assert.AreEqual(AccessorType.Vector4,
-                JsonSerializer.Deserialize(@"""VEC4""", GltfRootSourceGenerator.Default.AccessorType));
-
-            Assert.AreEqual(AccessorType.Matrix2x2,
-                JsonSerializer.Deserialize(@"""MAT2""", GltfRootSourceGenerator.Default.AccessorType));
-
-            Assert.AreEqual(AccessorType.Matrix3x3,
-                JsonSerializer.Deserialize(@"""MAT3""", GltfRootSourceGenerator.Default.AccessorType));
-
-            Assert.AreEqual(AccessorType.Matrix4x4,
-                JsonSerializer.Deserialize(@"""MAT4""", GltfRootSourceGenerator.Default.AccessorType));
+        [Test]
+        public void AccessorTypeUnknownDeserialization()
+        {
+            var accessor = JsonSerializer.Deserialize(@"{""type"":""Unknown\u00B9Type""}", GltfRootSourceGenerator.Default.Accessor);
+            Assert.AreEqual(AccessorType.Undefined, accessor.Type.Value);
+            Assert.AreEqual(System.Text.Encoding.UTF8.GetBytes("Unknown¹Type"), accessor.Type.RawValue);
 
             Assert.Throws<JsonException>(() =>
-                JsonSerializer.Deserialize(@"""foo""", GltfRootSourceGenerator.Default.AccessorType));
+                JsonSerializer.Deserialize(@"{""type"":42}", GltfRootSourceGenerator.Default.Accessor));
+        }
+
+        [Test]
+        [TestCase(AccessorType.Scalar, "SCALAR")]
+        [TestCase(AccessorType.Vector2, "VEC2")]
+        [TestCase(AccessorType.Vector3, "VEC3")]
+        [TestCase(AccessorType.Vector4, "VEC4")]
+        [TestCase(AccessorType.Matrix2x2, "MAT2")]
+        [TestCase(AccessorType.Matrix3x3, "MAT3")]
+        [TestCase(AccessorType.Matrix4x4, "MAT4")]
+        public void AccessorTypeSerialization(AccessorType value, string expected)
+        {
+            var json = JsonSerializer.Serialize(value, GltfRootSourceGenerator.Default.AccessorType);
+            Assert.AreEqual($@"""{expected}""", json);
+
+            var accessor = new Accessor { Type = new EnumOrRawValue<AccessorType>(value) };
+            json = JsonSerializer.Serialize(accessor, GltfRootSourceGenerator.Default.Accessor);
+            Assert.AreEqual($@"{{""bufferView"":-1,""type"":""{expected}""}}", json);
+        }
+
+        [Test]
+        public void AccessorTypeUnknownSerialization()
+        {
+            const string type = "UnknownType";
+            var typeBytes = System.Text.Encoding.UTF8.GetBytes(type);
+            var accessor = new Accessor { Type = new EnumOrRawValue<AccessorType>(typeBytes) };
+            var json = JsonSerializer.Serialize(accessor, GltfRootSourceGenerator.Default.Accessor);
+            Assert.AreEqual($@"{{""bufferView"":-1,""type"":""UnknownType""}}", json);
         }
 
         [Test]
@@ -283,6 +309,26 @@ namespace GLTFast.Tests.JsonParsing
 
             Assert.Throws<JsonException>(() =>
                 JsonSerializer.Deserialize("{\"type\":\"foo\"}", GltfRootSourceGenerator.Default.LightPunctual));
+        }
+
+        [Test]
+        public void AccessorDataTypeDeserialization()
+        {
+            // Known Value
+            Assert.AreEqual(
+                AccessorDataType.Byte,
+                JsonSerializer.Deserialize(
+                    "5120",
+                    GltfRootSourceGenerator.Default.AccessorDataType)
+            );
+
+            // Unknown Value
+            Assert.AreEqual(
+                (AccessorDataType)42,
+                JsonSerializer.Deserialize(
+                    "42",
+                    GltfRootSourceGenerator.Default.AccessorDataType)
+                );
         }
 
         static void CheckResultAccessor(Root gltf)

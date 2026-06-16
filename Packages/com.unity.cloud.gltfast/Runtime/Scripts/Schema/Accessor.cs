@@ -71,7 +71,8 @@ namespace GLTFast.Schema
 
         /// <inheritdoc cref="AccessorType"/>
         [JsonPropertyName("type")]
-        public AccessorType Type { get; set; }
+        [JsonConverter(typeof(AccessorTypeValueConverter))]
+        public EnumOrRawValue<AccessorType> Type { get; set; }
 
         /// <inheritdoc cref="Root.Extras"/>
         [JsonPropertyName("extras")]
@@ -234,8 +235,8 @@ namespace GLTFast.Schema
         /// <returns>Bounding box enclosing the minimum and maximum values</returns>
         public Bounds? TryGetBounds()
         {
-            Assert.AreEqual(AccessorType.Vector3, Type);
-            if (Min != null && Min.Count > 2 && Max != null && Max.Count > 2)
+            Assert.AreEqual(AccessorType.Vector3, Type.Value);
+            if (Min is { Count: > 2 } && Max is { Count: > 2 })
             {
                 var maxBounds = new float3(-Min[0], Max[1], Max[2]);
                 var minBounds = new float3(-Max[0], Min[1], Min[2]);
@@ -282,12 +283,14 @@ namespace GLTFast.Schema
         /// <summary>
         /// Byte size of one element
         /// </summary>
-        public int ElementByteSize => GetAccessorAttributeTypeLength(Type) * GetComponentTypeSize(ComponentType);
+        [JsonIgnore]
+        public int ElementByteSize => GetAccessorAttributeTypeLength(Type.Value) * GetComponentTypeSize(ComponentType);
 
         /// <summary>
         /// Overall, byte size.
         /// Ignores interleaved or sparse accessors
         /// </summary>
+        [JsonIgnore]
         public int ByteSize => ElementByteSize * Count;
 
         internal void GltfSerialize(JsonWriter writer)
@@ -299,9 +302,16 @@ namespace GLTFast.Schema
             }
             writer.AddProperty("componentType", (int)ComponentType);
             writer.AddProperty("count", Count);
-            Assert.AreNotEqual(AccessorType.Undefined, Type);
-            var type = JsonSerializer.Serialize(Type, GltfRootSourceGenerator.Default.AccessorType);
-            writer.AddProperty("type", type.AsSpan(1, type.Length - 2));
+            if (Type.RawValue != null)
+            {
+                writer.AddProperty("type", System.Text.Encoding.UTF8.GetString(Type.RawValue));
+            }
+            else
+            {
+                Assert.AreNotEqual(AccessorType.Undefined, Type.Value);
+                var type = JsonSerializer.Serialize(Type.Value, GltfRootSourceGenerator.Default.AccessorType);
+                writer.AddProperty("type", type.AsSpan(1, type.Length - 2));
+            }
             if (ByteOffset > 0)
             {
                 writer.AddProperty("byteOffset", ByteOffset);

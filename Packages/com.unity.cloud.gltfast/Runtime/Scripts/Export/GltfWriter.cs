@@ -1117,7 +1117,7 @@ namespace GLTFast.Export
                     ComponentType = Accessor.GetComponentType(attribute.format),
                     Count = vertexCount,
                 };
-                accessor.Type = Accessor.GetAccessorAttributeType(attribute.dimension);
+                accessor.Type = new EnumOrRawValue<AccessorType>(Accessor.GetAccessorAttributeType(attribute.dimension));
 
                 var accessorId = AddAccessor(accessor);
 
@@ -1225,7 +1225,7 @@ namespace GLTFast.Export
                     // min = new []{}, // TODO
                     // max = new []{}, // TODO
                 };
-                indexAccessor.Type = AccessorType.Scalar;
+                indexAccessor.Type = new EnumOrRawValue<AccessorType>(AccessorType.Scalar);
 
                 if (subMeshTopology == MeshTopology.Quads)
                 {
@@ -1543,7 +1543,7 @@ namespace GLTFast.Export
                     ComponentType = AccessorDataType.Float,
                     Count = bindposes.Length
                 };
-                accessor.Type = AccessorType.Matrix4x4;
+                accessor.Type = new EnumOrRawValue<AccessorType>(AccessorType.Matrix4x4);
 
                 var accessorId = AddAccessor(accessor);
                 m_MeshBindPoses ??= new Dictionary<int, int>();
@@ -1630,7 +1630,7 @@ namespace GLTFast.Export
                         Count = (int)encodeResult.vertexCount
                     };
                     var attributeType = Accessor.GetAccessorAttributeType(attribute.dimensions);
-                    accessor.Type = attributeType;
+                    accessor.Type = new EnumOrRawValue<AccessorType>(attributeType);
 
                     var accessorId = AddAccessor(accessor);
 
@@ -1667,7 +1667,7 @@ namespace GLTFast.Export
                     ComponentType = AccessorDataType.UnsignedInt,
                     Count = (int)encodeResult.indexCount
                 };
-                indexAccessor.Type = AccessorType.Scalar;
+                indexAccessor.Type = new EnumOrRawValue<AccessorType>(AccessorType.Scalar);
 
                 var indicesId = AddAccessor(indexAccessor);
 

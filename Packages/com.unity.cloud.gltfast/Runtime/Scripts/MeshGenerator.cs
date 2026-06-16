@@ -279,7 +279,7 @@ namespace GLTFast
                         accessor.ByteSize
                     );
 
-                    Assert.AreEqual(accessor.Type, AccessorType.Scalar);
+                    Assert.AreEqual(accessor.Type.Value, AccessorType.Scalar);
                     if (accessor.IsSparse)
                     {
                         logger?.Error(LogCode.SparseAccessor, "indices");

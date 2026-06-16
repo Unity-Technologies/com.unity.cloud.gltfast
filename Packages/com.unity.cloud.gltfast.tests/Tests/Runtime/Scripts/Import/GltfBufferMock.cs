@@ -34,7 +34,7 @@ namespace GLTFast.Tests
         public void GetAccessorAndData(int index, out Accessor accessor, out void* data, out int byteStride)
         {
             accessor = GetAccessor(index);
-            accessor.Type = AccessorType.Vector3;
+            accessor.Type = new EnumOrRawValue<AccessorType>(AccessorType.Vector3);
             data = null;
             byteStride = 1;
         }

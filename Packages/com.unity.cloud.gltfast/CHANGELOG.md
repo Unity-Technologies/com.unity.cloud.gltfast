@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Support for high precision node transforms.
 - `JsonWriter.AddProperty` overload that accepts `ReadOnlySpan<char>`.
+- `EnumOrRawValue<TEnum>` for serialization of JSON strings to enum values that can have values unknown at build time.
 - [MeshoptFilter](xref:GLTFast.Schema.MeshoptFilter) and [MeshoptMode](xref:GLTFast.Schema.MeshoptMode) for custom JSON serialization of `Meshoptimizer.Filter` and `Meshoptimizer.Mode`.
 - `UriValue`, a wrapper for serialization of URIs.
 
@@ -35,6 +36,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
       - `Accessor.Max`
       - `Accessor.Min`
   - (Performance) Data URIs are decoded directly to unmanaged buffers during JSON deserialization eliminating allocation of a UTF-16 string twice the size of the data URI.
+  - JSON string to enum deserialization via `EnumOrRawValue<TEnum>` preserves access to unknown values (not in the glTF specification but potentially introduced by a glTF extension).
 - Node transforms (translation, rotation, scale or matrix) are now in double precision throughout the API.
 - `IInstantiator.AddPrimitive` parameter `morphTargetWeights` is now of type `IReadOnlyList<float>` (was float[]).
 - `GameObjectInstantiator.MeshAddedDelegate` parameter `morphTargetWeights` is now of type `IReadOnlyList<float>` (was float[]).

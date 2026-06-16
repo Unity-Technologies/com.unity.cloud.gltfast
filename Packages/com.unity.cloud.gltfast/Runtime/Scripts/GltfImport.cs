@@ -3515,7 +3515,7 @@ namespace GLTFast
                     // the accessor only holds meta information
                     continue;
                 }
-                switch (acc.Type)
+                switch (acc.Type.Value)
                 {
                     case AccessorType.Matrix4x4 when m_AccessorUsage[i] == AccessorUsage.InverseBindMatrix:
                     {
@@ -3718,7 +3718,7 @@ namespace GLTFast
             matrices = new NativeArray<float4x4>(accessor.Count, Allocator.Persistent);
             Profiler.EndSample();
 
-            Assert.AreEqual(accessor.Type, AccessorType.Matrix4x4);
+            Assert.AreEqual(accessor.Type.Value, AccessorType.Matrix4x4);
             //Assert.AreEqual(accessor.count * GetLength(accessor.typeEnum) * 4 , (int) chunk.length);
             if (accessor.IsSparse)
             {
@@ -3754,7 +3754,7 @@ namespace GLTFast
             vectors = new NativeArray<float3>(accessor.Count, Allocator.Persistent);
             Profiler.EndSample();
 
-            Assert.AreEqual(accessor.Type, AccessorType.Vector3);
+            Assert.AreEqual(accessor.Type.Value, AccessorType.Vector3);
             if (accessor.IsSparse)
             {
                 Logger?.Error(LogCode.SparseAccessor, "Vector3");
@@ -3821,7 +3821,7 @@ namespace GLTFast
             vectors = new NativeArray<quaternion>(accessor.Count, Allocator.Persistent);
             Profiler.EndSample();
 
-            Assert.AreEqual(accessor.Type, AccessorType.Vector4);
+            Assert.AreEqual(accessor.Type.Value, AccessorType.Vector4);
             if (accessor.IsSparse)
             {
                 Logger?.Error(LogCode.SparseAccessor, "Vector4");
@@ -3883,7 +3883,7 @@ namespace GLTFast
                 accessor.ByteSize
                 );
 
-            Assert.AreEqual(accessor.Type, AccessorType.Scalar);
+            Assert.AreEqual(accessor.Type.Value, AccessorType.Scalar);
             if (accessor.IsSparse)
             {
                 Logger?.Error(LogCode.SparseAccessor, "scalars");
