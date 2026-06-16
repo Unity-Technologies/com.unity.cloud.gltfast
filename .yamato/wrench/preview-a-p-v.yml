@@ -745,7 +745,7 @@ preview_apv_-_6000_6_-_macos13arm:
   - command: npm install upm-ci-utils@stable -g --registry https://artifactory.prd.cds.internal.unity3d.com/artifactory/api/npm/upm-npm
     timeout: 20
     retries: 10
-  - command: unity-downloader-cli -u trunk -c editor --path .Editor --fast --arch arm64
+  - command: unity-downloader-cli -u 6000.6/staging -c editor --path .Editor --fast --arch arm64
     timeout: 10
     retries: 3
   - command: python PythonScripts/preview_apv.py --wrench-config=.yamato/wrench/wrench_config.json --editor-version=6000.6 --testsuite=editor,playmode --artifacts-path=PreviewApvArtifacts~
@@ -803,7 +803,7 @@ preview_apv_-_6000_6_-_ubuntu2204:
   - command: npm install upm-ci-utils@stable -g --registry https://artifactory.prd.cds.internal.unity3d.com/artifactory/api/npm/upm-npm
     timeout: 20
     retries: 10
-  - command: unity-downloader-cli -u trunk -c editor --path .Editor --fast
+  - command: unity-downloader-cli -u 6000.6/staging -c editor --path .Editor --fast
     timeout: 10
     retries: 3
   - command: python PythonScripts/preview_apv.py --wrench-config=.yamato/wrench/wrench_config.json --editor-version=6000.6 --testsuite=editor,playmode --artifacts-path=PreviewApvArtifacts~
@@ -862,7 +862,7 @@ preview_apv_-_6000_6_-_win10:
   - command: npm install upm-ci-utils@stable -g --registry https://artifactory.prd.cds.internal.unity3d.com/artifactory/api/npm/upm-npm
     timeout: 20
     retries: 10
-  - command: unity-downloader-cli -u trunk -c editor --path .Editor --fast
+  - command: unity-downloader-cli -u 6000.6/staging -c editor --path .Editor --fast
     timeout: 10
     retries: 3
   - command: python PythonScripts/preview_apv.py --wrench-config=.yamato/wrench/wrench_config.json --editor-version=6000.6 --testsuite=editor,playmode --artifacts-path=PreviewApvArtifacts~

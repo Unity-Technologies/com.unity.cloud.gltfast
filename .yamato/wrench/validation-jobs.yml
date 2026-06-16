@@ -883,7 +883,7 @@ validate_-_cloud_gltfast_-_6000_6_-_macos13arm:
   - command: 7z x -aoa wrench-localapv.zip
   - command: pip install semver requests --index-url https://artifactory-slo.bf.unity3d.com/artifactory/api/pypi/pypi/simple
   - command: python PythonScripts/print_machine_info.py
-  - command: unity-downloader-cli -u trunk -c editor --path .Editor --fast --arch arm64
+  - command: unity-downloader-cli -u 6000.6/staging -c editor --path .Editor --fast --arch arm64
     timeout: 20
     retries: 3
   - command: upm-pvp create-test-project test-cloud.gltfast --packages "upm-ci~/packages/*.tgz" --filter "com.unity.cloud.gltfast com.unity.cloud.gltfast.tests" --unity .Editor
@@ -955,7 +955,7 @@ validate_-_cloud_gltfast_-_6000_6_-_ubuntu2204:
   - command: 7z x -aoa wrench-localapv.zip
   - command: pip install semver requests --index-url https://artifactory-slo.bf.unity3d.com/artifactory/api/pypi/pypi/simple
   - command: python PythonScripts/print_machine_info.py
-  - command: unity-downloader-cli -u trunk -c editor --path .Editor --fast
+  - command: unity-downloader-cli -u 6000.6/staging -c editor --path .Editor --fast
     timeout: 20
     retries: 3
   - command: upm-pvp create-test-project test-cloud.gltfast --packages "upm-ci~/packages/*.tgz" --filter "com.unity.cloud.gltfast com.unity.cloud.gltfast.tests" --unity .Editor
@@ -1027,7 +1027,7 @@ validate_-_cloud_gltfast_-_6000_6_-_win10:
   - command: 7z x -aoa wrench-localapv.zip
   - command: pip install semver requests --index-url https://artifactory-slo.bf.unity3d.com/artifactory/api/pypi/pypi/simple
   - command: python PythonScripts/print_machine_info.py
-  - command: unity-downloader-cli -u trunk -c editor --path .Editor --fast
+  - command: unity-downloader-cli -u 6000.6/staging -c editor --path .Editor --fast
     timeout: 20
     retries: 3
   - command: upm-pvp create-test-project test-cloud.gltfast --packages "upm-ci~/packages/*.tgz" --filter "com.unity.cloud.gltfast com.unity.cloud.gltfast.tests" --unity .Editor
