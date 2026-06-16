@@ -140,7 +140,7 @@ namespace GLTFast.Tests.Import
         }
 
 #if UNITY_ANDROID && !UNITY_EDITOR
-        static async Task<string> CopyToTempFile(string sourcePath)
+        internal static async Task<string> CopyToTempFile(string sourcePath)
         {
             var request = UnityWebRequest.Get(sourcePath);
             request.SendWebRequest();

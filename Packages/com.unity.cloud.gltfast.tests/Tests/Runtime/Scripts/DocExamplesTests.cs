@@ -3,7 +3,6 @@
 
 using System.Collections;
 using System.IO;
-using System.Threading.Tasks;
 using GLTFast.Documentation.Examples;
 using GLTFast.Export;
 using GLTFast.Tests;
@@ -18,6 +17,26 @@ namespace GLTFast.DocExamples.Tests
     [Category("DocExamples")]
     class DocExamplesTests : IPrebuildSetup, IPostBuildCleanup
     {
+        [UnityTest]
+        public IEnumerator LoadGltfFile()
+        {
+            var component = new GameObject()
+                .AddComponent<LoadGltfFromMemory>();
+            Assert.NotNull(component);
+
+            var path = TestGltfGenerator.GetAssetPath(TestGltfGenerator.Asset.CylinderWithMaterial, GltfFormat.Binary);
+#if UNITY_ANDROID && !UNITY_EDITOR
+            // On Android streaming assets are packed in a jar file and cannot be accessed via file stream directly.
+            // So we copy the file to a temporary location first.
+            var copyTask = GltfBinaryTests.CopyToTempFile(path);
+            yield return AsyncWrapper.WaitForTask(copyTask);
+            path = copyTask.Result;
+#endif
+            var task = component.LoadGltfFile(path);
+            yield return AsyncWrapper.WaitForTask(task);
+            Object.Destroy(component.gameObject);
+        }
+
         [UnityTest]
         public IEnumerator LoadViaComponent()
         {
@@ -51,9 +70,8 @@ namespace GLTFast.DocExamples.Tests
         {
             var component = new GameObject()
                 .AddComponent<LoadGltfFromMemory>();
-            component.filePath = TestGltfGenerator.GetAssetPath(TestGltfGenerator.Asset.CylinderWithMaterial);
             Assert.NotNull(component);
-            var task = component.Instantiation();
+            var task = component.Instantiation(TestGltfGenerator.GetAssetPath(TestGltfGenerator.Asset.CylinderWithMaterial));
             yield return AsyncWrapper.WaitForTask(task);
             Object.Destroy(component.gameObject);
         }
@@ -64,9 +82,8 @@ namespace GLTFast.DocExamples.Tests
             LogAssert.Expect(LogType.Error, "Loading glTF failed!");
             var component = new GameObject()
                 .AddComponent<LoadGltfFromMemory>();
-            component.filePath = Path.Combine(Application.temporaryCachePath, "NonExistingFile.gltf");
             Assert.NotNull(component);
-            var task = component.Instantiation();
+            var task = component.Instantiation(Path.Combine(Application.temporaryCachePath, "NonExistingFile.gltf"));
             yield return AsyncWrapper.WaitForTask(task);
             Object.Destroy(component.gameObject);
         }
@@ -77,9 +94,8 @@ namespace GLTFast.DocExamples.Tests
         {
             var component = new GameObject()
                 .AddComponent<LoadGltfFromMemory>();
-            component.filePath = Path.Combine(testCaseSet.RootPath, testCase.relativeUri);
             Assert.NotNull(component);
-            var task = component.SceneInstanceAccess();
+            var task = component.SceneInstanceAccess(Path.Combine(testCaseSet.RootPath, testCase.relativeUri));
             yield return AsyncWrapper.WaitForTask(task);
             Object.Destroy(component.gameObject);
         }
@@ -90,7 +106,6 @@ namespace GLTFast.DocExamples.Tests
         {
             var component = new GameObject()
                 .AddComponent<LoadGltfFromMemory>();
-            component.filePath = TestGltfGenerator.GetAssetPath(TestGltfGenerator.Asset.CylinderWithMaterial);
             Assert.NotNull(component);
             var task = component.CustomDeferAgent();
             yield return AsyncWrapper.WaitForTask(task);
@@ -235,6 +250,7 @@ namespace GLTFast.DocExamples.Tests
 #if UNITY_EDITOR
             AddTagAndLayer("MyCustomLayer", "ExportMe");
             await TestGltfGenerator.CreateTestAssetAsync(TestGltfGenerator.Asset.CylinderWithMaterial);
+            await TestGltfGenerator.CreateTestAssetAsync(TestGltfGenerator.Asset.CylinderWithMaterial, GltfFormat.Binary);
 #endif
         }
 

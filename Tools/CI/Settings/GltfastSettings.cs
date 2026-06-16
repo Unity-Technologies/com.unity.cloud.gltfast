@@ -27,6 +27,15 @@ public class GltfastSettings : AnnotatedSettingsBase
         }
     };
 
+    public readonly string[] ProjectPaths =
+    [
+        "glTFast-Test",
+        "glTFast-Test-BuiltIn",
+        "glTFast-Test-entities",
+        "glTFast-Test-HDRP",
+        "glTFast-Test-minimalistic"
+    ];
+
     public GltfastSettings()
     {
         Wrench = new WrenchSettings(
