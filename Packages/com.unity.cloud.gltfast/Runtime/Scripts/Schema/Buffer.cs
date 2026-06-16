@@ -23,7 +23,7 @@ namespace GLTFast.Schema
         /// The URI (or IRI) of the buffer.
         /// </summary>
         [JsonPropertyName("uri")]
-        public string Uri { get; set; }
+        public UriValue Uri { get; set; }
 
         /// <inheritdoc cref="Asset.Extensions"/>
         [JsonPropertyName("extensions")]
@@ -45,9 +45,9 @@ namespace GLTFast.Schema
         internal void GltfSerialize(JsonWriter writer)
         {
             writer.AddObject();
-            if (!string.IsNullOrEmpty(Uri))
+            if (Uri != null)
             {
-                writer.AddPropertySafe("uri", Uri);
+                writer.AddPropertySafe("uri", Uri.AsString());
             }
             writer.AddProperty("byteLength", ByteLength);
             writer.Close();

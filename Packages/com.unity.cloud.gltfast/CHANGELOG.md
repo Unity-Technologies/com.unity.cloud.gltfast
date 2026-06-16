@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Support for high precision node transforms.
 - `JsonWriter.AddProperty` overload that accepts `ReadOnlySpan<char>`.
 - [MeshoptFilter](xref:GLTFast.Schema.MeshoptFilter) and [MeshoptMode](xref:GLTFast.Schema.MeshoptMode) for custom JSON serialization of `Meshoptimizer.Filter` and `Meshoptimizer.Mode`.
+- `UriValue`, a wrapper for serialization of URIs.
 
 ### Changed
 - JSON de-serialization is performed by [System.Text.Json](https://www.nuget.org/packages/system.text.json/) (or `Unity.Gltfast.Text.Json`, a copy of it for Unity 6.4 and older to avoid conflicts).
@@ -33,6 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
       - `Mesh.Weights`
       - `Accessor.Max`
       - `Accessor.Min`
+  - (Performance) Data URIs are decoded directly to unmanaged buffers during JSON deserialization eliminating allocation of a UTF-16 string twice the size of the data URI.
 - Node transforms (translation, rotation, scale or matrix) are now in double precision throughout the API.
 - `IInstantiator.AddPrimitive` parameter `morphTargetWeights` is now of type `IReadOnlyList<float>` (was float[]).
 - `GameObjectInstantiator.MeshAddedDelegate` parameter `morphTargetWeights` is now of type `IReadOnlyList<float>` (was float[]).

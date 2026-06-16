@@ -775,7 +775,7 @@ namespace GLTFast.Export
             {
                 m_Gltf.Buffers = new[] {
                     new Buffer {
-                        Uri = bufferPath,
+                        Uri = string.IsNullOrEmpty(bufferPath) ? null : new UriValue(bufferPath),
                         ByteLength = (uint) m_BufferStream.Length
                     }
                 };
@@ -1861,7 +1861,7 @@ namespace GLTFast.Export
                         }
                         if (imageExport.Write(Path.Combine(directory, fileName), overwrite))
                         {
-                            m_Images[imageId].Uri = fileName;
+                            m_Images[imageId].Uri = new UriValue(fileName);
                         }
                         else
                         {

@@ -5,7 +5,6 @@ using System;
 using System.Collections;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using GLTFast.Logging;
 using NUnit.Framework;
@@ -139,13 +138,11 @@ namespace GLTFast.Tests.Import
         [UnityTest]
         public IEnumerator ImageContentBasedDetection()
         {
-            var dataTask = DataUri.DecodeDataUriAsync(k_Png1PxDataUri, new UninterruptedDeferAgent(), CancellationToken.None);
-            yield return AsyncWrapper.WaitForTask(dataTask);
-            Assert.IsTrue(dataTask.IsCompletedSuccessfully);
-            var data = dataTask.Result;
+            const string base64Prefix = "data:image/png;base64,";
+            var data = Convert.FromBase64String(k_Png1PxDataUri[base64Prefix.Length..]);
             const string imageFileName = "FileWithNoExtension";
             var imagePath = Path.Combine(Application.temporaryCachePath, imageFileName);
-            File.WriteAllBytes(imagePath, data.Data.ToArray());
+            File.WriteAllBytes(imagePath, data);
             var path = Path.Combine(Application.temporaryCachePath, "GltfImageContentBasedDetection.gltf");
             var gltfNoMimeType = $@"
 {{
@@ -192,6 +189,47 @@ namespace GLTFast.Tests.Import
             var import = new GltfImport(logger: logger);
             Assert.AreEqual(expectSuccess, await loadMethod(import));
             loggerAssertion(logger);
+        }
+
+        [UnityTest]
+        public IEnumerator DataUriImageSharedByMultipleTextures()
+        {
+            var path = Path.Combine(Application.temporaryCachePath, "GltfDataUriImageSharedByMultipleTextures.gltf");
+            // One image (base-64 PNG), two samplers (different magFilter), two textures sharing the image.
+            var gltf = $@"
+{{
+    ""images"":[{{""uri"":""{k_Png1PxDataUri}""}}],
+    ""samplers"":[
+        {{""magFilter"":9728}},
+        {{""magFilter"":9729}}
+    ],
+    ""textures"":[
+        {{""source"":0,""sampler"":0}},
+        {{""source"":0,""sampler"":1}}
+    ]
+}}";
+            File.WriteAllText(path, gltf);
+            var task = Test(
+                async import =>
+                {
+                    var success = await import.Load(path);
+                    Assert.AreEqual(2, import.TextureCount);
+                    Assert.NotNull(import.GetTexture(0), "Texture 0 must be loaded.");
+                    Assert.NotNull(import.GetTexture(1), "Texture 1 must be loaded (shares image with texture 0).");
+                    return success;
+                },
+                true,
+                logger =>
+                {
+                    // EmbedSlow (data URI) is always emitted. ImageMultipleSamplers is DEBUG-only.
+                    foreach (var item in logger.Items)
+                    {
+                        Assert.AreNotEqual(LogCode.EmbedImageLoadFailed, item.Code,
+                            "Image load must not fail when the same image is referenced by multiple textures.");
+                    }
+                });
+            yield return AsyncWrapper.WaitForTask(task);
+            File.Delete(path);
         }
 
         static byte[] CreateGltfBinaryFromJson(string json)

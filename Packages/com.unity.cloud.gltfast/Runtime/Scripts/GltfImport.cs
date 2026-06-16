@@ -1168,21 +1168,22 @@ namespace GLTFast
                     );
             }
 
-            if (!string.IsNullOrEmpty(image.Uri))
+            if (image.Uri != null)
             {
-                if (DataUri.IsDataUri(image.Uri))
+                if (image.Uri.IsData || image.Uri.IsFailed)
                 {
                     Logger?.Warning(LogCode.EmbedSlow);
-                    var data = await DataUri.DecodeDataUriAsync(image.Uri, DeferAgent, cancellationToken);
-                    if (data is null)
+                    if (image.Uri.IsFailed || !image.Uri.TryGetData(out var data))
                     {
                         Logger?.Error(LogCode.EmbedImageLoadFailed);
+                        return null;
                     }
-
-                    return data;
+                    // Non-owning view: the UriValue (tracked by m_VolatileDisposables) owns the
+                    // NativeArray. This makes the same image safely consumable by multiple readers.
+                    return new ReadOnlyData(data.AsReadOnly(), null);
                 }
 
-                var uri = UriHelper.GetUriString(image.Uri, BaseUri);
+                var uri = UriHelper.GetUriString(image.Uri.AsString(), BaseUri);
                 if (!uri.IsAbsoluteUri && BaseUri == null)
                 {
                     Logger?.Error(
@@ -1376,27 +1377,41 @@ namespace GLTFast
         }
 
         /// <summary>
-        /// De-serializes a UTF-8 encoded glTF JSON string and returns the glTF root object.
+        /// De-serializes a UTF-8 encoded glTF JSON string and returns the glTF root object along
+        /// with the list of decoded data URI <see cref="UriValue"/>s produced by the converter.
+        /// Ownership of those entries transfers to the caller, which must add them to a disposal
+        /// container (e.g. <c>m_VolatileDisposables</c>) or dispose them directly.
         /// </summary>
         /// <param name="json">glTF JSON (UTF-8 encoded)</param>
-        /// <returns>De-serialized glTF root object.</returns>
-        protected static Root ParseJson(ReadOnlySpan<byte> json)
+        /// <returns>De-serialized glTF root object paired with the converter's pending list.</returns>
+        protected static (Root root, List<UriValue> pending) ParseJson(ReadOnlySpan<byte> json)
         {
             Profiler.BeginSample("ParseJson");
-            var result = JsonSerializer.Deserialize(json, GltfRootSourceGenerator.Default.Root);
-            Profiler.EndSample();
-            return result;
-        }
-
-        /// <summary>
-        /// De-serializes a UTF-8 encoded glTF JSON string and returns the glTF root object.
-        /// </summary>
-        /// <param name="json">glTF JSON (UTF-8 encoded)</param>
-        /// <returns>De-serialized glTF root object.</returns>
-        [Obsolete("Use ParseJson that accepts ReadOnlySpan<byte> instead.")]
-        protected static Root ParseJson(NativeArray<byte>.ReadOnly json)
-        {
-            return ParseJson(json.AsReadOnlySpan());
+            UriValueConverter.BeginCollect();
+            try
+            {
+                var root = JsonSerializer.Deserialize(json, GltfRootSourceGenerator.Default.Root);
+                var pending = UriValueConverter.EndCollect();
+                return (root, pending);
+            }
+            catch
+            {
+                // Failure: dispose any decoded data URIs the converter produced before
+                // the deserializer threw, otherwise their NativeArrays leak.
+                var pending = UriValueConverter.EndCollect();
+                if (pending != null)
+                {
+                    foreach (var uri in pending)
+                    {
+                        uri.Dispose();
+                    }
+                }
+                throw;
+            }
+            finally
+            {
+                Profiler.EndSample();
+            }
         }
 
         async Task<bool> ParseJsonAndLoadBuffers(
@@ -1418,6 +1433,7 @@ namespace GLTFast
                 );
 
             var predictedTime = length / (float)k_JsonParseSpeed;
+            List<UriValue> pending = null;
 #if GLTFAST_THREADS && !MEASURE_TIMINGS
             if (DeferAgent.ShouldDefer(predictedTime))
             {
@@ -1425,7 +1441,7 @@ namespace GLTFast
                 // => parse in a thread
                 try
                 {
-                    Root = await Task.Run(
+                    (Root, pending) = await Task.Run(
                         () => ParseJson(json.AsReadOnlySpan().Slice(offset, length)),
                         cancellationToken
                         );
@@ -1439,10 +1455,19 @@ namespace GLTFast
 #endif
             {
                 // Parse immediately on main thread
-                Root = ParseJson(json.AsReadOnlySpan().Slice(offset, length));
+                (Root, pending) = ParseJson(json.AsReadOnlySpan().Slice(offset, length));
 
                 // Loading subsequent buffers and images has to start asap.
                 // That's why parsing JSON right away is *very* important.
+            }
+
+            if (pending != null && pending.Count > 0)
+            {
+                m_VolatileDisposables ??= new List<IDisposable>(pending.Count);
+                foreach (var uri in pending)
+                {
+                    m_VolatileDisposables.Add(uri);
+                }
             }
 
             if (Root == null)
@@ -1478,10 +1503,10 @@ namespace GLTFast
                     cancellationToken.ThrowIfCancellationRequestedWithTracking();
 
                     var buffer = Root.Buffers[i];
-                    if (!string.IsNullOrEmpty(buffer.Uri))
+                    if (buffer.Uri != null)
                     {
                         m_BufferLoadTasks ??= new Dictionary<int, Task<bool>>();
-                        if (DataUri.IsDataUri(buffer.Uri))
+                        if (buffer.Uri.IsData || buffer.Uri.IsFailed)
                         {
                             Logger?.Warning(LogCode.EmbedSlow);
                             m_BufferLoadTasks[i] = LoadBufferFromDataUri(i, buffer, cancellationToken);
@@ -1489,7 +1514,7 @@ namespace GLTFast
                         else
                         {
                             m_BufferLoadTasks[i] = LoadBufferFromUriAsync(
-                                i, UriHelper.GetUriString(buffer.Uri, BaseUri));
+                                i, UriHelper.GetUriString(buffer.Uri.AsString(), BaseUri));
                         }
                     }
                 }
@@ -1498,31 +1523,53 @@ namespace GLTFast
             return true;
         }
 
+#pragma warning disable CS1998 // async method lacking 'await' is intentional: this stays a Task to match LoadBufferFromUriAsync.
         async Task<bool> LoadBufferFromDataUri(int bufferIndex, Buffer buffer, CancellationToken cancellationToken)
+#pragma warning restore CS1998
         {
             cancellationToken.ThrowIfCancellationRequestedWithTracking();
 
-            if (!TryGetBufferDataUriDescriptor(
-                    bufferIndex, buffer.ByteLength, buffer.Uri, out var startIndex, out var byteLength))
-            {
-                return false;
-            }
-
-            var data = await DataUri.DecodeDataUriAsync(
-                buffer.Uri,
-                startIndex,
-                byteLength,
-                DeferAgent,
-                cancellationToken,
-                true // usually there's just one buffer and it's time-critical
-            );
-            if (!data.IsCreated)
+            if (buffer.Uri.IsFailed)
             {
                 Logger?.Error(LogCode.EmbedBufferLoadFailed);
                 return false;
             }
-            m_VolatileDisposables ??= new List<IDisposable>();
-            m_VolatileDisposables.Add(data);
+
+            var mimeType = buffer.Uri.MimeType;
+            if (!mimeType.StartsWith("application/", StringComparison.Ordinal)
+                || !(
+                    mimeType.AsSpan(12).SequenceEqual("octet-stream")
+                    || mimeType.AsSpan(12).SequenceEqual("gltf-buffer")
+                    )
+                )
+            {
+                Logger?.Error(
+                    LogCode.BufferDataUriUnexpectedMimeType,
+                    bufferIndex.ToString(),
+                    mimeType
+                    );
+                return false;
+            }
+
+            if (!buffer.Uri.TryGetData(out var data))
+            {
+                Logger?.Error(LogCode.EmbedBufferLoadFailed);
+                return false;
+            }
+
+            if (data.Length < buffer.ByteLength)
+            {
+                Logger?.Error(
+                    LogCode.BufferContentUndersized,
+                    bufferIndex.ToString(),
+                    buffer.ByteLength.ToString(),
+                    data.Length.ToString()
+                    );
+                return false;
+            }
+
+            // The UriValue (already tracked via m_VolatileDisposables from ParseJsonAndLoadBuffers
+            // draining the converter's pending list) retains ownership of the NativeArray.
             m_Buffers[bufferIndex] = new ReadOnlyNativeArray<byte>(data);
             if (bufferIndex != 0 || !m_GlbBinChunk.HasValue)
             {
@@ -1797,12 +1844,12 @@ namespace GLTFast
                         continue;
                     }
 
-                    if (!string.IsNullOrEmpty(img.Uri) && !DataUri.IsDataUri(img.Uri))
+                    if (img.Uri != null && img.Uri.IsString)
                     {
                         // Load from URI
                         // Detect format based on mimeType or URI file extension.
                         var imgFormat = string.IsNullOrEmpty(img.MimeType)
-                            ? UriHelper.GetImageFormatFromUri(img.Uri)
+                            ? UriHelper.GetImageFormatFromUri(img.Uri.AsString())
                             : ImageFormatExtensions.FromMimeType(img.MimeType);
 
                         if (imgFormat is ImageFormat.Jpeg or ImageFormat.Png)
@@ -1842,7 +1889,7 @@ namespace GLTFast
                                 );
                             if (!loadFromBytes)
                             {
-                                var uri = UriHelper.GetUriString(img.Uri, BaseUri);
+                                var uri = UriHelper.GetUriString(img.Uri.AsString(), BaseUri);
                                 m_TextureLoadTasks[textureIndex] = ImageConversionImageLoader.LoadAsync(
                                     m_Context, uri, readable, cancellationToken);
                                 continue;
@@ -1936,50 +1983,6 @@ namespace GLTFast
             }
 
             Logger?.Error(LogCode.BufferLoadFailed, download.Error, index.ToString());
-            return false;
-        }
-
-        bool TryGetBufferDataUriDescriptor(
-            int bufferIndex,
-            uint expectedLength,
-            string dataUri,
-            out int startIndex,
-            out int byteLength
-            )
-        {
-            if (DataUri.TryGetDataUriDescriptor(
-                    dataUri, out var mimeType, out startIndex, out byteLength))
-            {
-                if (!mimeType.StartsWith("application/")
-                    || !(
-                        mimeType[12..].SequenceEqual("octet-stream")
-                        || mimeType[12..].SequenceEqual("gltf-buffer")
-                        )
-                    )
-                {
-                    Logger?.Error(
-                        LogCode.BufferDataUriUnexpectedMimeType,
-                        bufferIndex.ToString(),
-                        mimeType.ToString()
-                        );
-                    return false;
-                }
-
-                if (byteLength < expectedLength)
-                {
-                    Logger?.Error(
-                        LogCode.BufferContentUndersized,
-                        bufferIndex.ToString(),
-                        expectedLength.ToString(),
-                        byteLength.ToString()
-                    );
-                    return false;
-                }
-
-                return true;
-            }
-
-            Logger?.Error(LogCode.EmbedBufferLoadFailed);
             return false;
         }
 

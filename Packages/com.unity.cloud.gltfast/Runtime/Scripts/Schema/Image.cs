@@ -19,7 +19,7 @@ namespace GLTFast.Schema
         /// The image format must be jpg, png, bmp, or gif.
         /// </summary>
         [JsonPropertyName("uri")]
-        public string Uri { get; set; }
+        public UriValue Uri { get; set; }
 
         /// <summary>
         /// The image's MIME type.
@@ -55,9 +55,9 @@ namespace GLTFast.Schema
         {
             writer.AddObject();
             GltfSerializeName(writer);
-            if (!string.IsNullOrEmpty(Uri))
+            if (Uri != null)
             {
-                writer.AddPropertySafe("uri", Uri);
+                writer.AddPropertySafe("uri", Uri.AsString());
             }
             if (!string.IsNullOrEmpty(MimeType))
             {
