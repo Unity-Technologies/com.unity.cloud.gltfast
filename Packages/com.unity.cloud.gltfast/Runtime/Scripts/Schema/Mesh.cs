@@ -47,7 +47,8 @@ namespace GLTFast.Schema
         /// Array of weights to be applied to the Morph Targets.
         /// </summary>
         [JsonPropertyName("weights")]
-        public float[] Weights { get; set; }
+        [JsonConverter(typeof(FloatListConverter))]
+        public List<float> Weights { get; set; }
 
         /// <inheritdoc cref="Asset.Extensions"/>
         [JsonPropertyName("extensions")]

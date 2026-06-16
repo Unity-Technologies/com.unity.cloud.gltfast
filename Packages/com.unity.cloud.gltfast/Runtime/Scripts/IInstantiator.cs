@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: 2023 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
+using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
@@ -82,7 +83,7 @@ namespace GLTFast
             MeshResult meshResult,
             uint[] joints = null,
             uint? rootJoint = null,
-            float[] morphTargetWeights = null,
+            IReadOnlyList<float> morphTargetWeights = null,
             int meshNumeration = 0
         );
 

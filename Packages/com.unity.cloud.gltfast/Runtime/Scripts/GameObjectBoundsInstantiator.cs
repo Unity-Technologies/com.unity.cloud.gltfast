@@ -45,7 +45,7 @@ namespace GLTFast
             MeshResult meshResult,
             uint[] joints = null,
             uint? rootJoint = null,
-            float[] morphTargetWeights = null,
+            IReadOnlyList<float> morphTargetWeights = null,
             int meshNumeration = 0
         )
         {

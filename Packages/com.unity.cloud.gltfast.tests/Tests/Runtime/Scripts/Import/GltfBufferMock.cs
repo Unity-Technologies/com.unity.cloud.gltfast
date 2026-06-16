@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
+using System.Collections.Generic;
 using GLTFast.Schema;
 using Unity.Collections;
 
@@ -20,8 +21,8 @@ namespace GLTFast.Tests
                 Sparse = index == sparseAccessorIndex
                     ? new AccessorSparse()
                     : null,
-                Min = new float[] { -1, -1, -1 },
-                Max = new float[] { 1, 1, 1 }
+                Min = new List<float> { -1, -1, -1 },
+                Max = new List<float> { 1, 1, 1 }
             };
         }
 

@@ -1132,8 +1132,8 @@ namespace GLTFast.Export
                         var bounds = uMesh.bounds;
                         var max = bounds.max;
                         var min = bounds.min;
-                        accessor.Min = new[] { -max.x, min.y, min.z };
-                        accessor.Max = new[] { -min.x, max.y, max.z };
+                        accessor.Min = new List<float> { -max.x, min.y, min.z };
+                        accessor.Max = new List<float> { -min.x, max.y, max.z };
                         attributes.Position = accessorId;
                         break;
                     case VertexAttribute.Normal:
@@ -1640,13 +1640,13 @@ namespace GLTFast.Export
                         var bounds = submeshDesc.bounds;
                         var center = bounds.center;
                         var extents = bounds.extents;
-                        accessor.Min = new[]
+                        accessor.Min = new List<float>
                         {
                             -center.x-extents.x,
                             center.y-extents.y,
                             center.z-extents.z
                         };
-                        accessor.Max = new[]
+                        accessor.Max = new List<float>
                         {
                             -center.x+extents.x,
                             center.y+extents.y,

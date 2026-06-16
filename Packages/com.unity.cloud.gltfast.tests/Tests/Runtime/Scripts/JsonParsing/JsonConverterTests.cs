@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: 2025 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using GLTFast.Schema;
@@ -311,6 +312,102 @@ namespace GLTFast.Tests.JsonParsing
         }
 
         static string WriteToConverter(JsonConverter<float[]> converter, float[] data)
+        {
+            var stream = new MemoryStream(1000);
+            var writer = new Utf8JsonWriter(stream);
+            converter.Write(writer, data, JsonSerializerOptions.Default);
+            writer.Flush();
+            stream.Seek(0, SeekOrigin.Begin);
+            var rdr = new StreamReader(stream, Encoding.UTF8);
+            return rdr.ReadToEnd();
+        }
+
+        [Test]
+        public static void FloatListConverterTest()
+        {
+            var data = new List<float> { 1.1f, 2.2f, 3.3f, 4.4f, 5.5f };
+            var converter = new FloatListConverter();
+            var json = WriteToConverter(converter, data);
+
+            var result = ReadFromConverter(json, converter);
+            Assert.NotNull(result);
+            Assert.AreEqual(5, result.Count);
+            Assert.AreEqual(1.1f, result[0]);
+            Assert.AreEqual(2.2f, result[1]);
+            Assert.AreEqual(3.3f, result[2]);
+            Assert.AreEqual(4.4f, result[3]);
+            Assert.AreEqual(5.5f, result[4]);
+        }
+
+        [Test]
+        public static void FloatListConverterEmptyTest()
+        {
+            var converter = new FloatListConverter();
+            var result = ReadFromConverter("[]", converter);
+            Assert.NotNull(result);
+            Assert.AreEqual(0, result.Count);
+        }
+
+        [Test]
+        public static void FloatListConverterLargeTest()
+        {
+            const int count = 1024;
+            var data = new List<float>(count);
+            for (var i = 0; i < count; i++)
+            {
+                data.Add(i * 0.5f);
+            }
+            var converter = new FloatListConverter();
+            var json = WriteToConverter(converter, data);
+
+            var result = ReadFromConverter(json, converter);
+            Assert.NotNull(result);
+            Assert.AreEqual(count, result.Count);
+            for (var i = 0; i < count; i++)
+            {
+                Assert.AreEqual(i * 0.5f, result[i]);
+            }
+        }
+
+        [Test]
+        public static void FloatListConverterInvalidStartTest()
+        {
+            var converter = new FloatListConverter();
+            Assert.Throws<JsonException>(() => ReadFromConverter("9", converter));
+        }
+
+        [Test]
+        public static void FloatListConverterInvalidTypeTest()
+        {
+            var converter = new FloatListConverter();
+            Assert.Throws<JsonException>(() => ReadFromConverter("[1.1,\"string\"]", converter));
+        }
+
+        [Test]
+        public static void FloatListConverterInvalidArrayTest()
+        {
+            var converter = new FloatListConverter();
+            Assert.Throws<JsonException>(() => ReadFromConverter(k_InvalidArrayJson, converter));
+        }
+
+        [Test]
+        public static void FloatListConverterInvalidObjectTest()
+        {
+            var converter = new FloatListConverter();
+            Assert.Throws<JsonException>(() => ReadFromConverter(k_InvalidObjectJson, converter));
+        }
+
+        static List<float> ReadFromConverter(string json, FloatListConverter converter)
+        {
+            var jsonUtf8 = Encoding.UTF8.GetBytes(json);
+            var reader = new Utf8JsonReader(jsonUtf8);
+            reader.Read();
+            var result = converter.Read(ref reader, typeof(List<float>), null!);
+            Assert.AreEqual(jsonUtf8.Length, reader.BytesConsumed);
+            return result;
+        }
+
+        static string WriteToConverter(FloatListConverter converter, List<float> data)
         {
             var stream = new MemoryStream(1000);
             var writer = new Utf8JsonWriter(stream);

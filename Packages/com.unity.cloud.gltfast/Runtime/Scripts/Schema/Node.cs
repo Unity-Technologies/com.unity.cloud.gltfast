@@ -63,7 +63,8 @@ namespace GLTFast.Schema
         /// Number of elements must match number of Morph Targets of used mesh.
         /// </summary>
         [JsonPropertyName("weights")]
-        public float[] Weights { get; set; }
+        [JsonConverter(typeof(FloatListConverter))]
+        public List<float> Weights { get; set; }
 
         /// <summary>
         /// The index of the skin (in <see cref="Root.Skins"/>) referenced by this node.

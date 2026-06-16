@@ -201,7 +201,7 @@ namespace GLTFast
             MeshResult meshResult,
             uint[] joints = null,
             uint? rootJoint = null,
-            float[] morphTargetWeights = null,
+            IReadOnlyList<float> morphTargetWeights = null,
             int meshNumeration = 0
         )
         {
@@ -254,7 +254,7 @@ namespace GLTFast
                 smr.sharedMesh = meshResult.mesh;
                 if (morphTargetWeights != null)
                 {
-                    for (var i = 0; i < morphTargetWeights.Length; i++)
+                    for (var i = 0; i < morphTargetWeights.Count; i++)
                     {
                         var weight = morphTargetWeights[i];
                         smr.SetBlendShapeWeight(i, weight);
@@ -581,7 +581,7 @@ namespace GLTFast
             MeshResult meshResult,
             uint[] joints = null,
             uint? rootJoint = null,
-            float[] morphTargetWeights = null,
+            IReadOnlyList<float> morphTargetWeights = null,
             int meshNumeration = 0
         );
 

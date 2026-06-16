@@ -27,7 +27,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - `Camera.Type` ⇒ `CameraType`
     - `Material.AlphaMode` ⇒ `AlphaMode`
     - `MeshGpuInstancing.Attributes` ⇒ `InstancesAttributes`
+  - Type changes
+    - `float[]` ⇒ `List<float>`
+      - `Node.Weights`
+      - `Mesh.Weights`
+      - `Accessor.Max`
+      - `Accessor.Min`
 - Node transforms (translation, rotation, scale or matrix) are now in double precision throughout the API.
+- `IInstantiator.AddPrimitive` parameter `morphTargetWeights` is now of type `IReadOnlyList<float>` (was float[]).
+- `GameObjectInstantiator.MeshAddedDelegate` parameter `morphTargetWeights` is now of type `IReadOnlyList<float>` (was float[]).
 
 ### Removed
 - JsonUtility dependency and related code.

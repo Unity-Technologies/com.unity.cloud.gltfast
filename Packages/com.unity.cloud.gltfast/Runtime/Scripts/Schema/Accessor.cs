@@ -106,7 +106,8 @@ namespace GLTFast.Schema
         /// applied.
         /// </summary>
         [JsonPropertyName("max")]
-        public float[] Max { get; set; }
+        [JsonConverter(typeof(FloatListConverter))]
+        public List<float> Max { get; set; }
 
         /// <summary>
         /// Minimum value of each component in this attribute.
@@ -123,7 +124,8 @@ namespace GLTFast.Schema
         /// applied.
         /// </summary>
         [JsonPropertyName("min")]
-        public float[] Min { get; set; }
+        [JsonConverter(typeof(FloatListConverter))]
+        public List<float> Min { get; set; }
 
         /// <summary>
         /// Provides size of components by type
@@ -233,7 +235,7 @@ namespace GLTFast.Schema
         public Bounds? TryGetBounds()
         {
             Assert.AreEqual(AccessorType.Vector3, Type);
-            if (Min != null && Min.Length > 2 && Max != null && Max.Length > 2)
+            if (Min != null && Min.Count > 2 && Max != null && Max.Count > 2)
             {
                 var maxBounds = new float3(-Min[0], Max[1], Max[2]);
                 var minBounds = new float3(-Max[0], Min[1], Min[2]);
