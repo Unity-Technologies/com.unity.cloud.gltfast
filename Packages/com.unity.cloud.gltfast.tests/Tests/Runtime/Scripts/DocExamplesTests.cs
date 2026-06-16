@@ -23,8 +23,16 @@ namespace GLTFast.DocExamples.Tests
             var component = new GameObject()
                 .AddComponent<LoadGltfFromMemory>();
             Assert.NotNull(component);
-            var task = component.LoadGltfFile(
-                TestGltfGenerator.GetAssetPath(TestGltfGenerator.Asset.CylinderWithMaterial));
+
+            var path = TestGltfGenerator.GetAssetPath(TestGltfGenerator.Asset.CylinderWithMaterial, GltfFormat.Binary);
+#if UNITY_ANDROID && !UNITY_EDITOR
+            // On Android streaming assets are packed in a jar file and cannot be accessed via file stream directly.
+            // So we copy the file to a temporary location first.
+            var copyTask = GltfBinaryTests.CopyToTempFile(path);
+            yield return AsyncWrapper.WaitForTask(copyTask);
+            path = copyTask.Result;
+#endif
+            var task = component.LoadGltfFile(path);
             yield return AsyncWrapper.WaitForTask(task);
             Object.Destroy(component.gameObject);
         }
@@ -242,6 +250,7 @@ namespace GLTFast.DocExamples.Tests
 #if UNITY_EDITOR
             AddTagAndLayer("MyCustomLayer", "ExportMe");
             await TestGltfGenerator.CreateTestAssetAsync(TestGltfGenerator.Asset.CylinderWithMaterial);
+            await TestGltfGenerator.CreateTestAssetAsync(TestGltfGenerator.Asset.CylinderWithMaterial, GltfFormat.Binary);
 #endif
         }
 
