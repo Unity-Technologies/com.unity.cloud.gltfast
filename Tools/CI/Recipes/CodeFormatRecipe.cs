@@ -32,6 +32,8 @@ public class CodeFormatRecipe : RecipeBase
             jobs.Add(CreateJob(projectPath));
         }
 
+        jobs.Add(CreateRecipeJob());
+
         jobs.Add(CreateAllJob(jobs));
 
         return jobs.SelectJobs();
@@ -80,24 +82,34 @@ public class CodeFormatRecipe : RecipeBase
                 "fi"
             ]),
             new(".NET Format", $"dotnet format Projects/{projectPath}/{projectPath}.sln"),
-            new BlockCommand("Detect formatting changes", [
-                "if git diff --quiet; then",
-                "  echo \"No formatting changes detected required.\"",
-                "  curl -X POST -d \"{\\\"title\\\": \\\"Code Format Valid\\\",\\\"conclusion\\\": \\\"success\\\"}\" -H 'Content-Type: application/json' $YAMATO_REPORTING_SERVER/result",
-                "else",
-                "  git diff > format.patch",
-                "  echo '{\"title\":\"Code Format Invalid\",\"conclusion\":\"failure\",\"tags\":[\"code-format\",\"slack\"],\"resultType\":\"userFriendly\",\"summary\":\"Some files have incorrect formatting! The `code_format_patch` artifact contains a patch that fixes it.\",\"data\":' > result.json",
-                "  cat format.patch | jq -Rs . >> result.json",
-                "  echo '}' >> result.json",
-                "  curl -X POST -d @result.json -H 'Content-Type: application/json' $YAMATO_REPORTING_SERVER/result",
-                "  exit 1",
-                "fi",
-            ])
+            ReportFormattingChanges
         };
 
         return FluentJob
             .Create($"Code Format {projectPath}")
             .WithAgent("package-ci/ubuntu-22.04:v4", FlavorType.BuildLarge, ResourceType.Vm)
+            .WithCommands(commands)
+            .WithArtifact("code_format_patch", "format.patch");
+    }
+
+    static IJobBuilder CreateRecipeJob()
+    {
+        var commands = new List<Command>
+        {
+            new BlockCommand(".NET Format", [
+                "curl -sSL https://dot.net/v1/dotnet-install.sh -o dotnet-install.sh",
+                "chmod +x dotnet-install.sh",
+                "./dotnet-install.sh --jsonfile Tools/CI/global.json --install-dir $HOME/.dotnet",
+                "export DOTNET_ROOT=$HOME/.dotnet",
+                "export PATH=$DOTNET_ROOT:$PATH",
+                "dotnet format Tools/CI/Gltfast-recipes.sln",
+            ]),
+            ReportFormattingChanges
+        };
+
+        return FluentJob
+            .Create($"Code Format Recipes")
+            .WithAgent("package-ci/ubuntu-22.04:v4", FlavorType.BuildDefault, ResourceType.Vm)
             .WithCommands(commands)
             .WithArtifact("code_format_patch", "format.patch");
     }
@@ -111,6 +123,20 @@ public class CodeFormatRecipe : RecipeBase
             .WithNoGraphics()
             .WithQuit()
             .WithLogs(k_SetupLogFile);
+
+    static BlockCommand ReportFormattingChanges => new("Detect formatting changes", [
+        "if git diff --quiet; then",
+        "  echo \"No formatting changes detected required.\"",
+        "  curl -X POST -d \"{\\\"title\\\": \\\"Code Format Valid\\\",\\\"conclusion\\\": \\\"success\\\"}\" -H 'Content-Type: application/json' $YAMATO_REPORTING_SERVER/result",
+        "else",
+        "  git diff > format.patch",
+        "  echo '{\"title\":\"Code Format Invalid\",\"conclusion\":\"failure\",\"tags\":[\"code-format\",\"slack\"],\"resultType\":\"userFriendly\",\"summary\":\"Some files have incorrect formatting! The `code_format_patch` artifact contains a patch that fixes it.\",\"data\":' > result.json",
+        "  cat format.patch | jq -Rs . >> result.json",
+        "  echo '}' >> result.json",
+        "  curl -X POST -d @result.json -H 'Content-Type: application/json' $YAMATO_REPORTING_SERVER/result",
+        "  exit 1",
+        "fi",
+    ]);
 
     static string GetExecutablePath(HostPlatform hostPlatform)
     {

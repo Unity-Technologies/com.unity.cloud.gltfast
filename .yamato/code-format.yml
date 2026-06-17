@@ -13,6 +13,7 @@ code_format:
   - path: .yamato/code-format.yml#code_format_gltfast-test-entities
   - path: .yamato/code-format.yml#code_format_gltfast-test-hdrp
   - path: .yamato/code-format.yml#code_format_gltfast-test-minimalistic
+  - path: .yamato/code-format.yml#code_format_recipes
 code_format_gltfast-test:
   name: Code Format glTFast-Test
   agent:
@@ -201,6 +202,38 @@ code_format_gltfast-test-minimalistic:
       fi
   - name: .NET Format
     command: dotnet format Projects/glTFast-Test-minimalistic/glTFast-Test-minimalistic.sln
+  - name: Detect formatting changes
+    command: |-
+      if git diff --quiet; then
+        echo "No formatting changes detected required."
+        curl -X POST -d "{\"title\": \"Code Format Valid\",\"conclusion\": \"success\"}" -H 'Content-Type: application/json' $YAMATO_REPORTING_SERVER/result
+      else
+        git diff > format.patch
+        echo '{"title":"Code Format Invalid","conclusion":"failure","tags":["code-format","slack"],"resultType":"userFriendly","summary":"Some files have incorrect formatting! The `code_format_patch` artifact contains a patch that fixes it.","data":' > result.json
+        cat format.patch | jq -Rs . >> result.json
+        echo '}' >> result.json
+        curl -X POST -d @result.json -H 'Content-Type: application/json' $YAMATO_REPORTING_SERVER/result
+        exit 1
+      fi
+  artifacts:
+    code_format_patch:
+      paths:
+      - format.patch
+code_format_recipes:
+  name: Code Format Recipes
+  agent:
+    image: package-ci/ubuntu-22.04:v4
+    type: Unity::VM
+    flavor: b1.small
+  commands:
+  - name: .NET Format
+    command: |-
+      curl -sSL https://dot.net/v1/dotnet-install.sh -o dotnet-install.sh
+      chmod +x dotnet-install.sh
+      ./dotnet-install.sh --jsonfile Tools/CI/global.json --install-dir $HOME/.dotnet
+      export DOTNET_ROOT=$HOME/.dotnet
+      export PATH=$DOTNET_ROOT:$PATH
+      dotnet format Tools/CI/Gltfast-recipes.sln
   - name: Detect formatting changes
     command: |-
       if git diff --quiet; then
