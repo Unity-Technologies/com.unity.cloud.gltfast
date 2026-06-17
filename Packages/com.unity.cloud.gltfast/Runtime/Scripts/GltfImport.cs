@@ -2488,9 +2488,9 @@ namespace GLTFast
                         Logger?.Error(LogCode.AccessorAccessFailed, sampler.Input.ToString());
                         continue;
                     }
-                    var interpolation = sampler.Interpolation;
+                    var interpolation = sampler.Interpolation.Value;
 
-                    switch (channel.Target.Path)
+                    switch (channel.Target.Path.Value)
                     {
                         case AnimationPath.Translation:
                         {
@@ -3481,7 +3481,7 @@ namespace GLTFast
                     foreach (var channel in animation.Channels)
                     {
                         var accessorIndex = animation.Samplers[channel.Sampler].Output;
-                        switch (channel.Target.Path)
+                        switch (channel.Target.Path.Value)
                         {
                             case AnimationPath.Translation:
                                 SetAccessorUsage(accessorIndex, AccessorUsage.Translation);

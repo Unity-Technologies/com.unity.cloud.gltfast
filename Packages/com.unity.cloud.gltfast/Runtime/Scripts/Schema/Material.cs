@@ -87,7 +87,8 @@ namespace GLTFast.Schema
         /// using the normal painting operation (i.e. the Porter and Duff over operator).
         /// </summary>
         [JsonPropertyName("alphaMode")]
-        public AlphaMode AlphaMode { get; set; }
+        [JsonConverter(typeof(AlphaModeValueConverter))]
+        public EnumOrRawValue<AlphaMode> AlphaMode { get; set; }
 
         /// <summary>
         /// Specifies the cutoff threshold when in `MASK` mode. If the alpha value is greater than
@@ -164,9 +165,17 @@ namespace GLTFast.Schema
                 writer.AddArrayProperty("emissiveFactor", EmissiveFactor);
             }
 #pragma warning restore CS0618 // Type or member is obsolete
-            if (AlphaMode != AlphaMode.Opaque)
+            if (AlphaMode.Value != Schema.AlphaMode.Opaque || AlphaMode.RawValue != null)
             {
-                writer.AddProperty("alphaMode", AlphaMode.ToString().ToUpperInvariant());
+                var alphaMode = AlphaMode.RawValue != null
+                    ? System.Text.Encoding.UTF8.GetString(AlphaMode.RawValue)
+                    : AlphaMode.Value switch
+                    {
+                        Schema.AlphaMode.Mask => "MASK",
+                        Schema.AlphaMode.Blend => "BLEND",
+                        _ => "OPAQUE"
+                    };
+                writer.AddProperty("alphaMode", alphaMode);
             }
             if (math.abs(AlphaCutoff - .5f) > Constants.epsilon)
             {

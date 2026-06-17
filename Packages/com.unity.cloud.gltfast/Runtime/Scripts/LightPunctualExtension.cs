@@ -28,7 +28,7 @@ namespace GLTFast
         /// <param name="lightIntensityFactor">light intensity conversion factor</param>
         public static void ToUnityLight(this LightPunctual lightSource, Light lightDestination, float lightIntensityFactor)
         {
-            switch (lightSource.Type)
+            switch (lightSource.Type.Value)
             {
                 case LightType.Undefined:
                     break;

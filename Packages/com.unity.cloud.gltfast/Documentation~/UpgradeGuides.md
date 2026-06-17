@@ -32,6 +32,23 @@ The `glTFast.Newtonsoft` assembly will be removed when 7.0 leaves the experiment
 
 If your assembly definition referenced `glTFast.Newtonsoft`, replace the reference with `glTFast`.
 
+### Schema enum properties wrapped in `EnumOrRawValue<TEnum>`
+
+Several `GLTFast.Schema` properties that used to be plain enums are now wrapped in [EnumOrRawValue&lt;TEnum&gt;](xref:GLTFast.Schema.EnumOrRawValue`1) so that values introduced by glTF extensions (and therefore unknown at build time) are preserved through deserialization and serialization.
+
+| Property | Before | After |
+| -------- | ------ | ----- |
+| `Accessor.Type` | `GltfAccessorAttributeType` | `EnumOrRawValue<AccessorType>` |
+| `AnimationChannelTarget.Path` | `AnimationPath` | `EnumOrRawValue<AnimationPath>` |
+| `AnimationSampler.Interpolation` | `Interpolation` | `EnumOrRawValue<Interpolation>` |
+| `Material.AlphaMode` | `AlphaMode` | `EnumOrRawValue<AlphaMode>` |
+| `LightPunctual.Type` | `LightType` | `EnumOrRawValue<LightType>` |
+
+Reading: access the known enum via `.Value`; an unknown string is exposed as a UTF-8 byte sequence in `.RawValue`.
+
+> [!TIP]
+> Writing: an implicit conversion from the enum exists, so existing assignments such as `material.AlphaMode = AlphaMode.Blend;` continue to compile unchanged.
+
 ## Upgrade to 6.0
 
 Use Unity 2021.3.46f1 or newer only.

@@ -29,7 +29,8 @@ namespace GLTFast.Schema
         /// of the first point of the timeframe, until the next timeframe.
         /// </summary>
         [JsonPropertyName("interpolation")]
-        public Interpolation Interpolation { get; set; }
+        [JsonConverter(typeof(InterpolationValueConverter))]
+        public EnumOrRawValue<Interpolation> Interpolation { get; set; }
 
         /// <summary>
         /// The index of an accessor, containing keyframe output values. Output and input

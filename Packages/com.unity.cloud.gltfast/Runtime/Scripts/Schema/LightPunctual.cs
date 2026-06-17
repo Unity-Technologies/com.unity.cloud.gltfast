@@ -67,13 +67,22 @@ namespace GLTFast.Schema
 
         /// <inheritdoc cref="LightType"/>
         [JsonPropertyName("type")]
-        public LightType Type { get; set; }
+        [JsonConverter(typeof(LightTypeValueConverter))]
+        public EnumOrRawValue<LightType> Type { get; set; }
 
         internal void GltfSerialize(JsonWriter writer)
         {
             writer.AddObject();
-            Assert.AreNotEqual(LightType.Undefined, Type);
-            writer.AddProperty("type", Type.ToString().ToLowerInvariant());
+            var type = Type.RawValue != null
+                ? System.Text.Encoding.UTF8.GetString(Type.RawValue)
+                : Type.Value switch
+                {
+                    LightType.Spot => "spot",
+                    LightType.Directional => "directional",
+                    LightType.Point => "point",
+                    _ => throw new ArgumentOutOfRangeException(nameof(Type), Type.Value, $"Unsupported light type: {Type.Value}")
+                };
+            writer.AddProperty("type", type);
             GltfSerializeName(writer);
             if (LightColor != UnityEngine.Color.white)
             {

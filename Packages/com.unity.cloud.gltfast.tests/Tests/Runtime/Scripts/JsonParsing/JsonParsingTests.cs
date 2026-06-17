@@ -274,25 +274,20 @@ namespace GLTFast.Tests.JsonParsing
 ";
 
         [Test]
-        public void MaterialAlphaMode()
+        [TestCase(AlphaMode.Opaque, "{}", null)]
+        [TestCase(AlphaMode.Blend, @"{""alphaMode"":""BLEND""}", null)]
+        [TestCase(AlphaMode.Mask, @"{""alphaMode"":""MASK""}", null)]
+        [TestCase(AlphaMode.Opaque, @"{""alphaMode"":""OPAQUE""}", null)]
+        [TestCase(AlphaMode.Opaque, @"{""alphaMode"":""Invalid""}", "Invalid")]
+
+        public void MaterialAlphaMode(AlphaMode expected, string value, string expectedValue)
         {
-            var material = JsonSerializer.Deserialize("{}", GltfRootSourceGenerator.Default.Material);
-            Assert.AreEqual(AlphaMode.Opaque, material.AlphaMode);
-
-            material = JsonSerializer.Deserialize(@"{""alphaMode"":""BLEND""}", GltfRootSourceGenerator.Default.Material);
-            Assert.AreEqual(AlphaMode.Blend, material.AlphaMode);
-
-            material = JsonSerializer.Deserialize(@"{""alphaMode"":""MASK""}", GltfRootSourceGenerator.Default.Material);
-            Assert.AreEqual(AlphaMode.Mask, material.AlphaMode);
-
-            material = JsonSerializer.Deserialize(@"{""alphaMode"":""OPAQUE""}", GltfRootSourceGenerator.Default.Material);
-            Assert.AreEqual(AlphaMode.Opaque, material.AlphaMode);
-
-            Assert.Throws<JsonException>(() =>
+            var material = JsonSerializer.Deserialize(value, GltfRootSourceGenerator.Default.Material);
+            Assert.AreEqual(expected, material.AlphaMode.Value);
+            if (expectedValue != null)
             {
-                material = JsonSerializer.Deserialize(@"{""alphaMode"":""Invalid""}",
-                    GltfRootSourceGenerator.Default.Material);
-            });
+                Assert.AreEqual(System.Text.Encoding.UTF8.GetBytes(expectedValue), material.AlphaMode.RawValue);
+            }
         }
 
         [Test]

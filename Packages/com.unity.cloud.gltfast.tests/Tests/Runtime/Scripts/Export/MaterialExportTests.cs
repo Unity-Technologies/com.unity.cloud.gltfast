@@ -90,7 +90,7 @@ namespace GLTFast.Tests.Export
                 out _,
                 renderPipeline,
                 out var material);
-            Assert.AreEqual(AlphaMode.Mask, material.AlphaMode);
+            Assert.AreEqual(AlphaMode.Mask, material.AlphaMode.Value);
             Assert.AreEqual(.6f, material.AlphaCutoff);
 #else
             Assert.Ignore("Texture export is disabled! " + LogMessages.GetFullMessage(LogCode.ImageConversionNotEnabled));
@@ -105,7 +105,7 @@ namespace GLTFast.Tests.Export
                 out _,
                 renderPipeline,
                 out var material);
-            Assert.AreEqual(AlphaMode.Blend, material.AlphaMode);
+            Assert.AreEqual(AlphaMode.Blend, material.AlphaMode.Value);
 #else
             Assert.Ignore("Texture export is disabled! " + LogMessages.GetFullMessage(LogCode.ImageConversionNotEnabled));
 #endif

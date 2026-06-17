@@ -60,4 +60,26 @@ namespace GLTFast.Schema
     {
         protected override JsonTypeInfo<AccessorType> TypeInfo => GltfRootSourceGenerator.Default.AccessorType;
     }
+
+    class AlphaModeValueConverter : EnumOrRawValueConverter<AlphaMode>
+    {
+        protected override JsonTypeInfo<AlphaMode> TypeInfo => GltfRootSourceGenerator.Default.AlphaMode;
+    }
+
+    class LightTypeValueConverter : EnumOrRawValueConverter<LightType>
+    {
+        protected override JsonTypeInfo<LightType> TypeInfo => GltfRootSourceGenerator.Default.LightType;
+    }
+
+#if UNITY_ANIMATION || GLTFAST_ANIMATION
+    class AnimationPathValueConverter : EnumOrRawValueConverter<AnimationPath>
+    {
+        protected override JsonTypeInfo<AnimationPath> TypeInfo => GltfRootSourceGenerator.Default.AnimationPath;
+    }
+
+    class InterpolationValueConverter : EnumOrRawValueConverter<Interpolation>
+    {
+        protected override JsonTypeInfo<Interpolation> TypeInfo => GltfRootSourceGenerator.Default.Interpolation;
+    }
+#endif
 }

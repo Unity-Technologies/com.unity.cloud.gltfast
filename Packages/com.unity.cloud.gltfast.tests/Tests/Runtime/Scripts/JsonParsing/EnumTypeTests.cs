@@ -132,32 +132,30 @@ namespace GLTFast.Tests.JsonParsing
             Assert.AreEqual($@"{{""bufferView"":-1,""type"":""UnknownType""}}", json);
         }
 
+#if UNITY_ANIMATION
         [Test]
-        public void AnimationPathDeserialization()
+        [TestCase(AnimationPath.Pointer, "pointer")]
+        [TestCase(AnimationPath.Translation, "translation")]
+        [TestCase(AnimationPath.Rotation, "rotation")]
+        [TestCase(AnimationPath.Scale, "scale")]
+        [TestCase(AnimationPath.Weights, "weights")]
+        public void AnimationPathDeserialization(AnimationPath expected, string value)
+        {
+            var target = JsonSerializer.Deserialize(
+                $"{{\"path\":\"{value}\"}}", GltfRootSourceGenerator.Default.AnimationChannelTarget);
+            Assert.AreEqual(expected, target.Path.Value);
+            Assert.IsNull(target.Path.RawValue);
+        }
+#endif
+
+        [Test]
+        public void AnimationPathUnknownDeserialization()
         {
 #if UNITY_ANIMATION
             var target = JsonSerializer.Deserialize(
-                "{\"path\":\"pointer\"}", GltfRootSourceGenerator.Default.AnimationChannelTarget);
-            Assert.AreEqual(AnimationPath.Pointer, target.Path);
-
-            target = JsonSerializer.Deserialize(
-                "{\"path\":\"translation\"}", GltfRootSourceGenerator.Default.AnimationChannelTarget);
-            Assert.AreEqual(AnimationPath.Translation, target.Path);
-
-            target = JsonSerializer.Deserialize(
-                "{\"path\":\"rotation\"}", GltfRootSourceGenerator.Default.AnimationChannelTarget);
-            Assert.AreEqual(AnimationPath.Rotation, target.Path);
-
-            target = JsonSerializer.Deserialize(
-                "{\"path\":\"scale\"}", GltfRootSourceGenerator.Default.AnimationChannelTarget);
-            Assert.AreEqual(AnimationPath.Scale, target.Path);
-
-            target = JsonSerializer.Deserialize(
-                "{\"path\":\"weights\"}", GltfRootSourceGenerator.Default.AnimationChannelTarget);
-            Assert.AreEqual(AnimationPath.Weights, target.Path);
-
-            Assert.Throws<JsonException>(() =>
-                JsonSerializer.Deserialize("{\"path\":\"foo\"}", GltfRootSourceGenerator.Default.AnimationChannelTarget));
+                "{\"path\":\"Unknown\\u00B9Path\"}", GltfRootSourceGenerator.Default.AnimationChannelTarget);
+            Assert.AreEqual(AnimationPath.Undefined, target.Path.Value);
+            Assert.AreEqual(System.Text.Encoding.UTF8.GetBytes("Unknown¹Path"), target.Path.RawValue);
 #else
             Assert.Ignore("Requires Animation module to be enabled.");
 #endif
@@ -173,18 +171,21 @@ namespace GLTFast.Tests.JsonParsing
 #if UNITY_ANIMATION
             var json = value == null ? "{}" : $@"{{""interpolation"":""{value}""}}";
             Assert.AreEqual(expected,
-                JsonSerializer.Deserialize(json, GltfRootSourceGenerator.Default.AnimationSampler).Interpolation);
+                JsonSerializer.Deserialize(json, GltfRootSourceGenerator.Default.AnimationSampler).Interpolation.Value);
 #else
             Assert.Ignore("Requires Animation module to be enabled.");
 #endif
         }
 
         [Test]
-        public void InterpolationDeserializationException()
+        public void InterpolationUnknownDeserialization()
         {
 #if UNITY_ANIMATION
-            Assert.Throws<JsonException>(() =>
-                JsonSerializer.Deserialize(@"""foo""", GltfRootSourceGenerator.Default.AnimationSampler));
+            var sampler = JsonSerializer.Deserialize(
+                @"{""interpolation"":""Unknown¹Interpolation""}",
+                GltfRootSourceGenerator.Default.AnimationSampler);
+            Assert.AreEqual(Interpolation.Linear, sampler.Interpolation.Value);
+            Assert.AreEqual(System.Text.Encoding.UTF8.GetBytes("Unknown¹Interpolation"), sampler.Interpolation.RawValue);
 #else
             Assert.Ignore("Requires Animation module to be enabled.");
 #endif
@@ -293,22 +294,24 @@ namespace GLTFast.Tests.JsonParsing
         }
 
         [Test]
-        public void LightTypeDeserialization()
+        [TestCase(LightType.Spot, "spot")]
+        [TestCase(LightType.Directional, "directional")]
+        [TestCase(LightType.Point, "point")]
+        public void LightTypeDeserialization(LightType expected, string value)
         {
             var light = JsonSerializer.Deserialize(
-                "{\"type\":\"spot\"}", GltfRootSourceGenerator.Default.LightPunctual);
-            Assert.AreEqual(LightType.Spot, light.Type);
+                $"{{\"type\":\"{value}\"}}", GltfRootSourceGenerator.Default.LightPunctual);
+            Assert.AreEqual(expected, light.Type.Value);
+            Assert.IsNull(light.Type.RawValue);
+        }
 
-            light = JsonSerializer.Deserialize(
-                "{\"type\":\"directional\"}", GltfRootSourceGenerator.Default.LightPunctual);
-            Assert.AreEqual(LightType.Directional, light.Type);
-
-            light = JsonSerializer.Deserialize(
-                "{\"type\":\"point\"}", GltfRootSourceGenerator.Default.LightPunctual);
-            Assert.AreEqual(LightType.Point, light.Type);
-
-            Assert.Throws<JsonException>(() =>
-                JsonSerializer.Deserialize("{\"type\":\"foo\"}", GltfRootSourceGenerator.Default.LightPunctual));
+        [Test]
+        public void LightTypeUnknownDeserialization()
+        {
+            var light = JsonSerializer.Deserialize(
+                "{\"type\":\"Unknown\\u00B9Light\"}", GltfRootSourceGenerator.Default.LightPunctual);
+            Assert.AreEqual(LightType.Undefined, light.Type.Value);
+            Assert.AreEqual(System.Text.Encoding.UTF8.GetBytes("Unknown¹Light"), light.Type.RawValue);
         }
 
         [Test]
@@ -349,10 +352,10 @@ namespace GLTFast.Tests.JsonParsing
             Assert.NotNull(gltf.Animations[0].Channels);
             Assert.AreEqual(1, gltf.Animations[0].Channels.Count);
             Assert.NotNull(gltf.Animations[0].Channels[0].Target);
-            Assert.AreEqual(AnimationPath.Weights, gltf.Animations[0].Channels[0].Target.Path);
+            Assert.AreEqual(AnimationPath.Weights, gltf.Animations[0].Channels[0].Target.Path.Value);
             Assert.NotNull(gltf.Animations[0].Samplers);
             Assert.AreEqual(1, gltf.Animations[0].Samplers.Count);
-            Assert.AreEqual(Interpolation.CubicSpline, gltf.Animations[0].Samplers[0].Interpolation);
+            Assert.AreEqual(Interpolation.CubicSpline, gltf.Animations[0].Samplers[0].Interpolation.Value);
         }
 #endif
 
@@ -382,7 +385,7 @@ namespace GLTFast.Tests.JsonParsing
             Assert.NotNull(gltf.Extensions.LightsPunctual);
             Assert.NotNull(gltf.Extensions.LightsPunctual.Lights);
             Assert.AreEqual(1, gltf.Extensions.LightsPunctual.Lights.Length);
-            Assert.AreEqual(LightType.Directional, gltf.Extensions.LightsPunctual.Lights[0].Type);
+            Assert.AreEqual(LightType.Directional, gltf.Extensions.LightsPunctual.Lights[0].Type.Value);
         }
 
         static void CheckResultMaterials(Root gltf)
@@ -390,7 +393,7 @@ namespace GLTFast.Tests.JsonParsing
             Assert.NotNull(gltf);
             Assert.NotNull(gltf.Materials);
             Assert.AreEqual(1, gltf.Materials.Count);
-            Assert.AreEqual(AlphaMode.Mask, gltf.Materials[0].AlphaMode);
+            Assert.AreEqual(AlphaMode.Mask, gltf.Materials[0].AlphaMode.Value);
             Assert.NotNull(gltf.Meshes);
             Assert.AreEqual(1, gltf.Meshes.Count);
             Assert.NotNull(gltf.Meshes[0].Primitives);

@@ -20,7 +20,8 @@ namespace GLTFast.Schema
 
         /// <inheritdoc cref="AnimationPath"/>
         [JsonPropertyName("path")]
-        public AnimationPath Path { get; set; }
+        [JsonConverter(typeof(AnimationPathValueConverter))]
+        public EnumOrRawValue<AnimationPath> Path { get; set; }
 
         /// <inheritdoc cref="Asset.Extensions"/>
         [JsonPropertyName("extensions")]

@@ -35,6 +35,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
       - `Mesh.Weights`
       - `Accessor.Max`
       - `Accessor.Min`
+    - `TEnum` ⇒ `EnumOrRawValue<TEnum>` (to preserve unknown values introduced by glTF extensions)
+      - `Accessor.Type`
+      - `AnimationChannelTarget.Path`
+      - `AnimationSampler.Interpolation`
+      - `Material.AlphaMode`
+      - `LightPunctual.Type`
   - (Performance) Data URIs are decoded directly to unmanaged buffers during JSON deserialization eliminating allocation of a UTF-16 string twice the size of the data URI.
   - JSON string to enum deserialization via `EnumOrRawValue<TEnum>` preserves access to unknown values (not in the glTF specification but potentially introduced by a glTF extension).
 - Node transforms (translation, rotation, scale or matrix) are now in double precision throughout the API.
