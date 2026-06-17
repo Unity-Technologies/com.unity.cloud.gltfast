@@ -8,6 +8,7 @@ using Unity.Gltfast.Text.Json.Serialization.Metadata;
 
 namespace GLTFast.Schema
 {
+
     abstract class EnumOrRawValueConverter<TEnum> : JsonConverter<EnumOrRawValue<TEnum>> where TEnum : struct, Enum
     {
         protected abstract JsonTypeInfo<TEnum> TypeInfo { get; }
@@ -69,6 +70,11 @@ namespace GLTFast.Schema
     class ImageMimeTypeValueConverter : EnumOrRawValueConverter<ImageMimeType>
     {
         protected override JsonTypeInfo<ImageMimeType> TypeInfo => GltfRootSourceGenerator.Default.ImageMimeType;
+    }
+
+    class ExtensionValueConverter : EnumOrRawValueConverter<Extension>
+    {
+        protected override JsonTypeInfo<Extension> TypeInfo => GltfRootSourceGenerator.Default.Extension;
     }
 
     class LightTypeValueConverter : EnumOrRawValueConverter<LightType>

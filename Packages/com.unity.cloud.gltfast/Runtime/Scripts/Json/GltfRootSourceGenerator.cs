@@ -13,5 +13,6 @@ namespace GLTFast.Schema
         // , GenerationMode = JsonSourceGenerationMode.Serialization
         )]
     [JsonSerializable(typeof(Root))]
+    [JsonSerializable(typeof(Extension))]
     partial class GltfRootSourceGenerator : JsonSerializerContext { }
 }

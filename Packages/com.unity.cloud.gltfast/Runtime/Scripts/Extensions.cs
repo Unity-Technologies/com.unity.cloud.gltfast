@@ -1,77 +1,96 @@
 // SPDX-FileCopyrightText: 2023 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
+using Unity.Gltfast.Text.Json.Serialization;
+
 namespace GLTFast
 {
 
     /// <summary>
     /// <a href="https://www.khronos.org/registry/glTF/specs/2.0/glTF-2.0.html#specifying-extensions">glTF Extensions</a>
     /// </summary>
+    [JsonConverter(typeof(JsonStringEnumConverter<Extension>))]
     public enum Extension
     {
         /// <summary>
         /// <a href="https://github.com/KhronosGroup/glTF/blob/main/extensions/2.0/Khronos/KHR_draco_mesh_compression/README.md">KHR_draco_mesh_compression</a> glTF extension
         /// </summary>
+        [JsonStringEnumMemberName(ExtensionName.DracoMeshCompression)]
         DracoMeshCompression,
         /// <summary>
         /// <a href="https://github.com/KhronosGroup/glTF/blob/main/extensions/2.0/Khronos/KHR_lights_punctual/README.md">KHR_lights_punctual</a> glTF extension
         /// </summary>
+        [JsonStringEnumMemberName(ExtensionName.LightsPunctual)]
         LightsPunctual,
         /// <summary>
         /// <a href="https://github.com/KhronosGroup/glTF/tree/main/extensions/2.0/Archived/KHR_materials_pbrSpecularGlossiness">KHR_materials_pbrSpecularGlossiness</a> glTF extension
         /// </summary>
+        [JsonStringEnumMemberName(ExtensionName.MaterialsPbrSpecularGlossiness)]
         MaterialsPbrSpecularGlossiness,
         /// <summary>
         /// <a href="https://github.com/KhronosGroup/glTF/blob/main/extensions/2.0/Khronos/KHR_materials_transmission/README.md">KHR_materials_transmission</a> glTF extension
         /// </summary>
+        [JsonStringEnumMemberName(ExtensionName.MaterialsTransmission)]
         MaterialsTransmission,
         /// <summary>
         /// <a href="https://github.com/KhronosGroup/glTF/blob/main/extensions/2.0/Khronos/KHR_materials_unlit/README.md">KHR_materials_unlit</a> glTF extension
         /// </summary>
+        [JsonStringEnumMemberName(ExtensionName.MaterialsUnlit)]
         MaterialsUnlit,
         /// <summary>
         /// <a href="https://github.com/KhronosGroup/glTF/blob/main/extensions/2.0/Vendor/EXT_mesh_gpu_instancing/README.md">EXT_mesh_gpu_instancing</a> glTF extension
         /// </summary>
+        [JsonStringEnumMemberName(ExtensionName.MeshGPUInstancing)]
         MeshGPUInstancing,
         /// <summary>
         /// <a href="https://github.com/KhronosGroup/glTF/blob/main/extensions/2.0/Khronos/KHR_mesh_quantization/README.md">KHR_mesh_quantization</a> glTF extension
         /// </summary>
+        [JsonStringEnumMemberName(ExtensionName.MeshQuantization)]
         MeshQuantization,
         /// <summary>
         /// <a href="https://github.com/KhronosGroup/glTF/blob/main/extensions/2.0/Khronos/KHR_texture_basisu/README.md">KHR_texture_basisu</a> glTF extension
         /// </summary>
+        [JsonStringEnumMemberName(ExtensionName.TextureBasisUniversal)]
         TextureBasisUniversal,
         /// <summary>
         /// <a href="https://github.com/KhronosGroup/glTF/blob/main/extensions/2.0/Khronos/KHR_texture_transform/README.md">KHR_texture_transform</a> glTF extension
         /// </summary>
+        [JsonStringEnumMemberName(ExtensionName.TextureTransform)]
         TextureTransform,
         /// <summary>
         /// <a href="https://github.com/KhronosGroup/glTF/tree/main/extensions/2.0/Khronos/KHR_materials_clearcoat">KHR_materials_clearcoat</a> glTF extension
         /// </summary>
+        [JsonStringEnumMemberName(ExtensionName.MaterialsClearcoat)]
         MaterialsClearcoat,
         /// <summary>
         /// <a href="https://github.com/KhronosGroup/glTF/tree/main/extensions/2.0/Khronos/KHR_materials_variants">KHR_materials_variants</a> glTF extension
         /// </summary>
+        [JsonStringEnumMemberName(ExtensionName.MaterialsVariants)]
         MaterialsVariants,
         /// <summary>
         /// <a href="https://github.com/KhronosGroup/glTF/tree/main/extensions/2.0/Vendor/EXT_meshopt_compression">EXT_meshopt_compression</a> glTF extension
         /// </summary>
+        [JsonStringEnumMemberName(ExtensionName.MeshoptCompression)]
         MeshoptCompression,
         /// <summary>
         /// <a href="https://github.com/KhronosGroup/glTF/tree/main/extensions/2.0/Khronos/KHR_materials_ior">KHR_materials_ior</a> glTF extension
         /// </summary>
+        [JsonStringEnumMemberName(ExtensionName.MaterialsIor)]
         MaterialsIor,
         /// <summary>
         /// <a href="https://github.com/KhronosGroup/glTF/tree/main/extensions/2.0/Khronos/KHR_materials_sheen">KHR_materials_sheen</a> glTF extension
         /// </summary>
+        [JsonStringEnumMemberName(ExtensionName.MaterialsSheen)]
         MaterialsSheen,
         /// <summary>
         /// <a href="https://github.com/KhronosGroup/glTF/tree/main/extensions/2.0/Khronos/KHR_materials_specular">KHR_materials_specular</a> glTF extension
         /// </summary>
+        [JsonStringEnumMemberName(ExtensionName.MaterialsSpecular)]
         MaterialsSpecular,
         /// <summary>
         /// <a href="https://github.com/KhronosGroup/glTF/blob/main/extensions/2.0/Vendor/EXT_texture_webp/README.md">EXT_texture_webp</a> glTF extension
         /// </summary>
+        [JsonStringEnumMemberName(ExtensionName.TextureWebP)]
         TextureWebP,
     }
 

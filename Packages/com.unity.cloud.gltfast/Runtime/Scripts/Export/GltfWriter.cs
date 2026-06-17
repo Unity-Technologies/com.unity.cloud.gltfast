@@ -814,34 +814,22 @@ namespace GLTFast.Export
             if (m_ExtensionsRequired != null)
             {
                 var usedOnlyCount = m_ExtensionsUsedOnly?.Count ?? 0;
-                m_Gltf.ExtensionsRequired = new string[m_ExtensionsRequired.Count];
-                m_Gltf.ExtensionsUsed = new string[m_ExtensionsRequired.Count + usedOnlyCount];
-                var i = 0;
+                m_Gltf.ExtensionsRequired = new List<EnumOrRawValue<Extension>>(m_ExtensionsRequired.Count);
+                m_Gltf.ExtensionsUsed = new List<EnumOrRawValue<Extension>>(m_ExtensionsRequired.Count + usedOnlyCount);
                 foreach (var extension in m_ExtensionsRequired)
                 {
-                    var name = extension.GetName();
-                    Assert.IsFalse(string.IsNullOrEmpty(name));
-                    m_Gltf.ExtensionsRequired[i] = name;
-                    m_Gltf.ExtensionsUsed[i] = name;
-                    i++;
+                    Assert.IsFalse(string.IsNullOrEmpty(extension.GetName()));
+                    m_Gltf.ExtensionsRequired.Add(extension);
+                    m_Gltf.ExtensionsUsed.Add(extension);
                 }
             }
 
             if (m_ExtensionsUsedOnly != null)
             {
-                var i = 0;
-                if (m_Gltf.ExtensionsUsed == null)
-                {
-                    m_Gltf.ExtensionsUsed = new string[m_ExtensionsUsedOnly.Count];
-                }
-                else
-                {
-                    i = m_Gltf.ExtensionsUsed.Length - m_ExtensionsUsedOnly.Count;
-                }
-
+                m_Gltf.ExtensionsUsed ??= new List<EnumOrRawValue<Extension>>(m_ExtensionsUsedOnly.Count);
                 foreach (var extension in m_ExtensionsUsedOnly)
                 {
-                    m_Gltf.ExtensionsUsed[i++] = extension.GetName();
+                    m_Gltf.ExtensionsUsed.Add(extension);
                 }
             }
         }

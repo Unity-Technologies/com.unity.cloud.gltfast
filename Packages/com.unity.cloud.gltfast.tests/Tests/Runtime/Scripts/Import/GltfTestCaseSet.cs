@@ -269,12 +269,11 @@ namespace GLTFast.Tests.Import
             if (gltf.ExtensionsRequired != null)
             {
                 var extensionsRequired = new List<Extension>();
-                foreach (var extensionName in gltf.ExtensionsRequired)
+                foreach (var extension in gltf.ExtensionsRequired)
                 {
-                    var ext = ExtensionExtensions.FromName(extensionName);
-                    if (ext.HasValue)
+                    if (extension.RawValue == null)
                     {
-                        extensionsRequired.Add(ext.Value);
+                        extensionsRequired.Add(extension.Value);
                     }
                 }
                 return extensionsRequired.ToArray();

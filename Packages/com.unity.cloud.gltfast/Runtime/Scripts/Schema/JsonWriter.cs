@@ -92,13 +92,18 @@ namespace GLTFast.Schema
             AddArray(name);
             foreach (var value in values)
             {
-                CertifyValidJsonString(value);
-                Separate();
-                m_Stream.Write('"');
-                m_Stream.Write(value);
-                m_Stream.Write('"');
+                AddElement(value);
             }
             CloseArray();
+        }
+
+        public void AddElement(string value)
+        {
+            CertifyValidJsonString(value);
+            Separate();
+            m_Stream.Write('"');
+            m_Stream.Write(value);
+            m_Stream.Write('"');
         }
 
         public void AddArrayPropertySafe(string name, IEnumerable<string> values)

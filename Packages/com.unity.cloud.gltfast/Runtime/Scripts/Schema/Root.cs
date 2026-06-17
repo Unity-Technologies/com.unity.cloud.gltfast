@@ -17,14 +17,26 @@ namespace GLTFast.Schema
         /// <summary>
         /// Names of glTF extensions used somewhere in this asset.
         /// </summary>
+        /// <remarks>
+        /// Recognized extensions deserialize into <see cref="EnumOrRawValue{TEnum}.Value"/>.
+        /// Unknown extensions are kept as UTF-8 bytes in <see cref="EnumOrRawValue{TEnum}.RawValue"/>;
+        /// in that case <see cref="EnumOrRawValue{TEnum}.Value"/> is not authoritative.
+        /// </remarks>
         [JsonPropertyName("extensionsUsed")]
-        public string[] ExtensionsUsed { get; set; }
+        [JsonConverter(typeof(ExtensionListConverter))]
+        public List<EnumOrRawValue<Extension>> ExtensionsUsed { get; set; }
 
         /// <summary>
         /// Names of glTF extensions required to properly load this asset.
         /// </summary>
+        /// <remarks>
+        /// Recognized extensions deserialize into <see cref="EnumOrRawValue{TEnum}.Value"/>.
+        /// Unknown extensions are kept as UTF-8 bytes in <see cref="EnumOrRawValue{TEnum}.RawValue"/>;
+        /// in that case <see cref="EnumOrRawValue{TEnum}.Value"/> is not authoritative.
+        /// </remarks>
         [JsonPropertyName("extensionsRequired")]
-        public string[] ExtensionsRequired { get; set; }
+        [JsonConverter(typeof(ExtensionListConverter))]
+        public List<EnumOrRawValue<Extension>> ExtensionsRequired { get; set; }
 
         /// <summary>
         /// An array of accessors. An accessor is a typed view into a bufferView.
@@ -155,6 +167,23 @@ namespace GLTFast.Schema
             return bufferView.ByteStride > accessor.ElementByteSize;
         }
 
+        static void WriteExtensionList(JsonWriter writer, string propertyName, List<EnumOrRawValue<Extension>> extensions)
+        {
+            writer.AddArray(propertyName);
+            foreach (var ext in extensions)
+            {
+                if (ext.RawValue != null)
+                {
+                    writer.AddElement(System.Text.Encoding.UTF8.GetString(ext.RawValue));
+                }
+                else
+                {
+                    writer.AddElement(ext.Value.GetName());
+                }
+            }
+            writer.CloseArray();
+        }
+
         /// <summary>
         /// Serialization to JSON
         /// </summary>
@@ -180,12 +209,12 @@ namespace GLTFast.Schema
 
             if (ExtensionsRequired != null)
             {
-                writer.AddArrayProperty("extensionsRequired", ExtensionsRequired);
+                WriteExtensionList(writer, "extensionsRequired", ExtensionsRequired);
             }
 
             if (ExtensionsUsed != null)
             {
-                writer.AddArrayProperty("extensionsUsed", ExtensionsUsed);
+                WriteExtensionList(writer, "extensionsUsed", ExtensionsUsed);
             }
 
 #if UNITY_ANIMATION || GLTFAST_ANIMATION

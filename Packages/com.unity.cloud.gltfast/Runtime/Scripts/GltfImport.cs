@@ -101,25 +101,25 @@ namespace GLTFast
 
         const string k_PrimitiveName = "Primitive";
 
-        static readonly HashSet<string> k_SupportedExtensions = new HashSet<string> {
+        static readonly HashSet<Extension> k_SupportedExtensions = new HashSet<Extension> {
 #if DRACO_IS_ENABLED
-            ExtensionName.DracoMeshCompression,
+            Extension.DracoMeshCompression,
 #endif
 #if KTX_IS_ENABLED
-            ExtensionName.TextureBasisUniversal,
+            Extension.TextureBasisUniversal,
 #endif // KTX_IS_ENABLED
 #if MESHOPT_IS_ENABLED
-            ExtensionName.MeshoptCompression,
+            Extension.MeshoptCompression,
 #endif
-            ExtensionName.MaterialsPbrSpecularGlossiness,
-            ExtensionName.MaterialsUnlit,
-            ExtensionName.MaterialsVariants,
-            ExtensionName.TextureTransform,
-            ExtensionName.MeshQuantization,
-            ExtensionName.MaterialsTransmission,
-            ExtensionName.MeshGPUInstancing,
-            ExtensionName.LightsPunctual,
-            ExtensionName.MaterialsClearcoat,
+            Extension.MaterialsPbrSpecularGlossiness,
+            Extension.MaterialsUnlit,
+            Extension.MaterialsVariants,
+            Extension.TextureTransform,
+            Extension.MeshQuantization,
+            Extension.MaterialsTransmission,
+            Extension.MeshGPUInstancing,
+            Extension.LightsPunctual,
+            Extension.MaterialsClearcoat,
         };
 
         static IDeferAgent s_DefaultDeferAgent;
@@ -1592,59 +1592,75 @@ namespace GLTFast
             return true;
         }
 
-        bool CheckExtensionSupport(IEnumerable<string> extensions, bool required = true)
+        bool CheckExtensionSupport(List<EnumOrRawValue<Extension>> extensions, bool required = true)
         {
             if (extensions == null)
                 return true;
             var allExtensionsSupported = true;
             foreach (var ext in extensions)
             {
-                var supported = k_SupportedExtensions.Contains(ext)
-                    || (m_Addons != null && m_Addons.AnySupportsGltfExtension(ext));
-
-                if (!supported)
+                if (ext.RawValue != null)
                 {
-                    ReportUnsupportedExtension(ext, required);
-                    allExtensionsSupported = false;
+                    var name = System.Text.Encoding.UTF8.GetString(ext.RawValue);
+                    var supported = m_Addons != null && m_Addons.AnySupportsGltfExtension(name);
+                    if (!supported)
+                    {
+                        Logger?.Log(
+                            required ? LogType.Error : LogType.Warning,
+                            LogCode.ExtensionUnsupported,
+                            name
+                            );
+                        allExtensionsSupported = false;
+                    }
+                }
+                else
+                {
+                    var supported = k_SupportedExtensions.Contains(ext.Value)
+                        || (m_Addons != null && m_Addons.AnySupportsGltfExtension(ext.Value.GetName()));
+                    if (!supported)
+                    {
+                        ReportUnsupportedExtension(ext.Value, required);
+                        allExtensionsSupported = false;
+                    }
                 }
             }
             return allExtensionsSupported;
         }
 
-        void ReportUnsupportedExtension(string ext, bool required)
+        void ReportUnsupportedExtension(Extension ext, bool required)
         {
 #if !DRACO_IS_ENABLED
-            if (ext == ExtensionName.DracoMeshCompression)
+            if (ext == Extension.DracoMeshCompression)
             {
                 Logger?.Log(
                     required ? LogType.Error : LogType.Warning,
                     LogCode.PackageMissing,
                     "Draco for Unity",
-                    ext
+                    ExtensionName.DracoMeshCompression
                     );
                 return;
             }
 #endif
 #if !MESHOPT
-            if (ext == ExtensionName.MeshoptCompression)
+            if (ext == Extension.MeshoptCompression)
             {
                 Logger?.Log(
                     required ? LogType.Error : LogType.Warning,
                     LogCode.PackageMissing,
                     "meshoptimizer decompression for Unity",
-                    ext
+                    ExtensionName.MeshoptCompression
                 );
                 return;
             }
 #endif
 #if !KTX_IS_ENABLED
-            if (ext == ExtensionName.TextureBasisUniversal)
+            if (ext == Extension.TextureBasisUniversal)
             {
                 Logger?.Log(
                     required ? LogType.Error : LogType.Warning,
                     LogCode.PackageMissing,
                     "KTX for Unity",
-                    ext
+                    ExtensionName.TextureBasisUniversal
                     );
                 return;
             }
@@ -1652,7 +1668,7 @@ namespace GLTFast
             Logger?.Log(
                 required ? LogType.Error : LogType.Warning,
                 LogCode.ExtensionUnsupported,
-                ext
+                ext.GetName()
                 );
         }
 
