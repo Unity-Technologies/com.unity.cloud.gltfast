@@ -1,7 +1,9 @@
 // SPDX-FileCopyrightText: 2023 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
+using System;
 using System.Collections.Generic;
+using System.Text;
 using Unity.Gltfast.Text.Json;
 using Unity.Gltfast.Text.Json.Serialization;
 
@@ -25,7 +27,8 @@ namespace GLTFast.Schema
         /// The image's MIME type.
         /// </summary>
         [JsonPropertyName("mimeType")]
-        public string MimeType { get; set; }
+        [JsonConverter(typeof(ImageMimeTypeValueConverter))]
+        public EnumOrRawValue<ImageMimeType> MimeType { get; set; }
 
         /// <summary>
         /// The index of the bufferView that contains the image.
@@ -59,9 +62,21 @@ namespace GLTFast.Schema
             {
                 writer.AddPropertySafe("uri", Uri.AsString());
             }
-            if (!string.IsNullOrEmpty(MimeType))
+            if (MimeType.RawValue != null)
             {
-                writer.AddProperty("mimeType", MimeType);
+                writer.AddProperty("mimeType", Encoding.UTF8.GetString(MimeType.RawValue));
+            }
+            else if (MimeType.Value != ImageMimeType.Undefined)
+            {
+                var mimeType = MimeType.Value switch
+                {
+                    ImageMimeType.Jpeg => "image/jpeg",
+                    ImageMimeType.Png => "image/png",
+                    ImageMimeType.Ktx2 => "image/ktx2",
+                    ImageMimeType.WebP => "image/webp",
+                    _ => throw new ArgumentOutOfRangeException(nameof(MimeType), MimeType, null)
+                };
+                writer.AddProperty("mimeType", mimeType);
             }
             if (BufferView >= 0)
             {

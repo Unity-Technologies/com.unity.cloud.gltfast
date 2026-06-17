@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading.Tasks;
 
 #if DRACO_IS_INSTALLED
@@ -30,9 +31,6 @@ using Mesh = GLTFast.Schema.Mesh;
 using Sampler = GLTFast.Schema.Sampler;
 using Texture = GLTFast.Schema.Texture;
 
-#if DEBUG
-using System.Text;
-#endif
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -415,7 +413,7 @@ namespace GLTFast.Export
             var image = new Image
             {
                 Name = imageExport.FileName,
-                MimeType = imageExport.MimeType
+                MimeType = imageExport.MimeType,
             };
 
             imageExport.JpgQuality = m_Settings.JpgQuality;

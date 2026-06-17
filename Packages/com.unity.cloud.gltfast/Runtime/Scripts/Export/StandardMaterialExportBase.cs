@@ -335,7 +335,7 @@ namespace GLTFast.Export
                             // Force RGB for the baseColor, so that the alpha (which is smoothness)
                             // is not used for alpha-opacity
                             hasAlphaSmoothness
-                                ? ImageFormat.Jpg
+                                ? ImageFormat.Jpeg
                                 : ImageFormat.Unknown
                         );
                         if (pbr.BaseColorTexture != null)

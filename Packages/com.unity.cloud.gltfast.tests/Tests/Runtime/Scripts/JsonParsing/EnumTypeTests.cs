@@ -315,6 +315,89 @@ namespace GLTFast.Tests.JsonParsing
         }
 
         [Test]
+        [TestCase(ImageMimeType.Jpeg, "image/jpeg")]
+        [TestCase(ImageMimeType.Png, "image/png")]
+        [TestCase(ImageMimeType.Ktx2, "image/ktx2")]
+        [TestCase(ImageMimeType.WebP, "image/webp")]
+        public void ImageMimeTypeDeserialization(ImageMimeType expected, string value)
+        {
+            var image = JsonSerializer.Deserialize(
+                $@"{{""mimeType"":""{value}""}}", GltfRootSourceGenerator.Default.Image);
+            Assert.AreEqual(expected, image.MimeType.Value);
+            Assert.IsNull(image.MimeType.RawValue);
+        }
+
+        [Test]
+        public void ImageMimeTypeUnknownDeserialization()
+        {
+            var image = JsonSerializer.Deserialize(
+                @"{""mimeType"":""image/avif""}", GltfRootSourceGenerator.Default.Image);
+            Assert.AreEqual(ImageMimeType.Undefined, image.MimeType.Value);
+            Assert.AreEqual(System.Text.Encoding.UTF8.GetBytes("image/avif"), image.MimeType.RawValue);
+        }
+
+        [Test]
+        public void ImageMimeTypeLegacyKtxDeserialization()
+        {
+            var image = JsonSerializer.Deserialize(
+                @"{""mimeType"":""image/ktx""}", GltfRootSourceGenerator.Default.Image);
+            Assert.AreEqual(ImageMimeType.Undefined, image.MimeType.Value);
+            Assert.AreEqual(System.Text.Encoding.UTF8.GetBytes("image/ktx"), image.MimeType.RawValue);
+            Assert.AreEqual(ImageFormat.Unknown, ImageFormatExtensions.FromMimeType(image.MimeType));
+        }
+
+        [Test]
+        public void ImageMimeTypeAbsentDeserialization()
+        {
+            var image = JsonSerializer.Deserialize("{}", GltfRootSourceGenerator.Default.Image);
+            Assert.AreEqual(default(EnumOrRawValue<ImageMimeType>), image.MimeType);
+            Assert.AreEqual(ImageMimeType.Undefined, image.MimeType.Value);
+            Assert.IsNull(image.MimeType.RawValue);
+
+            var json = JsonSerializer.Serialize(image, GltfRootSourceGenerator.Default.Image);
+            Assert.AreEqual("{\"bufferView\":-1}", json);
+        }
+
+        [Test]
+        [TestCase(ImageMimeType.Jpeg, "image/jpeg")]
+        [TestCase(ImageMimeType.Png, "image/png")]
+        [TestCase(ImageMimeType.Ktx2, "image/ktx2")]
+        [TestCase(ImageMimeType.WebP, "image/webp")]
+        public void ImageMimeTypeSerialization(ImageMimeType value, string expected)
+        {
+            var image = new Image { MimeType = value };
+            var json = JsonSerializer.Serialize(image, GltfRootSourceGenerator.Default.Image);
+            Assert.AreEqual($@"{{""mimeType"":""{expected}"",""bufferView"":-1}}", json);
+        }
+
+        [Test]
+        public void ImageMimeTypeUnknownSerialization()
+        {
+            const string mime = "image/avif";
+            var image = new Image
+            {
+                MimeType = new EnumOrRawValue<ImageMimeType>(System.Text.Encoding.UTF8.GetBytes(mime))
+            };
+            var json = JsonSerializer.Serialize(image, GltfRootSourceGenerator.Default.Image);
+            Assert.AreEqual($@"{{""mimeType"":""{mime}"",""bufferView"":-1}}", json);
+        }
+
+        [Test]
+        [TestCase("image/jpeg")]
+        [TestCase("image/png")]
+        [TestCase("image/ktx2")]
+        [TestCase("image/webp")]
+        [TestCase("image/avif")]
+        [TestCase("image/ktx")]
+        public void ImageMimeTypeRoundtrip(string mime)
+        {
+            var image = JsonSerializer.Deserialize(
+                $@"{{""mimeType"":""{mime}""}}", GltfRootSourceGenerator.Default.Image);
+            var json = JsonSerializer.Serialize(image, GltfRootSourceGenerator.Default.Image);
+            Assert.AreEqual($@"{{""mimeType"":""{mime}"",""bufferView"":-1}}", json);
+        }
+
+        [Test]
         public void AccessorDataTypeDeserialization()
         {
             // Known Value

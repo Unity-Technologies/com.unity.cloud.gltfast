@@ -1848,7 +1848,7 @@ namespace GLTFast
                     {
                         // Load from URI
                         // Detect format based on mimeType or URI file extension.
-                        var imgFormat = string.IsNullOrEmpty(img.MimeType)
+                        var imgFormat = img.MimeType.Value == ImageMimeType.Undefined && img.MimeType.RawValue == null
                             ? UriHelper.GetImageFormatFromUri(img.Uri.AsString())
                             : ImageFormatExtensions.FromMimeType(img.MimeType);
 

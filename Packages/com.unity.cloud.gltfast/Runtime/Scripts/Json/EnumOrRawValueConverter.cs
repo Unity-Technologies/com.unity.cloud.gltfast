@@ -66,6 +66,11 @@ namespace GLTFast.Schema
         protected override JsonTypeInfo<AlphaMode> TypeInfo => GltfRootSourceGenerator.Default.AlphaMode;
     }
 
+    class ImageMimeTypeValueConverter : EnumOrRawValueConverter<ImageMimeType>
+    {
+        protected override JsonTypeInfo<ImageMimeType> TypeInfo => GltfRootSourceGenerator.Default.ImageMimeType;
+    }
+
     class LightTypeValueConverter : EnumOrRawValueConverter<LightType>
     {
         protected override JsonTypeInfo<LightType> TypeInfo => GltfRootSourceGenerator.Default.LightType;

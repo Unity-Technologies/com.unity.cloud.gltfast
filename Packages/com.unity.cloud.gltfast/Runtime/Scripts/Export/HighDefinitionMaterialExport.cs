@@ -201,7 +201,7 @@ namespace GLTFast.Export
                     {
                         pbr.BaseColorTexture = ExportTextureInfo(mainTex, gltf,
                             material.AlphaMode == AlphaMode.Opaque
-                                ? ImageFormat.Jpg
+                                ? ImageFormat.Jpeg
                                 : ImageFormat.Unknown
                             );
                         ExportTextureTransform(pbr.BaseColorTexture, uMaterial, k_BaseColorMap, gltf);

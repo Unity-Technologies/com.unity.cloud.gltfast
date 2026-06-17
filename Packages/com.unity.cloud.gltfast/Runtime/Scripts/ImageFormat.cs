@@ -20,6 +20,10 @@ namespace GLTFast
         Ktx,
         /// <summary>WebP</summary>
         /// <seealso href="https://developers.google.com/speed/webp"/>
-        WebP
+        WebP,
+
+        /// <summary>JPEG File Interchange Format</summary>
+        [Obsolete("Use Jpeg instead.")]
+        Jpg = Jpeg,
     }
 }

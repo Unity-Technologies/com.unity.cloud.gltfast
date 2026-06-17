@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `EnumOrRawValue<TEnum>` for serialization of JSON strings to enum values that can have values unknown at build time.
 - [MeshoptFilter](xref:GLTFast.Schema.MeshoptFilter) and [MeshoptMode](xref:GLTFast.Schema.MeshoptMode) for custom JSON serialization of `Meshoptimizer.Filter` and `Meshoptimizer.Mode`.
 - `UriValue`, a wrapper for serialization of URIs.
+- [ImageMimeType](xref:GLTFast.Schema.ImageMimeType) for type-safe access to glTF image MIME types.
 
 ### Changed
 - JSON de-serialization is performed by [System.Text.Json](https://www.nuget.org/packages/system.text.json/) (or `Unity.Gltfast.Text.Json`, a copy of it for Unity 6.4 and older to avoid conflicts).
@@ -42,15 +43,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
       - `AnimationSampler.Interpolation`
       - `Material.AlphaMode`
       - `LightPunctual.Type`
+    - `string` ⇒ [EnumOrRawValue&lt;ImageMimeType&gt;](xref:GLTFast.Schema.EnumOrRawValue`1)
+      - [Image.MimeType](xref:GLTFast.Schema.Image.MimeType)
   - (Performance) Data URIs are decoded directly to unmanaged buffers during JSON deserialization eliminating allocation of a UTF-16 string twice the size of the data URI.
   - JSON string to enum deserialization via `EnumOrRawValue<TEnum>` preserves access to unknown values (not in the glTF specification but potentially introduced by a glTF extension).
 - Node transforms (translation, rotation, scale or matrix) are now in double precision throughout the API.
 - `IInstantiator.AddPrimitive` parameter `morphTargetWeights` is now of type `IReadOnlyList<float>` (was float[]).
 - `GameObjectInstantiator.MeshAddedDelegate` parameter `morphTargetWeights` is now of type `IReadOnlyList<float>` (was float[]).
+- (Export) [ImageExportBase.MimeType](xref:GLTFast.Export.ImageExportBase.MimeType) returns [ImageMimeType](xref:GLTFast.Schema.ImageMimeType) (was `string`). Custom subclasses must update their overrides.
+- (Export) Merged `GLTFast.Export.ImageFormat` into [GLTFast.ImageFormat](xref:GLTFast.ImageFormat). Affected method signatures across [ImageExportBase](xref:GLTFast.Export.ImageExportBase), [ImageExport](xref:GLTFast.Export.ImageExport), [OrmImageExport](xref:GLTFast.Export.OrmImageExport), [MaskMapImageExport](xref:GLTFast.Export.MaskMapImageExport), [NormalImageExport](xref:GLTFast.Export.NormalImageExport) and material exporters.
+- (Export) Renamed `ImageFormat.Jpg` to [ImageFormat.Jpeg](xref:GLTFast.ImageFormat.Jpeg).
 
 ### Removed
 - JsonUtility dependency and related code.
 - Newtonsoft JSON dependency.
+- (Export) `GLTFast.Export.ImageFormat` enum (use [GLTFast.ImageFormat](xref:GLTFast.ImageFormat) instead).
+- Legacy `image/ktx` MIME type lenience. The glTF specification and `KHR_texture_basisu` require `image/ktx2`.
 
 ### Deprecated
 

@@ -34,20 +34,48 @@ If your assembly definition referenced `glTFast.Newtonsoft`, replace the referen
 
 ### Schema enum properties wrapped in `EnumOrRawValue<TEnum>`
 
-Several `GLTFast.Schema` properties that used to be plain enums are now wrapped in [EnumOrRawValue&lt;TEnum&gt;](xref:GLTFast.Schema.EnumOrRawValue`1) so that values introduced by glTF extensions (and therefore unknown at build time) are preserved through deserialization and serialization.
+Several `GLTFast.Schema` properties that used to be enums or strings are now wrapped in [EnumOrRawValue&lt;TEnum&gt;](xref:GLTFast.Schema.EnumOrRawValue`1) so that values introduced by glTF extensions (and therefore unknown at build time) are preserved through deserialization and serialization.
 
 | Property | Before | After |
 | -------- | ------ | ----- |
 | `Accessor.Type` | `GltfAccessorAttributeType` | `EnumOrRawValue<AccessorType>` |
 | `AnimationChannelTarget.Path` | `AnimationPath` | `EnumOrRawValue<AnimationPath>` |
 | `AnimationSampler.Interpolation` | `Interpolation` | `EnumOrRawValue<Interpolation>` |
-| `Material.AlphaMode` | `AlphaMode` | `EnumOrRawValue<AlphaMode>` |
+| [Image.MimeType](xref:GLTFast.Schema.Image.MimeType) | `string` | [EnumOrRawValue&lt;ImageMimeType&gt;](xref:GLTFast.Schema.EnumOrRawValue`1) |
 | `LightPunctual.Type` | `LightType` | `EnumOrRawValue<LightType>` |
+| `Material.AlphaMode` | `AlphaMode` | `EnumOrRawValue<AlphaMode>` |
 
 Reading: access the known enum via `.Value`; an unknown string is exposed as a UTF-8 byte sequence in `.RawValue`.
 
 > [!TIP]
 > Writing: an implicit conversion from the enum exists, so existing assignments such as `material.AlphaMode = AlphaMode.Blend;` continue to compile unchanged.
+
+#### Image MIME type
+
+| Before | After |
+| ------ | ----- |
+| `if (image.MimeType == "image/png") …` | `if (image.MimeType == ImageMimeType.Png) …` |
+| `if (string.IsNullOrEmpty(image.MimeType)) …` | `if (image.MimeType.Value == ImageMimeType.Undefined && image.MimeType.RawValue == null) …` |
+| `image.MimeType = "image/png";` | `image.MimeType = ImageMimeType.Png;` (uses implicit enum conversion) |
+
+The legacy `image/ktx` MIME string is no longer mapped to `ImageFormat.Ktx`. Per the glTF 2.0 specification and `KHR_texture_basisu`, use `image/ktx2`. Assets carrying the bare `image/ktx` will round-trip via `RawValue`, but `ImageFormatExtensions.FromMimeType` now resolves them to `ImageFormat.Unknown`.
+
+### Export image format and MIME type
+
+The redundant `GLTFast.Export.ImageFormat` enum was removed and merged into the canonical [GLTFast.ImageFormat](xref:GLTFast.ImageFormat). The enum value `Jpg` was renamed to `Jpeg` to match.
+
+| Before | After |
+| ------ | ----- |
+| `GLTFast.Export.ImageFormat` | [GLTFast.ImageFormat](xref:GLTFast.ImageFormat) |
+| `ImageFormat.Jpg` | `ImageFormat.Jpeg` |
+
+[Export.ImageExportBase.MimeType](xref:GLTFast.Export.ImageExportBase.MimeType) changed from `string` to [ImageMimeType](xref:GLTFast.Schema.ImageMimeType). Custom subclasses overriding the property must return the enum directly.
+
+| Before | After |
+| ------ | ----- |
+| `public override string MimeType => "image/png";` | `public override ImageMimeType MimeType => ImageMimeType.Png;` |
+
+The internal helpers `GLTFast.Export.Constants.mimeTypePNG` and `mimeTypeJPG` were removed; use `ImageMimeType.Png` / `ImageMimeType.Jpeg` instead.
 
 ## Upgrade to 6.0
 

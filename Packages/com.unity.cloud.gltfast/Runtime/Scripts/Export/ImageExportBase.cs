@@ -2,9 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
+using GLTFast.Schema;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Experimental.Rendering;
+using Material = UnityEngine.Material;
 using Object = UnityEngine.Object;
 
 namespace GLTFast.Export
@@ -23,7 +25,7 @@ namespace GLTFast.Export
         /// <summary>
         /// Exported texture's mime type
         /// </summary>
-        public abstract string MimeType { get; }
+        public abstract ImageMimeType MimeType { get; }
 
         /// <summary>
         /// Source texture's filter mode
