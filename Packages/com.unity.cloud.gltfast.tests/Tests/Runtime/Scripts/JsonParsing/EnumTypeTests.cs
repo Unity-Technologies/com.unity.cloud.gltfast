@@ -258,6 +258,7 @@ namespace GLTFast.Tests.JsonParsing
         {
             var obj = new Camera
             {
+                Type = CameraType.Orthographic,
                 Orthographic = new CameraOrthographic()
             };
             var json = JsonSerializer.Serialize(obj, GltfRootSourceGenerator.Default.Camera);
@@ -269,6 +270,7 @@ namespace GLTFast.Tests.JsonParsing
 
             obj = new Camera
             {
+                Type = CameraType.Perspective,
                 Perspective = new CameraPerspective()
             };
             json = JsonSerializer.Serialize(obj, GltfRootSourceGenerator.Default.Camera);

@@ -67,6 +67,11 @@ namespace GLTFast.Schema
         protected override JsonTypeInfo<AlphaMode> TypeInfo => GltfRootSourceGenerator.Default.AlphaMode;
     }
 
+    class CameraTypeValueConverter : EnumOrRawValueConverter<CameraType>
+    {
+        protected override JsonTypeInfo<CameraType> TypeInfo => GltfRootSourceGenerator.Default.CameraType;
+    }
+
     class ImageMimeTypeValueConverter : EnumOrRawValueConverter<ImageMimeType>
     {
         protected override JsonTypeInfo<ImageMimeType> TypeInfo => GltfRootSourceGenerator.Default.ImageMimeType;

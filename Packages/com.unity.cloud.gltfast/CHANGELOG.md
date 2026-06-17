@@ -42,6 +42,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
       - `Accessor.Type`
       - `AnimationChannelTarget.Path`
       - `AnimationSampler.Interpolation`
+      - `Camera.Type`
       - `Material.AlphaMode`
       - `LightPunctual.Type`
     - `string` ⇒ [EnumOrRawValue&lt;ImageMimeType&gt;](xref:GLTFast.Schema.EnumOrRawValue`1)

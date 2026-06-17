@@ -24,6 +24,7 @@ using UnityEngine.Rendering;
 
 using Buffer = GLTFast.Schema.Buffer;
 using Camera = GLTFast.Schema.Camera;
+using CameraType = UnityEngine.CameraType;
 using Debug = UnityEngine.Debug;
 using LightType = GLTFast.Schema.LightType;
 using Material = GLTFast.Schema.Material;
@@ -255,6 +256,8 @@ namespace GLTFast.Export
                 {
                     aspectRatio = targetTexture.width / (float)targetTexture.height;
                 }
+
+                camera.Type = Schema.CameraType.Orthographic;
                 camera.Orthographic = new CameraOrthographic
                 {
                     Ymag = oSize,
@@ -266,6 +269,7 @@ namespace GLTFast.Export
             }
             else
             {
+                camera.Type = Schema.CameraType.Perspective;
                 camera.Perspective = new CameraPerspective
                 {
                     Yfov = uCamera.fieldOfView * Mathf.Deg2Rad,

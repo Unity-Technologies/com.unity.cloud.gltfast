@@ -24,10 +24,8 @@ namespace GLTFast.Schema
 
         /// <inheritdoc cref="CameraType"/>
         [JsonPropertyName("type")]
-        public CameraType Type =>
-            Perspective != null
-                ? CameraType.Perspective
-                : Orthographic != null ? CameraType.Orthographic : CameraType.Undefined;
+        [JsonConverter(typeof(CameraTypeValueConverter))]
+        public EnumOrRawValue<CameraType> Type { get; set; }
 
         /// <inheritdoc cref="Asset.Extensions"/>
         [JsonPropertyName("extensions")]
@@ -50,7 +48,17 @@ namespace GLTFast.Schema
         {
             writer.AddObject();
             GltfSerializeName(writer);
-            writer.AddProperty("type", Type.ToString().ToLowerInvariant());
+
+            var type = Type.RawValue != null
+                ? System.Text.Encoding.UTF8.GetString(Type.RawValue)
+                : Type.Value switch
+                {
+                    CameraType.Orthographic => "orthographic",
+                    CameraType.Perspective => "perspective",
+                    _ => throw new ArgumentOutOfRangeException(nameof(Type), Type.Value, $"Unsupported camera type: {Type.Value}")
+                };
+            writer.AddProperty("type", type);
+
             if (Perspective != null)
             {
                 writer.AddProperty("perspective");

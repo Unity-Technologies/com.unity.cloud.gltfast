@@ -360,7 +360,12 @@ namespace GLTFast
                 return;
             }
             var camera = m_Gltf.GetSourceCamera(cameraIndex);
-            switch (camera.Type)
+            if (camera.Type.Value == CameraType.Undefined)
+            {
+                m_Logger?.Error($"Camera {cameraIndex} has unknown type {camera.Type.ToString()}");
+                return;
+            }
+            switch (camera.Type.Value)
             {
                 case CameraType.Orthographic:
                     var o = camera.Orthographic;

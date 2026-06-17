@@ -41,7 +41,9 @@ Several `GLTFast.Schema` properties that used to be enums or strings are now wra
 | `Accessor.Type` | `GltfAccessorAttributeType` | `EnumOrRawValue<AccessorType>` |
 | `AnimationChannelTarget.Path` | `AnimationPath` | `EnumOrRawValue<AnimationPath>` |
 | `AnimationSampler.Interpolation` | `Interpolation` | `EnumOrRawValue<Interpolation>` |
+| `Camera.Type` | `CameraType` | `EnumOrRawValue<CameraType>` |
 | [Image.MimeType](xref:GLTFast.Schema.Image.MimeType) | `string` | [EnumOrRawValue&lt;ImageMimeType&gt;](xref:GLTFast.Schema.EnumOrRawValue`1) |
+| `Material.AlphaMode` | `AlphaMode` | `EnumOrRawValue<AlphaMode>` |
 | `LightPunctual.Type` | `LightType` | `EnumOrRawValue<LightType>` |
 | `Material.AlphaMode` | `AlphaMode` | `EnumOrRawValue<AlphaMode>` |
 
