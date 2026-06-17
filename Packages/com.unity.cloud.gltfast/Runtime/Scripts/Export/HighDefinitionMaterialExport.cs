@@ -77,7 +77,7 @@ namespace GLTFast.Export
                     // TODO: use maxFactor as emissiveStrength (KHR_materials_emissive_strength)
                 }
 
-                material.Emissive = emissionColor;
+                material.EmissiveFactor = emissionColor;
             }
 
             if (uMaterial.HasProperty(k_EmissionColorMap))
@@ -298,11 +298,11 @@ namespace GLTFast.Export
 
             if (uMaterial.HasProperty(BaseColorProperty))
             {
-                pbr.BaseColor = uMaterial.GetColor(BaseColorProperty).linear;
+                pbr.BaseColorFactor = uMaterial.GetColor(BaseColorProperty).linear;
             }
             else if (uMaterial.HasProperty(ColorProperty))
             {
-                pbr.BaseColor = uMaterial.GetColor(ColorProperty).linear;
+                pbr.BaseColorFactor = uMaterial.GetColor(ColorProperty).linear;
             }
 
             if (ormImageExport == null && uMaterial.HasProperty(SmoothnessProperty))
@@ -314,7 +314,7 @@ namespace GLTFast.Export
             return success;
         }
 
-        protected override bool GetUnlitColor(UnityEngine.Material uMaterial, out Color baseColor)
+        protected override bool GetUnlitColor(UnityEngine.Material uMaterial, out UnityEngine.Color baseColor)
         {
             if (uMaterial.HasProperty(k_UnlitColor))
             {

@@ -8,6 +8,7 @@ using NUnit.Framework;
 using Unity.Gltfast.Text.Json;
 using UnityEngine;
 using UnityEngine.TestTools.Utils;
+using Color = UnityEngine.Color;
 
 namespace GLTFast.Tests.JsonParsing
 {
@@ -157,7 +158,7 @@ namespace GLTFast.Tests.JsonParsing
             var sheenColor = new Color(.2f, .5f, .7f);
             var ext = new Sheen
             {
-                SheenColor = sheenColor,
+                SheenColorFactor = sheenColor,
                 SheenRoughnessFactor = .42f,
                 SheenColorTexture = new TextureInfo
                 {
@@ -171,7 +172,7 @@ namespace GLTFast.Tests.JsonParsing
                 }
             };
 
-            Assert.That(ext.SheenColor, Is.EqualTo(sheenColor).Using(ColorEqualityComparer.Instance));
+            Assert.That((Color)ext.SheenColorFactor, Is.EqualTo(sheenColor).Using(ColorEqualityComparer.Instance));
 
             var json = CreateJsonTest(writer =>
             {
@@ -197,7 +198,7 @@ namespace GLTFast.Tests.JsonParsing
                     Index = 42,
                     TexCoord = 1,
                 },
-                SpecularColor = specularColor,
+                SpecularColorFactor = specularColor,
                 SpecularColorTexture = new TextureInfo
                 {
                     Index = 43,
@@ -205,7 +206,7 @@ namespace GLTFast.Tests.JsonParsing
                 }
             };
 
-            Assert.That(ext.SpecularColor, Is.EqualTo(specularColor).Using(ColorEqualityComparer.Instance));
+            Assert.That((Color)ext.SpecularColorFactor, Is.EqualTo(specularColor).Using(ColorEqualityComparer.Instance));
 
             var json = CreateJsonTest(writer =>
             {

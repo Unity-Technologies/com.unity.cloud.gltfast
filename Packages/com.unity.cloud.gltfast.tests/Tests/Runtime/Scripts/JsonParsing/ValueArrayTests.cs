@@ -7,6 +7,7 @@ using GLTFast.Schema;
 using NUnit.Framework;
 using Unity.Gltfast.Text.Json;
 using UnityEngine;
+using Color = UnityEngine.Color;
 
 namespace GLTFast.Tests.JsonParsing
 {
@@ -96,7 +97,7 @@ namespace GLTFast.Tests.JsonParsing
             var lights = gltf?.Extensions?.LightsPunctual?.Lights;
             Assert.NotNull(lights);
             Assert.AreEqual(1, lights.Length);
-            Assert.AreEqual(new Color(.1f, .2f, .3f), lights[0].LightColor);
+            Assert.AreEqual(new Color(.1f, .2f, .3f), (Color)lights[0].Color);
         }
 
         static void CheckResultMaterialValues(Root gltf)
@@ -105,19 +106,19 @@ namespace GLTFast.Tests.JsonParsing
             Assert.NotNull(gltf.Materials);
             Assert.AreEqual(1, gltf.Materials.Count);
             var mat = gltf.Materials[0];
-            Assert.AreEqual(new Color(.1f, .2f, .3f), mat.Emissive);
+            Assert.AreEqual(new Color(.1f, .2f, .3f), (Color)mat.EmissiveFactor);
             Assert.NotNull(mat.PbrMetallicRoughness);
-            Assert.AreEqual(new Color(.1f, .2f, .3f, .4f), mat.PbrMetallicRoughness.BaseColor);
+            Assert.AreEqual(new Color(.1f, .2f, .3f, .4f), (Color)mat.PbrMetallicRoughness.BaseColorFactor);
             var transform = mat.NormalTexture?.Extensions?.TextureTransform;
             Assert.NotNull(transform);
             CheckFloatArray(transform.Offset, 2, 1, 2);
             CheckFloatArray(transform.Scale, 2, 3, 4);
             var ext = mat.Extensions;
             Assert.NotNull(ext?.Sheen);
-            Assert.AreEqual(new Color(.1f, .2f, .3f), ext.Sheen.SheenColor);
+            Assert.AreEqual(new Color(.1f, .2f, .3f), (Color)ext.Sheen.SheenColorFactor);
             Assert.NotNull(ext.PbrSpecularGlossiness);
-            Assert.AreEqual(new Color(.1f, .2f, .3f, .4f), ext.PbrSpecularGlossiness.DiffuseColor);
-            Assert.AreEqual(new Color(.1f, .2f, .3f), ext.PbrSpecularGlossiness.SpecularColor);
+            Assert.AreEqual(new Color(.1f, .2f, .3f, .4f), (Color)ext.PbrSpecularGlossiness.DiffuseFactor);
+            Assert.AreEqual(new Color(.1f, .2f, .3f), (Color)ext.PbrSpecularGlossiness.SpecularFactor);
         }
 
         static void CheckResultMeshWeights(Root gltf)

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -169,6 +170,43 @@ namespace GLTFast.Schema
             m_Stream.Write(name);
             m_Stream.Write("\":");
             m_Stream.Write(value ? "true" : "false");
+        }
+
+        public void AddColorProperty(string name, Color color)
+        {
+            AddArray(name);
+            WriteFloat(color.R);
+            m_Stream.Write(',');
+            WriteFloat(color.G);
+            m_Stream.Write(',');
+            WriteFloat(color.B);
+            CloseArray();
+        }
+
+        public void AddColorProperty(string name, ColorAlpha color)
+        {
+            AddArray(name);
+            WriteFloat(color.R);
+            m_Stream.Write(',');
+            WriteFloat(color.G);
+            m_Stream.Write(',');
+            WriteFloat(color.B);
+            m_Stream.Write(',');
+            WriteFloat(color.A);
+            CloseArray();
+        }
+
+        void WriteFloat(float value)
+        {
+            Span<char> buffer = stackalloc char[32];
+            if (value.TryFormat(buffer, out var charsWritten, "R", CultureInfo.InvariantCulture))
+            {
+                m_Stream.Write(buffer[..charsWritten]);
+            }
+            else
+            {
+                m_Stream.Write(value.ToString("R", CultureInfo.InvariantCulture));
+            }
         }
 
         void Separate()

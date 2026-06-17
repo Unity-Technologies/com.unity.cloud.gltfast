@@ -10,6 +10,7 @@ using Unity.Collections.LowLevel.Unsafe;
 using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
+using Color = UnityEngine.Color;
 
 namespace GLTFast.Tests.Jobs
 {

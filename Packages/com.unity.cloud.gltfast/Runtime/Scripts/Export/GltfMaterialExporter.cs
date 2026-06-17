@@ -7,6 +7,7 @@ using GLTFast.Materials;
 using GLTFast.Schema;
 using Unity.Mathematics;
 using UnityEngine;
+using Color = UnityEngine.Color;
 using GltfMaterial = GLTFast.Schema.Material;
 using Material = UnityEngine.Material;
 
@@ -104,7 +105,7 @@ namespace GLTFast.Export
 
             if (TryGetValue(unityMaterial, MaterialProperty.BaseColor, out Color baseColor))
             {
-                material.PbrMetallicRoughness.BaseColor = baseColor.linear;
+                material.PbrMetallicRoughness.BaseColorFactor = baseColor.linear;
             }
 
             material = HandleMetallicRoughness(gltf, material, unityMaterial);
@@ -275,7 +276,7 @@ namespace GLTFast.Export
 
             if (TryGetValue(unityMaterial, MaterialProperty.EmissiveFactor, out Color emissiveFactor))
             {
-                material.Emissive = emissiveFactor;
+                material.EmissiveFactor = emissiveFactor;
             }
 
             return material;

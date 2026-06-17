@@ -96,7 +96,7 @@ namespace GLTFast.Tests.Export
 
         static void CompareArrays(JsonElement array1, JsonElement array2, string currentPath)
         {
-            Assert.AreEqual(array1.GetArrayLength(), array2.GetArrayLength());
+            Assert.AreEqual(array1.GetArrayLength(), array2.GetArrayLength(), $"Arrays differ at {currentPath}");
 
             for (var i = 0; i < array1.GetArrayLength(); i++)
             {

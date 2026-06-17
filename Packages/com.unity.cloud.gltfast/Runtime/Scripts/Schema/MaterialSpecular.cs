@@ -38,23 +38,8 @@ namespace GLTFast.Schema
         /// The F0 color of the specular reflection (linear RGB).
         /// </summary>
         [JsonPropertyName("specularColorFactor")]
-        [JsonConverter(typeof(Float3ArrayConverter))]
-        public float[] SpecularColorFactor { get; set; } = { 1, 1, 1 };
-
-        /// <inheritdoc cref="SpecularColorFactor"/>
-        public Color SpecularColor
-        {
-            get =>
-                new Color(
-                    SpecularColorFactor[0],
-                    SpecularColorFactor[1],
-                    SpecularColorFactor[2]
-                );
-            set
-            {
-                SpecularColorFactor = new[] { value.r, value.g, value.b };
-            }
-        }
+        [JsonConverter(typeof(ColorConverter))]
+        public Color SpecularColorFactor { get; set; } = Color.White;
 
         /// <summary>
         /// A texture that defines the F0 color of the specular reflection, stored in the RGB channels and encoded in
@@ -75,13 +60,9 @@ namespace GLTFast.Schema
                 writer.AddProperty("specularTexture");
                 SpecularTexture.GltfSerialize(writer);
             }
-            if (SpecularColorFactor != null && SpecularColorFactor.Length > 2 && (
-                    math.abs(SpecularColorFactor[0] - 1f) > Constants.epsilon ||
-                    math.abs(SpecularColorFactor[1] - 1f) > Constants.epsilon ||
-                    math.abs(SpecularColorFactor[2] - 1f) > Constants.epsilon
-                ))
+            if (SpecularColorFactor != Color.White)
             {
-                writer.AddArrayProperty("specularColorFactor", SpecularColorFactor);
+                writer.AddColorProperty("specularColorFactor", SpecularColorFactor);
             }
             if (SpecularColorTexture != null)
             {

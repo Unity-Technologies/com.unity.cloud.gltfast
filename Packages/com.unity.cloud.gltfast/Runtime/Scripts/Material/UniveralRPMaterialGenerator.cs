@@ -12,7 +12,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
-
+using Color = UnityEngine.Color;
 using Material = UnityEngine.Material;
 using GltfMaterial = GLTFast.Schema.Material;
 

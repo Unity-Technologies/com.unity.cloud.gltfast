@@ -56,26 +56,9 @@ namespace GLTFast.Schema
         /// If an emissiveTexture is specified, this value is multiplied with the texel
         /// values.
         /// </summary>
-        // Property is public for unified serialization only. Warn via Obsolete attribute.
-        [Obsolete("Use Emissive for access.")]
         [JsonPropertyName("emissiveFactor")]
-        [JsonConverter(typeof(Float3ArrayConverter))]
-        public float[] EmissiveFactor { get; set; } = { 0, 0, 0 };
-
-        /// <summary>
-        /// Emissive color of the material.
-        /// </summary>
-        public Color Emissive
-        {
-#pragma warning disable CS0618 // Type or member is obsolete
-            get => new Color(
-                EmissiveFactor[0],
-                EmissiveFactor[1],
-                EmissiveFactor[2]
-                );
-            set => EmissiveFactor = new[] { value.r, value.g, value.b };
-#pragma warning restore CS0618 // Type or member is obsolete
-        }
+        [JsonConverter(typeof(ColorConverter))]
+        public Color EmissiveFactor { get; set; } = Color.Black;
 
         /// <summary>
         /// The material's alpha rendering mode enumeration specifying the interpretation of the
@@ -163,17 +146,10 @@ namespace GLTFast.Schema
                 writer.AddProperty("emissiveTexture");
                 EmissiveTexture.GltfSerialize(writer);
             }
-#pragma warning disable CS0618 // Type or member is obsolete
-            if (EmissiveFactor != null
-                && (
-                    EmissiveFactor[0] > Constants.epsilon
-                    || EmissiveFactor[1] > Constants.epsilon
-                    || EmissiveFactor[2] > Constants.epsilon)
-                )
+            if (EmissiveFactor != Color.Black)
             {
-                writer.AddArrayProperty("emissiveFactor", EmissiveFactor);
+                writer.AddColorProperty("emissiveFactor", EmissiveFactor);
             }
-#pragma warning restore CS0618 // Type or member is obsolete
             if (AlphaMode.Value != Schema.AlphaMode.Opaque || AlphaMode.RawValue != null)
             {
                 var alphaMode = AlphaMode.RawValue != null

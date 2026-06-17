@@ -8,6 +8,7 @@ using GLTFast.Schema;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools.Utils;
+using Color = UnityEngine.Color;
 using GltfMaterial = GLTFast.Schema.Material;
 using Material = UnityEngine.Material;
 
@@ -18,6 +19,8 @@ namespace GLTFast.Tests.Export
     {
         const string k_ResourcePath = "Export/Materials/";
 
+        static ColorEqualityComparer s_ColorComparer = new(10e-5f);
+
         protected IMaterialExport m_Exporter;
 
         protected void BaseColorTest(RenderPipeline renderPipeline)
@@ -25,7 +28,8 @@ namespace GLTFast.Tests.Export
             var material = ConvertMaterial("BaseColor", out _, renderPipeline);
 
             Assert.IsNotNull(material.PbrMetallicRoughness);
-            Assert.AreEqual(new[] { .199999973f, .5, .75f, 1 }, material.PbrMetallicRoughness.BaseColorFactor);
+            Assert.That(new Color(.2f, .5f, .75f, 1f),
+                Is.EqualTo((Color)material.PbrMetallicRoughness.BaseColorFactor).Using(s_ColorComparer));
         }
 
         protected void BaseColorTextureTest(RenderPipeline renderPipeline)
@@ -254,7 +258,7 @@ namespace GLTFast.Tests.Export
         {
             var material = ConvertMaterial("EmissiveFactor", out _, renderPipeline);
 
-            Assert.AreEqual(new Color(1, 1, 0), material.Emissive);
+            Assert.AreEqual(new Color(1, 1, 0), (Color)material.EmissiveFactor);
             Assert.IsNull(material.EmissiveTexture);
         }
 
@@ -268,7 +272,7 @@ namespace GLTFast.Tests.Export
             Assert.AreEqual(1, gltfWriter.textures.Count);
             Assert.IsInstanceOf<ImageExport>(gltfWriter.imageExports[0]);
 
-            Assert.AreEqual(Color.white, material.Emissive);
+            Assert.AreEqual(Color.white, (Color)material.EmissiveFactor);
 
             var texture = material.EmissiveTexture;
             Assert.NotNull(texture);
@@ -289,7 +293,7 @@ namespace GLTFast.Tests.Export
             Assert.AreEqual(1, gltfWriter.textures.Count);
             Assert.IsInstanceOf<ImageExport>(gltfWriter.imageExports[0]);
 
-            Assert.AreEqual(new Color(1, .7353569f, 0), material.Emissive);
+            Assert.AreEqual(new Color(1, .7353569f, 0), (Color)material.EmissiveFactor);
 
             var texture = material.EmissiveTexture;
             Assert.NotNull(texture);
@@ -345,7 +349,8 @@ namespace GLTFast.Tests.Export
             Assert.IsInstanceOf<ImageExport>(gltfWriter.imageExports[0]);
 
             Assert.IsNotNull(material.PbrMetallicRoughness);
-            Assert.AreEqual(new[] { 0.787412345f, 0.603827417f, 0.447988421f, 1 }, material.PbrMetallicRoughness.BaseColorFactor);
+            Assert.That(new Color(0.787412345f, 0.603827417f, 0.447988421f, 1),
+                Is.EqualTo((Color)material.PbrMetallicRoughness.BaseColorFactor).Using(s_ColorComparer));
             var baseColorTexture = material.PbrMetallicRoughness.BaseColorTexture;
             Assert.IsNotNull(baseColorTexture);
             Assert.AreEqual(0, baseColorTexture.Index);
@@ -421,7 +426,8 @@ namespace GLTFast.Tests.Export
             Assert.IsInstanceOf<ImageExport>(gltfWriter.imageExports[0]);
 
             Assert.IsNotNull(material.PbrMetallicRoughness);
-            Assert.AreEqual(new[] { 0.787412345f, 0.603827417f, 0.447988421f, 1 }, material.PbrMetallicRoughness.BaseColorFactor);
+            Assert.That(new Color(0.787412345f, 0.603827417f, 0.447988421f, 1),
+                Is.EqualTo((Color)material.PbrMetallicRoughness.BaseColorFactor).Using(s_ColorComparer));
             var texture = material.PbrMetallicRoughness.BaseColorTexture;
             Assert.IsNotNull(texture);
             Assert.AreEqual(0, texture.Index);

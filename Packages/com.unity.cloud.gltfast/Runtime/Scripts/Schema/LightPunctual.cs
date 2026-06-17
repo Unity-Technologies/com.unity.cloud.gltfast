@@ -14,32 +14,11 @@ namespace GLTFast.Schema
     public class LightPunctual : NamedObject
     {
         /// <summary>
-        /// RGB values for light's color in linear space
-        /// </summary>
-        // Property is public for unified serialization only. Warn via Obsolete attribute.
-        [Obsolete("Use LightColor for access.")]
-        [JsonPropertyName("color")]
-        [JsonConverter(typeof(Float3ArrayConverter))]
-        public float[] Color { get; set; } = { 1, 1, 1 };
-
-        /// <summary>
         /// Light's color in linear space
         /// </summary>
-        public UnityEngine.Color LightColor
-        {
-#pragma warning disable CS0618 // Type or member is obsolete
-            get =>
-                new UnityEngine.Color(
-                    Color[0],
-                    Color[1],
-                    Color[2]
-                );
-            set
-            {
-                Color = new[] { value.r, value.g, value.b };
-            }
-#pragma warning restore CS0618 // Type or member is obsolete
-        }
+        [JsonPropertyName("color")]
+        [JsonConverter(typeof(ColorConverter))]
+        public Color Color { get; set; } = Color.White;
 
         /// <summary>
         /// Brightness of light in. The units that this is defined in depend on
@@ -98,11 +77,9 @@ namespace GLTFast.Schema
                 };
             writer.AddProperty("type", type);
             GltfSerializeName(writer);
-            if (LightColor != UnityEngine.Color.white)
+            if (Color != Color.White)
             {
-#pragma warning disable CS0618 // Type or member is obsolete
-                writer.AddArrayProperty("color", Color);
-#pragma warning restore CS0618 // Type or member is obsolete
+                writer.AddColorProperty("color", Color);
             }
             if (!Mathematics.ApproximatelyOne(Intensity))
             {

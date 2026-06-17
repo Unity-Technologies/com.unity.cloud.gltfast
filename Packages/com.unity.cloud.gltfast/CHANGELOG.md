@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `EnumOrRawValue<TEnum>` for serialization of JSON strings to enum values that can have values unknown at build time.
 - [MeshoptFilter](xref:GLTFast.Schema.MeshoptFilter) and [MeshoptMode](xref:GLTFast.Schema.MeshoptMode) for custom JSON serialization of `Meshoptimizer.Filter` and `Meshoptimizer.Mode`.
 - `UriValue`, a wrapper for serialization of URIs.
+- [Color](xref:GLTFast.Schema.Color) and [ColorAlpha](xref:GLTFast.Schema.ColorAlpha) structs for serialization of glTF color values.
 - [ImageMimeType](xref:GLTFast.Schema.ImageMimeType) for type-safe access to glTF image MIME types.
 
 ### Changed

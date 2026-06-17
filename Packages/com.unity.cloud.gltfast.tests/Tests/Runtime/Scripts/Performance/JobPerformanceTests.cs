@@ -10,6 +10,7 @@ using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.PerformanceTesting;
 using UnityEngine;
+using Color = UnityEngine.Color;
 
 namespace GLTFast.Tests.Performance.Jobs
 {

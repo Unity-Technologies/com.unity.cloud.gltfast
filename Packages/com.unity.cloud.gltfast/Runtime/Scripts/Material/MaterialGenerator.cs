@@ -12,6 +12,7 @@ using GLTFast.Schema;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Assertions;
+using Color = UnityEngine.Color;
 using Material = GLTFast.Schema.Material;
 #if USING_URP
 using UnityEngine.Rendering;

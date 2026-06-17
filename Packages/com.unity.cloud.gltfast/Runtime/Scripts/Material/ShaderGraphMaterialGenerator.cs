@@ -16,7 +16,7 @@ using UnityEditor;
 #endif
 using UnityEngine;
 using UnityEngine.Rendering;
-
+using Color = GLTFast.Schema.Color;
 using Material = UnityEngine.Material;
 using GltfMaterial = GLTFast.Schema.Material;
 
@@ -251,7 +251,7 @@ namespace GLTFast.Materials
 
             material.name = gltfMaterial.Name;
 
-            Color baseColorLinear = Color.white;
+            UnityEngine.Color baseColorLinear = UnityEngine.Color.white;
             RenderQueue? renderQueue = null;
 
             //added support for KHR_materials_pbrSpecularGlossiness
@@ -260,9 +260,9 @@ namespace GLTFast.Materials
                 PbrSpecularGlossiness specGloss = gltfMaterial.Extensions.PbrSpecularGlossiness;
                 if (specGloss != null)
                 {
-                    baseColorLinear = specGloss.DiffuseColor;
-                    material.SetVector(MaterialProperty.DiffuseFactor, specGloss.DiffuseColor.gamma);
-                    material.SetVector(MaterialProperty.SpecularFactor, specGloss.SpecularColor);
+                    baseColorLinear = specGloss.DiffuseFactor;
+                    material.SetVector(MaterialProperty.DiffuseFactor, ((UnityEngine.Color)specGloss.DiffuseFactor).gamma);
+                    material.SetVector(MaterialProperty.SpecularFactor, (UnityEngine.Color)specGloss.SpecularFactor);
                     material.SetFloat(MaterialProperty.GlossinessFactor, specGloss.GlossinessFactor);
 
                     TrySetTexture(
@@ -295,7 +295,7 @@ namespace GLTFast.Materials
                 // (according to extension specification)
                 && gltfMaterial.Extensions?.PbrSpecularGlossiness == null)
             {
-                baseColorLinear = gltfMaterial.PbrMetallicRoughness.BaseColor;
+                baseColorLinear = gltfMaterial.PbrMetallicRoughness.BaseColorFactor;
 
                 if (materialType != MaterialType.SpecularGlossiness)
                 {
@@ -442,9 +442,9 @@ namespace GLTFast.Materials
 
             material.SetVector(MaterialProperty.BaseColor, baseColorLinear.gamma);
 
-            if (gltfMaterial.Emissive != Color.black)
+            if (gltfMaterial.EmissiveFactor != Color.Black)
             {
-                material.SetColor(MaterialProperty.EmissiveFactor, gltfMaterial.Emissive);
+                material.SetColor(MaterialProperty.EmissiveFactor, gltfMaterial.EmissiveFactor);
                 material.EnableKeyword(k_EmissiveKeyword);
             }
 
@@ -616,7 +616,7 @@ namespace GLTFast.Materials
         protected virtual void SetShaderModePremultiply(GltfMaterial gltfMaterial, Material material) { }
 
         protected virtual RenderQueue? ApplyTransmission(
-            ref Color baseColorLinear,
+            ref UnityEngine.Color baseColorLinear,
             IGltfReadable gltf,
             Transmission transmission,
             Material material,
@@ -651,7 +651,7 @@ namespace GLTFast.Materials
                 if (gltfMaterial.Extensions.Clearcoat != null &&
                     gltfMaterial.Extensions.Clearcoat.ClearcoatFactor > 0) feature |= MetallicShaderFeatures.ClearCoat;
                 if (gltfMaterial.Extensions.Sheen != null &&
-                    gltfMaterial.Extensions.Sheen.SheenColor.maxColorComponent > 0) feature |= MetallicShaderFeatures.Sheen;
+                    gltfMaterial.Extensions.Sheen.SheenColorFactor.MaxColorComponent > 0) feature |= MetallicShaderFeatures.Sheen;
 
                 if (
                     gltfMaterial.Extensions.Transmission != null
@@ -677,7 +677,7 @@ namespace GLTFast.Materials
         protected virtual ShaderMode? ApplyTransmissionShaderFeatures(GltfMaterial gltfMaterial)
         {
             // Makeshift approximation
-            Color baseColorLinear = Color.white;
+            UnityEngine.Color baseColorLinear = UnityEngine.Color.white;
             var premultiply = TransmissionWorkaroundShaderMode(
                 gltfMaterial.Extensions.Transmission,
                 ref baseColorLinear

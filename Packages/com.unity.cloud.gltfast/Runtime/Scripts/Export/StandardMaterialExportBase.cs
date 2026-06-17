@@ -7,6 +7,7 @@ using GLTFast.Materials;
 using GLTFast.Schema;
 using Unity.Mathematics;
 using UnityEngine;
+using Color = UnityEngine.Color;
 using Material = GLTFast.Schema.Material;
 
 namespace GLTFast.Export
@@ -86,7 +87,7 @@ namespace GLTFast.Export
                         // TODO: use maxFactor as emissiveStrength (KHR_materials_emissive_strength)
                     }
 
-                    material.Emissive = emissionColor;
+                    material.EmissiveFactor = emissionColor;
                 }
 
                 if (uMaterial.HasProperty(k_EmissionMap))
@@ -175,7 +176,7 @@ namespace GLTFast.Export
                 {
                     MetallicFactor = 0,
                     RoughnessFactor = 1.0f,
-                    BaseColor = uMaterial.HasProperty(BaseColorProperty)
+                    BaseColorFactor = uMaterial.HasProperty(BaseColorProperty)
                         ? uMaterial.GetColor(BaseColorProperty).linear
                         : Color.white
                 };
@@ -190,7 +191,7 @@ namespace GLTFast.Export
                 if (uMaterial.HasProperty(k_TintColor))
                 {
                     //particles use _TintColor instead of _Color
-                    material.PbrMetallicRoughness.BaseColor = uMaterial.GetColor(k_TintColor).linear;
+                    material.PbrMetallicRoughness.BaseColorFactor = uMaterial.GetColor(k_TintColor).linear;
                 }
             }
 
@@ -299,11 +300,11 @@ namespace GLTFast.Export
 
             if (uMaterial.HasProperty(BaseColorProperty))
             {
-                pbr.BaseColor = uMaterial.GetColor(BaseColorProperty).linear;
+                pbr.BaseColorFactor = uMaterial.GetColor(BaseColorProperty).linear;
             }
             else if (uMaterial.HasProperty(ColorProperty))
             {
-                pbr.BaseColor = uMaterial.GetColor(ColorProperty).linear;
+                pbr.BaseColorFactor = uMaterial.GetColor(ColorProperty).linear;
             }
 
             if (uMaterial.HasProperty(k_TintColor))
@@ -316,7 +317,7 @@ namespace GLTFast.Export
                     white = (c.r + c.g + c.b) / 3.0f; //multiply alpha by overall whiteness of TintColor
                 }
 
-                pbr.BaseColor = (uMaterial.GetColor(k_TintColor) * white).linear;
+                pbr.BaseColorFactor = (uMaterial.GetColor(k_TintColor) * white).linear;
             }
 
             if (uMaterial.HasProperty(mainTexProperty))

@@ -8,6 +8,7 @@ using GLTFast.Schema;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Rendering;
+using Color = UnityEngine.Color;
 using Material = UnityEngine.Material;
 
 namespace GLTFast.Export
@@ -83,7 +84,7 @@ namespace GLTFast.Export
                 && baseColor != Color.white)
             {
                 material.PbrMetallicRoughness ??= new PbrMetallicRoughness();
-                material.PbrMetallicRoughness.BaseColor = baseColor.linear;
+                material.PbrMetallicRoughness.BaseColorFactor = baseColor.linear;
             }
 
             return material;

@@ -83,7 +83,7 @@ namespace GLTFast.Export
                     break;
             }
 
-            light.LightColor = uLight.color.linear;
+            light.Color = uLight.color.linear;
             light.Range = uLight.range;
 
             // Set Light intensity

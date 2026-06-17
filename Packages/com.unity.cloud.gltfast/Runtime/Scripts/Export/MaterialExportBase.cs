@@ -135,7 +135,7 @@ namespace GLTFast.Export
 
             if (GetUnlitColor(uMaterial, out var baseColor))
             {
-                pbr.BaseColor = baseColor.linear;
+                pbr.BaseColorFactor = baseColor.linear;
             }
 
             if (uMaterial.HasProperty(mainTexProperty))
@@ -167,7 +167,7 @@ namespace GLTFast.Export
         /// <param name="uMaterial">Unity material</param>
         /// <param name="baseColor">Resulting unlit color</param>
         /// <returns>True if the unlit color was retrieved, false otherwise</returns>
-        protected virtual bool GetUnlitColor(UnityEngine.Material uMaterial, out Color baseColor)
+        protected virtual bool GetUnlitColor(UnityEngine.Material uMaterial, out UnityEngine.Color baseColor)
         {
             if (uMaterial.HasProperty(BaseColorProperty))
             {
@@ -179,7 +179,7 @@ namespace GLTFast.Export
                 baseColor = uMaterial.GetColor(ColorProperty);
                 return true;
             }
-            baseColor = Color.magenta;
+            baseColor = UnityEngine.Color.magenta;
             return false;
         }
 

@@ -46,7 +46,7 @@ namespace GLTFast
             }
 
             lightDestination.useColorTemperature = false;
-            lightDestination.color = lightSource.LightColor.gamma;
+            lightDestination.color = ((UnityEngine.Color)lightSource.Color).gamma;
 
             LightAssignIntensity(lightDestination, lightSource, lightIntensityFactor);
 
@@ -92,7 +92,7 @@ namespace GLTFast
                     throw new ArgumentOutOfRangeException();
             }
 
-            lightDestination.LightColor = lightSource.color;
+            lightDestination.Color = lightSource.color;
 
             LightAssignIntensity(lightDestination, lightSource, lightIntensityFactor);
 

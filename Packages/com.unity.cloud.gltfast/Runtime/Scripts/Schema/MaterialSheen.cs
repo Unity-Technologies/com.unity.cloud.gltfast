@@ -22,25 +22,8 @@ namespace GLTFast.Schema
         /// The sheen color red, green and blue components in linear space.
         /// </summary>
         [JsonPropertyName("sheenColorFactor")]
-        [JsonConverter(typeof(Float3ArrayConverter))]
-        public float[] SheenColorFactor { get; set; } = { 1, 1, 1 };
-
-        /// <summary>
-        /// The sheen color in linear space.
-        /// </summary>
-        public Color SheenColor
-        {
-            get =>
-                new Color(
-                    SheenColorFactor[0],
-                    SheenColorFactor[1],
-                    SheenColorFactor[2]
-                );
-            set
-            {
-                SheenColorFactor = new[] { value.r, value.g, value.b };
-            }
-        }
+        [JsonConverter(typeof(ColorConverter))]
+        public Color SheenColorFactor { get; set; } = Color.White;
 
         /// <summary>
         /// The sheen color texture.
@@ -63,13 +46,9 @@ namespace GLTFast.Schema
         internal void GltfSerialize(JsonWriter writer)
         {
             writer.AddObject();
-            if (SheenColorFactor != null && SheenColorFactor.Length > 2 && (
-                    math.abs(SheenColorFactor[0] - 1f) > Constants.epsilon ||
-                    math.abs(SheenColorFactor[1] - 1f) > Constants.epsilon ||
-                    math.abs(SheenColorFactor[2] - 1f) > Constants.epsilon
-                ))
+            if (SheenColorFactor != Color.White)
             {
-                writer.AddArrayProperty("sheenColorFactor", SheenColorFactor);
+                writer.AddColorProperty("sheenColorFactor", SheenColorFactor);
             }
             if (SheenColorTexture != null)
             {

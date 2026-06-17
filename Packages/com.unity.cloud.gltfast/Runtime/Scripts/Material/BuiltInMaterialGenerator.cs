@@ -220,7 +220,7 @@ namespace GLTFast.Materials
             material.name = gltfMaterial.Name;
 
             StandardShaderMode shaderMode = StandardShaderMode.Opaque;
-            Color baseColorLinear = Color.white;
+            var baseColorLinear = UnityEngine.Color.white;
 
             if (gltfMaterial.AlphaMode == AlphaMode.Mask)
             {
@@ -239,8 +239,8 @@ namespace GLTFast.Materials
                 Schema.PbrSpecularGlossiness specGloss = gltfMaterial.Extensions.PbrSpecularGlossiness;
                 if (specGloss != null)
                 {
-                    baseColorLinear = specGloss.DiffuseColor;
-                    material.SetVector(MaterialProperty.SpecularFactor, specGloss.SpecularColor);
+                    baseColorLinear = specGloss.DiffuseFactor;
+                    material.SetVector(MaterialProperty.SpecularFactor, (UnityEngine.Color)specGloss.SpecularFactor);
                     material.SetFloat(MaterialProperty.GlossinessFactor, specGloss.GlossinessFactor);
 
                     TrySetTexture(
@@ -273,7 +273,7 @@ namespace GLTFast.Materials
                 // (according to extension specification)
                 && gltfMaterial.Extensions?.PbrSpecularGlossiness == null)
             {
-                baseColorLinear = gltfMaterial.PbrMetallicRoughness.BaseColor;
+                baseColorLinear = gltfMaterial.PbrMetallicRoughness.BaseColorFactor;
                 material.SetFloat(MaterialProperty.Metallic, gltfMaterial.PbrMetallicRoughness.MetallicFactor);
                 material.SetFloat(MaterialProperty.RoughnessFactor, gltfMaterial.PbrMetallicRoughness.RoughnessFactor);
 
@@ -383,9 +383,9 @@ namespace GLTFast.Materials
 
             material.SetVector(MaterialProperty.BaseColor, baseColorLinear.gamma);
 
-            if (gltfMaterial.Emissive != Color.black)
+            if (gltfMaterial.EmissiveFactor != Schema.Color.Black)
             {
-                material.SetColor(MaterialProperty.EmissiveFactor, gltfMaterial.Emissive);
+                material.SetColor(MaterialProperty.EmissiveFactor, gltfMaterial.EmissiveFactor);
                 material.EnableKeyword(k_EmissionKeyword);
             }
 

@@ -6,6 +6,7 @@ using Unity.Gltfast.Text.Json;
 using Unity.Gltfast.Text.Json.Serialization;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace GLTFast.Schema
 {
@@ -42,25 +43,8 @@ namespace GLTFast.Schema
         /// These values are linear.
         /// </summary>
         [JsonPropertyName("baseColorFactor")]
-        public float[] BaseColorFactor { get; set; } = { 1, 1, 1, 1 };
-
-        /// <summary>
-        /// Base color of the material in linear color space.
-        /// </summary>
-        public Color BaseColor
-        {
-            get =>
-                new Color(
-                    BaseColorFactor[0],
-                    BaseColorFactor[1],
-                    BaseColorFactor[2],
-                    BaseColorFactor[3]
-                );
-            set
-            {
-                BaseColorFactor = new[] { value.r, value.g, value.b, value.a };
-            }
-        }
+        [JsonConverter(typeof(ColorAlphaConverter))]
+        public ColorAlpha BaseColorFactor { get; set; } = ColorAlpha.White;
 
         /// <summary>
         /// The metalness of the material.
@@ -116,16 +100,10 @@ namespace GLTFast.Schema
         internal void GltfSerialize(JsonWriter writer)
         {
             writer.AddObject();
-            if (BaseColorFactor != null && !(
-                Mathematics.ApproximatelyOne(BaseColorFactor[0]) &&
-                Mathematics.ApproximatelyOne(BaseColorFactor[1]) &&
-                Mathematics.ApproximatelyOne(BaseColorFactor[2]) &&
-                Mathematics.ApproximatelyOne(BaseColorFactor[3])
-                ))
+            if (BaseColorFactor != ColorAlpha.White)
             {
-                writer.AddArrayProperty("baseColorFactor", BaseColorFactor);
+                writer.AddColorProperty("baseColorFactor", BaseColorFactor);
             }
-
             if (MetallicFactor < 1f)
             {
                 writer.AddProperty("metallicFactor", MetallicFactor);
