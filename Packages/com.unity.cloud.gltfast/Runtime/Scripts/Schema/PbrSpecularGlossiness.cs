@@ -57,8 +57,15 @@ namespace GLTFast.Schema
         /// <summary>
         /// The glossiness or smoothness of the material.
         /// </summary>
-        [JsonPropertyName("glossinessFactor")]
-        public float GlossinessFactor { get; set; } = 1;
+        [JsonIgnore]
+        public float GlossinessFactor { get; set; } = 1f;
+
+        [JsonPropertyName("glossinessFactor"), JsonInclude]
+        internal float? GlossinessFactorSerialized
+        {
+            get => Mathematics.ApproximatelyOne(GlossinessFactor) ? null : GlossinessFactor;
+            set => GlossinessFactor = value ?? 1f;
+        }
 
         /// <summary>
         /// The specular-glossiness texture.

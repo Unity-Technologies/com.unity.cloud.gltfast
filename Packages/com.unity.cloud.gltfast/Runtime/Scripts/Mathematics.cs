@@ -111,6 +111,18 @@ namespace GLTFast
             sincos(0.5 * angle, out var sina, out var cosa);
             return double4(0.0f, sina, 0.0f, cosa);
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static bool ApproximatelyOne(float value)
+        {
+            return abs(value - 1) <= EPSILON;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static bool Approximately(float value1, float value2)
+        {
+            return abs(value1 - value2) <= EPSILON;
+        }
     }
 
     static class Double3Extensions

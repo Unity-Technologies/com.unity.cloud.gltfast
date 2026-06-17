@@ -70,8 +70,15 @@ namespace GLTFast.Schema
         /// dirty metallic surfaces.
         /// This value is linear.
         /// </summary>
-        [JsonPropertyName("metallicFactor")]
-        public float MetallicFactor { get; set; } = 1;
+        [JsonIgnore]
+        public float MetallicFactor { get; set; } = 1f;
+
+        [JsonPropertyName("metallicFactor"), JsonInclude]
+        internal float? MetallicFactorSerialized
+        {
+            get => Mathematics.ApproximatelyOne(MetallicFactor) ? null : MetallicFactor;
+            set => MetallicFactor = value ?? 1f;
+        }
 
         /// <summary>
         /// The roughness of the material.
@@ -79,8 +86,15 @@ namespace GLTFast.Schema
         /// A value of 0.0 means the material is completely smooth.
         /// This value is linear.
         /// </summary>
-        [JsonPropertyName("roughnessFactor")]
-        public float RoughnessFactor { get; set; } = 1;
+        [JsonIgnore]
+        public float RoughnessFactor { get; set; } = 1f;
+
+        [JsonPropertyName("roughnessFactor"), JsonInclude]
+        internal float? RoughnessFactorSerialized
+        {
+            get => Mathematics.ApproximatelyOne(RoughnessFactor) ? null : RoughnessFactor;
+            set => RoughnessFactor = value ?? 1f;
+        }
 
         /// <inheritdoc cref="Asset.Extensions"/>
         [JsonPropertyName("extensions")]
@@ -102,11 +116,11 @@ namespace GLTFast.Schema
         internal void GltfSerialize(JsonWriter writer)
         {
             writer.AddObject();
-            if (BaseColorFactor != null && (
-                math.abs(BaseColorFactor[0] - 1f) > Constants.epsilon ||
-                math.abs(BaseColorFactor[1] - 1f) > Constants.epsilon ||
-                math.abs(BaseColorFactor[2] - 1f) > Constants.epsilon ||
-                math.abs(BaseColorFactor[3] - 1f) > Constants.epsilon
+            if (BaseColorFactor != null && !(
+                Mathematics.ApproximatelyOne(BaseColorFactor[0]) &&
+                Mathematics.ApproximatelyOne(BaseColorFactor[1]) &&
+                Mathematics.ApproximatelyOne(BaseColorFactor[2]) &&
+                Mathematics.ApproximatelyOne(BaseColorFactor[3])
                 ))
             {
                 writer.AddArrayProperty("baseColorFactor", BaseColorFactor);

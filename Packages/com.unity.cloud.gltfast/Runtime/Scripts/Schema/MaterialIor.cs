@@ -18,18 +18,25 @@ namespace GLTFast.Schema
         /// Default index of refraction. A good compromise for most opaque, dielectric materials.
         /// </summary>
         /// <seealso href="https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html#dielectrics"/>
-        public const float defaultIndexOfRefraction = 1.5f;
+        public const float DefaultIndexOfRefraction = 1.5f;
 
         /// <summary>
         /// The index of refraction.
         /// </summary>
-        [JsonPropertyName("ior")]
-        public float Ior { get; set; } = defaultIndexOfRefraction;
+        [JsonIgnore]
+        public float Ior { get; set; } = DefaultIndexOfRefraction;
+
+        [JsonPropertyName("ior"), JsonInclude]
+        internal float? IorSerialized
+        {
+            get => Mathematics.Approximately(Ior, DefaultIndexOfRefraction) ? null : Ior;
+            set => Ior = value ?? DefaultIndexOfRefraction;
+        }
 
         internal void GltfSerialize(JsonWriter writer)
         {
             writer.AddObject();
-            if (math.abs(Ior - defaultIndexOfRefraction) > Constants.epsilon)
+            if (!Mathematics.Approximately(Ior, DefaultIndexOfRefraction))
             {
                 writer.AddProperty("ior", Ior);
             }

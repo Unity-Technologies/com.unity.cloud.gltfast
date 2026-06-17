@@ -11,6 +11,7 @@ namespace GLTFast.Schema
     /// </summary>
     public class SpotLight
     {
+        const float k_OuterConeAngleDefault = math.PI / 4f;
 
         /// <summary>
         /// Angle, in radians, from centre of spotlight where falloff begins
@@ -24,8 +25,15 @@ namespace GLTFast.Schema
         /// Must be greater than innerConeAngle and less than or equal to
         /// PI / 2.0.
         /// </summary>
-        [JsonPropertyName("outerConeAngle")]
-        public float OuterConeAngle { get; set; } = math.PI / 4f;
+        [JsonIgnore]
+        public float OuterConeAngle { get; set; } = k_OuterConeAngleDefault;
+
+        [JsonPropertyName("outerConeAngle"), JsonInclude]
+        internal float? OuterConeAngleSerialized
+        {
+            get => Mathematics.Approximately(OuterConeAngle, k_OuterConeAngleDefault) ? null : OuterConeAngle;
+            set => OuterConeAngle = value ?? k_OuterConeAngleDefault;
+        }
 
         internal void GltfSerialize(JsonWriter writer)
         {

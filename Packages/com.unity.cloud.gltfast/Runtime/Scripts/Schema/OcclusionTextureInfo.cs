@@ -18,14 +18,21 @@ namespace GLTFast.Schema
         /// This value is ignored if the corresponding texture is not specified.
         /// This value is linear.
         /// </summary>
-        [JsonPropertyName("strength")]
-        public float Strength { get; set; } = 1.0f;
+        [JsonIgnore]
+        public float Strength { get; set; } = 1f;
+
+        [JsonPropertyName("strength"), JsonInclude]
+        internal float? StrengthSerialized
+        {
+            get => Mathematics.ApproximatelyOne(Strength) ? null : Strength;
+            set => Strength = value ?? 1f;
+        }
 
         internal override void GltfSerialize(JsonWriter writer)
         {
             writer.AddObject();
             GltfSerializeTextureInfo(writer);
-            if (math.abs(Strength - 1f) > Constants.epsilon)
+            if (!Mathematics.ApproximatelyOne(Strength))
             {
                 writer.AddProperty("strength", Strength);
             }

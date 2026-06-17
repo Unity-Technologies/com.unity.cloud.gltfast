@@ -47,8 +47,15 @@ namespace GLTFast.Schema
         /// candela (lm/sr) while directional lights use illuminance
         /// in lux (lm/m2)
         /// </summary>
-        [JsonPropertyName("intensity")]
-        public float Intensity { get; set; } = 1;
+        [JsonIgnore]
+        public float Intensity { get; set; } = 1f;
+
+        [JsonPropertyName("intensity"), JsonInclude]
+        internal float? IntensitySerialized
+        {
+            get => Mathematics.ApproximatelyOne(Intensity) ? null : Intensity;
+            set => Intensity = value ?? 1f;
+        }
 
         /// <summary>
         /// Hint defining a distance cutoff at which the light's intensity may
@@ -56,8 +63,15 @@ namespace GLTFast.Schema
         /// spot lights. Must be > 0. When undefined, range is assumed to be
         /// infinite.
         /// </summary>
-        [JsonPropertyName("range")]
-        public float Range { get; set; } = -1;
+        [JsonIgnore]
+        public float Range { get; set; } = -1f;
+
+        [JsonPropertyName("range"), JsonInclude]
+        internal float? RangeSerialized
+        {
+            get => Mathematics.Approximately(Range, -1f) ? null : Range;
+            set => Range = value ?? -1f;
+        }
 
         /// <summary>
         /// Spot light properties (only set on spot lights).
@@ -90,7 +104,7 @@ namespace GLTFast.Schema
                 writer.AddArrayProperty("color", Color);
 #pragma warning restore CS0618 // Type or member is obsolete
             }
-            if (Math.Abs(Intensity - 1.0) > Constants.epsilon)
+            if (!Mathematics.ApproximatelyOne(Intensity))
             {
                 writer.AddProperty("intensity", Intensity);
             }

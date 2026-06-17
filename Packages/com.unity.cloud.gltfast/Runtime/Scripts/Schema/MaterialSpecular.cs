@@ -17,8 +17,15 @@ namespace GLTFast.Schema
         /// <summary>
         /// The strength of the specular reflection.
         /// </summary>
-        [JsonPropertyName("specularFactor")]
+        [JsonIgnore]
         public float SpecularFactor { get; set; } = 1f;
+
+        [JsonPropertyName("specularFactor"), JsonInclude]
+        internal float? SpecularFactorSerialized
+        {
+            get => Mathematics.ApproximatelyOne(SpecularFactor) ? null : SpecularFactor;
+            set => SpecularFactor = value ?? 1f;
+        }
 
         /// <summary>
         /// A texture that defines the strength of the specular reflection, stored in the alpha (A) channel.
@@ -59,7 +66,7 @@ namespace GLTFast.Schema
         internal void GltfSerialize(JsonWriter writer)
         {
             writer.AddObject();
-            if (math.abs(SpecularFactor - 1f) > Constants.epsilon)
+            if (!Mathematics.ApproximatelyOne(SpecularFactor))
             {
                 writer.AddProperty("specularFactor", SpecularFactor);
             }

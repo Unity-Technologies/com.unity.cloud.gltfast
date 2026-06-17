@@ -95,8 +95,15 @@ namespace GLTFast.Schema
         /// or equal to this value then it is rendered as fully opaque, otherwise, it is rendered
         /// as fully transparent. This value is ignored for other modes.
         /// </summary>
-        [JsonPropertyName("alphaCutoff")]
-        public float AlphaCutoff { get; set; } = 0.5f;
+        [JsonIgnore]
+        public float AlphaCutoff { get; set; } = .5f;
+
+        [JsonPropertyName("alphaCutoff"), JsonInclude]
+        internal float? AlphaCutoffSerialized
+        {
+            get => Mathematics.Approximately(AlphaCutoff, .5f) ? null : AlphaCutoff;
+            set => AlphaCutoff = value ?? .5f;
+        }
 
         /// <summary>
         /// Specifies whether the material is double sided. When this value is false, back-face
@@ -123,11 +130,13 @@ namespace GLTFast.Schema
         /// <summary>
         /// True if the material requires the mesh to have normals.
         /// </summary>
+        [JsonIgnore]
         public bool RequiresNormals => Extensions?.Unlit == null;
 
         /// <summary>
         /// True if the material requires the mesh to have tangents.
         /// </summary>
+        [JsonIgnore]
         public bool RequiresTangents => NormalTexture is { Index: >= 0 };
 
         internal void GltfSerialize(JsonWriter writer)
@@ -177,7 +186,7 @@ namespace GLTFast.Schema
                     };
                 writer.AddProperty("alphaMode", alphaMode);
             }
-            if (math.abs(AlphaCutoff - .5f) > Constants.epsilon)
+            if (!Mathematics.Approximately(AlphaCutoff, .5f))
             {
                 writer.AddProperty("alphaCutoff", AlphaCutoff);
             }
