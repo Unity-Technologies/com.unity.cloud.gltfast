@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: 2023 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
+using GLTFast.Schema;
 using Unity.Gltfast.Text.Json.Serialization;
 
 namespace GLTFast
@@ -176,6 +177,19 @@ namespace GLTFast
                 default:
                     return null;
             }
+        }
+
+        /// <summary>
+        /// Returns the official name of the glTF extension
+        /// </summary>
+        /// <param name="extension">Extension value</param>
+        /// <returns>Name of the glTF extension</returns>
+        public static string GetName(this EnumOrRawValue<Extension> extension)
+        {
+            var name = extension.RawValue != null
+                ? System.Text.Encoding.UTF8.GetString(extension.RawValue)
+                : extension.Value.GetName();
+            return name;
         }
     }
 }

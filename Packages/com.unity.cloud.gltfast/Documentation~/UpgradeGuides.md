@@ -62,6 +62,33 @@ Reading: access the known enum via `.Value`; an unknown string is exposed as a U
 
 The legacy `image/ktx` MIME string is no longer mapped to `ImageFormat.Ktx`. Per the glTF 2.0 specification and `KHR_texture_basisu`, use `image/ktx2`. Assets carrying the bare `image/ktx` will round-trip via `RawValue`, but `ImageFormatExtensions.FromMimeType` now resolves them to `ImageFormat.Unknown`.
 
+#### glTF extension lists
+
+[Root.ExtensionsUsed](xref:GLTFast.Schema.Root.ExtensionsUsed) and [Root.ExtensionsRequired](xref:GLTFast.Schema.Root.ExtensionsRequired) changed from `string[]` to `List<`[EnumOrRawValue&lt;Extension&gt;](xref:GLTFast.Schema.EnumOrRawValue`1)`>`. Recognized extension names deserialize directly into the [Extension](xref:GLTFast.Extension) enum and never allocate a managed `string`; names not known at build time are preserved as UTF-8 bytes in `.RawValue`.
+
+Membership checks via the implicit enum conversion:
+
+| Before | After |
+| ------ | ----- |
+| `Array.IndexOf(root.ExtensionsRequired, "KHR_lights_punctual") >= 0` | `root.ExtensionsRequired.Contains(Extension.LightsPunctual)` |
+| `root.ExtensionsUsed.Length` | `root.ExtensionsUsed.Count` |
+
+Iteration (e.g. to log every entry):
+
+```csharp
+// Before
+foreach (var name in root.ExtensionsUsed) Debug.Log(name);
+
+// After
+foreach (var extension in root.ExtensionsUsed) Debug.Log(extension.GetName());
+```
+
+Constructing from code (e.g. for export):
+
+| Before | After |
+| ------ | ----- |
+| `root.ExtensionsUsed = new[] { "KHR_materials_unlit" };` | `root.ExtensionsUsed = new List<EnumOrRawValue<Extension>> { Extension.MaterialsUnlit };` (uses implicit enum conversion) |
+
 ### Export image format and MIME type
 
 The redundant `GLTFast.Export.ImageFormat` enum was removed and merged into the canonical [GLTFast.ImageFormat](xref:GLTFast.ImageFormat). The enum value `Jpg` was renamed to `Jpeg` to match.
