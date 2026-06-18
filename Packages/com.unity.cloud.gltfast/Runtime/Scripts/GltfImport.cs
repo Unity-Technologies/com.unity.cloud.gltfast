@@ -482,14 +482,8 @@ namespace GLTFast
             CancellationToken cancellationToken = default
             )
         {
-#if NET_STANDARD_2_1
-            await using
-#endif
-            var fs = new FileStream(localPath, FileMode.Open, FileAccess.Read);
+            await using var fs = new FileStream(localPath, FileMode.Open, FileAccess.Read);
             var result = await LoadStream(fs, uri, importSettings, cancellationToken);
-#if !NET_STANDARD_2_1
-            fs.Dispose();
-#endif
             return result;
         }
 
