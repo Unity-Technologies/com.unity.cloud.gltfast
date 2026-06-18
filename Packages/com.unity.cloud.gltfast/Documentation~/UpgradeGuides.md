@@ -89,6 +89,54 @@ Constructing from code (e.g. for export):
 | ------ | ----- |
 | `root.ExtensionsUsed = new[] { "KHR_materials_unlit" };` | `root.ExtensionsUsed = new List<EnumOrRawValue<Extension>> { Extension.MaterialsUnlit };` (uses implicit enum conversion) |
 
+### Schema index properties wrapped in `int?`
+
+Schema properties that hold indices into root-level arrays (and are optional in the glTF specification) changed from `int` to `int?`. The legacy `-1` sentinel that previously signaled "not set" is gone; an absent value is now `null`.
+
+This applies to (non-exhaustive — see the changelog for the full list):
+
+- `Accessor.BufferView`
+- `BufferView.ByteStride` (and the [IBufferView](xref:GLTFast.Schema.IBufferView) interface)
+- `Image.BufferView`
+- `MeshPrimitive.Indices`, `MeshPrimitive.Material`
+- `Attributes` (`POSITION`, `NORMAL`, `TANGENT`, `TEXCOORD_*`, `COLOR_0`, `JOINTS_0`, `WEIGHTS_0`) and `MorphTarget` (`POSITION`, `NORMAL`, `TANGENT`)
+- `Node.Mesh`, `Node.Skin`, `Node.Camera`
+- `Root.Scene`
+- `Skin.InverseBindMatrices`, `Skin.Skeleton`
+- `Texture.Sampler`, `Texture.Source`
+- `TextureInfo.Index`, `TextureTransform.TexCoord`
+- `NodeLightsPunctual.Light`, `TextureBasisUniversal.Source`
+- `InstancesAttributes` (`TRANSLATION`, `ROTATION`, `SCALE`)
+
+Reading: replace `x >= 0` checks with `x.HasValue`, and dereference via `x.Value`. The C# `is int` pattern combines both:
+
+| Before | After |
+| ------ | ----- |
+| `if (primitive.Material >= 0) { var m = gltf.GetMaterial(primitive.Material); … }` | `if (primitive.Material is int materialIndex) { var m = gltf.GetMaterial(materialIndex); … }` |
+| `if (node.Mesh >= 0) Use(node.Mesh);` | `if (node.Mesh.HasValue) Use(node.Mesh.Value);` |
+| `var idx = textureInfo.Index;` (was `int`) | `var idx = textureInfo.Index;` (now `int?`) — use `.Value` at the point of use |
+
+Writing: assign an `int` directly (implicit conversion to `int?` works), or `null` to clear:
+
+| Before | After |
+| ------ | ----- |
+| `node.Mesh = 3;` | `node.Mesh = 3;` (unchanged) |
+| `node.Mesh = -1;` | `node.Mesh = null;` |
+
+The corresponding `GltfSerialize` writers omit the property when `null`. Existing code that left a property at its default (`-1`) for "not set" should now leave it at `null` (the new default).
+
+#### Related API signature changes
+
+| Member | Before | After |
+| ------ | ------ | ----- |
+| [Texture.GetImageIndex](xref:GLTFast.Schema.Texture.GetImageIndex) | `int` | `int?` |
+| `MeshPrimitive.GetMaterialIndex` | `int` | `int?` |
+| `IMaterialsVariantsSlot.GetMaterialIndex` | `int` | `int?` |
+| `MeshResult.materialIndices` | `int[]` | `int?[]` |
+| `IGltfBuffers.GetBufferView` / `GetAccessorAndData` `byteStride` out param | `int` | `int?` |
+
+Custom implementations of [IMaterialsVariantsSlot](xref:GLTFast.IMaterialsVariantsSlot), [IBufferView](xref:GLTFast.Schema.IBufferView) or [IGltfBuffers](xref:GLTFast.IGltfBuffers) need to update their member signatures accordingly.
+
 ### Export image format and MIME type
 
 The redundant `GLTFast.Export.ImageFormat` enum was removed and merged into the canonical [GLTFast.ImageFormat](xref:GLTFast.ImageFormat). The enum value `Jpg` was renamed to `Jpeg` to match.

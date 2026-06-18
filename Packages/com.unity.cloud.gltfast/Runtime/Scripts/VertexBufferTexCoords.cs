@@ -143,7 +143,7 @@ namespace GLTFast
             void* input,
             int count,
             AccessorDataType inputType,
-            int inputByteStride,
+            int? inputByteStride,
             float2* output,
             int outputByteStride,
             bool normalized = false
@@ -158,7 +158,7 @@ namespace GLTFast
                 {
                     var jobUv = new Jobs.ConvertUVsFloatToFloatInterleavedJob
                     {
-                        inputByteStride = (inputByteStride > 0) ? inputByteStride : sizeof(float2),
+                        inputByteStride = inputByteStride ?? sizeof(float2),
                         input = (byte*)input,
                         outputByteStride = outputByteStride,
                         result = output
@@ -171,7 +171,7 @@ namespace GLTFast
                     {
                         var jobUv = new Jobs.ConvertUVsUInt8ToFloatInterleavedNormalizedJob
                         {
-                            inputByteStride = (inputByteStride > 0) ? inputByteStride : 2,
+                            inputByteStride = inputByteStride ?? 2 * sizeof(byte),
                             input = (byte*)input,
                             outputByteStride = outputByteStride,
                             result = output
@@ -182,7 +182,7 @@ namespace GLTFast
                     {
                         var jobUv = new Jobs.ConvertUVsUInt8ToFloatInterleavedJob
                         {
-                            inputByteStride = (inputByteStride > 0) ? inputByteStride : 2,
+                            inputByteStride = inputByteStride ?? 2 * sizeof(byte),
                             input = (byte*)input,
                             outputByteStride = outputByteStride,
                             result = output
@@ -195,7 +195,7 @@ namespace GLTFast
                     {
                         var jobUv = new Jobs.ConvertUVsUInt16ToFloatInterleavedNormalizedJob
                         {
-                            inputByteStride = (inputByteStride > 0) ? inputByteStride : 4,
+                            inputByteStride = inputByteStride ?? 2 * sizeof(ushort),
                             input = (byte*)input,
                             outputByteStride = outputByteStride,
                             result = output
@@ -206,7 +206,7 @@ namespace GLTFast
                     {
                         var jobUv = new Jobs.ConvertUVsUInt16ToFloatInterleavedJob
                         {
-                            inputByteStride = (inputByteStride > 0) ? inputByteStride : 4,
+                            inputByteStride = inputByteStride ?? 2 * sizeof(ushort),
                             input = (byte*)input,
                             outputByteStride = outputByteStride,
                             result = output
@@ -219,7 +219,7 @@ namespace GLTFast
                     {
                         var job = new Jobs.ConvertUVsInt16ToFloatInterleavedNormalizedJob
                         {
-                            inputByteStride = inputByteStride > 0 ? inputByteStride : 4,
+                            inputByteStride = inputByteStride ?? 2 * sizeof(short),
                             input = (short*)input,
                             outputByteStride = outputByteStride,
                             result = output
@@ -230,7 +230,7 @@ namespace GLTFast
                     {
                         var job = new Jobs.ConvertUVsInt16ToFloatInterleavedJob
                         {
-                            inputByteStride = inputByteStride > 0 ? inputByteStride : 4,
+                            inputByteStride = inputByteStride ?? 2 * sizeof(short),
                             input = (short*)input,
                             outputByteStride = outputByteStride,
                             result = output
@@ -243,7 +243,7 @@ namespace GLTFast
                     {
                         var jobInt8 = new Jobs.ConvertUVsInt8ToFloatInterleavedNormalizedJob
                         {
-                            inputByteStride = inputByteStride > 0 ? inputByteStride : 2,
+                            inputByteStride = inputByteStride ?? 2 * sizeof(sbyte),
                             input = (sbyte*)input,
                             outputByteStride = outputByteStride,
                             result = output
@@ -254,7 +254,7 @@ namespace GLTFast
                     {
                         var jobInt8 = new Jobs.ConvertUVsInt8ToFloatInterleavedJob
                         {
-                            inputByteStride = inputByteStride > 0 ? inputByteStride : 2,
+                            inputByteStride = inputByteStride ?? 2 * sizeof(sbyte),
                             input = (sbyte*)input,
                             outputByteStride = outputByteStride,
                             result = output

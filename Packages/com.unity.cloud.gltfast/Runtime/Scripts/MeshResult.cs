@@ -19,7 +19,7 @@ namespace GLTFast
         public readonly int[] primitiveIndices;
 
         /// <summary>glTF material index per sub-mesh</summary>
-        public readonly int[] materialIndices;
+        public readonly int?[] materialIndices;
 
         /// <summary>Converted Unity Mesh</summary>
         public readonly UnityEngine.Mesh mesh;
@@ -36,7 +36,7 @@ namespace GLTFast
         public MeshResult(
             int meshIndex,
             int[] primitiveIndices,
-            int[] materialIndices,
+            int?[] materialIndices,
             UnityEngine.Mesh mesh
             )
         {

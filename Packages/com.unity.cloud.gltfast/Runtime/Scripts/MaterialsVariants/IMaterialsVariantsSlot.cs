@@ -16,7 +16,7 @@ namespace GLTFast
         /// variantIndex, it returns the default material index.
         /// </summary>
         /// <param name="variantIndex">Materials variant index.</param>
-        /// <returns>Corresponding glTF material index.</returns>
-        int GetMaterialIndex(int variantIndex);
+        /// <returns>Corresponding glTF material index, or null when no material is assigned.</returns>
+        int? GetMaterialIndex(int variantIndex);
     }
 }

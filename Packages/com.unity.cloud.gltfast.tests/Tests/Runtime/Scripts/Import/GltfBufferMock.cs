@@ -31,7 +31,7 @@ namespace GLTFast.Tests
             throw new NotImplementedException();
         }
 
-        public void GetAccessorAndData(int index, out Accessor accessor, out void* data, out int byteStride)
+        public void GetAccessorAndData(int index, out Accessor accessor, out void* data, out int? byteStride)
         {
             accessor = GetAccessor(index);
             accessor.Type = new EnumOrRawValue<AccessorType>(AccessorType.Vector3);
@@ -49,7 +49,7 @@ namespace GLTFast.Tests
             data = null;
         }
 
-        public ReadOnlyNativeArray<byte> GetBufferView(int bufferViewIndex, out int byteStride, int offset = 0, int length = 0)
+        public ReadOnlyNativeArray<byte> GetBufferView(int bufferViewIndex, out int? byteStride, int offset = 0, int length = 0)
         {
             throw new NotImplementedException();
         }

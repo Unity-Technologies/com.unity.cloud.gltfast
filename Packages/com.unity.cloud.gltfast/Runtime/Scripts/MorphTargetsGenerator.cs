@@ -128,34 +128,34 @@ namespace GLTFast
             Profiler.BeginSample("ScheduleMorphTargetJobs");
 
             buffers.GetAccessorAndData(
-                morphTarget.Position,
+                morphTarget.Position.Value,
                 out var posAcc,
                 out var posData,
                 out _
                 );
 
             var jobCount = 1;
-            if (posAcc.IsSparse && posAcc.BufferView >= 0)
+            if (posAcc.IsSparse && posAcc.BufferView.HasValue)
                 jobCount++;
 
             Accessor nrmAcc = null;
             void* nrmInput = null;
-            var nrmInputByteStride = 0;
+            int? nrmInputByteStride = null;
 
-            if (morphTarget.Normal >= 0)
+            if (morphTarget.Normal.HasValue)
             {
-                buffers.GetAccessorAndData(morphTarget.Normal, out nrmAcc, out nrmInput, out nrmInputByteStride);
-                jobCount += nrmAcc.IsSparse && nrmAcc.BufferView >= 0 ? 2 : 1;
+                buffers.GetAccessorAndData(morphTarget.Normal.Value, out nrmAcc, out nrmInput, out nrmInputByteStride);
+                jobCount += nrmAcc.IsSparse && nrmAcc.BufferView.HasValue ? 2 : 1;
             }
 
             Accessor tanAcc = null;
             void* tanInput = null;
-            var tanInputByteStride = 0;
+            int? tanInputByteStride = null;
 
-            if (morphTarget.Tangent >= 0)
+            if (morphTarget.Tangent.HasValue)
             {
-                buffers.GetAccessorAndData(morphTarget.Tangent, out tanAcc, out tanInput, out tanInputByteStride);
-                jobCount += tanAcc.IsSparse && tanAcc.BufferView >= 0 ? 2 : 1;
+                buffers.GetAccessorAndData(morphTarget.Tangent.Value, out tanAcc, out tanInput, out tanInputByteStride);
+                jobCount += tanAcc.IsSparse && tanAcc.BufferView.HasValue ? 2 : 1;
             }
 
             var handles = new NativeArray<JobHandle>(jobCount, VertexBufferGeneratorBase.defaultAllocator);
@@ -258,7 +258,7 @@ namespace GLTFast
             IGltfBuffers buffers,
             Accessor nrmAcc,
             void* nrmInput,
-            int nrmInputByteStride,
+            int? nrmInputByteStride,
             NativeArray<JobHandle> handles,
             ref int handleIndex
             )
@@ -323,7 +323,7 @@ namespace GLTFast
             IGltfBuffers buffers,
             Accessor tanAcc,
             void* tanInput,
-            int tanInputByteStride,
+            int? tanInputByteStride,
             NativeArray<JobHandle> handles,
             int handleIndex
             )

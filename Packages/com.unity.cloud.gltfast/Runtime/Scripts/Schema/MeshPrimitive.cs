@@ -36,13 +36,13 @@ namespace GLTFast.Schema
         /// when `OES_element_index_uint` extension is used; `type` must be `\"SCALAR\"`.
         /// </summary>
         [JsonPropertyName("indices")]
-        public int Indices { get; set; } = -1;
+        public int? Indices { get; set; }
 
         /// <summary>
         /// The index of the material to apply to this primitive when rendering.
         /// </summary>
         [JsonPropertyName("material")]
-        public int Material { get; set; } = -1;
+        public int? Material { get; set; }
 
         /// <summary>
         /// The type of primitives to render. All valid values correspond to WebGL enums.
@@ -73,7 +73,7 @@ namespace GLTFast.Schema
         }
 
         /// <inheritdoc />
-        public int GetMaterialIndex(int variantIndex)
+        public int? GetMaterialIndex(int variantIndex)
         {
             var mapping = Extensions?.MaterialsVariants;
             if (mapping != null && mapping.TryGetMaterialIndex(variantIndex, out var materialIndex))
@@ -104,13 +104,13 @@ namespace GLTFast.Schema
                 writer.AddProperty("attributes");
                 Attributes.GltfSerialize(writer);
             }
-            if (Indices >= 0)
+            if (Indices.HasValue)
             {
-                writer.AddProperty("indices", Indices);
+                writer.AddProperty("indices", Indices.Value);
             }
-            if (Material >= 0)
+            if (Material.HasValue)
             {
-                writer.AddProperty("material", Material);
+                writer.AddProperty("material", Material.Value);
             }
             if (Mode != PrimitiveMode.Triangles)
             {
@@ -142,63 +142,63 @@ namespace GLTFast.Schema
     {
         /// <summary>Vertex position accessor index.</summary>
         [JsonPropertyName("POSITION")]
-        public int Position { get; set; } = -1;
+        public int? Position { get; set; }
 
         /// <summary>Vertex normals accessor index.</summary>
         [JsonPropertyName("NORMAL")]
-        public int Normal { get; set; } = -1;
+        public int? Normal { get; set; }
 
         /// <summary>Vertex tangents accessor index.</summary>
         [JsonPropertyName("TANGENT")]
-        public int Tangent { get; set; } = -1;
+        public int? Tangent { get; set; }
 
         /// <summary>Texture coordinates accessor index.</summary>
         [JsonPropertyName("TEXCOORD_0")]
-        public int TexCoord0 { get; set; } = -1;
+        public int? TexCoord0 { get; set; }
 
         /// <summary>Texture coordinates accessor index (second UV set).</summary>
         [JsonPropertyName("TEXCOORD_1")]
-        public int TexCoord1 { get; set; } = -1;
+        public int? TexCoord1 { get; set; }
 
         /// <summary>Texture coordinates accessor index (third UV set).</summary>
         [JsonPropertyName("TEXCOORD_2")]
-        public int TexCoord2 { get; set; } = -1;
+        public int? TexCoord2 { get; set; }
 
         /// <summary>Texture coordinates accessor index (fourth UV set).</summary>
         [JsonPropertyName("TEXCOORD_3")]
-        public int TexCoord3 { get; set; } = -1;
+        public int? TexCoord3 { get; set; }
 
         /// <summary>Texture coordinates accessor index (fifth UV set).</summary>
         [JsonPropertyName("TEXCOORD_4")]
-        public int TexCoord4 { get; set; } = -1;
+        public int? TexCoord4 { get; set; }
 
         /// <summary>Texture coordinates accessor index (sixth UV set).</summary>
         [JsonPropertyName("TEXCOORD_5")]
-        public int TexCoord5 { get; set; } = -1;
+        public int? TexCoord5 { get; set; }
 
         /// <summary>Texture coordinates accessor index (seventh UV set).</summary>
         [JsonPropertyName("TEXCOORD_6")]
-        public int TexCoord6 { get; set; } = -1;
+        public int? TexCoord6 { get; set; }
 
         /// <summary>Texture coordinates accessor index (eighth UV set).</summary>
         [JsonPropertyName("TEXCOORD_7")]
-        public int TexCoord7 { get; set; } = -1;
+        public int? TexCoord7 { get; set; }
 
         /// <summary>Texture coordinates accessor index (ninth UV set).</summary>
         [JsonPropertyName("TEXCOORD_8")]
-        public int TexCoord8 { get; set; } = -1;
+        public int? TexCoord8 { get; set; }
 
         /// <summary>Vertex color accessor index.</summary>
         [JsonPropertyName("COLOR_0")]
-        public int Color0 { get; set; } = -1;
+        public int? Color0 { get; set; }
 
         /// <summary>Bone joints accessor index.</summary>
         [JsonPropertyName("JOINTS_0")]
-        public int Joints0 { get; set; } = -1;
+        public int? Joints0 { get; set; }
 
         /// <summary>Bone weights accessor index.</summary>
         [JsonPropertyName("WEIGHTS_0")]
-        public int Weights0 { get; set; } = -1;
+        public int? Weights0 { get; set; }
 
         /// <summary>
         /// Calculates the texture coordinate set quantity.
@@ -206,15 +206,15 @@ namespace GLTFast.Schema
         /// <returns>Texture coordinate set quantity.</returns>
         public int GetTexCoordsCount()
         {
-            if (TexCoord0 < 0) return 0;
-            if (TexCoord1 < 0) return 1;
-            if (TexCoord2 < 0) return 2;
-            if (TexCoord3 < 0) return 3;
-            if (TexCoord4 < 0) return 4;
-            if (TexCoord5 < 0) return 5;
-            if (TexCoord6 < 0) return 6;
-            if (TexCoord7 < 0) return 7;
-            return TexCoord8 < 0 ? 8 : 9;
+            if (!TexCoord0.HasValue) return 0;
+            if (!TexCoord1.HasValue) return 1;
+            if (!TexCoord2.HasValue) return 2;
+            if (!TexCoord3.HasValue) return 3;
+            if (!TexCoord4.HasValue) return 4;
+            if (!TexCoord5.HasValue) return 5;
+            if (!TexCoord6.HasValue) return 6;
+            if (!TexCoord7.HasValue) return 7;
+            return !TexCoord8.HasValue ? 8 : 9;
         }
 
         /// <summary>
@@ -242,34 +242,34 @@ namespace GLTFast.Schema
             }
 
             uvAccessors = new int[uvCount];
-            uvAccessors[0] = TexCoord0;
+            uvAccessors[0] = TexCoord0.Value;
             if (uvAccessors.Length >= 2)
             {
-                uvAccessors[1] = TexCoord1;
+                uvAccessors[1] = TexCoord1.Value;
             }
             if (uvAccessors.Length >= 3)
             {
-                uvAccessors[2] = TexCoord2;
+                uvAccessors[2] = TexCoord2.Value;
             }
             if (uvAccessors.Length >= 4)
             {
-                uvAccessors[3] = TexCoord3;
+                uvAccessors[3] = TexCoord3.Value;
             }
             if (uvAccessors.Length >= 5)
             {
-                uvAccessors[4] = TexCoord4;
+                uvAccessors[4] = TexCoord4.Value;
             }
             if (uvAccessors.Length >= 6)
             {
-                uvAccessors[5] = TexCoord5;
+                uvAccessors[5] = TexCoord5.Value;
             }
             if (uvAccessors.Length >= 7)
             {
-                uvAccessors[6] = TexCoord6;
+                uvAccessors[6] = TexCoord6.Value;
             }
             if (uvAccessors.Length >= 8)
             {
-                uvAccessors[7] = TexCoord7;
+                uvAccessors[7] = TexCoord7.Value;
             }
             return true;
         }
@@ -277,20 +277,20 @@ namespace GLTFast.Schema
         internal void GltfSerialize(JsonWriter writer)
         {
             writer.AddObject();
-            if (Position >= 0) writer.AddProperty("POSITION", Position);
-            if (Normal >= 0) writer.AddProperty("NORMAL", Normal);
-            if (Tangent >= 0) writer.AddProperty("TANGENT", Tangent);
-            if (TexCoord0 >= 0) writer.AddProperty("TEXCOORD_0", TexCoord0);
-            if (TexCoord1 >= 0) writer.AddProperty("TEXCOORD_1", TexCoord1);
-            if (TexCoord2 >= 0) writer.AddProperty("TEXCOORD_2", TexCoord2);
-            if (TexCoord3 >= 0) writer.AddProperty("TEXCOORD_3", TexCoord3);
-            if (TexCoord4 >= 0) writer.AddProperty("TEXCOORD_4", TexCoord4);
-            if (TexCoord5 >= 0) writer.AddProperty("TEXCOORD_5", TexCoord5);
-            if (TexCoord6 >= 0) writer.AddProperty("TEXCOORD_6", TexCoord6);
-            if (TexCoord7 >= 0) writer.AddProperty("TEXCOORD_7", TexCoord7);
-            if (Color0 >= 0) writer.AddProperty("COLOR_0", Color0);
-            if (Joints0 >= 0) writer.AddProperty("JOINTS_0", Joints0);
-            if (Weights0 >= 0) writer.AddProperty("WEIGHTS_0", Weights0);
+            if (Position.HasValue) writer.AddProperty("POSITION", Position.Value);
+            if (Normal.HasValue) writer.AddProperty("NORMAL", Normal.Value);
+            if (Tangent.HasValue) writer.AddProperty("TANGENT", Tangent.Value);
+            if (TexCoord0.HasValue) writer.AddProperty("TEXCOORD_0", TexCoord0.Value);
+            if (TexCoord1.HasValue) writer.AddProperty("TEXCOORD_1", TexCoord1.Value);
+            if (TexCoord2.HasValue) writer.AddProperty("TEXCOORD_2", TexCoord2.Value);
+            if (TexCoord3.HasValue) writer.AddProperty("TEXCOORD_3", TexCoord3.Value);
+            if (TexCoord4.HasValue) writer.AddProperty("TEXCOORD_4", TexCoord4.Value);
+            if (TexCoord5.HasValue) writer.AddProperty("TEXCOORD_5", TexCoord5.Value);
+            if (TexCoord6.HasValue) writer.AddProperty("TEXCOORD_6", TexCoord6.Value);
+            if (TexCoord7.HasValue) writer.AddProperty("TEXCOORD_7", TexCoord7.Value);
+            if (Color0.HasValue) writer.AddProperty("COLOR_0", Color0.Value);
+            if (Joints0.HasValue) writer.AddProperty("JOINTS_0", Joints0.Value);
+            if (Weights0.HasValue) writer.AddProperty("WEIGHTS_0", Weights0.Value);
             writer.Close();
         }
     }
@@ -367,19 +367,19 @@ namespace GLTFast.Schema
     {
         /// <summary>Vertex position deviation accessor index.</summary>
         [JsonPropertyName("POSITION")]
-        public int Position { get; set; } = -1;
+        public int? Position { get; set; }
         /// <summary>Vertex normal deviation accessor index.</summary>
         [JsonPropertyName("NORMAL")]
-        public int Normal { get; set; } = -1;
+        public int? Normal { get; set; }
         /// <summary>Vertex tangent deviation accessor index.</summary>
         [JsonPropertyName("TANGENT")]
-        public int Tangent { get; set; } = -1;
+        public int? Tangent { get; set; }
 
         internal void GltfSerialize(JsonWriter writer)
         {
-            if (Position >= 0) writer.AddProperty("POSITION", Position);
-            if (Normal >= 0) writer.AddProperty("NORMAL", Normal);
-            if (Tangent >= 0) writer.AddProperty("TANGENT", Tangent);
+            if (Position.HasValue) writer.AddProperty("POSITION", Position.Value);
+            if (Normal.HasValue) writer.AddProperty("NORMAL", Normal.Value);
+            if (Tangent.HasValue) writer.AddProperty("TANGENT", Tangent.Value);
         }
     }
 }

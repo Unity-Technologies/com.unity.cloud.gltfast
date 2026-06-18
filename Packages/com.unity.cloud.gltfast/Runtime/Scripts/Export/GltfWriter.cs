@@ -224,10 +224,11 @@ namespace GLTFast.Export
                 attributeUsage &= ~VertexAttributeUsage.Skinning;
             }
 
-            node.Mesh = AddMesh(uMesh, attributeUsage);
+            var meshId = AddMesh(uMesh, attributeUsage);
+            node.Mesh = meshId;
             if (skinning)
             {
-                node.Skin = AddSkin(node.Mesh, joints);
+                node.Skin = AddSkin(meshId, joints);
             }
         }
 
@@ -432,7 +433,7 @@ namespace GLTFast.Export
         }
 
         /// <inheritdoc />
-        public int AddTexture(int imageId, int samplerId)
+        public int AddTexture(int? imageId, int? samplerId)
         {
 #if UNITY_IMAGECONVERSION
             CertifyNotDisposed();
@@ -458,12 +459,12 @@ namespace GLTFast.Export
         }
 
         /// <inheritdoc />
-        public int AddSampler(FilterMode filterMode, TextureWrapMode wrapModeU, TextureWrapMode wrapModeV)
+        public int? AddSampler(FilterMode filterMode, TextureWrapMode wrapModeU, TextureWrapMode wrapModeV)
         {
             if (filterMode == FilterMode.Bilinear && wrapModeU == TextureWrapMode.Repeat && wrapModeV == TextureWrapMode.Repeat)
             {
                 // This is the default, so no sampler needed
-                return -1;
+                return null;
             }
             CertifyNotDisposed();
             m_Samplers = m_Samplers ?? new List<Sampler>();
@@ -863,8 +864,7 @@ namespace GLTFast.Export
                     var nodeId = nodeMaterial.Key;
                     var materialIds = nodeMaterial.Value;
                     var node = m_Nodes[nodeId];
-                    var originalMeshId = node.Mesh;
-                    if (originalMeshId < 0) continue;
+                    if (node.Mesh is not int originalMeshId) continue;
                     var mesh = m_Meshes[originalMeshId];
 
                     var meshMaterialCombo = new MeshMaterialCombination(originalMeshId, materialIds);
@@ -903,7 +903,7 @@ namespace GLTFast.Export
         {
             for (var i = 0; i < materialIds.Length && i < mesh.Primitives.Count; i++)
             {
-                mesh.Primitives[i].Material = materialIds[i] >= 0 ? materialIds[i] : -1;
+                mesh.Primitives[i].Material = materialIds[i] >= 0 ? materialIds[i] : null;
             }
         }
 

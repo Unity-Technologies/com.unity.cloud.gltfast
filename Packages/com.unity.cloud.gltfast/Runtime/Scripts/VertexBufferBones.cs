@@ -161,7 +161,7 @@ namespace GLTFast
             void* input,
             int count,
             AccessorDataType inputType,
-            int inputByteStride,
+            int? inputByteStride,
             float4* output,
             int outputByteStride
             )
@@ -171,18 +171,20 @@ namespace GLTFast
             switch (inputType)
             {
                 case AccessorDataType.Float:
-                    var jobTangentI = new ConvertBoneWeightsFloatToFloatInterleavedJob();
-                    jobTangentI.inputByteStride = inputByteStride > 0 ? inputByteStride : 16;
-                    jobTangentI.input = (byte*)input;
-                    jobTangentI.outputByteStride = outputByteStride;
-                    jobTangentI.result = output;
+                    var jobTangentI = new ConvertBoneWeightsFloatToFloatInterleavedJob
+                    {
+                        inputByteStride = inputByteStride ?? sizeof(float4),
+                        input = (byte*)input,
+                        outputByteStride = outputByteStride,
+                        result = output
+                    };
                     jobHandle = jobTangentI.ScheduleBatch(count, GltfImport.DefaultBatchCount);
                     break;
                 case AccessorDataType.UnsignedShort:
                 {
                     var job = new ConvertBoneWeightsUInt16ToFloatInterleavedJob
                     {
-                        inputByteStride = inputByteStride > 0 ? inputByteStride : 8,
+                        inputByteStride = inputByteStride ?? 4 * sizeof(ushort),
                         input = (byte*)input,
                         outputByteStride = outputByteStride,
                         result = output
@@ -194,7 +196,7 @@ namespace GLTFast
                 {
                     var job = new ConvertBoneWeightsUInt8ToFloatInterleavedJob
                     {
-                        inputByteStride = inputByteStride > 0 ? inputByteStride : 4,
+                        inputByteStride = inputByteStride ?? 4 * sizeof(byte),
                         input = (byte*)input,
                         outputByteStride = outputByteStride,
                         result = output
@@ -216,7 +218,7 @@ namespace GLTFast
             void* input,
             int count,
             AccessorDataType inputType,
-            int inputByteStride,
+            int? inputByteStride,
             uint4* output,
             int outputByteStride,
             ICodeLogger logger
@@ -227,19 +229,23 @@ namespace GLTFast
             switch (inputType)
             {
                 case AccessorDataType.UnsignedByte:
-                    var jointsUInt8Job = new ConvertBoneJointsUInt8ToUInt32Job();
-                    jointsUInt8Job.inputByteStride = inputByteStride > 0 ? inputByteStride : 4;
-                    jointsUInt8Job.input = (byte*)input;
-                    jointsUInt8Job.outputByteStride = outputByteStride;
-                    jointsUInt8Job.result = output;
+                    var jointsUInt8Job = new ConvertBoneJointsUInt8ToUInt32Job
+                    {
+                        inputByteStride = inputByteStride ?? 4 * sizeof(byte),
+                        input = (byte*)input,
+                        outputByteStride = outputByteStride,
+                        result = output
+                    };
                     jobHandle = jointsUInt8Job.Schedule(count, GltfImport.DefaultBatchCount);
                     break;
                 case AccessorDataType.UnsignedShort:
-                    var jointsUInt16Job = new ConvertBoneJointsUInt16ToUInt32Job();
-                    jointsUInt16Job.inputByteStride = inputByteStride > 0 ? inputByteStride : 8;
-                    jointsUInt16Job.input = (byte*)input;
-                    jointsUInt16Job.outputByteStride = outputByteStride;
-                    jointsUInt16Job.result = output;
+                    var jointsUInt16Job = new ConvertBoneJointsUInt16ToUInt32Job
+                    {
+                        inputByteStride = inputByteStride ?? 4 * sizeof(ushort),
+                        input = (byte*)input,
+                        outputByteStride = outputByteStride,
+                        result = output
+                    };
                     jobHandle = jointsUInt16Job.Schedule(count, GltfImport.DefaultBatchCount);
                     break;
                 default:

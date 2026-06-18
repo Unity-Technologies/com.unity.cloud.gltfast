@@ -15,18 +15,18 @@ namespace GLTFast.Schema
         /// Instance positions accessor index
         /// </summary>
         [JsonPropertyName("TRANSLATION")]
-        public int Translation { get; set; } = -1;
+        public int? Translation { get; set; }
 
         /// <summary>
         /// Instance rotations accessor index
         /// </summary>
         [JsonPropertyName("ROTATION")]
-        public int Rotation { get; set; } = -1;
+        public int? Rotation { get; set; }
 
         /// <summary>
         /// Instance scales accessor index
         /// </summary>
         [JsonPropertyName("SCALE")]
-        public int Scale { get; set; } = -1;
+        public int? Scale { get; set; }
     }
 }

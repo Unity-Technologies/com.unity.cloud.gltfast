@@ -33,7 +33,7 @@ namespace GLTFast.Schema
         /// If this is undefined, look in the sparse object for the index and value buffer views.
         /// </summary>
         [JsonPropertyName("bufferView")]
-        public int BufferView { get; set; } = -1;
+        public int? BufferView { get; set; }
 
         /// <summary>
         /// The offset relative to the start of the bufferView in bytes.
@@ -296,9 +296,9 @@ namespace GLTFast.Schema
         internal void GltfSerialize(JsonWriter writer)
         {
             writer.AddObject();
-            if (BufferView >= 0)
+            if (BufferView.HasValue)
             {
-                writer.AddProperty("bufferView", BufferView);
+                writer.AddProperty("bufferView", BufferView.Value);
             }
             writer.AddProperty("componentType", (int)ComponentType);
             writer.AddProperty("count", Count);

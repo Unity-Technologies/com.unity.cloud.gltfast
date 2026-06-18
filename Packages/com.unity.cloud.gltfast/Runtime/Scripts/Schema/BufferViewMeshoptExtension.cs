@@ -32,7 +32,7 @@ namespace GLTFast.Schema
         /// The stride, in bytes, between vertex attributes or other interleaved data.
         /// </summary>
         [JsonPropertyName("byteStride")]
-        public int ByteStride { get; set; }
+        public int? ByteStride { get; set; }
 
         [JsonPropertyName("count")]
         public int Count { get; set; }

@@ -82,10 +82,11 @@ namespace GLTFast
             JobHandle? jobHandle;
 
             Profiler.BeginSample("GetVector3Job");
+            if (!accessor.BufferView.HasValue) return null;
             if (accessor.ComponentType == AccessorDataType.Float)
             {
                 var input = buffers.GetStridedAccessorData<float3>(
-                    accessor.BufferView,
+                    accessor.BufferView.Value,
                     accessor.Count,
                     accessor.ByteOffset
                 );
@@ -100,7 +101,7 @@ namespace GLTFast
             else if (accessor.ComponentType == AccessorDataType.UnsignedShort)
             {
                 var input = buffers.GetStridedAccessorData<ushort3>(
-                    accessor.BufferView,
+                    accessor.BufferView.Value,
                     accessor.Count,
                     accessor.ByteOffset
                 );
@@ -128,7 +129,7 @@ namespace GLTFast
             else if (accessor.ComponentType == AccessorDataType.Short)
             {
                 var input = buffers.GetStridedAccessorData<short3>(
-                    accessor.BufferView,
+                    accessor.BufferView.Value,
                     accessor.Count,
                     accessor.ByteOffset
                 );
@@ -170,7 +171,7 @@ namespace GLTFast
             else if (accessor.ComponentType == AccessorDataType.Byte)
             {
                 var input = buffers.GetStridedAccessorData<sbyte3>(
-                    accessor.BufferView,
+                    accessor.BufferView.Value,
                     accessor.Count,
                     accessor.ByteOffset
                 );
@@ -212,7 +213,7 @@ namespace GLTFast
             else if (accessor.ComponentType == AccessorDataType.UnsignedByte)
             {
                 var input = buffers.GetStridedAccessorData<byte3>(
-                    accessor.BufferView,
+                    accessor.BufferView.Value,
                     accessor.Count,
                     accessor.ByteOffset
                 );
@@ -251,7 +252,7 @@ namespace GLTFast
             void* input,
             int count,
             AccessorDataType inputType,
-            int inputByteStride,
+            int? inputByteStride,
             float4* output,
             int outputByteStride,
             bool normalized = false
@@ -265,7 +266,7 @@ namespace GLTFast
                 {
                     var jobTangent = new ConvertTangentsFloatToFloatInterleavedJob
                     {
-                        inputByteStride = inputByteStride > 0 ? inputByteStride : 16,
+                        inputByteStride = inputByteStride ?? sizeof(float4),
                         input = (byte*)input,
                         outputByteStride = outputByteStride,
                         result = output
@@ -278,7 +279,7 @@ namespace GLTFast
                     Assert.IsTrue(normalized);
                     var jobTangent = new ConvertTangentsInt16ToFloatInterleavedNormalizedJob
                     {
-                        inputByteStride = inputByteStride > 0 ? inputByteStride : 8,
+                        inputByteStride = inputByteStride ?? 4 * sizeof(short),
                         input = (short*)input,
                         outputByteStride = outputByteStride,
                         result = output
@@ -291,7 +292,7 @@ namespace GLTFast
                     Assert.IsTrue(normalized);
                     var jobTangent = new ConvertTangentsInt8ToFloatInterleavedNormalizedJob
                     {
-                        inputByteStride = inputByteStride > 0 ? inputByteStride : 4,
+                        inputByteStride = inputByteStride ?? 4 * sizeof(sbyte),
                         input = (sbyte*)input,
                         outputByteStride = outputByteStride,
                         result = output

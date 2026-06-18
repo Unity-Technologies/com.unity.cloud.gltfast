@@ -35,7 +35,7 @@ namespace GLTFast.Schema
         /// Use this instead of the image's uri property.
         /// </summary>
         [JsonPropertyName("bufferView")]
-        public int BufferView { get; set; } = -1;
+        public int? BufferView { get; set; }
 
         /// <inheritdoc cref="Asset.Extensions"/>
         [JsonPropertyName("extensions")]
@@ -78,9 +78,9 @@ namespace GLTFast.Schema
                 };
                 writer.AddProperty("mimeType", mimeType);
             }
-            if (BufferView >= 0)
+            if (BufferView.HasValue)
             {
-                writer.AddProperty("bufferView", BufferView);
+                writer.AddProperty("bufferView", BufferView.Value);
             }
             writer.Close();
         }

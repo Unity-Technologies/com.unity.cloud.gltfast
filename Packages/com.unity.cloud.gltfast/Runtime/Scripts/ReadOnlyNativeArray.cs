@@ -91,7 +91,12 @@ namespace GLTFast
             return array.AsReadOnly();
         }
 
-        public ReadOnlyNativeStridedArray<TTarget> ToStrided<TTarget>(int offset, int count, int byteStride) where TTarget : unmanaged
+        public ReadOnlyNativeStridedArray<TTarget> ToStrided<TTarget>(
+            int offset,
+            int count,
+            int byteStride
+            )
+            where TTarget : unmanaged
         {
             return new ReadOnlyNativeStridedArray<TTarget>(
                 m_Buffer,

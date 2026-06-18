@@ -109,8 +109,8 @@ namespace GLTFast
         {
             var mainBufferType = MainBufferType.Position;
             var firstAttributes = m_Primitives[0].Attributes;
-            hasNormals = firstAttributes.Normal >= 0;
-            hasTangents = firstAttributes.Tangent >= 0;
+            hasNormals = firstAttributes.Normal.HasValue;
+            hasTangents = firstAttributes.Tangent.HasValue;
 
             if (hasTangents)
                 mainBufferType = MainBufferType.PosNormTan;
@@ -126,13 +126,13 @@ namespace GLTFast
                     || primitive.Mode == PrimitiveMode.TriangleFan
                     || primitive.Mode == PrimitiveMode.TriangleStrip)
                 {
-                    if (primitive.Material < 0)
+                    if (!primitive.Material.HasValue)
                     {
                         mainBufferType |= MainBufferType.Normal;
                     }
                     else
                     {
-                        var material = gltf.GetSourceMaterial(primitive.Material);
+                        var material = gltf.GetSourceMaterial(primitive.Material.Value);
                         if (material.RequiresTangents)
                         {
                             mainBufferType |= MainBufferType.Normal | MainBufferType.Tangent;
@@ -209,9 +209,9 @@ namespace GLTFast
             for (var i = 0; i < SubMeshCount; i++)
             {
                 var primitive = GetSubMesh(i);
-                if (primitive.Indices >= 0)
+                if (primitive.Indices.HasValue)
                 {
-                    var accessor = buffers.GetAccessor(primitive.Indices);
+                    var accessor = buffers.GetAccessor(primitive.Indices.Value);
                     if (accessor.ComponentType == AccessorDataType.UnsignedInt)
                     {
                         indexFormat = IndexFormat.UInt32;
@@ -220,7 +220,7 @@ namespace GLTFast
                 }
                 else
                 {
-                    var vertexCount = buffers.GetAccessor(primitive.Attributes.Position).Count;
+                    var vertexCount = buffers.GetAccessor(primitive.Attributes.Position.Value).Count;
                     if (vertexCount > ushort.MaxValue)
                     {
                         indexFormat = IndexFormat.UInt32;
@@ -235,10 +235,10 @@ namespace GLTFast
             for (var subMeshIndex = 0; subMeshIndex < SubMeshCount; subMeshIndex++)
             {
                 var primitive = GetSubMesh(subMeshIndex);
-                if (primitive.Indices >= 0)
+                if (primitive.Indices.HasValue)
                 {
                     var flip = primitive.Mode == PrimitiveMode.Triangles;
-                    var accessor = buffers.GetAccessor(primitive.Indices);
+                    var accessor = buffers.GetAccessor(primitive.Indices.Value);
 
                     var minIndexCount = 3;
                     var indexCount = accessor.Count;
@@ -273,7 +273,7 @@ namespace GLTFast
                     m_Indices.Allocate(subMeshIndex, indexCount);
 
                     var accessorData = buffers.GetBufferView(
-                        accessor.BufferView,
+                        accessor.BufferView.Value,
                         out _,
                         accessor.ByteOffset,
                         accessor.ByteSize
@@ -374,7 +374,7 @@ namespace GLTFast
                 }
                 else
                 {
-                    var vertexCount = buffers.GetAccessor(primitive.Attributes.Position).Count;
+                    var vertexCount = buffers.GetAccessor(primitive.Attributes.Position.Value).Count;
                     var indexCount = primitive.Mode switch
                     {
                         PrimitiveMode.TriangleStrip or PrimitiveMode.TriangleFan => (vertexCount - 2) * 3,

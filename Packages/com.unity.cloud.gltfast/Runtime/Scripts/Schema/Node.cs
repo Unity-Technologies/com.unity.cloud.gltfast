@@ -27,7 +27,7 @@ namespace GLTFast.Schema
         /// The index of the mesh in this node.
         /// </summary>
         [JsonPropertyName("mesh")]
-        public int Mesh { get; set; } = -1;
+        public int? Mesh { get; set; }
 
         /// <summary>
         /// A floating-point 4x4 transformation matrix stored in column-major order.
@@ -70,13 +70,13 @@ namespace GLTFast.Schema
         /// The index of the skin (in <see cref="Root.Skins"/>) referenced by this node.
         /// </summary>
         [JsonPropertyName("skin")]
-        public int Skin { get; set; } = -1;
+        public int? Skin { get; set; }
 
         /// <summary>
         /// Camera index
         /// </summary>
         [JsonPropertyName("camera")]
-        public int Camera { get; set; } = -1;
+        public int? Camera { get; set; }
 
         /// <summary>
         /// Application-specific data.
@@ -104,9 +104,9 @@ namespace GLTFast.Schema
                 writer.AddArrayProperty("children", Children);
             }
 
-            if (Mesh >= 0)
+            if (Mesh.HasValue)
             {
-                writer.AddProperty("mesh", Mesh);
+                writer.AddProperty("mesh", Mesh.Value);
             }
 
             if (Translation != null)
@@ -134,14 +134,14 @@ namespace GLTFast.Schema
                 writer.AddArrayProperty("weights", Weights);
             }
 
-            if (Skin >= 0)
+            if (Skin.HasValue)
             {
-                writer.AddProperty("skin", Skin);
+                writer.AddProperty("skin", Skin.Value);
             }
 
-            if (Camera >= 0)
+            if (Camera.HasValue)
             {
-                writer.AddProperty("camera", Camera);
+                writer.AddProperty("camera", Camera.Value);
             }
 
             if (Extensions != null)

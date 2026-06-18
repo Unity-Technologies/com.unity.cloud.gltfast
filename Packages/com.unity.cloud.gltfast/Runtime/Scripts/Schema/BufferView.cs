@@ -37,7 +37,7 @@ namespace GLTFast.Schema
         /// When this is zero, data is tightly packed.
         /// </summary>
         [JsonPropertyName("byteStride")]
-        public int ByteStride { get; set; } = -1;
+        public int? ByteStride { get; set; }
 
         /// <summary>
         /// The target that the WebGL buffer should be bound to.
@@ -69,9 +69,9 @@ namespace GLTFast.Schema
             {
                 writer.AddProperty("byteOffset", ByteOffset);
             }
-            if (ByteStride > 0)
+            if (ByteStride.HasValue)
             {
-                writer.AddProperty("byteStride", ByteStride);
+                writer.AddProperty("byteStride", ByteStride.Value);
             }
             if (Target > 0)
             {

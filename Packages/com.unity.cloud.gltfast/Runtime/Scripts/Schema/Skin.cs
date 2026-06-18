@@ -18,13 +18,13 @@ namespace GLTFast.Schema
         /// floating-point 4x4 inverse-bind matrices.
         /// </summary>
         [JsonPropertyName("inverseBindMatrices")]
-        public int InverseBindMatrices { get; set; } = -1;
+        public int? InverseBindMatrices { get; set; }
 
         /// <summary>
         /// The index of the node used as a skeleton root.
         /// </summary>
         [JsonPropertyName("skeleton")]
-        public int Skeleton { get; set; } = -1;
+        public int? Skeleton { get; set; }
 
         /// <summary>
         /// Indices of skeleton nodes, used as joints in this skin.
@@ -54,14 +54,14 @@ namespace GLTFast.Schema
             writer.AddObject();
             GltfSerializeName(writer);
 
-            if (InverseBindMatrices != -1)
+            if (InverseBindMatrices.HasValue)
             {
-                writer.AddProperty("inverseBindMatrices", InverseBindMatrices);
+                writer.AddProperty("inverseBindMatrices", InverseBindMatrices.Value);
             }
 
-            if (Skeleton != -1)
+            if (Skeleton.HasValue)
             {
-                writer.AddProperty("skeleton", Skeleton);
+                writer.AddProperty("skeleton", Skeleton.Value);
             }
 
             if (Joints != null)

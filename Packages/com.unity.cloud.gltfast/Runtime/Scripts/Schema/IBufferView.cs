@@ -28,7 +28,7 @@ namespace GLTFast.Schema
         /// <summary>
         /// The stride, in bytes, between vertex attributes.
         /// </summary>
-        /// <remarks>When this is 0 or negative, data is tightly packed.</remarks>
-        int ByteStride { get; }
+        /// <remarks>When this is null, data is tightly packed.</remarks>
+        int? ByteStride { get; }
     }
 }

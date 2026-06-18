@@ -37,14 +37,14 @@ namespace GLTFast
                 var materialId = slot.GetMaterialIndex(variantIndex);
                 materials[subMesh] = null;
                 Task<Material> task;
-                if (materialId < 0)
+                if (materialId.HasValue)
                 {
-                    getDefaultMaterialTask ??= materialProvider.GetDefaultMaterialAsync(cancellationToken);
-                    task = getDefaultMaterialTask;
+                    task = materialProvider.GetMaterialAsync(materialId.Value, cancellationToken);
                 }
                 else
                 {
-                    task = materialProvider.GetMaterialAsync(materialId, cancellationToken);
+                    getDefaultMaterialTask ??= materialProvider.GetDefaultMaterialAsync(cancellationToken);
+                    task = getDefaultMaterialTask;
                 }
                 getMaterialTasks ??= new Dictionary<Task<Material>, int>();
                 getMaterialTasks[task] = subMesh;

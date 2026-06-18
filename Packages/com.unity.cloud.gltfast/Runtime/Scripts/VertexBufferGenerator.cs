@@ -82,7 +82,7 @@ namespace GLTFast
             for (var i = 0; i < m_Attributes.Length; i++)
             {
                 VertexIntervals[i] = vertexCount;
-                m_PositionAccessors[i] = m_Buffers.GetAccessor(m_Attributes[i].Position);
+                m_PositionAccessors[i] = m_Buffers.GetAccessor(m_Attributes[i].Position.Value);
                 vertexCount += m_PositionAccessors[i].Count;
             }
             VertexIntervals[m_Attributes.Length] = vertexCount;
@@ -273,7 +273,7 @@ namespace GLTFast
         unsafe bool ScheduleNormalsJobs(Attributes att, byte* vDataPtr, int outputByteStride, int i, NativeArray<JobHandle> handles, ref int handleIndex)
         {
             m_Buffers.GetAccessorAndData(
-                att.Normal,
+                att.Normal.Value,
                 out var nrmAcc,
                 out var input,
                 out var inputByteStride
@@ -309,7 +309,7 @@ namespace GLTFast
         unsafe bool ScheduleTangentsJobs(Attributes att, byte* vDataPtr, int outputByteStride, int i, NativeArray<JobHandle> handles, ref int handleIndex)
         {
             m_Buffers.GetAccessorAndData(
-                att.Tangent,
+                att.Tangent.Value,
                 out var tanAcc,
                 out var input,
                 out var inputByteStride
@@ -361,7 +361,7 @@ namespace GLTFast
         bool ScheduleColorsJobs(Attributes att, int i, NativeArray<JobHandle> handles, ref int handleIndex)
         {
             var success = m_Colors.ScheduleVertexColorJob(
-                att.Color0,
+                att.Color0.Value,
                 VertexIntervals[i],
                 handles.GetSubArray(handleIndex, 1),
                 m_Buffers
@@ -403,8 +403,8 @@ namespace GLTFast
                 var att = attributes[i];
 
                 var h = m_Bones.ScheduleVertexBonesJob(
-                    att.Weights0,
-                    att.Joints0,
+                    att.Weights0.Value,
+                    att.Joints0.Value,
                     VertexIntervals[i],
                     m_Buffers
                 );

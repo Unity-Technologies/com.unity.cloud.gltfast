@@ -17,7 +17,7 @@ namespace GLTFast.Schema
         /// The index of the texture.
         /// </summary>
         [JsonPropertyName("index")]
-        public int Index { get; set; } = -1;
+        public int? Index { get; set; }
 
         /// <summary>
         /// This integer value is used to construct a string in the format
@@ -57,9 +57,9 @@ namespace GLTFast.Schema
 
         internal void GltfSerializeTextureInfo(JsonWriter writer)
         {
-            if (Index >= 0)
+            if (Index.HasValue)
             {
-                writer.AddProperty("index", Index);
+                writer.AddProperty("index", Index.Value);
             }
             if (TexCoord > 0)
             {

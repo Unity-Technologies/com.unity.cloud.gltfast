@@ -342,9 +342,8 @@ namespace GLTFast.Materials
             int uvChannelPropertyId = -1
             )
         {
-            if (textureInfo is { Index: >= 0 })
+            if (textureInfo?.Index is int textureIndex)
             {
-                int textureIndex = textureInfo.Index;
                 var srcTexture = gltf.GetSourceTexture(textureIndex);
                 if (srcTexture != null)
                 {
@@ -408,9 +407,9 @@ namespace GLTFast.Materials
             {
                 hasTransform = true;
                 var tt = textureInfo.Extensions.TextureTransform;
-                if (tt.TexCoord >= 0)
+                if (tt.TexCoord.HasValue)
                 {
-                    texCoord = tt.TexCoord;
+                    texCoord = tt.TexCoord.Value;
                 }
 
                 if (tt.Offset != null)

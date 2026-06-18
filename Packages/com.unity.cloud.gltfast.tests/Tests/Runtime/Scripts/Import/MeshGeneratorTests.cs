@@ -203,7 +203,7 @@ namespace GLTFast.Tests.Import
             throw new NotImplementedException();
         }
 
-        public unsafe void GetAccessorAndData(int index, out Accessor accessor, out void* data, out int byteStride)
+        public unsafe void GetAccessorAndData(int index, out Accessor accessor, out void* data, out int? byteStride)
         {
             throw new NotImplementedException();
         }
@@ -215,7 +215,7 @@ namespace GLTFast.Tests.Import
         {
             throw new NotImplementedException();
         }
-        public ReadOnlyNativeArray<byte> GetBufferView(int bufferViewIndex, out int byteStride, int offset = 0, int length = 0)
+        public ReadOnlyNativeArray<byte> GetBufferView(int bufferViewIndex, out int? byteStride, int offset = 0, int length = 0)
         {
             var indices = new NativeArray<ushort>(3, Allocator.Persistent);
             m_Disposables.Add(indices);

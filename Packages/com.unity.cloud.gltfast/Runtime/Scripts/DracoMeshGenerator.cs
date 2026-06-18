@@ -56,7 +56,7 @@ namespace GLTFast
                 var primitive = primitives[index];
                 Assert.IsTrue(primitive.IsDracoCompressed);
 
-                var posAccessor = buffers.GetAccessor(primitive.Attributes.Position);
+                var posAccessor = buffers.GetAccessor(primitive.Attributes.Position.Value);
 
                 if (m_HasMorphTargets)
                 {
@@ -79,13 +79,13 @@ namespace GLTFast
                     }
                 }
 
-                if (primitive.Material < 0)
+                if (!primitive.Material.HasValue)
                 {
                     m_NeedsNormals = true;
                 }
                 else
                 {
-                    var material = gltf.GetSourceMaterial(primitive.Material);
+                    var material = gltf.GetSourceMaterial(primitive.Material.Value);
                     m_NeedsNormals |= material.RequiresNormals;
                     m_NeedsTangents |= material.RequiresTangents;
                 }
@@ -123,8 +123,8 @@ namespace GLTFast
                 primitives.Count,
                 morphTargets.Length,
                 morphTargetNames,
-                morphTargets[0].Normal >= 0,
-                morphTargets[0].Tangent >= 0,
+                morphTargets[0].Normal.HasValue,
+                morphTargets[0].Tangent.HasValue,
                 buffers,
                 deferAgent
             );
@@ -241,34 +241,34 @@ namespace GLTFast
                 var attributes = attributesArray[i];
                 var result = new Dictionary<VertexAttribute, int>();
                 results[i] = result;
-                if (attributes.Position >= 0)
-                    result[VertexAttribute.Position] = attributes.Position;
-                if (attributes.Normal >= 0)
-                    result[VertexAttribute.Normal] = attributes.Normal;
-                if (attributes.Tangent >= 0)
-                    result[VertexAttribute.Tangent] = attributes.Tangent;
-                if (attributes.Color0 >= 0)
-                    result[VertexAttribute.Color] = attributes.Color0;
-                if (attributes.TexCoord0 >= 0)
-                    result[VertexAttribute.TexCoord0] = attributes.TexCoord0;
-                if (attributes.TexCoord1 >= 0)
-                    result[VertexAttribute.TexCoord1] = attributes.TexCoord1;
-                if (attributes.TexCoord2 >= 0)
-                    result[VertexAttribute.TexCoord2] = attributes.TexCoord2;
-                if (attributes.TexCoord3 >= 0)
-                    result[VertexAttribute.TexCoord3] = attributes.TexCoord3;
-                if (attributes.TexCoord4 >= 0)
-                    result[VertexAttribute.TexCoord4] = attributes.TexCoord4;
-                if (attributes.TexCoord5 >= 0)
-                    result[VertexAttribute.TexCoord5] = attributes.TexCoord5;
-                if (attributes.TexCoord6 >= 0)
-                    result[VertexAttribute.TexCoord6] = attributes.TexCoord6;
-                if (attributes.TexCoord7 >= 0)
-                    result[VertexAttribute.TexCoord7] = attributes.TexCoord7;
-                if (attributes.Weights0 >= 0)
-                    result[VertexAttribute.BlendWeight] = attributes.Weights0;
-                if (attributes.Joints0 >= 0)
-                    result[VertexAttribute.BlendIndices] = attributes.Joints0;
+                if (attributes.Position.HasValue)
+                    result[VertexAttribute.Position] = attributes.Position.Value;
+                if (attributes.Normal.HasValue)
+                    result[VertexAttribute.Normal] = attributes.Normal.Value;
+                if (attributes.Tangent.HasValue)
+                    result[VertexAttribute.Tangent] = attributes.Tangent.Value;
+                if (attributes.Color0.HasValue)
+                    result[VertexAttribute.Color] = attributes.Color0.Value;
+                if (attributes.TexCoord0.HasValue)
+                    result[VertexAttribute.TexCoord0] = attributes.TexCoord0.Value;
+                if (attributes.TexCoord1.HasValue)
+                    result[VertexAttribute.TexCoord1] = attributes.TexCoord1.Value;
+                if (attributes.TexCoord2.HasValue)
+                    result[VertexAttribute.TexCoord2] = attributes.TexCoord2.Value;
+                if (attributes.TexCoord3.HasValue)
+                    result[VertexAttribute.TexCoord3] = attributes.TexCoord3.Value;
+                if (attributes.TexCoord4.HasValue)
+                    result[VertexAttribute.TexCoord4] = attributes.TexCoord4.Value;
+                if (attributes.TexCoord5.HasValue)
+                    result[VertexAttribute.TexCoord5] = attributes.TexCoord5.Value;
+                if (attributes.TexCoord6.HasValue)
+                    result[VertexAttribute.TexCoord6] = attributes.TexCoord6.Value;
+                if (attributes.TexCoord7.HasValue)
+                    result[VertexAttribute.TexCoord7] = attributes.TexCoord7.Value;
+                if (attributes.Weights0.HasValue)
+                    result[VertexAttribute.BlendWeight] = attributes.Weights0.Value;
+                if (attributes.Joints0.HasValue)
+                    result[VertexAttribute.BlendIndices] = attributes.Joints0.Value;
             }
 
             return results;

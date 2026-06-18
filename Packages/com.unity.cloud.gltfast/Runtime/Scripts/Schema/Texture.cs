@@ -20,13 +20,13 @@ namespace GLTFast.Schema
         /// The index of the sampler used by this texture.
         /// </summary>
         [JsonPropertyName("sampler")]
-        public int Sampler { get; set; } = -1;
+        public int? Sampler { get; set; }
 
         /// <summary>
         /// The index of the image used by this texture.
         /// </summary>
         [JsonPropertyName("source")]
-        public int Source { get; set; } = -1;
+        public int? Source { get; set; }
 
         /// <inheritdoc cref="Root.Extras"/>
         [JsonPropertyName("extras")]
@@ -45,11 +45,11 @@ namespace GLTFast.Schema
         /// Retrieves the final image index.
         /// </summary>
         /// <returns>Final image index</returns>
-        public int GetImageIndex()
+        public int? GetImageIndex()
         {
             if (Extensions != null)
             {
-                if (Extensions.BasisU != null && Extensions.BasisU.Source >= 0)
+                if (Extensions.BasisU != null && Extensions.BasisU.Source.HasValue)
                 {
                     return Extensions.BasisU.Source;
                 }
@@ -66,13 +66,13 @@ namespace GLTFast.Schema
         {
             writer.AddObject();
             GltfSerializeName(writer);
-            if (Source >= 0)
+            if (Source.HasValue)
             {
-                writer.AddProperty("source", Source);
+                writer.AddProperty("source", Source.Value);
             }
-            if (Sampler >= 0)
+            if (Sampler.HasValue)
             {
-                writer.AddProperty("sampler", Sampler);
+                writer.AddProperty("sampler", Sampler.Value);
             }
             if (Extensions != null)
             {

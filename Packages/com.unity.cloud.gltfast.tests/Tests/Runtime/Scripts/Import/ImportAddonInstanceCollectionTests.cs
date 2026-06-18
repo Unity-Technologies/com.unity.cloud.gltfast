@@ -152,9 +152,9 @@ namespace GLTFast.Tests
     {
         public bool IsAbleToLoad(Texture texture, out int imageIndex)
         {
-            if (texture.Source % 4 == 0)
+            if (texture.Source is int source && source % 4 == 0)
             {
-                imageIndex = texture.Source * 2;
+                imageIndex = source * 2;
                 return true;
             }
             imageIndex = -1;

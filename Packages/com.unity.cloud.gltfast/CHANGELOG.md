@@ -50,9 +50,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - `string[]` ⇒ `List<`[EnumOrRawValue&lt;Extension&gt;](xref:GLTFast.Schema.EnumOrRawValue`1)`>`
       - [Root.ExtensionsUsed](xref:GLTFast.Schema.Root.ExtensionsUsed)
       - [Root.ExtensionsRequired](xref:GLTFast.Schema.Root.ExtensionsRequired)
+    - `int` ⇒ `int?` for index properties that are optional in the glTF specification. `null` now represents an absent value; the legacy `-1` sentinel is gone.
+      - [Accessor.BufferView](xref:GLTFast.Schema.Accessor.BufferView)
+      - [BufferView.ByteStride](xref:GLTFast.Schema.BufferView.ByteStride) (also on [IBufferView](xref:GLTFast.Schema.IBufferView))
+      - [Image.BufferView](xref:GLTFast.Schema.Image.BufferView)
+      - `InstancesAttributes.Translation`, `.Rotation`, `.Scale`
+      - `MeshPrimitive.Indices`, `.Material`
+      - `Attributes.Position`, `.Normal`, `.Tangent`, `.TexCoord0`–`.TexCoord8`, `.Color0`, `.Joints0`, `.Weights0`
+      - `MorphTarget.Position`, `.Normal`, `.Tangent`
+      - [Node.Mesh](xref:GLTFast.Schema.Node.Mesh), [Node.Skin](xref:GLTFast.Schema.Node.Skin), [Node.Camera](xref:GLTFast.Schema.Node.Camera)
+      - `NodeLightsPunctual.Light`
+      - [Root.Scene](xref:GLTFast.Schema.Root.Scene)
+      - `Skin.InverseBindMatrices`, `Skin.Skeleton`
+      - [Texture.Sampler](xref:GLTFast.Schema.Texture.Sampler), [Texture.Source](xref:GLTFast.Schema.Texture.Source)
+      - `TextureBasisUniversal.Source`
+      - [TextureInfo.Index](xref:GLTFast.Schema.TextureInfo.Index)
+      - `TextureTransform.TexCoord`
   - (Performance) Data URIs are decoded directly to unmanaged buffers during JSON deserialization eliminating allocation of a UTF-16 string twice the size of the data URI.
   - (Performance) `Root.ExtensionsUsed`/`Root.ExtensionsRequired` entries that match a recognized [Extension](xref:GLTFast.Extension) deserialize directly into the enum, avoiding the managed string allocation per entry. Extension-support checks (`GltfImport`) now use `HashSet<Extension>` instead of `HashSet<string>`.
   - JSON string to enum deserialization via `EnumOrRawValue<TEnum>` preserves access to unknown values (not in the glTF specification but potentially introduced by a glTF extension).
+- API signature changes following the index nullability cleanup of the serialization classes:
+  - [Texture.GetImageIndex](xref:GLTFast.Schema.Texture.GetImageIndex) returns `int?` (was `int`).
+  - `MeshPrimitive.GetMaterialIndex` returns `int?` (was `int`).
+  - `IMaterialsVariantsSlot.GetMaterialIndex` returns `int?` (was `int`).
+  - `MeshResult.materialIndices` is now `int?[]` (was `int[]`).
+  - `IGltfBuffers.GetBufferView` and `IGltfBuffers.GetAccessorAndData` `byteStride` out parameter is now `int?` (was `int`).
 - Node transforms (translation, rotation, scale or matrix) are now in double precision throughout the API.
 - `IInstantiator.AddPrimitive` parameter `morphTargetWeights` is now of type `IReadOnlyList<float>` (was float[]).
 - `GameObjectInstantiator.MeshAddedDelegate` parameter `morphTargetWeights` is now of type `IReadOnlyList<float>` (was float[]).

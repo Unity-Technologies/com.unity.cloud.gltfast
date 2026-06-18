@@ -101,7 +101,7 @@ namespace GLTFast.Export
         /// <param name="imageId">glTF image index returned by <see cref="AddImage"/></param>
         /// <param name="samplerId">glTF sampler index returned by <see cref="AddSampler"/></param>
         /// <returns>glTF texture index</returns>
-        int AddTexture(int imageId, int samplerId);
+        int AddTexture(int? imageId, int? samplerId);
 
         /// <summary>
         /// Creates a glTF sampler based on Unity filter and wrap settings
@@ -110,7 +110,7 @@ namespace GLTFast.Export
         /// <param name="wrapModeU">Texture wrap mode in U direction</param>
         /// <param name="wrapModeV">Texture wrap mode in V direction</param>
         /// <returns>glTF sampler index or -1 if no sampler is required</returns>
-        int AddSampler(FilterMode filterMode, TextureWrapMode wrapModeU, TextureWrapMode wrapModeV);
+        int? AddSampler(FilterMode filterMode, TextureWrapMode wrapModeU, TextureWrapMode wrapModeV);
 
         /// <summary>
         /// Creates a glTF camera based on a Unity camera

@@ -111,7 +111,7 @@ namespace GLTFast.Schema
         /// The index of the default scene.
         /// </summary>
         [JsonPropertyName("scene")]
-        public int Scene { get; set; } = -1;
+        public int? Scene { get; set; }
 
         /// <summary>
         /// An array of scenes.
@@ -162,9 +162,9 @@ namespace GLTFast.Schema
         public bool IsAccessorInterleaved(int accessorIndex)
         {
             var accessor = Accessors[accessorIndex];
-            var bufferView = BufferViews[accessor.BufferView];
-            if (bufferView.ByteStride < 0) return false;
-            return bufferView.ByteStride > accessor.ElementByteSize;
+            var bufferView = BufferViews[accessor.BufferView.Value];
+            if (!bufferView.ByteStride.HasValue) return false;
+            return bufferView.ByteStride.Value > accessor.ElementByteSize;
         }
 
         static void WriteExtensionList(JsonWriter writer, string propertyName, List<EnumOrRawValue<Extension>> extensions)
@@ -305,9 +305,9 @@ namespace GLTFast.Schema
                 }
                 writer.CloseArray();
             }
-            if (Scene >= 0)
+            if (Scene.HasValue)
             {
-                writer.AddProperty("scene", Scene);
+                writer.AddProperty("scene", Scene.Value);
             }
             if (Scenes != null)
             {

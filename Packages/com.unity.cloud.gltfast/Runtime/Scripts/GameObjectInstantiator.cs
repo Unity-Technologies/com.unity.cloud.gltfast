@@ -266,7 +266,9 @@ namespace GLTFast
             var materials = new Material[meshResult.materialIndices.Length];
             for (var index = 0; index < materials.Length; index++)
             {
-                var material = m_Gltf.GetMaterial(meshResult.materialIndices[index]) ?? m_Gltf.GetDefaultMaterial();
+                var materialIndex = meshResult.materialIndices[index];
+                var material = (materialIndex.HasValue ? m_Gltf.GetMaterial(materialIndex.Value) : null)
+                    ?? m_Gltf.GetDefaultMaterial();
                 materials[index] = material;
             }
 
@@ -312,7 +314,9 @@ namespace GLTFast
             var materials = new Material[meshResult.materialIndices.Length];
             for (var index = 0; index < materials.Length; index++)
             {
-                var material = m_Gltf.GetMaterial(meshResult.materialIndices[index]) ?? m_Gltf.GetDefaultMaterial();
+                var materialIndex = meshResult.materialIndices[index];
+                var material = (materialIndex.HasValue ? m_Gltf.GetMaterial(materialIndex.Value) : null)
+                    ?? m_Gltf.GetDefaultMaterial();
                 material.enableInstancing = true;
                 materials[index] = material;
             }

@@ -35,7 +35,7 @@ namespace GLTFast.Schema
         /// Overrides the textureInfo texCoord value if supplied, and if this extension is supported.
         /// </summary>
         [JsonPropertyName("texCoord")]
-        public int TexCoord { get; set; } = -1;
+        public int? TexCoord { get; set; }
 
         internal void GltfSerialize(JsonWriter writer)
         {
@@ -52,9 +52,9 @@ namespace GLTFast.Schema
             {
                 writer.AddProperty("rotation", Rotation);
             }
-            if (TexCoord >= 0)
+            if (TexCoord.HasValue)
             {
-                writer.AddProperty("texCoord", TexCoord);
+                writer.AddProperty("texCoord", TexCoord.Value);
             }
             writer.Close();
         }

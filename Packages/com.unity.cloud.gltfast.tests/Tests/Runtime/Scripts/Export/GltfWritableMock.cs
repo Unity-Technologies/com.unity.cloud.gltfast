@@ -89,7 +89,7 @@ namespace GLTFast.Tests.Export
             return imageId;
         }
 
-        public int AddTexture(int imageId, int samplerId)
+        public int AddTexture(int? imageId, int? samplerId)
         {
             if (!m_ImageConversion) return -1;
 
@@ -111,7 +111,7 @@ namespace GLTFast.Tests.Export
             return textures.Count - 1;
         }
 
-        public int AddSampler(FilterMode filterMode, TextureWrapMode wrapModeU, TextureWrapMode wrapModeV)
+        public int? AddSampler(FilterMode filterMode, TextureWrapMode wrapModeU, TextureWrapMode wrapModeV)
         {
             if (filterMode == FilterMode.Bilinear && wrapModeU == TextureWrapMode.Repeat && wrapModeV == TextureWrapMode.Repeat)
             {

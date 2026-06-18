@@ -90,7 +90,6 @@ namespace GLTFast.Tests
 
                 if (actual != materials[subMesh].name)
                 {
-
                     Assert.AreEqual(actual, materials[subMesh].name);
                 }
             }
@@ -108,7 +107,7 @@ namespace GLTFast.Tests
         {
             var result = new MeshPrimitive
             {
-                Material = seed == 0 ? -1 : seed,
+                Material = seed == 0 ? null : seed,
                 Extensions = new MeshPrimitiveExtensions
                 {
                     MaterialsVariants = new MaterialsVariantsMeshPrimitiveExtension

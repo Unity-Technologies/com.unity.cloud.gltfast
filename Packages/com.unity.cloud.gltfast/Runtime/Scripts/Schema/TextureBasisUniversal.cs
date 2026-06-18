@@ -16,6 +16,6 @@ namespace GLTFast.Schema
         /// with Basis Universal super-compression.
         /// </summary>
         [JsonPropertyName("source")]
-        public int Source { get; set; } = -1;
+        public int? Source { get; set; }
     }
 }

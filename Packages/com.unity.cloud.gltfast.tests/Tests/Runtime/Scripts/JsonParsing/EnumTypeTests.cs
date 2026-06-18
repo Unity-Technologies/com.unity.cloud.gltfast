@@ -119,7 +119,7 @@ namespace GLTFast.Tests.JsonParsing
 
             var accessor = new Accessor { Type = new EnumOrRawValue<AccessorType>(value) };
             json = JsonSerializer.Serialize(accessor, GltfRootSourceGenerator.Default.Accessor);
-            Assert.AreEqual($@"{{""bufferView"":-1,""type"":""{expected}""}}", json);
+            Assert.AreEqual($@"{{""type"":""{expected}""}}", json);
         }
 
         [Test]
@@ -129,7 +129,7 @@ namespace GLTFast.Tests.JsonParsing
             var typeBytes = System.Text.Encoding.UTF8.GetBytes(type);
             var accessor = new Accessor { Type = new EnumOrRawValue<AccessorType>(typeBytes) };
             var json = JsonSerializer.Serialize(accessor, GltfRootSourceGenerator.Default.Accessor);
-            Assert.AreEqual($@"{{""bufferView"":-1,""type"":""UnknownType""}}", json);
+            Assert.AreEqual($@"{{""type"":""UnknownType""}}", json);
         }
 
 #if UNITY_ANIMATION
@@ -357,7 +357,7 @@ namespace GLTFast.Tests.JsonParsing
             Assert.IsNull(image.MimeType.RawValue);
 
             var json = JsonSerializer.Serialize(image, GltfRootSourceGenerator.Default.Image);
-            Assert.AreEqual("{\"bufferView\":-1}", json);
+            Assert.AreEqual("{}", json);
         }
 
         [Test]
@@ -369,7 +369,7 @@ namespace GLTFast.Tests.JsonParsing
         {
             var image = new Image { MimeType = value };
             var json = JsonSerializer.Serialize(image, GltfRootSourceGenerator.Default.Image);
-            Assert.AreEqual($@"{{""mimeType"":""{expected}"",""bufferView"":-1}}", json);
+            Assert.AreEqual($@"{{""mimeType"":""{expected}""}}", json);
         }
 
         [Test]
@@ -381,7 +381,7 @@ namespace GLTFast.Tests.JsonParsing
                 MimeType = new EnumOrRawValue<ImageMimeType>(System.Text.Encoding.UTF8.GetBytes(mime))
             };
             var json = JsonSerializer.Serialize(image, GltfRootSourceGenerator.Default.Image);
-            Assert.AreEqual($@"{{""mimeType"":""{mime}"",""bufferView"":-1}}", json);
+            Assert.AreEqual($@"{{""mimeType"":""{mime}""}}", json);
         }
 
         [Test]
@@ -396,7 +396,7 @@ namespace GLTFast.Tests.JsonParsing
             var image = JsonSerializer.Deserialize(
                 $@"{{""mimeType"":""{mime}""}}", GltfRootSourceGenerator.Default.Image);
             var json = JsonSerializer.Serialize(image, GltfRootSourceGenerator.Default.Image);
-            Assert.AreEqual($@"{{""mimeType"":""{mime}"",""bufferView"":-1}}", json);
+            Assert.AreEqual($@"{{""mimeType"":""{mime}""}}", json);
         }
 
         [Test]

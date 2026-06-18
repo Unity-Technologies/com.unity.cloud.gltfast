@@ -122,7 +122,7 @@ namespace GLTFast
             void* input,
             AccessorDataType inputType,
             AccessorType type,
-            int inputByteStride,
+            int? inputByteStride,
             NativeArray<float4> output
             )
         {
@@ -138,7 +138,7 @@ namespace GLTFast
                         var job = new Jobs.ConvertColorsRgbUInt8ToRGBAFloatJob
                         {
                             input = (byte*)input,
-                            inputByteStride = inputByteStride > 0 ? inputByteStride : 3,
+                            inputByteStride = inputByteStride ?? 3 * sizeof(byte),
                             result = output
                         };
                         jobHandle = job.Schedule(output.Length, GltfImport.DefaultBatchCount);
@@ -149,7 +149,7 @@ namespace GLTFast
                         var job = new Jobs.ConvertColorsRGBFloatToRGBAFloatJob
                         {
                             input = (byte*)input,
-                            inputByteStride = inputByteStride > 0 ? inputByteStride : 12,
+                            inputByteStride = inputByteStride ?? sizeof(float3),
                             result = output
                         };
                         jobHandle = job.Schedule(output.Length, GltfImport.DefaultBatchCount);
@@ -160,7 +160,7 @@ namespace GLTFast
                         var job = new Jobs.ConvertColorsRgbUInt16ToRGBAFloatJob
                         {
                             input = (ushort*)input,
-                            inputByteStride = inputByteStride > 0 ? inputByteStride : 6,
+                            inputByteStride = inputByteStride ?? 3 * sizeof(ushort),
                             result = output
                         };
                         jobHandle = job.Schedule(output.Length, GltfImport.DefaultBatchCount);
@@ -180,7 +180,7 @@ namespace GLTFast
                         var job = new Jobs.ConvertColorsRgbaUInt8ToRGBAFloatJob
                         {
                             input = (byte*)input,
-                            inputByteStride = inputByteStride > 0 ? inputByteStride : 4,
+                            inputByteStride = inputByteStride ?? 4 * sizeof(byte),
                             result = output
                         };
                         jobHandle = job.Schedule(output.Length, GltfImport.DefaultBatchCount);
@@ -203,7 +203,7 @@ namespace GLTFast
                             var job = new Jobs.ConvertColorsRGBAFloatToRGBAFloatJob
                             {
                                 input = (byte*)input,
-                                inputByteStride = inputByteStride,
+                                inputByteStride = inputByteStride ?? sizeof(float4),
                                 result = output
                             };
                             jobHandle = job.ScheduleBatch(output.Length, GltfImport.DefaultBatchCount);
@@ -215,7 +215,7 @@ namespace GLTFast
                         var job = new Jobs.ConvertColorsRgbaUInt16ToRGBAFloatJob
                         {
                             input = (ushort*)input,
-                            inputByteStride = inputByteStride > 0 ? inputByteStride : 8,
+                            inputByteStride = inputByteStride ?? 4 * sizeof(ushort),
                             result = output
                         };
                         jobHandle = job.ScheduleBatch(output.Length, GltfImport.DefaultBatchCount);
