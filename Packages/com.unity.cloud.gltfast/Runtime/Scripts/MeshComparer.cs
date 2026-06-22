@@ -87,17 +87,20 @@ namespace GLTFast
             if (x == null) return 0;
             HashCode hash = new();
             hash.Add(x.Count);
-            foreach (var target in x)
+            for (var index = 0; index < x.Count; index++)
             {
+                var target = x[index];
                 if (target == null)
                 {
                     hash.Add(0);
                     continue;
                 }
+
                 hash.Add(target.Position);
                 hash.Add(target.Normal);
                 hash.Add(target.Tangent);
             }
+
             return hash.ToHashCode();
         }
 
