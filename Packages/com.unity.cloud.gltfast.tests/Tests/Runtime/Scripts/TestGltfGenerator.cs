@@ -135,8 +135,8 @@ namespace GLTFast.Tests
             var nodeId = writer.AddNode(new float3(0), name: "Cylinder");
             nodes.Add(nodeId);
 
-            writer.AddMeshToNode((int)nodeId, cylinderMesh, new[] { materialId }, null);
-            writer.AddScene(nodes.ToArray());
+            writer.AddMeshToNode((int)nodeId, cylinderMesh, new[] { materialId }, (List<uint>)null);
+            writer.AddScene(nodes);
             await writer.SaveToFileAndDisposeInternal(path, true);
         }
 
@@ -163,7 +163,7 @@ namespace GLTFast.Tests
                     }
                 }
             }
-            writer.AddScene(nodes.ToArray());
+            writer.AddScene(nodes);
             await writer.SaveToFileAndDisposeInternal(path, true);
         }
 
@@ -180,9 +180,9 @@ namespace GLTFast.Tests
                 (int)nodeId,
                 mesh,
                 null,
-                null
+                (List<uint>)null
                 );
-            writer.AddScene(new[] { nodeId });
+            writer.AddScene(new List<uint> { nodeId });
             await writer.SaveToFileAndDisposeInternal(path, true);
         }
     }

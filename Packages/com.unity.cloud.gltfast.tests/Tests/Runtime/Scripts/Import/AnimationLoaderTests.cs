@@ -143,7 +143,7 @@ namespace GLTFast.Tests.Import
             INodeHierarchyInfo nodeHierarchyInfo,
             NativeArray<float>.ReadOnly times,
             NativeArray<float>.ReadOnly values,
-            Interpolation interpolation, string[] morphTargetNames = null)
+            Interpolation interpolation, IReadOnlyList<string> morphTargetNames = null)
         {
             m_Clips[clipIndex].AddMorphTargetWeightCurve(targetNode, times, values, interpolation);
         }

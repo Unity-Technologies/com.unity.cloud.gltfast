@@ -43,7 +43,7 @@ namespace GLTFast
                 primitive.Attributes.GetTexCoordsCount(),
                 primitive.Attributes.Color0 >= 0,
                 primitive.Attributes.Weights0 >= 0 && primitive.Attributes.Joints0 >= 0,
-                primitive.Targets?.Length ?? 0
+                primitive.Targets?.Count ?? 0
             );
         }
 

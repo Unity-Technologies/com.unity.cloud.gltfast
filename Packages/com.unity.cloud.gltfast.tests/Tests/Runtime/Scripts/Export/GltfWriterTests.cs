@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using GLTFast.Export;
@@ -148,7 +149,7 @@ namespace GLTFast.Tests.Export
 
             var node = writer.AddNode();
             var tmpGameObject = GameObject.CreatePrimitive(PrimitiveType.Plane);
-            writer.AddMeshToNode((int)node, tmpGameObject.GetComponent<MeshFilter>().sharedMesh, null, null);
+            writer.AddMeshToNode((int)node, tmpGameObject.GetComponent<MeshFilter>().sharedMesh, null, (List<uint>)null);
 
             await writer.SaveToStreamAndDispose(new MemoryStream());
 
@@ -169,7 +170,7 @@ namespace GLTFast.Tests.Export
 
             var node = writer.AddNode();
             var tmpGameObject = GameObject.CreatePrimitive(PrimitiveType.Plane);
-            writer.AddMeshToNode((int)node, tmpGameObject.GetComponent<MeshFilter>().sharedMesh, null, null);
+            writer.AddMeshToNode((int)node, tmpGameObject.GetComponent<MeshFilter>().sharedMesh, null, (List<uint>)null);
 
             await writer.SaveToStreamAndDispose(new MemoryStream());
 
@@ -200,8 +201,8 @@ namespace GLTFast.Tests.Export
             writer.AddMaterial(new Material(shader) { color = Color.yellow }, out materials[3], materialExport);
             writer.AddMaterial(new Material(shader) { color = Color.magenta }, out materials[4], materialExport);
             writer.AddMaterial(new Material(shader) { color = Color.cyan }, out materials[5], materialExport);
-            writer.AddMeshToNode((int)node, TestMeshGenerator.GenerateSubMeshCube(indexFormat), materials, null);
-            writer.AddScene(new uint[] { node }, "CubeScene");
+            writer.AddMeshToNode((int)node, TestMeshGenerator.GenerateSubMeshCube(indexFormat), materials, (List<uint>)null);
+            writer.AddScene(new List<uint> { node }, "CubeScene");
             await writer.SaveToFileAndDispose(Path.Combine(Application.persistentDataPath, $"MeshCubeQuadsSubMesh-{indexFormat}.gltf"));
         }
     }

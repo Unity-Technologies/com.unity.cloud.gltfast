@@ -138,7 +138,7 @@ namespace GLTFast.Export
             double3? translation = null,
             double4? rotation = null,
             double3? scale = null,
-            uint[] children = null,
+            List<uint> children = null,
             string name = null
         )
         {
@@ -152,6 +152,25 @@ namespace GLTFast.Export
         }
 
         /// <inheritdoc />
+        [Obsolete("Use overload with List<uint> children parameter.")]
+        public uint AddNode(
+            float3? translation,
+            quaternion? rotation,
+            float3? scale,
+            uint[] children,
+            string name = null
+        )
+        {
+            return AddNode(
+                translation,
+                rotation?.value,
+                scale,
+                children == null ? null : new List<uint>(children),
+                name
+            );
+        }
+
+        /// <inheritdoc />
         [Obsolete("Use overload with joints parameter.")]
         public void AddMeshToNode(int nodeId, UnityEngine.Mesh uMesh, int[] materialIds)
         {
@@ -162,7 +181,7 @@ namespace GLTFast.Export
         [Obsolete("Use overload with joints parameter.")]
         public void AddMeshToNode(int nodeId, UnityEngine.Mesh uMesh, int[] materialIds, bool skinning)
         {
-            AddMeshToNode(nodeId, uMesh, materialIds, null);
+            AddMeshToNode(nodeId, uMesh, materialIds, (List<uint>)null);
         }
 
         /// <inheritdoc />
@@ -170,7 +189,7 @@ namespace GLTFast.Export
             int nodeId,
             UnityEngine.Mesh uMesh,
             int[] materialIds,
-            uint[] joints
+            List<uint> joints
             )
         {
             if ((m_Settings.ComponentMask & ComponentType.Mesh) == 0) return;
@@ -183,7 +202,7 @@ namespace GLTFast.Export
 
             // Always export positions.
             var attributeUsage = VertexAttributeUsage.Position;
-            var skinning = joints != null && joints.Length > 0;
+            var skinning = joints != null && joints.Count > 0;
             if (skinning)
             {
                 attributeUsage |= VertexAttributeUsage.Skinning;
@@ -230,6 +249,13 @@ namespace GLTFast.Export
             {
                 node.Skin = AddSkin(meshId, joints);
             }
+        }
+
+        /// <inheritdoc />
+        [Obsolete("Use overload with List<uint> joints parameter.")]
+        public void AddMeshToNode(int nodeId, UnityEngine.Mesh uMesh, int[] materialIds, uint[] joints)
+        {
+            AddMeshToNode(nodeId, uMesh, materialIds, joints == null ? null : new List<uint>(joints));
         }
 
         /// <inheritdoc />
@@ -347,10 +373,10 @@ namespace GLTFast.Export
         }
 
         /// <inheritdoc />
-        public uint AddScene(uint[] nodes, string name = null)
+        public uint AddScene(List<uint> nodes, string name = null)
         {
             CertifyNotDisposed();
-            m_Scenes = m_Scenes ?? new List<Scene>();
+            m_Scenes ??= new List<Scene>();
             var scene = new Scene
             {
                 Name = name,
@@ -362,6 +388,13 @@ namespace GLTFast.Export
                 m_Gltf.Scene = 0;
             }
             return (uint)m_Scenes.Count - 1;
+        }
+
+        /// <inheritdoc />
+        [Obsolete("Use overload with List<uint> nodes parameter.")]
+        public uint AddScene(uint[] nodes, string name = null)
+        {
+            return AddScene(nodes == null ? null : new List<uint>(nodes), name);
         }
 
         /// <inheritdoc />
@@ -776,7 +809,7 @@ namespace GLTFast.Export
 
             if (m_BufferStream != null && m_BufferStream.Length > 0)
             {
-                m_Gltf.Buffers = new[] {
+                m_Gltf.Buffers = new List<Buffer> {
                     new Buffer {
                         Uri = string.IsNullOrEmpty(bufferPath) ? null : new UriValue(bufferPath),
                         ByteLength = (uint) m_BufferStream.Length
@@ -801,7 +834,7 @@ namespace GLTFast.Export
                 RegisterExtensionUsage(Extension.LightsPunctual);
                 m_Gltf.Extensions = m_Gltf.Extensions ?? new Schema.RootExtensions();
                 m_Gltf.Extensions.LightsPunctual = m_Gltf.Extensions.LightsPunctual ?? new LightsPunctual();
-                m_Gltf.Extensions.LightsPunctual.Lights = m_Lights.ToArray();
+                m_Gltf.Extensions.LightsPunctual.Lights = m_Lights;
             }
 
             m_Gltf.Asset = new Asset
@@ -2179,17 +2212,8 @@ namespace GLTFast.Export
             var node = CreateNode(translation, rotation, scale, name);
             m_Nodes.Add(node);
             var nodeId = (uint)m_Nodes.Count - 1;
-            if (parent.Children == null)
-            {
-                parent.Children = new[] { nodeId };
-            }
-            else
-            {
-                var newChildren = new uint[parent.Children.Length + 1];
-                newChildren[0] = nodeId;
-                parent.Children.CopyTo(newChildren, 1);
-                parent.Children = newChildren;
-            }
+            parent.Children ??= new List<uint>();
+            parent.Children.Insert(0, nodeId);
             return node;
         }
 
@@ -2248,7 +2272,7 @@ namespace GLTFast.Export
             return meshId;
         }
 
-        int AddSkin(int meshId, uint[] joints)
+        int AddSkin(int meshId, List<uint> joints)
         {
             m_Skins ??= new List<Skin>();
             m_SkinMesh ??= new List<int>();

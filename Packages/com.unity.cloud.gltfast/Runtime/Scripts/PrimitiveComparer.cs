@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using GLTFast.Schema;
 
@@ -50,12 +51,12 @@ namespace GLTFast
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        static bool Equals(MorphTarget[] x, MorphTarget[] y)
+        static bool Equals(IReadOnlyList<MorphTarget> x, IReadOnlyList<MorphTarget> y)
         {
             if (ReferenceEquals(x, y)) return true;
             if (x == null || y == null) return false;
-            if (x.Length != y.Length) return false;
-            for (var i = 0; i < x.Length; i++)
+            if (x.Count != y.Count) return false;
+            for (var i = 0; i < x.Count; i++)
             {
                 if (!Equals(x[i], y[i]))
                     return false;
@@ -96,22 +97,25 @@ namespace GLTFast
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        static int GetHashCode(MorphTarget[] x)
+        static int GetHashCode(IReadOnlyList<MorphTarget> x)
         {
             if (x == null) return 0;
             HashCode hash = new();
-            hash.Add(x.Length);
-            foreach (var target in x)
+            hash.Add(x.Count);
+            for (var index = 0; index < x.Count; index++)
             {
+                var target = x[index];
                 if (target == null)
                 {
                     hash.Add(0);
                     continue;
                 }
+
                 hash.Add(target.Position);
                 hash.Add(target.Normal);
                 hash.Add(target.Tangent);
             }
+
             return hash.ToHashCode();
         }
     }

@@ -31,7 +31,7 @@ namespace GLTFast
 
         public DracoMeshGenerator(
             IReadOnlyList<MeshPrimitive> primitives,
-            string[] morphTargetNames,
+            IReadOnlyList<string> morphTargetNames,
             string meshName,
             IGltfReadable gltf,
             IGltfBuffers buffers,
@@ -41,7 +41,7 @@ namespace GLTFast
             : base(meshName)
         {
             var morphTargets = primitives[0].Targets;
-            m_HasMorphTargets = morphTargets is { Length: > 0 };
+            m_HasMorphTargets = morphTargets is { Count: > 0 };
 
             var vertexCount = 0;
             var primitivesCount = primitives.Count;
@@ -110,10 +110,10 @@ namespace GLTFast
 
         void InitializeMorphTargets(
             IReadOnlyList<MeshPrimitive> primitives,
-            string[] morphTargetNames,
+            IReadOnlyList<string> morphTargetNames,
             int[] vertexIntervals,
             int vertexCount,
-            MorphTarget[] morphTargets,
+            List<MorphTarget> morphTargets,
             IGltfBuffers buffers,
             IDeferAgent deferAgent
             )
@@ -121,7 +121,7 @@ namespace GLTFast
             m_MorphTargetsGenerator = new MorphTargetsGenerator(
                 vertexCount,
                 primitives.Count,
-                morphTargets.Length,
+                morphTargets.Count,
                 morphTargetNames,
                 morphTargets[0].Normal.HasValue,
                 morphTargets[0].Tangent.HasValue,
@@ -131,7 +131,7 @@ namespace GLTFast
             for (var subMesh = 0; subMesh < primitives.Count; subMesh++)
             {
                 var primitive = primitives[subMesh];
-                for (var morphTargetIndex = 0; morphTargetIndex < primitive.Targets.Length; morphTargetIndex++)
+                for (var morphTargetIndex = 0; morphTargetIndex < primitive.Targets.Count; morphTargetIndex++)
                 {
                     var target = primitive.Targets[morphTargetIndex];
                     m_MorphTargetsGenerator.AddMorphTarget(vertexIntervals[subMesh], subMesh, morphTargetIndex, target);

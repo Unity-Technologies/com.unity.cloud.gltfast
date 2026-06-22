@@ -1003,9 +1003,9 @@ namespace GLTFast
         /// <inheritdoc />
         public LightPunctual GetSourceLightPunctual(uint index)
         {
-            if (Root?.Extensions?.LightsPunctual?.Lights != null && index < Root.Extensions.LightsPunctual.Lights.Length)
+            if (Root?.Extensions?.LightsPunctual?.Lights != null && index < Root.Extensions.LightsPunctual.Lights.Count)
             {
-                return Root.Extensions.LightsPunctual.Lights[index];
+                return Root.Extensions.LightsPunctual.Lights[(int)index];
             }
             return null;
         }
@@ -1112,7 +1112,7 @@ namespace GLTFast
             }
 
             var skin = Root.Skins[skinId];
-            var result = new Matrix4x4[skin.Joints.Length];
+            var result = new Matrix4x4[skin.Joints.Count];
             for (var i = 0; i < result.Length; i++)
             {
                 result[i] = Matrix4x4.identity;
@@ -1485,7 +1485,7 @@ namespace GLTFast
 
             if (Root.Buffers != null)
             {
-                var bufferCount = Root.Buffers.Length;
+                var bufferCount = Root.Buffers.Count;
                 if (bufferCount > 0)
                 {
                     m_Buffers = new ReadOnlyNativeArray<byte>[bufferCount];
@@ -3055,7 +3055,7 @@ namespace GLTFast
 
                         var mesh = meshAssignment.mesh;
                         var meshName = string.IsNullOrEmpty(mesh.name) ? null : mesh.name;
-                        uint[] joints = null;
+                        IReadOnlyList<uint> joints = null;
                         uint? rootJoint = null;
 
                         if (mesh.HasVertexAttribute(UnityEngine.Rendering.VertexAttribute.BlendIndices))
@@ -3160,7 +3160,7 @@ namespace GLTFast
                 if (node.Extensions?.LightsPunctual != null && Root.Extensions?.LightsPunctual?.Lights != null)
                 {
                     if (node.Extensions.LightsPunctual.Light is int lightIndex
-                        && lightIndex < Root.Extensions.LightsPunctual.Lights.Length)
+                        && lightIndex < Root.Extensions.LightsPunctual.Lights.Count)
                     {
                         instantiator.AddLightPunctual(nodeIndex, (uint)lightIndex);
                     }

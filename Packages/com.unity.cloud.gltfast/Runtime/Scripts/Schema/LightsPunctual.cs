@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: 2023 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
+using System.Collections.Generic;
 using Unity.Gltfast.Text.Json.Serialization;
 
 namespace GLTFast.Schema
@@ -17,7 +18,7 @@ namespace GLTFast.Schema
         /// Collection of lights
         /// </summary>
         [JsonPropertyName("lights")]
-        public LightPunctual[] Lights { get; set; }
+        public List<LightPunctual> Lights { get; set; }
 
         internal void GltfSerialize(JsonWriter writer)
         {

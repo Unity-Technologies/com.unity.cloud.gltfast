@@ -4,6 +4,7 @@
 #if UNITY_ANIMATION
 
 using System;
+using System.Collections.Generic;
 using GLTFast.Addons;
 using GLTFast.Schema;
 using Unity.Collections;
@@ -115,7 +116,7 @@ namespace GLTFast.Animations
             NativeArray<float>.ReadOnly times,
             NativeArray<float>.ReadOnly values,
             Interpolation interpolation,
-            string[] morphTargetNames = null
+            IReadOnlyList<string> morphTargetNames = null
             )
         {
             AddMorphTargetWeightCurves(
@@ -241,7 +242,7 @@ namespace GLTFast.Animations
             NativeArray<float>.ReadOnly times,
             NativeArray<float>.ReadOnly values,
             Interpolation interpolation,
-            string[] morphTargetNames = null
+            IReadOnlyList<string> morphTargetNames = null
             )
         {
             Profiler.BeginSample("AnimationModuleLoader.AddMorphTargetWeightCurves");
@@ -257,7 +258,7 @@ namespace GLTFast.Animations
             }
             else
             {
-                morphTargetCount = morphTargetNames.Length;
+                morphTargetCount = morphTargetNames.Count;
             }
 
             var animationPath = AnimationUtils.CreateAnimationPath(targetNode, nodeHierarchyInfo, subPath);

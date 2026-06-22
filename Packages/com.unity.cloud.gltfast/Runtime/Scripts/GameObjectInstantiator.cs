@@ -98,7 +98,7 @@ namespace GLTFast
         /// <inheritdoc />
         public virtual void BeginScene(
             string name,
-            uint[] rootNodeIndices
+            IReadOnlyList<uint> rootNodeIndices
             )
         {
             Profiler.BeginSample("BeginScene");
@@ -109,7 +109,7 @@ namespace GLTFast
             GameObject sceneGameObject;
             if (m_Settings.SceneObjectCreation == SceneObjectCreation.Never
                 || (m_Settings.SceneObjectCreation == SceneObjectCreation.WhenMultipleRootNodes
-                    && (rootNodeIndices == null || rootNodeIndices.Length == 1))
+                    && (rootNodeIndices == null || rootNodeIndices.Count == 1))
                 )
             {
                 sceneGameObject = m_Parent.gameObject;
@@ -199,7 +199,7 @@ namespace GLTFast
             uint nodeIndex,
             string meshName,
             MeshResult meshResult,
-            uint[] joints = null,
+            IReadOnlyList<uint> joints = null,
             uint? rootJoint = null,
             IReadOnlyList<float> morphTargetWeights = null,
             int meshNumeration = 0
@@ -239,7 +239,7 @@ namespace GLTFast
                 smr.updateWhenOffscreen = m_Settings.SkinUpdateWhenOffscreen;
                 if (joints != null)
                 {
-                    var bones = new Transform[joints.Length];
+                    var bones = new Transform[joints.Count];
                     for (var j = 0; j < bones.Length; j++)
                     {
                         var jointIndex = joints[j];
@@ -538,7 +538,7 @@ namespace GLTFast
         }
 
         /// <inheritdoc />
-        public virtual void EndScene(uint[] rootNodeIndices)
+        public virtual void EndScene(IReadOnlyList<uint> rootNodeIndices)
         {
             Profiler.BeginSample("EndScene");
 
@@ -588,7 +588,7 @@ namespace GLTFast
             uint nodeIndex,
             string meshName,
             MeshResult meshResult,
-            uint[] joints = null,
+            IReadOnlyList<uint> joints = null,
             uint? rootJoint = null,
             IReadOnlyList<float> morphTargetWeights = null,
             int meshNumeration = 0

@@ -21,7 +21,7 @@ namespace GLTFast.Schema
         /// The indices of this node's children.
         /// </summary>
         [JsonPropertyName("children")]
-        public uint[] Children { get; set; }
+        public List<uint> Children { get; set; }
 
         /// <summary>
         /// The index of the mesh in this node.

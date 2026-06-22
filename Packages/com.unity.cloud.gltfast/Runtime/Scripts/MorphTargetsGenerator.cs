@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using GLTFast.Schema;
@@ -17,7 +18,7 @@ namespace GLTFast
 
     class MorphTargetsGenerator
     {
-        readonly string[] m_MorphTargetNames;
+        readonly IReadOnlyList<string> m_MorphTargetNames;
         readonly IGltfBuffers m_Buffers;
         readonly IDeferAgent m_DeferAgent;
 
@@ -28,7 +29,7 @@ namespace GLTFast
             int vertexCount,
             int subMeshCount,
             int morphTargetCount,
-            string[] morphTargetNames,
+            IReadOnlyList<string> morphTargetNames,
             bool hasNormals,
             bool hasTangents,
             IGltfBuffers buffers,

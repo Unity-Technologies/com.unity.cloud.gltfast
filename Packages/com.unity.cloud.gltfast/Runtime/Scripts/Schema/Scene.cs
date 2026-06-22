@@ -18,7 +18,7 @@ namespace GLTFast.Schema
         /// The indices of all root nodes
         /// </summary>
         [JsonPropertyName("nodes")]
-        public uint[] Nodes { get; set; }
+        public List<uint> Nodes { get; set; }
 
         /// <inheritdoc cref="Asset.Extensions"/>
         [JsonPropertyName("extensions")]

@@ -121,7 +121,7 @@ $@"
             Assert.NotNull(gltf.Extensions);
             Assert.NotNull(gltf.Extensions.LightsPunctual);
             Assert.NotNull(gltf.Extensions.LightsPunctual.Lights);
-            Assert.AreEqual(1, gltf.Extensions.LightsPunctual.Lights.Length);
+            Assert.AreEqual(1, gltf.Extensions.LightsPunctual.Lights.Count);
             Assert.AreEqual(LightType.Directional, gltf.Extensions.LightsPunctual.Lights[0].Type);
             Assert.IsFalse(gltf.Extensions.TryGetValue<MyExtension>("CUSTOM_my_extension", out var ext));
             Assert.IsNull(ext);
@@ -153,7 +153,7 @@ $@"
             Assert.NotNull(gltf.Extensions);
             Assert.NotNull(gltf.Extensions.LightsPunctual);
             Assert.NotNull(gltf.Extensions.LightsPunctual.Lights);
-            Assert.AreEqual(1, gltf.Extensions.LightsPunctual.Lights.Length);
+            Assert.AreEqual(1, gltf.Extensions.LightsPunctual.Lights.Count);
             Assert.AreEqual(LightType.Directional, gltf.Extensions.LightsPunctual.Lights[0].Type);
         }
 
@@ -165,7 +165,7 @@ $@"
             Assert.NotNull(gltf.Extensions);
             Assert.NotNull(gltf.Extensions.LightsPunctual);
             Assert.NotNull(gltf.Extensions.LightsPunctual.Lights);
-            Assert.AreEqual(1, gltf.Extensions.LightsPunctual.Lights.Length);
+            Assert.AreEqual(1, gltf.Extensions.LightsPunctual.Lights.Count);
             Assert.AreEqual(LightType.Directional, gltf.Extensions.LightsPunctual.Lights[0].Type);
             Assert.IsTrue(gltf.Extensions.TryGetValue<MyExtension>("CUSTOM_my_extension", out var ext));
             CertifyCustomExtensions(gltf.Extensions);

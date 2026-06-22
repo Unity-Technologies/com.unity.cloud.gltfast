@@ -45,9 +45,9 @@ namespace GLTFast.Tests.Export
                                     {
                                         Mappings = new List<MaterialVariantsMapping>
                                         {
-                                            new() {Material = 0, Variants = new [] { 0 }},
-                                            new() {Material = 1, Variants = new [] { 1 }},
-                                            new() {Material = 2, Variants = new [] { 2 }},
+                                            new() {Material = 0, Variants = new List<int> { 0 }},
+                                            new() {Material = 1, Variants = new List<int> { 1 }},
+                                            new() {Material = 2, Variants = new List<int> { 2 }},
                                         }
                                     }
                                 }

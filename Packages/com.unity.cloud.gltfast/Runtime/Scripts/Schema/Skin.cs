@@ -30,7 +30,7 @@ namespace GLTFast.Schema
         /// Indices of skeleton nodes, used as joints in this skin.
         /// </summary>
         [JsonPropertyName("joints")]
-        public uint[] Joints { get; set; }
+        public List<uint> Joints { get; set; }
 
         /// <inheritdoc cref="Asset.Extensions"/>
         [JsonPropertyName("extensions")]

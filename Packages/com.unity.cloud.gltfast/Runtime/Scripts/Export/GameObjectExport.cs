@@ -116,7 +116,7 @@ namespace GLTFast.Export
             }
             if (rootNodes.Count > 0)
             {
-                m_Writer.AddScene(rootNodes.ToArray(), name);
+                m_Writer.AddScene(rootNodes, name);
             }
 
             return success;
@@ -183,10 +183,9 @@ namespace GLTFast.Export
 
             var success = true;
             var childCount = gameObject.transform.childCount;
-            uint[] children = null;
+            List<uint> children = null;
             if (childCount > 0)
             {
-                var childList = new List<uint>(gameObject.transform.childCount);
                 for (var i = 0; i < childCount; i++)
                 {
                     var child = gameObject.transform.GetChild(i);
@@ -199,12 +198,9 @@ namespace GLTFast.Export
                         );
                     if (childNodeId >= 0)
                     {
-                        childList.Add((uint)childNodeId);
+                        children ??= new List<uint>(childCount);
+                        children.Add((uint)childNodeId);
                     }
-                }
-                if (childList.Count > 0)
-                {
-                    children = childList.ToArray();
                 }
             }
 
@@ -303,14 +299,13 @@ namespace GLTFast.Export
 
             if (mesh != null)
             {
-                uint[] joints = null;
+                List<uint> joints = null;
                 if (bones != null)
                 {
-                    joints = new uint[bones.Length];
-                    for (var i = 0; i < bones.Length; i++)
+                    joints = new List<uint>(bones.Length);
+                    foreach (var bone in bones)
                     {
-                        var bone = bones[i];
-                        if (!transformNodeId.TryGetValue(bone, out joints[i]))
+                        if (!transformNodeId.TryGetValue(bone, out var boneNodeId))
                         {
 #if DEBUG
                             Debug.LogError($"Skip skin on {transform.name}: No node ID for bone transform {bone.name} found!");
@@ -318,6 +313,7 @@ namespace GLTFast.Export
                             break;
 #endif
                         }
+                        joints.Add(boneNodeId);
                     }
                 }
                 m_Writer.AddMeshToNode((int)nodeId, mesh, materialIds, joints);

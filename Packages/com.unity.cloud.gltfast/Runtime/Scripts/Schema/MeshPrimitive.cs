@@ -57,7 +57,7 @@ namespace GLTFast.Schema
         /// displacements' data).
         /// </summary>
         [JsonPropertyName("targets")]
-        public MorphTarget[] Targets { get; set; }
+        public List<MorphTarget> Targets { get; set; }
 
         /// <inheritdoc cref="Root.Extras"/>
         [JsonPropertyName("extras")]

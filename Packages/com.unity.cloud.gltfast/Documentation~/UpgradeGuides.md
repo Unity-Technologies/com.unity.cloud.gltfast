@@ -137,6 +137,71 @@ The corresponding `GltfSerialize` writers omit the property when `null`. Existin
 
 Custom implementations of [IMaterialsVariantsSlot](xref:GLTFast.IMaterialsVariantsSlot), [IBufferView](xref:GLTFast.Schema.IBufferView) or [IGltfBuffers](xref:GLTFast.IGltfBuffers) need to update their member signatures accordingly.
 
+### Schema collection properties moved from `T[]` to `List<T>`
+
+Variable-length collection properties on `GLTFast.Schema` types are now `List<T>` instead of `T[]`, completing the migration started with `Root.Accessors`, `Root.Materials`, `Mesh.Primitives`, etc. Fixed-size mathematical arrays (`Node.Matrix`/`.Rotation`/`.Scale`/`.Translation`, `TextureTransform.Offset`/`.Scale`) keep their array type — their length is part of the contract enforced by the JSON converters.
+
+| Property | Before | After |
+| -------- | ------ | ----- |
+| [LightsPunctual.Lights](xref:GLTFast.Schema.LightsPunctual.Lights) | `LightPunctual[]` | `List<LightPunctual>` |
+| `MaterialVariantsMapping.Variants` | `int[]` | `List<int>` |
+| `MeshExtras.TargetNames` | `string[]` | `List<string>` |
+| [MeshPrimitive.Targets](xref:GLTFast.Schema.MeshPrimitive.Targets) | `MorphTarget[]` | `List<MorphTarget>` |
+| [Node.Children](xref:GLTFast.Schema.Node.Children) | `uint[]` | `List<uint>` |
+| [Root.Buffers](xref:GLTFast.Schema.Root.Buffers) | `Buffer[]` | `List<Buffer>` |
+| [Scene.Nodes](xref:GLTFast.Schema.Scene.Nodes) | `uint[]` | `List<uint>` |
+| [Skin.Joints](xref:GLTFast.Schema.Skin.Joints) | `uint[]` | `List<uint>` |
+
+Reading is mostly unchanged — indexing (`[i]`) and `foreach` work the same, but `.Length` becomes `.Count`:
+
+| Before | After |
+| ------ | ----- |
+| `for (var i = 0; i < primitive.Targets.Length; i++) …` | `for (var i = 0; i < primitive.Targets.Count; i++) …` |
+| `if (scene.Nodes is { Length: > 0 }) …` | `if (scene.Nodes is { Count: > 0 }) …` |
+| `var bones = new Transform[skin.Joints.Length];` | `var bones = new Transform[skin.Joints.Count];` |
+
+Constructing from code (e.g. for export) uses list initializers:
+
+| Before | After |
+| ------ | ----- |
+| `node.Children = new[] { 1u, 2u };` | `node.Children = new List<uint> { 1u, 2u };` |
+| `mapping.Variants = new[] { 0, 1 };` | `mapping.Variants = new List<int> { 0, 1 };` |
+
+#### Related API signature changes
+
+Public method parameters that used to take `uint[]` / `string[]` were updated based on how the receiver consumes the value.
+
+**Borrowed inputs** (consumed during the call; never stored) take `IReadOnlyList<…>`. Arrays and Lists both satisfy this, so existing call sites that pass arrays continue to compile; only custom *implementations* of the interface need to update their signatures.
+
+| Member | Before | After |
+| ------ | ------ | ----- |
+| [IInstantiator.BeginScene](xref:GLTFast.IInstantiator.BeginScene*) `rootNodeIndices` | `uint[]` | `IReadOnlyList<uint>` |
+| [IInstantiator.EndScene](xref:GLTFast.IInstantiator.EndScene*) `rootNodeIndices` | `uint[]` | `IReadOnlyList<uint>` |
+| [IInstantiator.AddPrimitive](xref:GLTFast.IInstantiator.AddPrimitive*) `joints` | `uint[]` | `IReadOnlyList<uint>` |
+| `GameObjectInstantiator.MeshAddedDelegate` `joints` | `uint[]` | `IReadOnlyList<uint>` |
+| `IAnimationProcessor.AddMorphTargetWeightCurves` `morphTargetNames` | `string[]` | `IReadOnlyList<string>` |
+
+**Adopted inputs** (stored in the schema and serialized later) take `List<uint>`. Ownership of the list transfers to the writer — the caller must not mutate it after the call. An obsolete `uint[]` overload preserves back-compat by copying the array into a new list; callers should migrate to passing a `List<uint>` they will not modify further.
+
+| Member | Before | After |
+| ------ | ------ | ----- |
+| [IGltfWritable.AddNode](xref:GLTFast.Export.IGltfWritable.AddNode*) `children` | `uint[]` | `List<uint>` (ownership transferred) |
+| [IGltfWritable.AddScene](xref:GLTFast.Export.IGltfWritable.AddScene*) `nodes` | `uint[]` | `List<uint>` (ownership transferred) |
+| [IGltfWritable.AddMeshToNode](xref:GLTFast.Export.IGltfWritable.AddMeshToNode*) `joints` | `uint[]` | `List<uint>` (ownership transferred) |
+
+```csharp
+// Before
+var children = new uint[] { 1, 2, 3 };
+writer.AddNode(children: children);
+
+// After — build a List you no longer touch
+var children = new List<uint> { 1, 2, 3 };
+writer.AddNode(children: children);
+// Don't mutate `children` here; the writer now owns it.
+```
+
+Custom subclasses or implementations of these interfaces and delegates need to update their member signatures to match.
+
 ### Export image format and MIME type
 
 The redundant `GLTFast.Export.ImageFormat` enum was removed and merged into the canonical [GLTFast.ImageFormat](xref:GLTFast.ImageFormat). The enum value `Jpg` was renamed to `Jpeg` to match.

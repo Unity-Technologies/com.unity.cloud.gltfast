@@ -101,7 +101,7 @@ namespace GLTFast.Schema
         /// Morph targets' names
         /// </summary>
         [JsonPropertyName("targetNames")]
-        public string[] TargetNames { get; set; }
+        public List<string> TargetNames { get; set; }
 
         /// <summary>JSON properties without a matching member.</summary>
         [JsonExtensionData, JsonInclude] internal Dictionary<string, JsonElement> ExtensionsData { get; set; }

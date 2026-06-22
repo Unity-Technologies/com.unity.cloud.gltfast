@@ -105,7 +105,7 @@ namespace GLTFast.Schema
 
         /// <summary>Materials variants indices.</summary>
         [JsonPropertyName("variants")]
-        public int[] Variants { get; set; }
+        public List<int> Variants { get; set; }
 
         internal void GltfSerialize(JsonWriter writer)
         {

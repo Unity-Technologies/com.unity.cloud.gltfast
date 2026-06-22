@@ -511,7 +511,7 @@ namespace GLTFast.Tests.JsonParsing
             Assert.NotNull(mat.Extras);
             Assert.NotNull(mat.Extras.TargetNames);
             Assert.NotNull(mat.Extras.TargetNames);
-            Assert.AreEqual(2, mat.Extras.TargetNames.Length, "Invalid targetNames quantity");
+            Assert.AreEqual(2, mat.Extras.TargetNames.Count, "Invalid targetNames quantity");
             Assert.AreEqual("Key 1", mat.Extras.TargetNames[0]);
             Assert.AreEqual("Key 2", mat.Extras.TargetNames[1]);
 

@@ -50,6 +50,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - `string[]` ⇒ `List<`[EnumOrRawValue&lt;Extension&gt;](xref:GLTFast.Schema.EnumOrRawValue`1)`>`
       - [Root.ExtensionsUsed](xref:GLTFast.Schema.Root.ExtensionsUsed)
       - [Root.ExtensionsRequired](xref:GLTFast.Schema.Root.ExtensionsRequired)
+    - `T[]` ⇒ `List<T>` for the remaining variable-length collection properties in `GLTFast.Schema`. Fixed-size mathematical arrays (`Node.Matrix`/`.Rotation`/`.Scale`/`.Translation`, `TextureTransform.Offset`/`.Scale`) are unchanged.
+      - [LightsPunctual.Lights](xref:GLTFast.Schema.LightsPunctual.Lights)
+      - `MaterialVariantsMapping.Variants`
+      - `MeshExtras.TargetNames`
+      - [MeshPrimitive.Targets](xref:GLTFast.Schema.MeshPrimitive.Targets)
+      - [Node.Children](xref:GLTFast.Schema.Node.Children)
+      - [Root.Buffers](xref:GLTFast.Schema.Root.Buffers)
+      - [Scene.Nodes](xref:GLTFast.Schema.Scene.Nodes)
+      - [Skin.Joints](xref:GLTFast.Schema.Skin.Joints)
     - `int` ⇒ `int?` for index properties that are optional in the glTF specification. `null` now represents an absent value; the legacy `-1` sentinel is gone.
       - [Accessor.BufferView](xref:GLTFast.Schema.Accessor.BufferView)
       - [BufferView.ByteStride](xref:GLTFast.Schema.BufferView.ByteStride) (also on [IBufferView](xref:GLTFast.Schema.IBufferView))
@@ -78,6 +87,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Node transforms (translation, rotation, scale or matrix) are now in double precision throughout the API.
 - `IInstantiator.AddPrimitive` parameter `morphTargetWeights` is now of type `IReadOnlyList<float>` (was float[]).
 - `GameObjectInstantiator.MeshAddedDelegate` parameter `morphTargetWeights` is now of type `IReadOnlyList<float>` (was float[]).
+- API signature changes following the schema array⇒List conversion.
+  - [IInstantiator.BeginScene](xref:GLTFast.IInstantiator.BeginScene*) `rootNodeIndices` is `IReadOnlyList<uint>` (was `uint[]`).
+  - [IInstantiator.EndScene](xref:GLTFast.IInstantiator.EndScene*) `rootNodeIndices` is `IReadOnlyList<uint>` (was `uint[]`).
+  - [IInstantiator.AddPrimitive](xref:GLTFast.IInstantiator.AddPrimitive*) `joints` is `IReadOnlyList<uint>` (was `uint[]`).
+  - `GameObjectInstantiator.MeshAddedDelegate` parameter `joints` is `IReadOnlyList<uint>` (was `uint[]`).
+  - [IGltfWritable.AddNode](xref:GLTFast.Export.IGltfWritable.AddNode*) `children` is `List<uint>` (was `uint[]`; ownership is transferred).
+  - [IGltfWritable.AddScene](xref:GLTFast.Export.IGltfWritable.AddScene*) `nodes` is `List<uint>` (was `uint[]`; ownership is transferred).
+  - [IGltfWritable.AddMeshToNode](xref:GLTFast.Export.IGltfWritable.AddMeshToNode*) `joints` is `List<uint>` (was `uint[]`; ownership is transferred).
+  - `IAnimationProcessor.AddMorphTargetWeightCurves` and `AnimationModuleProcessor.AddMorphTargetWeightCurves` `morphTargetNames` is `IReadOnlyList<string>` (was `string[]`). Affects [GLTFast.Animations.IAnimationProcessor](xref:GLTFast.Animations.IAnimationProcessor) implementations.
 - (Export) [ImageExportBase.MimeType](xref:GLTFast.Export.ImageExportBase.MimeType) returns [ImageMimeType](xref:GLTFast.Schema.ImageMimeType) (was `string`). Custom subclasses must update their overrides.
 - (Export) Merged `GLTFast.Export.ImageFormat` into [GLTFast.ImageFormat](xref:GLTFast.ImageFormat). Affected method signatures across [ImageExportBase](xref:GLTFast.Export.ImageExportBase), [ImageExport](xref:GLTFast.Export.ImageExport), [OrmImageExport](xref:GLTFast.Export.OrmImageExport), [MaskMapImageExport](xref:GLTFast.Export.MaskMapImageExport), [NormalImageExport](xref:GLTFast.Export.NormalImageExport) and material exporters.
 - (Export) Renamed `ImageFormat.Jpg` to [ImageFormat.Jpeg](xref:GLTFast.ImageFormat.Jpeg).

@@ -40,7 +40,7 @@ namespace GLTFast
         public MeshGenerator(
             IReadOnlyList<MeshPrimitive> primitives,
             SubMeshAssignment[] subMeshAssignments,
-            string[] morphTargetNames,
+            IReadOnlyList<string> morphTargetNames,
             string meshName,
             IGltfReadable gltf,
             IGltfBuffers buffers,
@@ -176,7 +176,7 @@ namespace GLTFast
         }
 
         void CreateMorphTargetGenerator(
-            string[] morphTargetNames,
+            IReadOnlyList<string> morphTargetNames,
             bool hasNormals,
             bool hasTangents,
             IGltfBuffers buffers,
@@ -190,7 +190,7 @@ namespace GLTFast
                 m_MorphTargetsGenerator = new MorphTargetsGenerator(
                     m_VertexData.VertexCount,
                     m_Primitives.Count,
-                    morphTargets.Length,
+                    morphTargets.Count,
                     morphTargetNames,
                     hasNormals,
                     hasTangents,
@@ -417,7 +417,7 @@ namespace GLTFast
             if (m_MorphTargetsGenerator == null)
                 return;
             var vertexOffset = m_VertexData.VertexIntervals[subMesh];
-            for (var morphTargetIndex = 0; morphTargetIndex < primitive.Targets.Length; morphTargetIndex++)
+            for (var morphTargetIndex = 0; morphTargetIndex < primitive.Targets.Count; morphTargetIndex++)
             {
                 var morphTarget = primitive.Targets[morphTargetIndex];
                 var success = m_MorphTargetsGenerator.AddMorphTarget(

@@ -28,7 +28,7 @@ namespace GLTFast
         /// <inheritdoc />
         public override void BeginScene(
             string name,
-            uint[] rootNodeIndices
+            IReadOnlyList<uint> rootNodeIndices
             )
         {
             base.BeginScene(
@@ -43,7 +43,7 @@ namespace GLTFast
             uint nodeIndex,
             string meshName,
             MeshResult meshResult,
-            uint[] joints = null,
+            IReadOnlyList<uint> joints = null,
             uint? rootJoint = null,
             IReadOnlyList<float> morphTargetWeights = null,
             int meshNumeration = 0

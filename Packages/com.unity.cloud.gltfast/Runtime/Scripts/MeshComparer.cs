@@ -29,10 +29,11 @@ namespace GLTFast
         public int GetHashCode(IReadOnlyList<MeshPrimitive> obj)
         {
             var hashCode = new HashCode();
-            foreach (var primitive in obj)
+            for (var index = 0; index < obj.Count; index++)
             {
-                hashCode.Add(GetHashCode(primitive));
+                hashCode.Add(GetHashCode(obj[index]));
             }
+
             return hashCode.ToHashCode();
         }
 
@@ -81,11 +82,11 @@ namespace GLTFast
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        static int GetHashCode(MorphTarget[] x)
+        static int GetHashCode(IReadOnlyList<MorphTarget> x)
         {
             if (x == null) return 0;
             HashCode hash = new();
-            hash.Add(x.Length);
+            hash.Add(x.Count);
             foreach (var target in x)
             {
                 if (target == null)
@@ -101,12 +102,12 @@ namespace GLTFast
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        static bool Equals(MorphTarget[] x, MorphTarget[] y)
+        static bool Equals(IReadOnlyList<MorphTarget> x, IReadOnlyList<MorphTarget> y)
         {
             if (ReferenceEquals(x, y)) return true;
             if (x == null || y == null) return false;
-            if (x.Length != y.Length) return false;
-            for (var i = 0; i < x.Length; i++)
+            if (x.Count != y.Count) return false;
+            for (var i = 0; i < x.Count; i++)
             {
                 if (!Equals(x[i], y[i]))
                     return false;

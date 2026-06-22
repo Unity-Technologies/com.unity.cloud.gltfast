@@ -62,7 +62,7 @@ namespace GLTFast.Schema
         /// An array of buffers. A buffer points to binary geometry, animation, or skins.
         /// </summary>
         [JsonPropertyName("buffers")]
-        public Buffer[] Buffers { get; set; }
+        public List<Buffer> Buffers { get; set; }
 
         /// <summary>
         /// An array of bufferViews.

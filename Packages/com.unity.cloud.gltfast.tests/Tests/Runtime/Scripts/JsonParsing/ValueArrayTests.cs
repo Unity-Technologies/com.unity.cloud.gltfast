@@ -96,7 +96,7 @@ namespace GLTFast.Tests.JsonParsing
         {
             var lights = gltf?.Extensions?.LightsPunctual?.Lights;
             Assert.NotNull(lights);
-            Assert.AreEqual(1, lights.Length);
+            Assert.AreEqual(1, lights.Count);
             Assert.AreEqual(new Color(.1f, .2f, .3f), (Color)lights[0].Color);
         }
 

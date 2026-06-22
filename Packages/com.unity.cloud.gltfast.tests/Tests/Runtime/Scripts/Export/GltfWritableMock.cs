@@ -37,11 +37,24 @@ namespace GLTFast.Tests.Export
             double3? translation = null,
             double4? rotation = null,
             double3? scale = null,
-            uint[] children = null,
+            List<uint> children = null,
             string name = null
             )
         {
             throw new NotImplementedException();
+        }
+
+        [Obsolete("Use overload with List<uint> children parameter.")]
+        public uint AddNode(
+            float3? translation,
+            quaternion? rotation,
+            float3? scale,
+            uint[] children,
+            string name = null
+            )
+        {
+            return AddNode(
+                translation, rotation?.value, scale, children == null ? null : new List<uint>(children), name);
         }
 
         public void AddMeshToNode(int nodeId, Mesh uMesh, int[] materialIds)
@@ -54,9 +67,15 @@ namespace GLTFast.Tests.Export
             throw new NotImplementedException();
         }
 
-        public void AddMeshToNode(int nodeId, Mesh uMesh, int[] materialIds, uint[] joints)
+        public void AddMeshToNode(int nodeId, Mesh uMesh, int[] materialIds, List<uint> joints)
         {
             throw new NotImplementedException();
+        }
+
+        [Obsolete("Use overload with List<uint> joints parameter.")]
+        public void AddMeshToNode(int nodeId, Mesh uMesh, int[] materialIds, uint[] joints)
+        {
+            AddMeshToNode(nodeId, uMesh, materialIds, joints == null ? null : new List<uint>(joints));
         }
 
         public void AddCameraToNode(int nodeId, int cameraId)
@@ -144,9 +163,15 @@ namespace GLTFast.Tests.Export
             throw new NotImplementedException();
         }
 
-        public uint AddScene(uint[] nodes, string name = null)
+        public uint AddScene(List<uint> nodes, string name = null)
         {
             throw new NotImplementedException();
+        }
+
+        [Obsolete("Use overload with List<uint> nodes parameter.")]
+        public uint AddScene(uint[] nodes, string name = null)
+        {
+            return AddScene(nodes == null ? null : new List<uint>(nodes), name);
         }
 
         public void RegisterExtensionUsage(Extension extension, bool required = true)

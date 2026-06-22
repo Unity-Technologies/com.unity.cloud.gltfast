@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
+using System.Collections.Generic;
 using GLTFast.Addons;
 using GLTFast.Schema;
 using Unity.Collections;
@@ -112,7 +113,7 @@ namespace GLTFast.Animations
             NativeArray<float>.ReadOnly times,
             NativeArray<float>.ReadOnly values,
             Interpolation interpolation,
-            string[] morphTargetNames = null
+            IReadOnlyList<string> morphTargetNames = null
         );
 
         /// <summary>

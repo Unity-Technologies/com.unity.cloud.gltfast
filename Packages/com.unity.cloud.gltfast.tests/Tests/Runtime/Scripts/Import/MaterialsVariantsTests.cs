@@ -120,7 +120,7 @@ namespace GLTFast.Tests
             for (var variant = 0; variant < variantsCount + 2; variant += 3)
             {
                 result.Extensions.MaterialsVariants.Mappings.Add(
-                    new MaterialVariantsMapping { Material = seed + (variant + 3) / 3 * 100, Variants = new[] { variant, variant + 1 } }
+                    new MaterialVariantsMapping { Material = seed + (variant + 3) / 3 * 100, Variants = new List<int> { variant, variant + 1 } }
                     );
             }
 

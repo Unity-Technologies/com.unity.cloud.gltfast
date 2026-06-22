@@ -58,7 +58,7 @@ namespace GLTFast
         /// <inheritdoc />
         public void BeginScene(
             string name,
-            uint[] nodeIndices
+            IReadOnlyList<uint> nodeIndices
         )
         {
             Profiler.BeginSample("BeginScene");
@@ -79,7 +79,7 @@ namespace GLTFast
 
             var dedicatedSceneEntity = m_Settings.SceneObjectCreation == SceneObjectCreation.Always
                 || (m_Settings.SceneObjectCreation == SceneObjectCreation.WhenMultipleRootNodes
-                    && nodeIndices is { Length: > 1 });
+                    && nodeIndices is { Count: > 1 });
 
             if (dedicatedSceneEntity)
             {
@@ -173,7 +173,7 @@ namespace GLTFast
             uint nodeIndex,
             string meshName,
             MeshResult meshResult,
-            uint[] joints = null,
+            IReadOnlyList<uint> joints = null,
             uint? rootJoint = null,
             IReadOnlyList<float> morphTargetWeights = null,
             int meshNumeration = 0
@@ -376,7 +376,7 @@ namespace GLTFast
         }
 
         /// <inheritdoc />
-        public virtual void EndScene(uint[] rootNodeIndices)
+        public virtual void EndScene(IReadOnlyList<uint> rootNodeIndices)
         {
             Profiler.BeginSample("EndScene");
 

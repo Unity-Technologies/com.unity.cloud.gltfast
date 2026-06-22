@@ -97,7 +97,7 @@ namespace GLTFast.Tests.Performance
             Assert.AreEqual(-20f, gltf.Nodes[9999].Translation[0]);
             Assert.AreEqual(14f, gltf.Nodes[9999].Translation[1]);
             Assert.AreEqual(11f, gltf.Nodes[9999].Translation[2]);
-            Assert.AreEqual(10_000, gltf.Scenes[0].Nodes.Length);
+            Assert.AreEqual(10_000, gltf.Scenes[0].Nodes.Count);
             Assert.AreEqual(42, gltf.Scenes[0].Nodes[42]);
             Assert.AreEqual(9999, gltf.Scenes[0].Nodes[9999]);
         }

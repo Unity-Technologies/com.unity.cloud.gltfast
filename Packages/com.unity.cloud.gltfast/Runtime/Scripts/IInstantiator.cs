@@ -27,7 +27,7 @@ namespace GLTFast
         /// <param name="rootNodeIndices">Indices of root level nodes in scene</param>
         void BeginScene(
             string name
-            , uint[] rootNodeIndices
+            , IReadOnlyList<uint> rootNodeIndices
         );
 
 #if UNITY_ANIMATION
@@ -81,7 +81,7 @@ namespace GLTFast
             uint nodeIndex,
             string meshName,
             MeshResult meshResult,
-            uint[] joints = null,
+            IReadOnlyList<uint> joints = null,
             uint? rootJoint = null,
             IReadOnlyList<float> morphTargetWeights = null,
             int meshNumeration = 0
@@ -141,7 +141,7 @@ namespace GLTFast
         /// </summary>
         /// <param name="rootNodeIndices">Indices of root level nodes in scene</param>
         void EndScene(
-            uint[] rootNodeIndices
+            IReadOnlyList<uint> rootNodeIndices
         );
     }
 }

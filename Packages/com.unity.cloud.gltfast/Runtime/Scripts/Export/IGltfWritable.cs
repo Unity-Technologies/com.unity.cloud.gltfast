@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Unity.Mathematics;
@@ -22,15 +23,26 @@ namespace GLTFast.Export
         /// <param name="translation">Local translation of the node (in Unity-space)</param>
         /// <param name="rotation">Local rotation of the node (in Unity-space)</param>
         /// <param name="scale">Local scale of the node (in Unity-space)</param>
-        /// <param name="children">Array of node indices that are parented to
-        /// this newly created node</param>
+        /// <param name="children">Node indices that are parented to
+        /// this newly created node. Ownership of the list is transferred to
+        /// the writer; the caller must not modify it after the call.</param>
         /// <param name="name">Name of the node</param>
         /// <returns>glTF node index</returns>
         uint AddNode(
             double3? translation = null,
             double4? rotation = null,
             double3? scale = null,
-            uint[] children = null,
+            List<uint> children = null,
+            string name = null
+        );
+
+        /// <inheritdoc cref="AddNode(double3?,double4?,double3?,List{uint},string)"/>
+        [Obsolete("Use overload with double precision and List<uint> children parameter.")]
+        uint AddNode(
+            float3? translation,
+            quaternion? rotation,
+            float3? scale,
+            uint[] children,
             string name = null
         );
 
@@ -62,7 +74,13 @@ namespace GLTFast.Export
         /// <param name="uMesh">Unity mesh to be assigned and exported</param>
         /// <param name="materialIds">glTF materials IDs to be assigned
         /// (multiple in case of sub-meshes)</param>
-        /// <param name="joints">Node indices representing the joints of a skin.</param>
+        /// <param name="joints">Node indices representing the joints of a skin.
+        /// Ownership of the list is transferred to the writer; the caller must
+        /// not modify it after the call.</param>
+        void AddMeshToNode(int nodeId, Mesh uMesh, int[] materialIds, List<uint> joints);
+
+        /// <inheritdoc cref="AddMeshToNode(int,Mesh,int[],List{uint})"/>
+        [Obsolete("Use overload with List<uint> joints parameter.")]
         void AddMeshToNode(int nodeId, Mesh uMesh, int[] materialIds, uint[] joints);
 
         /// <summary>
@@ -132,9 +150,15 @@ namespace GLTFast.Export
         /// <summary>
         /// Adds a scene to the glTF
         /// </summary>
-        /// <param name="nodes">Root level nodes</param>
+        /// <param name="nodes">Root level nodes. Ownership of the list is
+        /// transferred to the writer; the caller must not modify it after the
+        /// call.</param>
         /// <param name="name">Name of the scene</param>
         /// <returns>glTF scene index</returns>
+        uint AddScene(List<uint> nodes, string name = null);
+
+        /// <inheritdoc cref="AddScene(List{uint},string)"/>
+        [Obsolete("Use overload with List<uint> nodes parameter.")]
         uint AddScene(uint[] nodes, string name = null);
 
         /// <summary>
