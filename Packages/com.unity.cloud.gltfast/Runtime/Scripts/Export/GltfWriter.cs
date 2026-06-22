@@ -1769,11 +1769,7 @@ namespace GLTFast.Export
                 if (!overwrite && imageDest == ImageDestination.SeparateFile)
                 {
                     var fileExists = false;
-                    var fileNames = new HashSet<string>(
-#if NET_STANDARD
-                        m_ImageExports.Count
-#endif
-                        );
+                    var fileNames = new HashSet<string>(m_ImageExports.Count);
 
                     bool GetUniqueFileName(ref string filename)
                     {
