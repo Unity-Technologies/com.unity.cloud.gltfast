@@ -23,7 +23,7 @@ MonoBehaviour:
   - relativeUri: EightTexcoords/EightTexcoords.gltf
     expectLoadFail: 0
     expectInstantiationFail: 0
-    expectedLogCodes: 34000000
+    expectedLogCodes: 36000000
     requiredExtensions: 
   - relativeUri: EmbedBufferInvalid/EmbedBufferInvalid.gltf
     expectLoadFail: 1
@@ -63,7 +63,7 @@ MonoBehaviour:
   - relativeUri: NineTexcoords/NineTexcoords.gltf
     expectLoadFail: 0
     expectInstantiationFail: 0
-    expectedLogCodes: 34000000
+    expectedLogCodes: 36000000
     requiredExtensions: 
   - relativeUri: NoNormals/NoNormals.gltf
     expectLoadFail: 0
@@ -128,12 +128,12 @@ MonoBehaviour:
   - relativeUri: Bounds/BoundsMissing/BoundsMissing.gltf
     expectLoadFail: 0
     expectInstantiationFail: 0
-    expectedLogCodes: 20000000
+    expectedLogCodes: 22000000
     requiredExtensions: 
   - relativeUri: DracoSpecialCases/glTF/DracoSpecialCases.gltf
     expectLoadFail: 0
     expectInstantiationFail: 0
-    expectedLogCodes: 2000000034000000
+    expectedLogCodes: 2200000036000000
     requiredExtensions: 00000000
   - relativeUri: FormatVariants/glTF/FormatVariants.gltf
     expectLoadFail: 0
@@ -141,6 +141,11 @@ MonoBehaviour:
     expectedLogCodes: 
     requiredExtensions: 
   - relativeUri: FormatVariants/glTF-Binary/FormatVariants.glb
+    expectLoadFail: 0
+    expectInstantiationFail: 0
+    expectedLogCodes: 
+    requiredExtensions: 
+  - relativeUri: FormatVariants/glTF-Binary/FormatVariantsGLB3.glb
     expectLoadFail: 0
     expectInstantiationFail: 0
     expectedLogCodes: 
