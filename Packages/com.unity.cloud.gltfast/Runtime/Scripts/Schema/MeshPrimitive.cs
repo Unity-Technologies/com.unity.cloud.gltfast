@@ -47,8 +47,15 @@ namespace GLTFast.Schema
         /// <summary>
         /// The type of primitives to render. All valid values correspond to WebGL enums.
         /// </summary>
-        [JsonPropertyName("mode")]
+        [JsonIgnore]
         public PrimitiveMode Mode { get; set; } = PrimitiveMode.Triangles;
+
+        [JsonPropertyName("mode"), JsonInclude]
+        internal PrimitiveMode? ModeSerialized
+        {
+            get => Mode == PrimitiveMode.Triangles ? null : Mode;
+            set => Mode = value ?? PrimitiveMode.Triangles;
+        }
 
         /// <summary>
         /// An array of Morph Targets, each  Morph Target is a dictionary mapping

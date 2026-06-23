@@ -75,6 +75,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
       - `TextureBasisUniversal.Source`
       - [TextureInfo.Index](xref:GLTFast.Schema.TextureInfo.Index)
       - `TextureTransform.TexCoord`
+    - `int` ⇒ [BufferViewTarget](xref:GLTFast.Schema.BufferViewTarget) for [BufferView.Target](xref:GLTFast.Schema.BufferView.Target).
   - (Performance) Data URIs are decoded directly to unmanaged buffers during JSON deserialization eliminating allocation of a UTF-16 string twice the size of the data URI.
   - (Performance) `Root.ExtensionsUsed`/`Root.ExtensionsRequired` entries that match a recognized [Extension](xref:GLTFast.Extension) deserialize directly into the enum, avoiding the managed string allocation per entry. Extension-support checks (`GltfImport`) now use `HashSet<Extension>` instead of `HashSet<string>`.
   - JSON string to enum deserialization via `EnumOrRawValue<TEnum>` preserves access to unknown values (not in the glTF specification but potentially introduced by a glTF extension).

@@ -78,14 +78,28 @@ namespace GLTFast.Schema
         /// <summary>
         /// s wrapping mode.  All valid values correspond to WebGL enums.
         /// </summary>
-        [JsonPropertyName("wrapS")]
+        [JsonIgnore]
         public WrapMode WrapS { get; set; } = WrapMode.Repeat;
+
+        [JsonPropertyName("wrapS"), JsonInclude]
+        internal WrapMode? WrapSSerialized
+        {
+            get => WrapS is WrapMode.Repeat or WrapMode.Undefined ? null : WrapS;
+            set => WrapS = value ?? WrapMode.Repeat;
+        }
 
         /// <summary>
         /// t wrapping mode.  All valid values correspond to WebGL enums.
         /// </summary>
-        [JsonPropertyName("wrapT")]
+        [JsonIgnore]
         public WrapMode WrapT { get; set; } = WrapMode.Repeat;
+
+        [JsonPropertyName("wrapT"), JsonInclude]
+        internal WrapMode? WrapTSerialized
+        {
+            get => WrapT is WrapMode.Repeat or WrapMode.Undefined ? null : WrapT;
+            set => WrapT = value ?? WrapMode.Repeat;
+        }
 
         /// <inheritdoc cref="Asset.Extensions"/>
         [JsonPropertyName("extensions")]
@@ -108,18 +122,21 @@ namespace GLTFast.Schema
         /// Unity filter mode, derived from glTF's
         /// <see cref="MinFilter"/> and <see cref="MagFilter"/>.
         /// </summary>
+        [JsonIgnore]
         public FilterMode FilterMode => ConvertFilterMode(MinFilter, MagFilter);
 
         /// <summary>
         /// Unity texture wrap mode (horizontal), derived from glTF's
         /// <see cref="WrapS"/> value.
         /// </summary>
+        [JsonIgnore]
         public TextureWrapMode WrapU => ConvertWrapMode(WrapS);
 
         /// <summary>
         /// Unity texture wrap mode (vertical), derived from glTF's
         /// <see cref="WrapT"/> value.
         /// </summary>
+        [JsonIgnore]
         public TextureWrapMode WrapV => ConvertWrapMode(WrapT);
 
         static FilterMode ConvertFilterMode(MinFilterMode minFilterToConvert, MagFilterMode magFilterToConvert)

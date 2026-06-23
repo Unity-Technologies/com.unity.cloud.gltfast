@@ -2361,7 +2361,7 @@ namespace GLTFast.Export
                 Buffer = 0,
                 ByteOffset = (int)byteOffset,
                 ByteLength = bufferViewData.Length,
-                Target = (int)bufferViewTarget,
+                Target = bufferViewTarget,
             };
             if (byteStride.HasValue)
             {

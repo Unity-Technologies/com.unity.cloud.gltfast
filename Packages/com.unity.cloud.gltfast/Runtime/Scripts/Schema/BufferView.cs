@@ -45,7 +45,7 @@ namespace GLTFast.Schema
         /// When this is not provided, the bufferView contains animation or skin data.
         /// </summary>
         [JsonPropertyName("target")]
-        public int Target { get; set; }
+        public BufferViewTarget Target { get; set; }
 
         /// <inheritdoc cref="Root.Extras"/>
         [JsonPropertyName("extras")]
@@ -73,9 +73,9 @@ namespace GLTFast.Schema
             {
                 writer.AddProperty("byteStride", ByteStride.Value);
             }
-            if (Target > 0)
+            if (Target != BufferViewTarget.Undefined)
             {
-                writer.AddProperty("target", Target);
+                writer.AddProperty("target", (int)Target);
             }
             writer.Close();
         }

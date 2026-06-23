@@ -137,6 +137,17 @@ The corresponding `GltfSerialize` writers omit the property when `null`. Existin
 
 Custom implementations of [IMaterialsVariantsSlot](xref:GLTFast.IMaterialsVariantsSlot), [IBufferView](xref:GLTFast.Schema.IBufferView) or [IGltfBuffers](xref:GLTFast.IGltfBuffers) need to update their member signatures accordingly.
 
+### `BufferView.Target` typed as `BufferViewTarget`
+
+[BufferView.Target](xref:GLTFast.Schema.BufferView.Target) is now [BufferViewTarget](xref:GLTFast.Schema.BufferViewTarget) instead of `int`. The enum members carry the WebGL constants, and `BufferViewTarget.Undefined` (value `0`) represents the absent target. Comparisons against the raw integer no longer compile; use the enum members directly.
+
+| Before | After |
+| ------ | ----- |
+| `bufferView.Target = 34962;` | `bufferView.Target = BufferViewTarget.ArrayBuffer;` |
+| `bufferView.Target = (int)BufferViewTarget.ElementArrayBuffer;` | `bufferView.Target = BufferViewTarget.ElementArrayBuffer;` |
+| `if (bufferView.Target > 0) …` | `if (bufferView.Target != BufferViewTarget.Undefined) …` |
+| `var raw = bufferView.Target;` (was `int`) | `var raw = (int)bufferView.Target;` if you still need the WebGL constant |
+
 ### Schema collection properties moved from `T[]` to `List<T>`
 
 Variable-length collection properties on `GLTFast.Schema` types are now `List<T>` instead of `T[]`, completing the migration started with `Root.Accessors`, `Root.Materials`, `Mesh.Primitives`, etc. Fixed-size mathematical arrays (`Node.Matrix`/`.Rotation`/`.Scale`/`.Translation`, `TextureTransform.Offset`/`.Scale`) keep their array type — their length is part of the contract enforced by the JSON converters.
