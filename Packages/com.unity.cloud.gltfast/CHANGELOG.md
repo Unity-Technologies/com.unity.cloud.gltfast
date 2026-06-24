@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Removed useless `SerializeFieldAttribute` from `MaterialsVariantsComponent.Control` to avoid compiler warning in Unity 6.6 and newer.
 - Removed usage of obsolete `FindObjectsByType` overloads.
 - (Test) Avoid `Animation` component conflict by accidentally loading glTF twice in `DocExamplesTest`.
+- [IsTextureYFlipped](xref:GLTFast.GltfImportBase.IsTextureYFlipped(System.Int32)) returns correct value when multiple textures reference one image.
 
 ### Removed
 
