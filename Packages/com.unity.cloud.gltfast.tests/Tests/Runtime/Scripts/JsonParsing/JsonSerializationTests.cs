@@ -1,9 +1,18 @@
 // SPDX-FileCopyrightText: 2026 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
+using System.Collections.Generic;
+using System.Text;
 using GLTFast.Schema;
 using NUnit.Framework;
 using Unity.Gltfast.Text.Json;
+using Camera = GLTFast.Schema.Camera;
+using CameraType = GLTFast.Schema.CameraType;
+using Color = GLTFast.Schema.Color;
+using LightType = GLTFast.Schema.LightType;
+using Material = GLTFast.Schema.Material;
+using Mesh = GLTFast.Schema.Mesh;
+using Texture = GLTFast.Schema.Texture;
 
 namespace GLTFast.Tests.JsonParsing
 {
@@ -68,6 +77,40 @@ namespace GLTFast.Tests.JsonParsing
         }
 
         [Test]
+        public void SamplerName()
+        {
+            var obj = new Sampler { Name = "s" };
+            var json = JsonSerializer.Serialize(obj, GltfRootSourceGenerator.Default.Sampler);
+            Assert.AreEqual(@"{""name"":""s""}", json);
+        }
+
+        [Test]
+        [TestCase(Sampler.MagFilterMode.Undefined, "{}")]
+        [TestCase(Sampler.MagFilterMode.Nearest, @"{""magFilter"":9728}")]
+        [TestCase(Sampler.MagFilterMode.Linear, @"{""magFilter"":9729}")]
+        public void SamplerMagFilter(Sampler.MagFilterMode value, string expected)
+        {
+            var obj = new Sampler { MagFilter = value };
+            var json = JsonSerializer.Serialize(obj, GltfRootSourceGenerator.Default.Sampler);
+            Assert.AreEqual(expected, json);
+        }
+
+        [Test]
+        [TestCase(Sampler.MinFilterMode.Undefined, "{}")]
+        [TestCase(Sampler.MinFilterMode.Nearest, @"{""minFilter"":9728}")]
+        [TestCase(Sampler.MinFilterMode.Linear, @"{""minFilter"":9729}")]
+        [TestCase(Sampler.MinFilterMode.NearestMipmapNearest, @"{""minFilter"":9984}")]
+        [TestCase(Sampler.MinFilterMode.LinearMipmapNearest, @"{""minFilter"":9985}")]
+        [TestCase(Sampler.MinFilterMode.NearestMipmapLinear, @"{""minFilter"":9986}")]
+        [TestCase(Sampler.MinFilterMode.LinearMipmapLinear, @"{""minFilter"":9987}")]
+        public void SamplerMinFilter(Sampler.MinFilterMode value, string expected)
+        {
+            var obj = new Sampler { MinFilter = value };
+            var json = JsonSerializer.Serialize(obj, GltfRootSourceGenerator.Default.Sampler);
+            Assert.AreEqual(expected, json);
+        }
+
+        [Test]
         public void BufferViewDefault()
         {
             var obj = new BufferView();
@@ -87,9 +130,1654 @@ namespace GLTFast.Tests.JsonParsing
         }
 
         [Test]
+        public void BufferViewName()
+        {
+            var obj = new BufferView { Name = "v" };
+            var json = JsonSerializer.Serialize(obj, GltfRootSourceGenerator.Default.BufferView);
+            Assert.AreEqual(@"{""name"":""v""}", json);
+        }
+
+        [Test]
+        public void BufferViewBuffer()
+        {
+            var obj = new BufferView { Buffer = 3 };
+            var json = JsonSerializer.Serialize(obj, GltfRootSourceGenerator.Default.BufferView);
+            Assert.AreEqual(@"{""buffer"":3}", json);
+        }
+
+        [Test]
+        public void BufferViewByteOffset()
+        {
+            var obj = new BufferView { ByteOffset = 16 };
+            var json = JsonSerializer.Serialize(obj, GltfRootSourceGenerator.Default.BufferView);
+            Assert.AreEqual(@"{""byteOffset"":16}", json);
+        }
+
+        [Test]
+        public void BufferViewByteLength()
+        {
+            var obj = new BufferView { ByteLength = 64 };
+            var json = JsonSerializer.Serialize(obj, GltfRootSourceGenerator.Default.BufferView);
+            Assert.AreEqual(@"{""byteLength"":64}", json);
+        }
+
+        [Test]
+        public void BufferViewByteStride()
+        {
+            var obj = new BufferView { ByteStride = 12 };
+            var json = JsonSerializer.Serialize(obj, GltfRootSourceGenerator.Default.BufferView);
+            Assert.AreEqual(@"{""byteStride"":12}", json);
+        }
+
+        [Test]
+        public void RootDefault()
+        {
+            var json = JsonSerializer.Serialize(new Root(), GltfRootSourceGenerator.Default.Root);
+            Assert.AreEqual("{}", json);
+        }
+
+        [Test]
+        public void RootScene()
+        {
+            var json = JsonSerializer.Serialize(new Root { Scene = 3 }, GltfRootSourceGenerator.Default.Root);
+            Assert.AreEqual(@"{""scene"":3}", json);
+        }
+
+        [Test]
+        public void RootAsset()
+        {
+            var json = JsonSerializer.Serialize(
+                new Root { Asset = new Asset { Version = "2.0" } },
+                GltfRootSourceGenerator.Default.Root);
+            Assert.AreEqual(@"{""asset"":{""version"":""2.0""}}", json);
+        }
+
+        [Test]
+        public void RootAccessors()
+        {
+            var json = JsonSerializer.Serialize(
+                new Root { Accessors = new List<Accessor> { new() { Count = 1 } } },
+                GltfRootSourceGenerator.Default.Root);
+            Assert.AreEqual(@"{""accessors"":[{""count"":1}]}", json);
+        }
+
+        [Test]
+        public void RootBuffers()
+        {
+            var json = JsonSerializer.Serialize(
+                new Root { Buffers = new List<Schema.Buffer> { new() { ByteLength = 8 } } },
+                GltfRootSourceGenerator.Default.Root);
+            Assert.AreEqual(@"{""buffers"":[{""byteLength"":8}]}", json);
+        }
+
+        [Test]
+        public void RootBufferViews()
+        {
+            var json = JsonSerializer.Serialize(
+                new Root { BufferViews = new List<BufferView> { new() { ByteLength = 4 } } },
+                GltfRootSourceGenerator.Default.Root);
+            Assert.AreEqual(@"{""bufferViews"":[{""byteLength"":4}]}", json);
+        }
+
+        [Test]
+        public void RootCameras()
+        {
+            var json = JsonSerializer.Serialize(
+                new Root { Cameras = new List<Camera> { new() { Type = CameraType.Perspective } } },
+                GltfRootSourceGenerator.Default.Root);
+            Assert.AreEqual(@"{""cameras"":[{""type"":""perspective""}]}", json);
+        }
+
+        [Test]
+        public void RootImages()
+        {
+            var json = JsonSerializer.Serialize(
+                new Root { Images = new List<Image> { new() { BufferView = 0 } } },
+                GltfRootSourceGenerator.Default.Root);
+            Assert.AreEqual(@"{""images"":[{""bufferView"":0}]}", json);
+        }
+
+        [Test]
+        public void RootMaterials()
+        {
+            var json = JsonSerializer.Serialize(
+                new Root { Materials = new List<Material> { new() { Name = "m" } } },
+                GltfRootSourceGenerator.Default.Root);
+            Assert.AreEqual(@"{""materials"":[{""name"":""m""}]}", json);
+        }
+
+        [Test]
+        public void RootMeshes()
+        {
+            var json = JsonSerializer.Serialize(
+                new Root { Meshes = new List<Mesh> { new() { Name = "m" } } },
+                GltfRootSourceGenerator.Default.Root);
+            Assert.AreEqual(@"{""meshes"":[{""name"":""m""}]}", json);
+        }
+
+        [Test]
+        public void RootNodes()
+        {
+            var json = JsonSerializer.Serialize(
+                new Root { Nodes = new List<Node> { new() { Mesh = 0 } } },
+                GltfRootSourceGenerator.Default.Root);
+            Assert.AreEqual(@"{""nodes"":[{""mesh"":0}]}", json);
+        }
+
+        [Test]
+        public void RootSamplers()
+        {
+            var json = JsonSerializer.Serialize(
+                new Root { Samplers = new List<Sampler> { new() { MagFilter = Sampler.MagFilterMode.Nearest } } },
+                GltfRootSourceGenerator.Default.Root);
+            Assert.AreEqual(@"{""samplers"":[{""magFilter"":9728}]}", json);
+        }
+
+        [Test]
+        public void RootScenes()
+        {
+            var json = JsonSerializer.Serialize(
+                new Root { Scenes = new List<Scene> { new() { Name = "s" } } },
+                GltfRootSourceGenerator.Default.Root);
+            Assert.AreEqual(@"{""scenes"":[{""name"":""s""}]}", json);
+        }
+
+        [Test]
+        public void RootSkins()
+        {
+            var json = JsonSerializer.Serialize(
+                new Root { Skins = new List<Skin> { new() { Name = "k" } } },
+                GltfRootSourceGenerator.Default.Root);
+            Assert.AreEqual(@"{""skins"":[{""name"":""k""}]}", json);
+        }
+
+        [Test]
+        public void RootTextures()
+        {
+            var json = JsonSerializer.Serialize(
+                new Root { Textures = new List<Texture> { new() { Source = 0 } } },
+                GltfRootSourceGenerator.Default.Root);
+            Assert.AreEqual(@"{""textures"":[{""source"":0}]}", json);
+        }
+
+        [Test]
+        public void RootExtensionsUsed()
+        {
+            var json = JsonSerializer.Serialize(
+                new Root { ExtensionsUsed = new List<EnumOrRawValue<Extension>> { new(Extension.MaterialsUnlit) } },
+                GltfRootSourceGenerator.Default.Root);
+            Assert.AreEqual(@"{""extensionsUsed"":[""KHR_materials_unlit""]}", json);
+        }
+
+        [Test]
+        public void RootExtensionsRequired()
+        {
+            var json = JsonSerializer.Serialize(
+                new Root { ExtensionsRequired = new List<EnumOrRawValue<Extension>> { new(Extension.MaterialsUnlit) } },
+                GltfRootSourceGenerator.Default.Root);
+            Assert.AreEqual(@"{""extensionsRequired"":[""KHR_materials_unlit""]}", json);
+        }
+
+        [Test]
+        public void RootExtensions()
+        {
+            var json = JsonSerializer.Serialize(
+                new Root { Extensions = new RootExtensions { LightsPunctual = new LightsPunctual { Lights = new List<LightPunctual>() } } },
+                GltfRootSourceGenerator.Default.Root);
+            Assert.AreEqual(@"{""extensions"":{""KHR_lights_punctual"":{""lights"":[]}}}", json);
+        }
+
+        [Test]
+        public void RootExtras()
+        {
+            var json = JsonSerializer.Serialize(
+                new Root { Extras = new UnclassifiedData() },
+                GltfRootSourceGenerator.Default.Root);
+            Assert.AreEqual(@"{""extras"":{}}", json);
+        }
+
+#if UNITY_ANIMATION || GLTFAST_ANIMATION
+        [Test]
+        public void RootAnimations()
+        {
+            var json = JsonSerializer.Serialize(
+                new Root { Animations = new List<Animation> { new() { Name = "a" } } },
+                GltfRootSourceGenerator.Default.Root);
+            Assert.AreEqual(@"{""animations"":[{""name"":""a""}]}", json);
+        }
+#endif
+
+        [Test]
+        public void AssetDefault()
+        {
+            var json = JsonSerializer.Serialize(new Asset(), GltfRootSourceGenerator.Default.Asset);
+            Assert.AreEqual("{}", json);
+        }
+
+        [Test]
+        public void AssetName()
+        {
+            var json = JsonSerializer.Serialize(new Asset { Name = "A" }, GltfRootSourceGenerator.Default.Asset);
+            Assert.AreEqual(@"{""name"":""A""}", json);
+        }
+
+        [Test]
+        public void AssetCopyright()
+        {
+            var json = JsonSerializer.Serialize(new Asset { Copyright = "C" }, GltfRootSourceGenerator.Default.Asset);
+            Assert.AreEqual(@"{""copyright"":""C""}", json);
+        }
+
+        [Test]
+        public void AssetGenerator()
+        {
+            var json = JsonSerializer.Serialize(new Asset { Generator = "g" }, GltfRootSourceGenerator.Default.Asset);
+            Assert.AreEqual(@"{""generator"":""g""}", json);
+        }
+
+        [Test]
+        public void AssetVersion()
+        {
+            var json = JsonSerializer.Serialize(new Asset { Version = "2.0" }, GltfRootSourceGenerator.Default.Asset);
+            Assert.AreEqual(@"{""version"":""2.0""}", json);
+        }
+
+        [Test]
+        public void AssetMinVersion()
+        {
+            var json = JsonSerializer.Serialize(new Asset { MinVersion = "2.0" }, GltfRootSourceGenerator.Default.Asset);
+            Assert.AreEqual(@"{""minVersion"":""2.0""}", json);
+        }
+
+        [Test]
+        public void AssetExtras()
+        {
+            var json = JsonSerializer.Serialize(new Asset { Extras = new UnclassifiedData() }, GltfRootSourceGenerator.Default.Asset);
+            Assert.AreEqual(@"{""extras"":{}}", json);
+        }
+
+        [Test]
+        public void AssetExtensions()
+        {
+            var json = JsonSerializer.Serialize(new Asset { Extensions = new UnclassifiedData() }, GltfRootSourceGenerator.Default.Asset);
+            Assert.AreEqual(@"{""extensions"":{}}", json);
+        }
+
+        [Test]
+        public void AccessorDefault()
+        {
+            var json = JsonSerializer.Serialize(new Accessor(), GltfRootSourceGenerator.Default.Accessor);
+            Assert.AreEqual("{}", json);
+        }
+
+        [Test]
+        public void AccessorName()
+        {
+            var json = JsonSerializer.Serialize(new Accessor { Name = "a" }, GltfRootSourceGenerator.Default.Accessor);
+            Assert.AreEqual(@"{""name"":""a""}", json);
+        }
+
+        [Test]
+        public void AccessorBufferView()
+        {
+            var json = JsonSerializer.Serialize(new Accessor { BufferView = 7 }, GltfRootSourceGenerator.Default.Accessor);
+            Assert.AreEqual(@"{""bufferView"":7}", json);
+        }
+
+        [Test]
+        public void AccessorByteOffset()
+        {
+            var json = JsonSerializer.Serialize(new Accessor { ByteOffset = 8 }, GltfRootSourceGenerator.Default.Accessor);
+            Assert.AreEqual(@"{""byteOffset"":8}", json);
+        }
+
+        [Test]
+        [TestCase(AccessorDataType.Byte, 5120)]
+        [TestCase(AccessorDataType.UnsignedByte, 5121)]
+        [TestCase(AccessorDataType.Short, 5122)]
+        [TestCase(AccessorDataType.UnsignedShort, 5123)]
+        [TestCase(AccessorDataType.UnsignedInt, 5125)]
+        [TestCase(AccessorDataType.Float, 5126)]
+        public void AccessorComponentType(AccessorDataType value, int expected)
+        {
+            var json = JsonSerializer.Serialize(new Accessor { ComponentType = value }, GltfRootSourceGenerator.Default.Accessor);
+            Assert.AreEqual($@"{{""componentType"":{expected}}}", json);
+        }
+
+        [Test]
+        public void AccessorNormalized()
+        {
+            var json = JsonSerializer.Serialize(new Accessor { Normalized = true }, GltfRootSourceGenerator.Default.Accessor);
+            Assert.AreEqual(@"{""normalized"":true}", json);
+        }
+
+        [Test]
+        public void AccessorCount()
+        {
+            var json = JsonSerializer.Serialize(new Accessor { Count = 42 }, GltfRootSourceGenerator.Default.Accessor);
+            Assert.AreEqual(@"{""count"":42}", json);
+        }
+
+        [Test]
+        public void AccessorTypeTest()
+        {
+            var json = JsonSerializer.Serialize(new Accessor { Type = AccessorType.Vector3 }, GltfRootSourceGenerator.Default.Accessor);
+            Assert.AreEqual(@"{""type"":""VEC3""}", json);
+        }
+
+        [Test]
+        public void AccessorTypeRaw()
+        {
+            var raw = Encoding.UTF8.GetBytes("CUSTOM");
+            var json = JsonSerializer.Serialize(new Accessor { Type = new EnumOrRawValue<AccessorType>(raw) }, GltfRootSourceGenerator.Default.Accessor);
+            Assert.AreEqual(@"{""type"":""CUSTOM""}", json);
+        }
+
+        [Test]
+        public void AccessorMax()
+        {
+            var json = JsonSerializer.Serialize(new Accessor { Max = new List<float> { 1f, 2f, 3f } }, GltfRootSourceGenerator.Default.Accessor);
+            Assert.AreEqual(@"{""max"":[1,2,3]}", json);
+        }
+
+        [Test]
+        public void AccessorMin()
+        {
+            var json = JsonSerializer.Serialize(new Accessor { Min = new List<float> { 0f, 0f, 0f } }, GltfRootSourceGenerator.Default.Accessor);
+            Assert.AreEqual(@"{""min"":[0,0,0]}", json);
+        }
+
+        [Test]
+        public void AccessorSparse()
+        {
+            var json = JsonSerializer.Serialize(new Accessor { Sparse = new AccessorSparse { Count = 2 } }, GltfRootSourceGenerator.Default.Accessor);
+            Assert.AreEqual(@"{""sparse"":{""count"":2}}", json);
+        }
+
+        [Test]
+        public void AccessorExtras()
+        {
+            var json = JsonSerializer.Serialize(new Accessor { Extras = new UnclassifiedData() }, GltfRootSourceGenerator.Default.Accessor);
+            Assert.AreEqual(@"{""extras"":{}}", json);
+        }
+
+        [Test]
+        public void AccessorExtensions()
+        {
+            var json = JsonSerializer.Serialize(new Accessor { Extensions = new UnclassifiedData() }, GltfRootSourceGenerator.Default.Accessor);
+            Assert.AreEqual(@"{""extensions"":{}}", json);
+        }
+
+        [Test]
+        public void AccessorSparseDefault()
+        {
+            var json = JsonSerializer.Serialize(new AccessorSparse(), GltfRootSourceGenerator.Default.AccessorSparse);
+            Assert.AreEqual("{}", json);
+        }
+
+        [Test]
+        public void AccessorSparseCount()
+        {
+            var json = JsonSerializer.Serialize(new AccessorSparse { Count = 5 }, GltfRootSourceGenerator.Default.AccessorSparse);
+            Assert.AreEqual(@"{""count"":5}", json);
+        }
+
+        [Test]
+        public void AccessorSparseIndicesProperty()
+        {
+            var json = JsonSerializer.Serialize(
+                new AccessorSparse { Indices = new AccessorSparseIndices { BufferView = 1 } },
+                GltfRootSourceGenerator.Default.AccessorSparse);
+            Assert.AreEqual(@"{""indices"":{""bufferView"":1}}", json);
+        }
+
+        [Test]
+        public void AccessorSparseValuesProperty()
+        {
+            var json = JsonSerializer.Serialize(
+                new AccessorSparse { Values = new AccessorSparseValues { BufferView = 2 } },
+                GltfRootSourceGenerator.Default.AccessorSparse);
+            Assert.AreEqual(@"{""values"":{""bufferView"":2}}", json);
+        }
+
+        [Test]
+        public void AccessorSparseIndicesDefault()
+        {
+            var json = JsonSerializer.Serialize(new AccessorSparseIndices(), GltfRootSourceGenerator.Default.AccessorSparseIndices);
+            Assert.AreEqual("{}", json);
+        }
+
+        [Test]
+        public void AccessorSparseIndicesBufferView()
+        {
+            var json = JsonSerializer.Serialize(new AccessorSparseIndices { BufferView = 4 }, GltfRootSourceGenerator.Default.AccessorSparseIndices);
+            Assert.AreEqual(@"{""bufferView"":4}", json);
+        }
+
+        [Test]
+        public void AccessorSparseIndicesByteOffset()
+        {
+            var json = JsonSerializer.Serialize(new AccessorSparseIndices { ByteOffset = 16 }, GltfRootSourceGenerator.Default.AccessorSparseIndices);
+            Assert.AreEqual(@"{""byteOffset"":16}", json);
+        }
+
+        [Test]
+        public void AccessorSparseIndicesComponentType()
+        {
+            var json = JsonSerializer.Serialize(new AccessorSparseIndices { ComponentType = AccessorDataType.UnsignedShort }, GltfRootSourceGenerator.Default.AccessorSparseIndices);
+            Assert.AreEqual(@"{""componentType"":5123}", json);
+        }
+
+        [Test]
+        public void AccessorSparseValuesDefault()
+        {
+            var json = JsonSerializer.Serialize(new AccessorSparseValues(), GltfRootSourceGenerator.Default.AccessorSparseValues);
+            Assert.AreEqual("{}", json);
+        }
+
+        [Test]
+        public void AccessorSparseValuesBufferView()
+        {
+            var json = JsonSerializer.Serialize(new AccessorSparseValues { BufferView = 4 }, GltfRootSourceGenerator.Default.AccessorSparseValues);
+            Assert.AreEqual(@"{""bufferView"":4}", json);
+        }
+
+        [Test]
+        public void AccessorSparseValuesByteOffset()
+        {
+            var json = JsonSerializer.Serialize(new AccessorSparseValues { ByteOffset = 8 }, GltfRootSourceGenerator.Default.AccessorSparseValues);
+            Assert.AreEqual(@"{""byteOffset"":8}", json);
+        }
+
+#if UNITY_ANIMATION || GLTFAST_ANIMATION
+        [Test]
+        public void AnimationDefault()
+        {
+            var json = JsonSerializer.Serialize(new Animation(), GltfRootSourceGenerator.Default.Animation);
+            Assert.AreEqual("{}", json);
+        }
+
+        [Test]
+        public void AnimationName()
+        {
+            var json = JsonSerializer.Serialize(new Animation { Name = "a" }, GltfRootSourceGenerator.Default.Animation);
+            Assert.AreEqual(@"{""name"":""a""}", json);
+        }
+
+        [Test]
+        public void AnimationChannels()
+        {
+            var json = JsonSerializer.Serialize(
+                new Animation { Channels = new List<AnimationChannel> { new() { Sampler = 1 } } },
+                GltfRootSourceGenerator.Default.Animation);
+            Assert.AreEqual(@"{""channels"":[{""sampler"":1}]}", json);
+        }
+
+        [Test]
+        public void AnimationSamplers()
+        {
+            var json = JsonSerializer.Serialize(
+                new Animation { Samplers = new List<AnimationSampler> { new() { Input = 0, Output = 1 } } },
+                GltfRootSourceGenerator.Default.Animation);
+            Assert.AreEqual(@"{""samplers"":[{""input"":0,""output"":1}]}", json);
+        }
+
+        [Test]
+        public void AnimationChannelDefault()
+        {
+            var json = JsonSerializer.Serialize(new AnimationChannel(), GltfRootSourceGenerator.Default.AnimationChannel);
+            Assert.AreEqual("{}", json);
+        }
+
+        [Test]
+        public void AnimationChannelSampler()
+        {
+            var json = JsonSerializer.Serialize(new AnimationChannel { Sampler = 3 }, GltfRootSourceGenerator.Default.AnimationChannel);
+            Assert.AreEqual(@"{""sampler"":3}", json);
+        }
+
+        [Test]
+        public void AnimationChannelTarget()
+        {
+            var json = JsonSerializer.Serialize(
+                new AnimationChannel { Target = new AnimationChannelTarget { Node = 1 } },
+                GltfRootSourceGenerator.Default.AnimationChannel);
+            Assert.AreEqual(@"{""target"":{""node"":1}}", json);
+        }
+
+        [Test]
+        public void AnimationChannelTargetDefault()
+        {
+            var json = JsonSerializer.Serialize(new AnimationChannelTarget(), GltfRootSourceGenerator.Default.AnimationChannelTarget);
+            Assert.AreEqual("{}", json);
+        }
+
+        [Test]
+        public void AnimationChannelTargetNode()
+        {
+            var json = JsonSerializer.Serialize(new AnimationChannelTarget { Node = 7 }, GltfRootSourceGenerator.Default.AnimationChannelTarget);
+            Assert.AreEqual(@"{""node"":7}", json);
+        }
+
+        [Test]
+        public void AnimationChannelTargetNodeZero()
+        {
+            var json = JsonSerializer.Serialize(new AnimationChannelTarget { Node = 0 }, GltfRootSourceGenerator.Default.AnimationChannelTarget);
+            Assert.AreEqual(@"{""node"":0}", json);
+        }
+
+        [Test]
+        [TestCase(AnimationPath.Translation, "translation")]
+        [TestCase(AnimationPath.Rotation, "rotation")]
+        [TestCase(AnimationPath.Scale, "scale")]
+        [TestCase(AnimationPath.Weights, "weights")]
+        [TestCase(AnimationPath.Pointer, "pointer")]
+        public void AnimationChannelTargetPath(AnimationPath value, string expected)
+        {
+            var json = JsonSerializer.Serialize(new AnimationChannelTarget { Path = value }, GltfRootSourceGenerator.Default.AnimationChannelTarget);
+            Assert.AreEqual($@"{{""path"":""{expected}""}}", json);
+        }
+
+        [Test]
+        public void AnimationSamplerDefault()
+        {
+            var json = JsonSerializer.Serialize(new AnimationSampler(), GltfRootSourceGenerator.Default.AnimationSampler);
+            Assert.AreEqual("{}", json);
+        }
+
+        [Test]
+        public void AnimationSamplerInput()
+        {
+            var json = JsonSerializer.Serialize(new AnimationSampler { Input = 2 }, GltfRootSourceGenerator.Default.AnimationSampler);
+            Assert.AreEqual(@"{""input"":2}", json);
+        }
+
+        [Test]
+        public void AnimationSamplerOutput()
+        {
+            var json = JsonSerializer.Serialize(new AnimationSampler { Output = 4 }, GltfRootSourceGenerator.Default.AnimationSampler);
+            Assert.AreEqual(@"{""output"":4}", json);
+        }
+
+        [Test]
+        [TestCase(Interpolation.Step, "STEP")]
+        [TestCase(Interpolation.CubicSpline, "CUBICSPLINE")]
+        public void AnimationSamplerInterpolation(Interpolation value, string expected)
+        {
+            var json = JsonSerializer.Serialize(new AnimationSampler { Interpolation = value }, GltfRootSourceGenerator.Default.AnimationSampler);
+            Assert.AreEqual($@"{{""interpolation"":""{expected}""}}", json);
+        }
+
+        /// <summary>
+        /// Regression: accessor index 0 (typical time accessor) must round-trip; not be dropped.
+        /// </summary>
+        [Test]
+        public void AnimationSamplerInputOutputZero()
+        {
+            var obj = new AnimationSampler { Input = 0, Output = 0 };
+            var json = JsonSerializer.Serialize(obj, GltfRootSourceGenerator.Default.AnimationSampler);
+            Assert.AreEqual(@"{""input"":0,""output"":0}", json);
+        }
+
+        /// <summary>
+        /// Extension-relaxation scenario: an empty JSON object deserializes with sentinel values
+        /// and must re-serialize back to an empty object (no spurious "input"/"output" emitted).
+        /// </summary>
+        [Test]
+        public void AnimationSamplerAbsentRoundTrip()
+        {
+            var obj = JsonSerializer.Deserialize("{}", GltfRootSourceGenerator.Default.AnimationSampler);
+            Assert.IsTrue(obj.Input < 0);
+            Assert.IsTrue(obj.Output < 0);
+            var json = JsonSerializer.Serialize(obj, GltfRootSourceGenerator.Default.AnimationSampler);
+            Assert.AreEqual("{}", json);
+        }
+#endif
+
+        [Test]
+        public void BufferDefault()
+        {
+            var json = JsonSerializer.Serialize(new Schema.Buffer(), GltfRootSourceGenerator.Default.Buffer);
+            Assert.AreEqual("{}", json);
+        }
+
+        [Test]
+        public void BufferName()
+        {
+            var json = JsonSerializer.Serialize(new Schema.Buffer { Name = "b" }, GltfRootSourceGenerator.Default.Buffer);
+            Assert.AreEqual(@"{""name"":""b""}", json);
+        }
+
+        [Test]
+        public void BufferByteLength()
+        {
+            var json = JsonSerializer.Serialize(new Schema.Buffer { ByteLength = 256 }, GltfRootSourceGenerator.Default.Buffer);
+            Assert.AreEqual(@"{""byteLength"":256}", json);
+        }
+
+        [Test]
+        public void BufferUri()
+        {
+            var json = JsonSerializer.Serialize(new Schema.Buffer { Uri = new UriValue("data.bin") }, GltfRootSourceGenerator.Default.Buffer);
+            Assert.AreEqual(@"{""uri"":""data.bin""}", json);
+        }
+
+        [Test]
+        public void BufferViewExtensionsDefault()
+        {
+            var json = JsonSerializer.Serialize(new BufferViewExtensions(), GltfRootSourceGenerator.Default.BufferViewExtensions);
+            Assert.AreEqual("{}", json);
+        }
+
+#if MESHOPT_IS_RECENT
+        [Test]
+        public void BufferViewExtensionsMeshopt()
+        {
+            var json = JsonSerializer.Serialize(
+                new BufferViewExtensions { ExtMeshoptCompression = new BufferViewMeshoptExtension { Count = 1 } },
+                GltfRootSourceGenerator.Default.BufferViewExtensions);
+            Assert.AreEqual(@"{""EXT_meshopt_compression"":{""count"":1}}", json);
+        }
+
+        [Test]
+        public void BufferViewMeshoptExtensionDefault()
+        {
+            var json = JsonSerializer.Serialize(new BufferViewMeshoptExtension(), GltfRootSourceGenerator.Default.BufferViewMeshoptExtension);
+            Assert.AreEqual("{}", json);
+        }
+
+        [Test]
+        public void BufferViewMeshoptExtensionBuffer()
+        {
+            var json = JsonSerializer.Serialize(new BufferViewMeshoptExtension { Buffer = 1 }, GltfRootSourceGenerator.Default.BufferViewMeshoptExtension);
+            Assert.AreEqual(@"{""buffer"":1}", json);
+        }
+
+        [Test]
+        public void BufferViewMeshoptExtensionBufferZero()
+        {
+            var json = JsonSerializer.Serialize(new BufferViewMeshoptExtension { Buffer = 0 }, GltfRootSourceGenerator.Default.BufferViewMeshoptExtension);
+            Assert.AreEqual(@"{""buffer"":0}", json);
+        }
+
+        [Test]
+        public void BufferViewMeshoptExtensionByteOffset()
+        {
+            var json = JsonSerializer.Serialize(new BufferViewMeshoptExtension { ByteOffset = 8 }, GltfRootSourceGenerator.Default.BufferViewMeshoptExtension);
+            Assert.AreEqual(@"{""byteOffset"":8}", json);
+        }
+
+        [Test]
+        public void BufferViewMeshoptExtensionByteLength()
+        {
+            var json = JsonSerializer.Serialize(new BufferViewMeshoptExtension { ByteLength = 16 }, GltfRootSourceGenerator.Default.BufferViewMeshoptExtension);
+            Assert.AreEqual(@"{""byteLength"":16}", json);
+        }
+
+        [Test]
+        public void BufferViewMeshoptExtensionByteStride()
+        {
+            var json = JsonSerializer.Serialize(new BufferViewMeshoptExtension { ByteStride = 4 }, GltfRootSourceGenerator.Default.BufferViewMeshoptExtension);
+            Assert.AreEqual(@"{""byteStride"":4}", json);
+        }
+
+        [Test]
+        public void BufferViewMeshoptExtensionCount()
+        {
+            var json = JsonSerializer.Serialize(new BufferViewMeshoptExtension { Count = 12 }, GltfRootSourceGenerator.Default.BufferViewMeshoptExtension);
+            Assert.AreEqual(@"{""count"":12}", json);
+        }
+
+        [Test]
+        [TestCase(MeshoptMode.Attributes, "ATTRIBUTES")]
+        [TestCase(MeshoptMode.Triangles, "TRIANGLES")]
+        [TestCase(MeshoptMode.Indices, "INDICES")]
+        public void BufferViewMeshoptExtensionMode(MeshoptMode value, string expected)
+        {
+            var json = JsonSerializer.Serialize(new BufferViewMeshoptExtension { Mode = value }, GltfRootSourceGenerator.Default.BufferViewMeshoptExtension);
+            Assert.AreEqual($@"{{""mode"":""{expected}""}}", json);
+        }
+
+        [Test]
+        [TestCase(MeshoptFilter.None, null)]
+        [TestCase(MeshoptFilter.Octahedral, "OCTAHEDRAL")]
+        [TestCase(MeshoptFilter.Quaternion, "QUATERNION")]
+        [TestCase(MeshoptFilter.Exponential, "EXPONENTIAL")]
+        public void BufferViewMeshoptExtensionFilter(MeshoptFilter value, string expected)
+        {
+            var json = JsonSerializer.Serialize(new BufferViewMeshoptExtension { Filter = value }, GltfRootSourceGenerator.Default.BufferViewMeshoptExtension);
+            if (expected != null)
+            {
+                Assert.AreEqual($@"{{""filter"":""{expected}""}}", json);
+            }
+            else
+            {
+                Assert.AreEqual("{}", json);
+            }
+        }
+#endif
+
+        [Test]
+        public void CameraDefault()
+        {
+            var json = JsonSerializer.Serialize(new Camera(), GltfRootSourceGenerator.Default.Camera);
+            Assert.AreEqual("{}", json);
+        }
+
+        [Test]
+        public void CameraName()
+        {
+            var json = JsonSerializer.Serialize(new Camera { Name = "c" }, GltfRootSourceGenerator.Default.Camera);
+            Assert.AreEqual(@"{""name"":""c""}", json);
+        }
+
+        [Test]
+        public void CameraOrthographic()
+        {
+            var json = JsonSerializer.Serialize(
+                new Camera { Orthographic = new CameraOrthographic { Xmag = 1f } },
+                GltfRootSourceGenerator.Default.Camera);
+            Assert.AreEqual(@"{""orthographic"":{""xmag"":1}}", json);
+        }
+
+        [Test]
+        public void CameraPerspective()
+        {
+            var json = JsonSerializer.Serialize(
+                new Camera { Perspective = new CameraPerspective { Yfov = 1.5f } },
+                GltfRootSourceGenerator.Default.Camera);
+            Assert.AreEqual(@"{""perspective"":{""yfov"":1.5}}", json);
+        }
+
+        [Test]
+        [TestCase(CameraType.Orthographic, "orthographic")]
+        [TestCase(CameraType.Perspective, "perspective")]
+        public void CameraTypeProperty(CameraType value, string expected)
+        {
+            var json = JsonSerializer.Serialize(new Camera { Type = value }, GltfRootSourceGenerator.Default.Camera);
+            Assert.AreEqual($@"{{""type"":""{expected}""}}", json);
+        }
+
+        [Test]
+        public void CameraOrthographicDefault()
+        {
+            var json = JsonSerializer.Serialize(new CameraOrthographic(), GltfRootSourceGenerator.Default.CameraOrthographic);
+            Assert.AreEqual("{}", json);
+        }
+
+        [Test]
+        public void CameraOrthographicXmag()
+        {
+            var json = JsonSerializer.Serialize(new CameraOrthographic { Xmag = 2f }, GltfRootSourceGenerator.Default.CameraOrthographic);
+            Assert.AreEqual(@"{""xmag"":2}", json);
+        }
+
+        [Test]
+        public void CameraOrthographicYmag()
+        {
+            var json = JsonSerializer.Serialize(new CameraOrthographic { Ymag = 3f }, GltfRootSourceGenerator.Default.CameraOrthographic);
+            Assert.AreEqual(@"{""ymag"":3}", json);
+        }
+
+        [Test]
+        public void CameraOrthographicZfar()
+        {
+            var json = JsonSerializer.Serialize(new CameraOrthographic { Zfar = 100f }, GltfRootSourceGenerator.Default.CameraOrthographic);
+            Assert.AreEqual(@"{""zfar"":100}", json);
+        }
+
+        [Test]
+        public void CameraOrthographicZnear()
+        {
+            var json = JsonSerializer.Serialize(new CameraOrthographic { Znear = 0.5f }, GltfRootSourceGenerator.Default.CameraOrthographic);
+            Assert.AreEqual(@"{""znear"":0.5}", json);
+        }
+
+        [Test]
+        public void CameraPerspectiveDefault()
+        {
+            var json = JsonSerializer.Serialize(new CameraPerspective(), GltfRootSourceGenerator.Default.CameraPerspective);
+            Assert.AreEqual("{}", json);
+        }
+
+        [Test]
+        public void CameraPerspectiveAspectRatio()
+        {
+            var json = JsonSerializer.Serialize(new CameraPerspective { AspectRatio = 1.5f }, GltfRootSourceGenerator.Default.CameraPerspective);
+            Assert.AreEqual(@"{""aspectRatio"":1.5}", json);
+        }
+
+        [Test]
+        public void CameraPerspectiveYfov()
+        {
+            var json = JsonSerializer.Serialize(new CameraPerspective { Yfov = 1.25f }, GltfRootSourceGenerator.Default.CameraPerspective);
+            Assert.AreEqual(@"{""yfov"":1.25}", json);
+        }
+
+        [Test]
+        public void CameraPerspectiveZfar()
+        {
+            var json = JsonSerializer.Serialize(new CameraPerspective { Zfar = 100f }, GltfRootSourceGenerator.Default.CameraPerspective);
+            Assert.AreEqual(@"{""zfar"":100}", json);
+        }
+
+        [Test]
+        public void CameraPerspectiveZnear()
+        {
+            var json = JsonSerializer.Serialize(new CameraPerspective { Znear = 0.25f }, GltfRootSourceGenerator.Default.CameraPerspective);
+            Assert.AreEqual(@"{""znear"":0.25}", json);
+        }
+
+        [Test]
+        public void ImageDefault()
+        {
+            var json = JsonSerializer.Serialize(new Image(), GltfRootSourceGenerator.Default.Image);
+            Assert.AreEqual("{}", json);
+        }
+
+        [Test]
+        public void ImageName()
+        {
+            var json = JsonSerializer.Serialize(new Image { Name = "i" }, GltfRootSourceGenerator.Default.Image);
+            Assert.AreEqual(@"{""name"":""i""}", json);
+        }
+
+        [Test]
+        public void ImageUri()
+        {
+            var json = JsonSerializer.Serialize(new Image { Uri = new UriValue("texture.png") }, GltfRootSourceGenerator.Default.Image);
+            Assert.AreEqual(@"{""uri"":""texture.png""}", json);
+        }
+
+        [Test]
+        [TestCase(ImageMimeType.Jpeg, "image/jpeg")]
+        [TestCase(ImageMimeType.Png, "image/png")]
+        [TestCase(ImageMimeType.Ktx2, "image/ktx2")]
+        [TestCase(ImageMimeType.WebP, "image/webp")]
+        public void ImageMimeTypeTest(ImageMimeType value, string expected)
+        {
+            var json = JsonSerializer.Serialize(new Image { MimeType = value }, GltfRootSourceGenerator.Default.Image);
+            Assert.AreEqual($@"{{""mimeType"":""{expected}""}}", json);
+        }
+
+        [Test]
+        public void ImageBufferView()
+        {
+            var json = JsonSerializer.Serialize(new Image { BufferView = 5 }, GltfRootSourceGenerator.Default.Image);
+            Assert.AreEqual(@"{""bufferView"":5}", json);
+        }
+
+        [Test]
+        public void MaterialDefault()
+        {
+            var json = JsonSerializer.Serialize(new Material(), GltfRootSourceGenerator.Default.Material);
+            Assert.AreEqual("{}", json);
+        }
+
+        [Test]
+        public void MaterialName()
+        {
+            var json = JsonSerializer.Serialize(new Material { Name = "m" }, GltfRootSourceGenerator.Default.Material);
+            Assert.AreEqual(@"{""name"":""m""}", json);
+        }
+
+        [Test]
+        public void MaterialPbrMetallicRoughness()
+        {
+            var json = JsonSerializer.Serialize(
+                new Material { PbrMetallicRoughness = new PbrMetallicRoughness() },
+                GltfRootSourceGenerator.Default.Material);
+            Assert.AreEqual(@"{""pbrMetallicRoughness"":{""baseColorFactor"":[1,1,1,1]}}", json);
+        }
+
+        [Test]
+        public void MaterialNormalTexture()
+        {
+            var json = JsonSerializer.Serialize(
+                new Material { NormalTexture = new NormalTextureInfo { Index = 0 } },
+                GltfRootSourceGenerator.Default.Material);
+            Assert.AreEqual(@"{""normalTexture"":{""index"":0}}", json);
+        }
+
+        [Test]
+        public void MaterialOcclusionTexture()
+        {
+            var json = JsonSerializer.Serialize(
+                new Material { OcclusionTexture = new OcclusionTextureInfo { Index = 0 } },
+                GltfRootSourceGenerator.Default.Material);
+            Assert.AreEqual(@"{""occlusionTexture"":{""index"":0}}", json);
+        }
+
+        [Test]
+        public void MaterialEmissiveTexture()
+        {
+            var json = JsonSerializer.Serialize(
+                new Material { EmissiveTexture = new TextureInfo { Index = 0 } },
+                GltfRootSourceGenerator.Default.Material);
+            Assert.AreEqual(@"{""emissiveTexture"":{""index"":0}}", json);
+        }
+
+        [Test]
+        public void MaterialEmissiveFactor()
+        {
+            var json = JsonSerializer.Serialize(
+                new Material { EmissiveFactor = new Color(0.5f, 0.25f, 0.75f) },
+                GltfRootSourceGenerator.Default.Material);
+            Assert.AreEqual(@"{""emissiveFactor"":[0.5,0.25,0.75]}", json);
+        }
+
+        [Test]
+        [TestCase(AlphaMode.Mask, "MASK")]
+        [TestCase(AlphaMode.Blend, "BLEND")]
+        public void MaterialAlphaMode(AlphaMode value, string expected)
+        {
+            var json = JsonSerializer.Serialize(new Material { AlphaMode = value }, GltfRootSourceGenerator.Default.Material);
+            Assert.AreEqual($@"{{""alphaMode"":""{expected}""}}", json);
+        }
+
+        [Test]
+        public void MaterialAlphaCutoffDefault()
+        {
+            var json = JsonSerializer.Serialize(new Material { AlphaCutoff = 0.5f }, GltfRootSourceGenerator.Default.Material);
+            Assert.AreEqual("{}", json);
+        }
+
+        [Test]
+        public void MaterialAlphaCutoffCustom()
+        {
+            var json = JsonSerializer.Serialize(new Material { AlphaCutoff = 0.25f }, GltfRootSourceGenerator.Default.Material);
+            Assert.AreEqual(@"{""alphaCutoff"":0.25}", json);
+        }
+
+        [Test]
+        public void MaterialDoubleSided()
+        {
+            var json = JsonSerializer.Serialize(new Material { DoubleSided = true }, GltfRootSourceGenerator.Default.Material);
+            Assert.AreEqual(@"{""doubleSided"":true}", json);
+        }
+
+        [Test]
+        public void MaterialExtensions()
+        {
+            var json = JsonSerializer.Serialize(
+                new Material { Extensions = new MaterialExtensions { Unlit = new MaterialUnlit() } },
+                GltfRootSourceGenerator.Default.Material);
+            Assert.AreEqual(@"{""extensions"":{""KHR_materials_unlit"":{}}}", json);
+        }
+
+        [Test]
+        public void MaterialExtensionsDefault()
+        {
+            var json = JsonSerializer.Serialize(new MaterialExtensions(), GltfRootSourceGenerator.Default.MaterialExtensions);
+            Assert.AreEqual("{}", json);
+        }
+
+        [Test]
+        public void MaterialExtensionsPbrSpecularGlossiness()
+        {
+            var json = JsonSerializer.Serialize(
+                new MaterialExtensions { PbrSpecularGlossiness = new PbrSpecularGlossiness() },
+                GltfRootSourceGenerator.Default.MaterialExtensions);
+            Assert.AreEqual(@"{""KHR_materials_pbrSpecularGlossiness"":{""diffuseFactor"":[1,1,1,1],""specularFactor"":[1,1,1]}}", json);
+        }
+
+        [Test]
+        public void MaterialExtensionsUnlit()
+        {
+            var json = JsonSerializer.Serialize(
+                new MaterialExtensions { Unlit = new MaterialUnlit() },
+                GltfRootSourceGenerator.Default.MaterialExtensions);
+            Assert.AreEqual(@"{""KHR_materials_unlit"":{}}", json);
+        }
+
+        [Test]
+        public void MaterialExtensionsTransmission()
+        {
+            var json = JsonSerializer.Serialize(
+                new MaterialExtensions { Transmission = new Transmission() },
+                GltfRootSourceGenerator.Default.MaterialExtensions);
+            Assert.AreEqual(@"{""KHR_materials_transmission"":{}}", json);
+        }
+
+        [Test]
+        public void MaterialExtensionsClearcoat()
+        {
+            var json = JsonSerializer.Serialize(
+                new MaterialExtensions { Clearcoat = new ClearCoat() },
+                GltfRootSourceGenerator.Default.MaterialExtensions);
+            Assert.AreEqual(@"{""KHR_materials_clearcoat"":{}}", json);
+        }
+
+        [Test]
+        public void MaterialExtensionsSheen()
+        {
+            var json = JsonSerializer.Serialize(
+                new MaterialExtensions { Sheen = new Sheen() },
+                GltfRootSourceGenerator.Default.MaterialExtensions);
+            Assert.AreEqual(@"{""KHR_materials_sheen"":{""sheenColorFactor"":[1,1,1]}}", json);
+        }
+
+        [Test]
+        public void MaterialExtensionsSpecular()
+        {
+            var json = JsonSerializer.Serialize(
+                new MaterialExtensions { Specular = new MaterialSpecular() },
+                GltfRootSourceGenerator.Default.MaterialExtensions);
+            Assert.AreEqual(@"{""KHR_materials_specular"":{""specularColorFactor"":[1,1,1]}}", json);
+        }
+
+        [Test]
+        public void MaterialExtensionsIor()
+        {
+            var json = JsonSerializer.Serialize(
+                new MaterialExtensions { IndexOfRefraction = new MaterialIor() },
+                GltfRootSourceGenerator.Default.MaterialExtensions);
+            Assert.AreEqual(@"{""KHR_materials_ior"":{}}", json);
+        }
+
+        [Test]
+        public void PbrMetallicRoughnessDefault()
+        {
+            var json = JsonSerializer.Serialize(new PbrMetallicRoughness(), GltfRootSourceGenerator.Default.PbrMetallicRoughness);
+            Assert.AreEqual(@"{""baseColorFactor"":[1,1,1,1]}", json);
+        }
+
+        [Test]
+        public void PbrMetallicRoughnessBaseColorTexture()
+        {
+            var json = JsonSerializer.Serialize(
+                new PbrMetallicRoughness { BaseColorTexture = new TextureInfo { Index = 0 } },
+                GltfRootSourceGenerator.Default.PbrMetallicRoughness);
+            Assert.AreEqual(@"{""baseColorTexture"":{""index"":0},""baseColorFactor"":[1,1,1,1]}", json);
+        }
+
+        [Test]
+        public void PbrMetallicRoughnessMetallicRoughnessTexture()
+        {
+            var json = JsonSerializer.Serialize(
+                new PbrMetallicRoughness { MetallicRoughnessTexture = new TextureInfo { Index = 1 } },
+                GltfRootSourceGenerator.Default.PbrMetallicRoughness);
+            Assert.AreEqual(@"{""metallicRoughnessTexture"":{""index"":1},""baseColorFactor"":[1,1,1,1]}", json);
+        }
+
+        [Test]
+        public void PbrMetallicRoughnessBaseColorFactor()
+        {
+            var json = JsonSerializer.Serialize(
+                new PbrMetallicRoughness { BaseColorFactor = new ColorAlpha(0.5f, 0.25f, 0.75f, 0.5f) },
+                GltfRootSourceGenerator.Default.PbrMetallicRoughness);
+            Assert.AreEqual(@"{""baseColorFactor"":[0.5,0.25,0.75,0.5]}", json);
+        }
+
+        [Test]
+        public void PbrMetallicRoughnessMetallicFactor()
+        {
+            var json = JsonSerializer.Serialize(
+                new PbrMetallicRoughness { MetallicFactor = 0.25f },
+                GltfRootSourceGenerator.Default.PbrMetallicRoughness);
+            Assert.AreEqual(@"{""baseColorFactor"":[1,1,1,1],""metallicFactor"":0.25}", json);
+        }
+
+        [Test]
+        public void PbrMetallicRoughnessRoughnessFactor()
+        {
+            var json = JsonSerializer.Serialize(
+                new PbrMetallicRoughness { RoughnessFactor = 0.5f },
+                GltfRootSourceGenerator.Default.PbrMetallicRoughness);
+            Assert.AreEqual(@"{""baseColorFactor"":[1,1,1,1],""roughnessFactor"":0.5}", json);
+        }
+
+        [Test]
+        public void PbrSpecularGlossinessDefault()
+        {
+            var json = JsonSerializer.Serialize(new PbrSpecularGlossiness(), GltfRootSourceGenerator.Default.PbrSpecularGlossiness);
+            Assert.AreEqual(@"{""diffuseFactor"":[1,1,1,1],""specularFactor"":[1,1,1]}", json);
+        }
+
+        [Test]
+        public void PbrSpecularGlossinessDiffuseFactor()
+        {
+            var json = JsonSerializer.Serialize(
+                new PbrSpecularGlossiness { DiffuseFactor = new ColorAlpha(0.5f, 0.5f, 0.5f, 0.5f) },
+                GltfRootSourceGenerator.Default.PbrSpecularGlossiness);
+            Assert.AreEqual(@"{""diffuseFactor"":[0.5,0.5,0.5,0.5],""specularFactor"":[1,1,1]}", json);
+        }
+
+        [Test]
+        public void PbrSpecularGlossinessDiffuseTexture()
+        {
+            var json = JsonSerializer.Serialize(
+                new PbrSpecularGlossiness { DiffuseTexture = new TextureInfo { Index = 0 } },
+                GltfRootSourceGenerator.Default.PbrSpecularGlossiness);
+            Assert.AreEqual(@"{""diffuseFactor"":[1,1,1,1],""diffuseTexture"":{""index"":0},""specularFactor"":[1,1,1]}", json);
+        }
+
+        [Test]
+        public void PbrSpecularGlossinessSpecularFactor()
+        {
+            var json = JsonSerializer.Serialize(
+                new PbrSpecularGlossiness { SpecularFactor = new Color(0.5f, 0.5f, 0.5f) },
+                GltfRootSourceGenerator.Default.PbrSpecularGlossiness);
+            Assert.AreEqual(@"{""diffuseFactor"":[1,1,1,1],""specularFactor"":[0.5,0.5,0.5]}", json);
+        }
+
+        [Test]
+        public void PbrSpecularGlossinessGlossinessFactor()
+        {
+            var json = JsonSerializer.Serialize(
+                new PbrSpecularGlossiness { GlossinessFactor = 0.5f },
+                GltfRootSourceGenerator.Default.PbrSpecularGlossiness);
+            Assert.AreEqual(@"{""diffuseFactor"":[1,1,1,1],""specularFactor"":[1,1,1],""glossinessFactor"":0.5}", json);
+        }
+
+        [Test]
+        public void PbrSpecularGlossinessSpecularGlossinessTexture()
+        {
+            var json = JsonSerializer.Serialize(
+                new PbrSpecularGlossiness { SpecularGlossinessTexture = new TextureInfo { Index = 0 } },
+                GltfRootSourceGenerator.Default.PbrSpecularGlossiness);
+            Assert.AreEqual(@"{""diffuseFactor"":[1,1,1,1],""specularFactor"":[1,1,1],""specularGlossinessTexture"":{""index"":0}}", json);
+        }
+
+        [Test]
+        public void MaterialUnlitDefault()
+        {
+            var json = JsonSerializer.Serialize(new MaterialUnlit(), GltfRootSourceGenerator.Default.MaterialUnlit);
+            Assert.AreEqual("{}", json);
+        }
+
+        [Test]
+        public void TransmissionDefault()
+        {
+            var json = JsonSerializer.Serialize(new Transmission(), GltfRootSourceGenerator.Default.Transmission);
+            Assert.AreEqual("{}", json);
+        }
+
+        [Test]
+        public void TransmissionFactor()
+        {
+            var json = JsonSerializer.Serialize(new Transmission { TransmissionFactor = 0.5f }, GltfRootSourceGenerator.Default.Transmission);
+            Assert.AreEqual(@"{""transmissionFactor"":0.5}", json);
+        }
+
+        [Test]
+        public void TransmissionTexture()
+        {
+            var json = JsonSerializer.Serialize(
+                new Transmission { TransmissionTexture = new TextureInfo { Index = 0 } },
+                GltfRootSourceGenerator.Default.Transmission);
+            Assert.AreEqual(@"{""transmissionTexture"":{""index"":0}}", json);
+        }
+
+        [Test]
+        public void ClearCoatDefault()
+        {
+            var json = JsonSerializer.Serialize(new ClearCoat(), GltfRootSourceGenerator.Default.ClearCoat);
+            Assert.AreEqual("{}", json);
+        }
+
+        [Test]
+        public void ClearCoatFactor()
+        {
+            var json = JsonSerializer.Serialize(new ClearCoat { ClearcoatFactor = 0.5f }, GltfRootSourceGenerator.Default.ClearCoat);
+            Assert.AreEqual(@"{""clearcoatFactor"":0.5}", json);
+        }
+
+        [Test]
+        public void ClearCoatTexture()
+        {
+            var json = JsonSerializer.Serialize(
+                new ClearCoat { ClearcoatTexture = new TextureInfo { Index = 0 } },
+                GltfRootSourceGenerator.Default.ClearCoat);
+            Assert.AreEqual(@"{""clearcoatTexture"":{""index"":0}}", json);
+        }
+
+        [Test]
+        public void ClearCoatRoughnessFactor()
+        {
+            var json = JsonSerializer.Serialize(new ClearCoat { ClearcoatRoughnessFactor = 0.25f }, GltfRootSourceGenerator.Default.ClearCoat);
+            Assert.AreEqual(@"{""clearcoatRoughnessFactor"":0.25}", json);
+        }
+
+        [Test]
+        public void ClearCoatRoughnessTexture()
+        {
+            var json = JsonSerializer.Serialize(
+                new ClearCoat { ClearcoatRoughnessTexture = new TextureInfo { Index = 1 } },
+                GltfRootSourceGenerator.Default.ClearCoat);
+            Assert.AreEqual(@"{""clearcoatRoughnessTexture"":{""index"":1}}", json);
+        }
+
+        [Test]
+        public void ClearCoatNormalTexture()
+        {
+            var json = JsonSerializer.Serialize(
+                new ClearCoat { ClearcoatNormalTexture = new NormalTextureInfo { Index = 2 } },
+                GltfRootSourceGenerator.Default.ClearCoat);
+            Assert.AreEqual(@"{""clearcoatNormalTexture"":{""index"":2}}", json);
+        }
+
+        [Test]
+        public void SheenDefault()
+        {
+            var json = JsonSerializer.Serialize(new Sheen(), GltfRootSourceGenerator.Default.Sheen);
+            Assert.AreEqual(@"{""sheenColorFactor"":[1,1,1]}", json);
+        }
+
+        [Test]
+        public void SheenColorFactor()
+        {
+            var json = JsonSerializer.Serialize(new Sheen { SheenColorFactor = new Color(0.5f, 0.25f, 0.75f) }, GltfRootSourceGenerator.Default.Sheen);
+            Assert.AreEqual(@"{""sheenColorFactor"":[0.5,0.25,0.75]}", json);
+        }
+
+        [Test]
+        public void SheenColorTexture()
+        {
+            var json = JsonSerializer.Serialize(
+                new Sheen { SheenColorTexture = new TextureInfo { Index = 0 } },
+                GltfRootSourceGenerator.Default.Sheen);
+            Assert.AreEqual(@"{""sheenColorFactor"":[1,1,1],""sheenColorTexture"":{""index"":0}}", json);
+        }
+
+        [Test]
+        public void SheenRoughnessFactor()
+        {
+            var json = JsonSerializer.Serialize(new Sheen { SheenRoughnessFactor = 0.5f }, GltfRootSourceGenerator.Default.Sheen);
+            Assert.AreEqual(@"{""sheenColorFactor"":[1,1,1],""sheenRoughnessFactor"":0.5}", json);
+        }
+
+        [Test]
+        public void SheenRoughnessTexture()
+        {
+            var json = JsonSerializer.Serialize(
+                new Sheen { SheenRoughnessTexture = new TextureInfo { Index = 0 } },
+                GltfRootSourceGenerator.Default.Sheen);
+            Assert.AreEqual(@"{""sheenColorFactor"":[1,1,1],""sheenRoughnessTexture"":{""index"":0}}", json);
+        }
+
+        [Test]
+        public void MaterialSpecularDefault()
+        {
+            var json = JsonSerializer.Serialize(new MaterialSpecular(), GltfRootSourceGenerator.Default.MaterialSpecular);
+            Assert.AreEqual(@"{""specularColorFactor"":[1,1,1]}", json);
+        }
+
+        [Test]
+        public void MaterialSpecularFactor()
+        {
+            var json = JsonSerializer.Serialize(new MaterialSpecular { SpecularFactor = 0.5f }, GltfRootSourceGenerator.Default.MaterialSpecular);
+            Assert.AreEqual(@"{""specularFactor"":0.5,""specularColorFactor"":[1,1,1]}", json);
+        }
+
+        [Test]
+        public void MaterialSpecularTexture()
+        {
+            var json = JsonSerializer.Serialize(
+                new MaterialSpecular { SpecularTexture = new TextureInfo { Index = 0 } },
+                GltfRootSourceGenerator.Default.MaterialSpecular);
+            Assert.AreEqual(@"{""specularTexture"":{""index"":0},""specularColorFactor"":[1,1,1]}", json);
+        }
+
+        [Test]
+        public void MaterialSpecularColorFactor()
+        {
+            var json = JsonSerializer.Serialize(
+                new MaterialSpecular { SpecularColorFactor = new Color(0.5f, 0.25f, 0.75f) },
+                GltfRootSourceGenerator.Default.MaterialSpecular);
+            Assert.AreEqual(@"{""specularColorFactor"":[0.5,0.25,0.75]}", json);
+        }
+
+        [Test]
+        public void MaterialSpecularColorTexture()
+        {
+            var json = JsonSerializer.Serialize(
+                new MaterialSpecular { SpecularColorTexture = new TextureInfo { Index = 0 } },
+                GltfRootSourceGenerator.Default.MaterialSpecular);
+            Assert.AreEqual(@"{""specularColorFactor"":[1,1,1],""specularColorTexture"":{""index"":0}}", json);
+        }
+
+        [Test]
+        public void MaterialIorDefault()
+        {
+            var json = JsonSerializer.Serialize(new MaterialIor(), GltfRootSourceGenerator.Default.MaterialIor);
+            Assert.AreEqual("{}", json);
+        }
+
+        [Test]
+        public void MaterialIorCustom()
+        {
+            var json = JsonSerializer.Serialize(new MaterialIor { Ior = 1.25f }, GltfRootSourceGenerator.Default.MaterialIor);
+            Assert.AreEqual(@"{""ior"":1.25}", json);
+        }
+
+        [Test]
+        public void MeshDefault()
+        {
+            var json = JsonSerializer.Serialize(new Mesh(), GltfRootSourceGenerator.Default.Mesh);
+            Assert.AreEqual("{}", json);
+        }
+
+        [Test]
+        public void MeshName()
+        {
+            var json = JsonSerializer.Serialize(new Mesh { Name = "m" }, GltfRootSourceGenerator.Default.Mesh);
+            Assert.AreEqual(@"{""name"":""m""}", json);
+        }
+
+        [Test]
+        public void MeshPrimitives()
+        {
+            var json = JsonSerializer.Serialize(
+                new Mesh { Primitives = new List<MeshPrimitive> { new() { Indices = 0 } } },
+                GltfRootSourceGenerator.Default.Mesh);
+            Assert.AreEqual(@"{""primitives"":[{""indices"":0}]}", json);
+        }
+
+        [Test]
+        public void MeshExtras()
+        {
+            var json = JsonSerializer.Serialize(
+                new Mesh { Extras = new MeshExtras { TargetNames = new List<string> { "k1" } } },
+                GltfRootSourceGenerator.Default.Mesh);
+            Assert.AreEqual(@"{""extras"":{""targetNames"":[""k1""]}}", json);
+        }
+
+        [Test]
+        public void MeshWeights()
+        {
+            var json = JsonSerializer.Serialize(
+                new Mesh { Weights = new List<float> { 0f, 1f } },
+                GltfRootSourceGenerator.Default.Mesh);
+            Assert.AreEqual(@"{""weights"":[0,1]}", json);
+        }
+
+        [Test]
+        public void MeshExtrasDefault()
+        {
+            var json = JsonSerializer.Serialize(new MeshExtras(), GltfRootSourceGenerator.Default.MeshExtras);
+            Assert.AreEqual("{}", json);
+        }
+
+        [Test]
+        public void MeshExtrasTargetNames()
+        {
+            var json = JsonSerializer.Serialize(
+                new MeshExtras { TargetNames = new List<string> { "a", "b" } },
+                GltfRootSourceGenerator.Default.MeshExtras);
+            Assert.AreEqual(@"{""targetNames"":[""a"",""b""]}", json);
+        }
+
+        [Test]
+        public void MeshPrimitiveAttributes()
+        {
+            var json = JsonSerializer.Serialize(
+                new MeshPrimitive { Attributes = new Attributes { Position = 0 } },
+                GltfRootSourceGenerator.Default.MeshPrimitive);
+            Assert.AreEqual(@"{""attributes"":{""POSITION"":0}}", json);
+        }
+
+        [Test]
+        public void MeshPrimitiveIndices()
+        {
+            var json = JsonSerializer.Serialize(new MeshPrimitive { Indices = 3 }, GltfRootSourceGenerator.Default.MeshPrimitive);
+            Assert.AreEqual(@"{""indices"":3}", json);
+        }
+
+        [Test]
+        public void MeshPrimitiveMaterial()
+        {
+            var json = JsonSerializer.Serialize(new MeshPrimitive { Material = 7 }, GltfRootSourceGenerator.Default.MeshPrimitive);
+            Assert.AreEqual(@"{""material"":7}", json);
+        }
+
+        [Test]
+        public void MeshPrimitiveTargets()
+        {
+            var json = JsonSerializer.Serialize(
+                new MeshPrimitive { Targets = new List<MorphTarget> { new() { Position = 0 } } },
+                GltfRootSourceGenerator.Default.MeshPrimitive);
+            Assert.AreEqual(@"{""targets"":[{""POSITION"":0}]}", json);
+        }
+
+        [Test]
+        public void MeshPrimitiveExtensions()
+        {
+            var json = JsonSerializer.Serialize(
+                new MeshPrimitive { Extensions = new MeshPrimitiveExtensions() },
+                GltfRootSourceGenerator.Default.MeshPrimitive);
+            Assert.AreEqual(@"{""extensions"":{}}", json);
+        }
+
+        [Test]
         public void AttributesDefault()
         {
             var json = JsonSerializer.Serialize(new Attributes(), GltfRootSourceGenerator.Default.Attributes);
+            Assert.AreEqual("{}", json);
+        }
+
+        [Test]
+        public void AttributesAllProperties()
+        {
+            var obj = new Attributes
+            {
+                Position = 0,
+                Normal = 1,
+                Tangent = 2,
+                TexCoords = new List<int?> { 3, 4, 5, 6, 7, 8, 9, 10, 11 },
+                Colors = new List<int?> { 12 },
+                Joints = new List<int?> { 13 },
+                Weights = new List<int?> { 14 },
+            };
+            var json = JsonSerializer.Serialize(obj, GltfRootSourceGenerator.Default.Attributes);
+            Assert.AreEqual(
+                @"{""POSITION"":0,""NORMAL"":1,""TANGENT"":2,""TEXCOORD_0"":3,""TEXCOORD_1"":4,""TEXCOORD_2"":5,""TEXCOORD_3"":6,""TEXCOORD_4"":7,""TEXCOORD_5"":8,""TEXCOORD_6"":9,""TEXCOORD_7"":10,""TEXCOORD_8"":11,""COLOR_0"":12,""JOINTS_0"":13,""WEIGHTS_0"":14}",
+                json);
+        }
+
+        [Test]
+        public void MorphTargetDefault()
+        {
+            var json = JsonSerializer.Serialize(new MorphTarget(), GltfRootSourceGenerator.Default.MorphTarget);
+            Assert.AreEqual("{}", json);
+        }
+
+        [Test]
+        public void MorphTargetAllProperties()
+        {
+            var obj = new MorphTarget { Position = 1, Normal = 2, Tangent = 3 };
+            var json = JsonSerializer.Serialize(obj, GltfRootSourceGenerator.Default.MorphTarget);
+            Assert.AreEqual(@"{""POSITION"":1,""NORMAL"":2,""TANGENT"":3}", json);
+        }
+
+        [Test]
+        public void MeshPrimitiveExtensionsDefault()
+        {
+            var json = JsonSerializer.Serialize(new MeshPrimitiveExtensions(), GltfRootSourceGenerator.Default.MeshPrimitiveExtensions);
+            Assert.AreEqual("{}", json);
+        }
+
+        [Test]
+        public void MeshPrimitiveExtensionsMaterialsVariants()
+        {
+            var json = JsonSerializer.Serialize(
+                new MeshPrimitiveExtensions
+                {
+                    MaterialsVariants = new MaterialsVariantsMeshPrimitiveExtension
+                    {
+                        Mappings = new List<MaterialVariantsMapping> { new() { Material = 0, Variants = new List<int> { 0 } } }
+                    }
+                },
+                GltfRootSourceGenerator.Default.MeshPrimitiveExtensions);
+            Assert.AreEqual(@"{""KHR_materials_variants"":{""mappings"":[{""material"":0,""variants"":[0]}]}}", json);
+        }
+
+        [Test]
+        public void MaterialsVariantsMeshPrimitiveExtensionDefault()
+        {
+            var json = JsonSerializer.Serialize(
+                new MaterialsVariantsMeshPrimitiveExtension(),
+                GltfRootSourceGenerator.Default.MaterialsVariantsMeshPrimitiveExtension);
+            Assert.AreEqual("{}", json);
+        }
+
+        [Test]
+        public void MaterialsVariantsMeshPrimitiveExtensionMappings()
+        {
+            var json = JsonSerializer.Serialize(
+                new MaterialsVariantsMeshPrimitiveExtension
+                {
+                    Mappings = new List<MaterialVariantsMapping> { new() { Material = 1, Variants = new List<int> { 0, 1 } } }
+                },
+                GltfRootSourceGenerator.Default.MaterialsVariantsMeshPrimitiveExtension);
+            Assert.AreEqual(@"{""mappings"":[{""material"":1,""variants"":[0,1]}]}", json);
+        }
+
+        [Test]
+        public void MaterialVariantsMappingDefault()
+        {
+            var json = JsonSerializer.Serialize(new MaterialVariantsMapping(), GltfRootSourceGenerator.Default.MaterialVariantsMapping);
+            Assert.AreEqual("{}", json);
+        }
+
+        [Test]
+        public void MaterialVariantsMappingMaterial()
+        {
+            var json = JsonSerializer.Serialize(new MaterialVariantsMapping { Material = 2 }, GltfRootSourceGenerator.Default.MaterialVariantsMapping);
+            Assert.AreEqual(@"{""material"":2}", json);
+        }
+
+        [Test]
+        public void MaterialVariantsMappingVariants()
+        {
+            var json = JsonSerializer.Serialize(
+                new MaterialVariantsMapping { Variants = new List<int> { 0, 1 } },
+                GltfRootSourceGenerator.Default.MaterialVariantsMapping);
+            Assert.AreEqual(@"{""variants"":[0,1]}", json);
+        }
+
+        [Test]
+        public void NodeDefault()
+        {
+            var json = JsonSerializer.Serialize(new Node(), GltfRootSourceGenerator.Default.Node);
+            Assert.AreEqual("{}", json);
+        }
+
+        [Test]
+        public void NodeName()
+        {
+            var json = JsonSerializer.Serialize(new Node { Name = "n" }, GltfRootSourceGenerator.Default.Node);
+            Assert.AreEqual(@"{""name"":""n""}", json);
+        }
+
+        [Test]
+        public void NodeChildren()
+        {
+            var json = JsonSerializer.Serialize(new Node { Children = new List<uint> { 1, 2 } }, GltfRootSourceGenerator.Default.Node);
+            Assert.AreEqual(@"{""children"":[1,2]}", json);
+        }
+
+        [Test]
+        public void NodeMesh()
+        {
+            var json = JsonSerializer.Serialize(new Node { Mesh = 3 }, GltfRootSourceGenerator.Default.Node);
+            Assert.AreEqual(@"{""mesh"":3}", json);
+        }
+
+        [Test]
+        public void NodeMatrix()
+        {
+            var matrix = new double[]
+            {
+                1, 0, 0, 0,
+                0, 1, 0, 0,
+                0, 0, 1, 0,
+                1, 2, 3, 1
+            };
+            var json = JsonSerializer.Serialize(new Node { Matrix = matrix }, GltfRootSourceGenerator.Default.Node);
+            Assert.AreEqual(@"{""matrix"":[1,0,0,0,0,1,0,0,0,0,1,0,1,2,3,1]}", json);
+        }
+
+        [Test]
+        public void NodeRotation()
+        {
+            var json = JsonSerializer.Serialize(new Node { Rotation = new double[] { 0, 0, 0, 1 } }, GltfRootSourceGenerator.Default.Node);
+            Assert.AreEqual(@"{""rotation"":[0,0,0,1]}", json);
+        }
+
+        [Test]
+        public void NodeScale()
+        {
+            var json = JsonSerializer.Serialize(new Node { Scale = new double[] { 1, 2, 3 } }, GltfRootSourceGenerator.Default.Node);
+            Assert.AreEqual(@"{""scale"":[1,2,3]}", json);
+        }
+
+        [Test]
+        public void NodeTranslation()
+        {
+            var json = JsonSerializer.Serialize(new Node { Translation = new double[] { 4, 5, 6 } }, GltfRootSourceGenerator.Default.Node);
+            Assert.AreEqual(@"{""translation"":[4,5,6]}", json);
+        }
+
+        [Test]
+        public void NodeWeights()
+        {
+            var json = JsonSerializer.Serialize(new Node { Weights = new List<float> { 0.5f } }, GltfRootSourceGenerator.Default.Node);
+            Assert.AreEqual(@"{""weights"":[0.5]}", json);
+        }
+
+        [Test]
+        public void NodeSkin()
+        {
+            var json = JsonSerializer.Serialize(new Node { Skin = 1 }, GltfRootSourceGenerator.Default.Node);
+            Assert.AreEqual(@"{""skin"":1}", json);
+        }
+
+        [Test]
+        public void NodeCamera()
+        {
+            var json = JsonSerializer.Serialize(new Node { Camera = 2 }, GltfRootSourceGenerator.Default.Node);
+            Assert.AreEqual(@"{""camera"":2}", json);
+        }
+
+        [Test]
+        public void NodeExtensions()
+        {
+            var json = JsonSerializer.Serialize(
+                new Node { Extensions = new NodeExtensions { LightsPunctual = new NodeLightsPunctual { Light = 0 } } },
+                GltfRootSourceGenerator.Default.Node);
+            Assert.AreEqual(@"{""extensions"":{""KHR_lights_punctual"":{""light"":0}}}", json);
+        }
+
+        [Test]
+        public void NodeExtensionsDefault()
+        {
+            var json = JsonSerializer.Serialize(new NodeExtensions(), GltfRootSourceGenerator.Default.NodeExtensions);
+            Assert.AreEqual("{}", json);
+        }
+
+        [Test]
+        public void NodeExtensionsMeshGpuInstancing()
+        {
+            var json = JsonSerializer.Serialize(
+                new NodeExtensions { MeshGpuInstancing = new MeshGpuInstancing { Attributes = new InstancesAttributes { Translation = 0 } } },
+                GltfRootSourceGenerator.Default.NodeExtensions);
+            Assert.AreEqual(@"{""EXT_mesh_gpu_instancing"":{""attributes"":{""TRANSLATION"":0}}}", json);
+        }
+
+        [Test]
+        public void NodeExtensionsLightsPunctual()
+        {
+            var json = JsonSerializer.Serialize(
+                new NodeExtensions { LightsPunctual = new NodeLightsPunctual { Light = 4 } },
+                GltfRootSourceGenerator.Default.NodeExtensions);
+            Assert.AreEqual(@"{""KHR_lights_punctual"":{""light"":4}}", json);
+        }
+
+        [Test]
+        public void MeshGpuInstancingDefault()
+        {
+            var json = JsonSerializer.Serialize(new MeshGpuInstancing(), GltfRootSourceGenerator.Default.MeshGpuInstancing);
             Assert.AreEqual("{}", json);
         }
 
@@ -159,6 +1847,449 @@ namespace GLTFast.Tests.JsonParsing
                 GltfRootSourceGenerator.Default.Attributes);
             var json = JsonSerializer.Serialize(attrs, GltfRootSourceGenerator.Default.Attributes);
             Assert.AreEqual(@"{""POSITION"":0,""_TEMPERATURE"":5}", json);
+        }
+
+        [Test]
+        public void MeshGpuInstancingAttributes()
+        {
+            var json = JsonSerializer.Serialize(
+                new MeshGpuInstancing { Attributes = new InstancesAttributes { Translation = 0, Rotation = 1, Scale = 2 } },
+                GltfRootSourceGenerator.Default.MeshGpuInstancing);
+            Assert.AreEqual(@"{""attributes"":{""TRANSLATION"":0,""ROTATION"":1,""SCALE"":2}}", json);
+        }
+
+        [Test]
+        public void InstancesAttributesDefault()
+        {
+            var json = JsonSerializer.Serialize(new InstancesAttributes(), GltfRootSourceGenerator.Default.InstancesAttributes);
+            Assert.AreEqual("{}", json);
+        }
+
+        [Test]
+        public void InstancesAttributesAllProperties()
+        {
+            var obj = new InstancesAttributes { Translation = 0, Rotation = 1, Scale = 2 };
+            var json = JsonSerializer.Serialize(obj, GltfRootSourceGenerator.Default.InstancesAttributes);
+            Assert.AreEqual(@"{""TRANSLATION"":0,""ROTATION"":1,""SCALE"":2}", json);
+        }
+
+        [Test]
+        public void NodeLightsPunctualDefault()
+        {
+            var json = JsonSerializer.Serialize(new NodeLightsPunctual(), GltfRootSourceGenerator.Default.NodeLightsPunctual);
+            Assert.AreEqual("{}", json);
+        }
+
+        [Test]
+        public void NodeLightsPunctualLight()
+        {
+            var json = JsonSerializer.Serialize(new NodeLightsPunctual { Light = 7 }, GltfRootSourceGenerator.Default.NodeLightsPunctual);
+            Assert.AreEqual(@"{""light"":7}", json);
+        }
+
+        [Test]
+        public void RootExtensionsDefault()
+        {
+            var json = JsonSerializer.Serialize(new RootExtensions(), GltfRootSourceGenerator.Default.RootExtensions);
+            Assert.AreEqual("{}", json);
+        }
+
+        [Test]
+        public void RootExtensionsLightsPunctual()
+        {
+            var json = JsonSerializer.Serialize(
+                new RootExtensions { LightsPunctual = new LightsPunctual { Lights = new List<LightPunctual>() } },
+                GltfRootSourceGenerator.Default.RootExtensions);
+            Assert.AreEqual(@"{""KHR_lights_punctual"":{""lights"":[]}}", json);
+        }
+
+        [Test]
+        public void RootExtensionsMaterialsVariants()
+        {
+            var json = JsonSerializer.Serialize(
+                new RootExtensions { MaterialsVariants = new MaterialsVariantsRootExtension { Variants = new List<MaterialsVariant>() } },
+                GltfRootSourceGenerator.Default.RootExtensions);
+            Assert.AreEqual(@"{""KHR_materials_variants"":{""variants"":[]}}", json);
+        }
+
+        [Test]
+        public void LightsPunctualDefault()
+        {
+            var json = JsonSerializer.Serialize(new LightsPunctual(), GltfRootSourceGenerator.Default.LightsPunctual);
+            Assert.AreEqual("{}", json);
+        }
+
+        [Test]
+        public void LightsPunctualLights()
+        {
+            var json = JsonSerializer.Serialize(
+                new LightsPunctual { Lights = new List<LightPunctual> { new() { Type = LightType.Directional } } },
+                GltfRootSourceGenerator.Default.LightsPunctual);
+            Assert.AreEqual(@"{""lights"":[{""color"":[1,1,1],""type"":""directional""}]}", json);
+        }
+
+        [Test]
+        public void LightPunctualDefault()
+        {
+            var json = JsonSerializer.Serialize(new LightPunctual(), GltfRootSourceGenerator.Default.LightPunctual);
+            Assert.AreEqual(@"{""color"":[1,1,1]}", json);
+        }
+
+        [Test]
+        public void LightPunctualName()
+        {
+            var json = JsonSerializer.Serialize(new LightPunctual { Name = "L" }, GltfRootSourceGenerator.Default.LightPunctual);
+            Assert.AreEqual(@"{""color"":[1,1,1],""name"":""L""}", json);
+        }
+
+        [Test]
+        public void LightPunctualColor()
+        {
+            var json = JsonSerializer.Serialize(new LightPunctual { Color = new Color(0.5f, 0.25f, 0.75f) }, GltfRootSourceGenerator.Default.LightPunctual);
+            Assert.AreEqual(@"{""color"":[0.5,0.25,0.75]}", json);
+        }
+
+        [Test]
+        public void LightPunctualIntensity()
+        {
+            var json = JsonSerializer.Serialize(new LightPunctual { Intensity = 2f }, GltfRootSourceGenerator.Default.LightPunctual);
+            Assert.AreEqual(@"{""color"":[1,1,1],""intensity"":2}", json);
+        }
+
+        [Test]
+        public void LightPunctualRange()
+        {
+            var json = JsonSerializer.Serialize(new LightPunctual { Range = 10f }, GltfRootSourceGenerator.Default.LightPunctual);
+            Assert.AreEqual(@"{""color"":[1,1,1],""range"":10}", json);
+        }
+
+        [Test]
+        public void LightPunctualSpot()
+        {
+            var json = JsonSerializer.Serialize(new LightPunctual { Spot = new SpotLight() }, GltfRootSourceGenerator.Default.LightPunctual);
+            Assert.AreEqual(@"{""color"":[1,1,1],""spot"":{}}", json);
+        }
+
+        [Test]
+        [TestCase(LightType.Spot, "spot")]
+        [TestCase(LightType.Directional, "directional")]
+        [TestCase(LightType.Point, "point")]
+        public void LightPunctualType(LightType value, string expected)
+        {
+            var json = JsonSerializer.Serialize(new LightPunctual { Type = value }, GltfRootSourceGenerator.Default.LightPunctual);
+            Assert.AreEqual($@"{{""color"":[1,1,1],""type"":""{expected}""}}", json);
+        }
+
+        [Test]
+        public void SpotLightDefault()
+        {
+            var json = JsonSerializer.Serialize(new SpotLight(), GltfRootSourceGenerator.Default.SpotLight);
+            Assert.AreEqual("{}", json);
+        }
+
+        [Test]
+        public void SpotLightInnerConeAngle()
+        {
+            var json = JsonSerializer.Serialize(new SpotLight { InnerConeAngle = 0.25f }, GltfRootSourceGenerator.Default.SpotLight);
+            Assert.AreEqual(@"{""innerConeAngle"":0.25}", json);
+        }
+
+        [Test]
+        public void SpotLightOuterConeAngle()
+        {
+            var json = JsonSerializer.Serialize(new SpotLight { OuterConeAngle = 0.5f }, GltfRootSourceGenerator.Default.SpotLight);
+            Assert.AreEqual(@"{""outerConeAngle"":0.5}", json);
+        }
+
+        [Test]
+        public void MaterialsVariantsRootExtensionDefault()
+        {
+            var json = JsonSerializer.Serialize(new MaterialsVariantsRootExtension(), GltfRootSourceGenerator.Default.MaterialsVariantsRootExtension);
+            Assert.AreEqual("{}", json);
+        }
+
+        [Test]
+        public void MaterialsVariantsRootExtensionVariants()
+        {
+            var json = JsonSerializer.Serialize(
+                new MaterialsVariantsRootExtension { Variants = new List<MaterialsVariant> { new() { Name = "v" } } },
+                GltfRootSourceGenerator.Default.MaterialsVariantsRootExtension);
+            Assert.AreEqual(@"{""variants"":[{""name"":""v""}]}", json);
+        }
+
+        [Test]
+        public void MaterialsVariantDefault()
+        {
+            var json = JsonSerializer.Serialize(new MaterialsVariant(), GltfRootSourceGenerator.Default.MaterialsVariant);
+            Assert.AreEqual("{}", json);
+        }
+
+        [Test]
+        public void MaterialsVariantName()
+        {
+            var json = JsonSerializer.Serialize(new MaterialsVariant { Name = "x" }, GltfRootSourceGenerator.Default.MaterialsVariant);
+            Assert.AreEqual(@"{""name"":""x""}", json);
+        }
+
+        [Test]
+        public void SceneDefault()
+        {
+            var json = JsonSerializer.Serialize(new Scene(), GltfRootSourceGenerator.Default.Scene);
+            Assert.AreEqual("{}", json);
+        }
+
+        [Test]
+        public void SceneName()
+        {
+            var json = JsonSerializer.Serialize(new Scene { Name = "s" }, GltfRootSourceGenerator.Default.Scene);
+            Assert.AreEqual(@"{""name"":""s""}", json);
+        }
+
+        [Test]
+        public void SceneNodes()
+        {
+            var json = JsonSerializer.Serialize(new Scene { Nodes = new List<uint> { 0, 1 } }, GltfRootSourceGenerator.Default.Scene);
+            Assert.AreEqual(@"{""nodes"":[0,1]}", json);
+        }
+
+        [Test]
+        public void SkinDefault()
+        {
+            var json = JsonSerializer.Serialize(new Skin(), GltfRootSourceGenerator.Default.Skin);
+            Assert.AreEqual("{}", json);
+        }
+
+        [Test]
+        public void SkinName()
+        {
+            var json = JsonSerializer.Serialize(new Skin { Name = "k" }, GltfRootSourceGenerator.Default.Skin);
+            Assert.AreEqual(@"{""name"":""k""}", json);
+        }
+
+        [Test]
+        public void SkinInverseBindMatrices()
+        {
+            var json = JsonSerializer.Serialize(new Skin { InverseBindMatrices = 3 }, GltfRootSourceGenerator.Default.Skin);
+            Assert.AreEqual(@"{""inverseBindMatrices"":3}", json);
+        }
+
+        [Test]
+        public void SkinSkeleton()
+        {
+            var json = JsonSerializer.Serialize(new Skin { Skeleton = 5 }, GltfRootSourceGenerator.Default.Skin);
+            Assert.AreEqual(@"{""skeleton"":5}", json);
+        }
+
+        [Test]
+        public void SkinJoints()
+        {
+            var json = JsonSerializer.Serialize(new Skin { Joints = new List<uint> { 1, 2, 3 } }, GltfRootSourceGenerator.Default.Skin);
+            Assert.AreEqual(@"{""joints"":[1,2,3]}", json);
+        }
+
+        [Test]
+        public void TextureDefault()
+        {
+            var json = JsonSerializer.Serialize(new Texture(), GltfRootSourceGenerator.Default.Texture);
+            Assert.AreEqual("{}", json);
+        }
+
+        [Test]
+        public void TextureName()
+        {
+            var json = JsonSerializer.Serialize(new Texture { Name = "t" }, GltfRootSourceGenerator.Default.Texture);
+            Assert.AreEqual(@"{""name"":""t""}", json);
+        }
+
+        [Test]
+        public void TextureSampler()
+        {
+            var json = JsonSerializer.Serialize(new Texture { Sampler = 1 }, GltfRootSourceGenerator.Default.Texture);
+            Assert.AreEqual(@"{""sampler"":1}", json);
+        }
+
+        [Test]
+        public void TextureSource()
+        {
+            var json = JsonSerializer.Serialize(new Texture { Source = 2 }, GltfRootSourceGenerator.Default.Texture);
+            Assert.AreEqual(@"{""source"":2}", json);
+        }
+
+        [Test]
+        public void TextureExtensions()
+        {
+            var json = JsonSerializer.Serialize(
+                new Texture { Extensions = new TextureExtensions { BasisU = new TextureBasisUniversal { Source = 3 } } },
+                GltfRootSourceGenerator.Default.Texture);
+            Assert.AreEqual(@"{""extensions"":{""KHR_texture_basisu"":{""source"":3}}}", json);
+        }
+
+        [Test]
+        public void TextureExtensionsDefault()
+        {
+            var json = JsonSerializer.Serialize(new TextureExtensions(), GltfRootSourceGenerator.Default.TextureExtensions);
+            Assert.AreEqual("{}", json);
+        }
+
+        [Test]
+        public void TextureExtensionsBasisU()
+        {
+            var json = JsonSerializer.Serialize(
+                new TextureExtensions { BasisU = new TextureBasisUniversal { Source = 1 } },
+                GltfRootSourceGenerator.Default.TextureExtensions);
+            Assert.AreEqual(@"{""KHR_texture_basisu"":{""source"":1}}", json);
+        }
+
+        [Test]
+        public void TextureBasisUniversalDefault()
+        {
+            var json = JsonSerializer.Serialize(new TextureBasisUniversal(), GltfRootSourceGenerator.Default.TextureBasisUniversal);
+            Assert.AreEqual("{}", json);
+        }
+
+        [Test]
+        public void TextureBasisUniversalSource()
+        {
+            var json = JsonSerializer.Serialize(new TextureBasisUniversal { Source = 4 }, GltfRootSourceGenerator.Default.TextureBasisUniversal);
+            Assert.AreEqual(@"{""source"":4}", json);
+        }
+
+        [Test]
+        public void TextureInfoDefault()
+        {
+            var json = JsonSerializer.Serialize(new TextureInfo(), GltfRootSourceGenerator.Default.TextureInfo);
+            Assert.AreEqual("{}", json);
+        }
+
+        [Test]
+        public void TextureInfoIndex()
+        {
+            var json = JsonSerializer.Serialize(new TextureInfo { Index = 3 }, GltfRootSourceGenerator.Default.TextureInfo);
+            Assert.AreEqual(@"{""index"":3}", json);
+        }
+
+        [Test]
+        public void TextureInfoTexCoord()
+        {
+            var json = JsonSerializer.Serialize(new TextureInfo { TexCoord = 2 }, GltfRootSourceGenerator.Default.TextureInfo);
+            Assert.AreEqual(@"{""texCoord"":2}", json);
+        }
+
+        [Test]
+        public void TextureInfoExtensions()
+        {
+            var json = JsonSerializer.Serialize(
+                new TextureInfo { Extensions = new TextureInfoExtensions { TextureTransform = new TextureTransform() } },
+                GltfRootSourceGenerator.Default.TextureInfo);
+            Assert.AreEqual(@"{""extensions"":{""KHR_texture_transform"":{""offset"":[0,0],""scale"":[1,1]}}}", json);
+        }
+
+        [Test]
+        public void NormalTextureInfoDefault()
+        {
+            var json = JsonSerializer.Serialize(new NormalTextureInfo(), GltfRootSourceGenerator.Default.NormalTextureInfo);
+            Assert.AreEqual("{}", json);
+        }
+
+        [Test]
+        public void NormalTextureInfoScale()
+        {
+            var json = JsonSerializer.Serialize(new NormalTextureInfo { Scale = 0.5f }, GltfRootSourceGenerator.Default.NormalTextureInfo);
+            Assert.AreEqual(@"{""scale"":0.5}", json);
+        }
+
+        [Test]
+        public void NormalTextureInfoIndex()
+        {
+            var json = JsonSerializer.Serialize(new NormalTextureInfo { Index = 0 }, GltfRootSourceGenerator.Default.NormalTextureInfo);
+            Assert.AreEqual(@"{""index"":0}", json);
+        }
+
+        [Test]
+        public void OcclusionTextureInfoDefault()
+        {
+            var json = JsonSerializer.Serialize(new OcclusionTextureInfo(), GltfRootSourceGenerator.Default.OcclusionTextureInfo);
+            Assert.AreEqual("{}", json);
+        }
+
+        [Test]
+        public void OcclusionTextureInfoStrength()
+        {
+            var json = JsonSerializer.Serialize(new OcclusionTextureInfo { Strength = 0.5f }, GltfRootSourceGenerator.Default.OcclusionTextureInfo);
+            Assert.AreEqual(@"{""strength"":0.5}", json);
+        }
+
+        [Test]
+        public void OcclusionTextureInfoIndex()
+        {
+            var json = JsonSerializer.Serialize(new OcclusionTextureInfo { Index = 0 }, GltfRootSourceGenerator.Default.OcclusionTextureInfo);
+            Assert.AreEqual(@"{""index"":0}", json);
+        }
+
+        [Test]
+        public void TextureInfoExtensionsDefault()
+        {
+            var json = JsonSerializer.Serialize(new TextureInfoExtensions(), GltfRootSourceGenerator.Default.TextureInfoExtensions);
+            Assert.AreEqual("{}", json);
+        }
+
+        [Test]
+        public void TextureInfoExtensionsTextureTransform()
+        {
+            var json = JsonSerializer.Serialize(
+                new TextureInfoExtensions { TextureTransform = new TextureTransform() },
+                GltfRootSourceGenerator.Default.TextureInfoExtensions);
+            Assert.AreEqual(@"{""KHR_texture_transform"":{""offset"":[0,0],""scale"":[1,1]}}", json);
+        }
+
+        [Test]
+        public void TextureTransformDefault()
+        {
+            var json = JsonSerializer.Serialize(new TextureTransform(), GltfRootSourceGenerator.Default.TextureTransform);
+            Assert.AreEqual(@"{""offset"":[0,0],""scale"":[1,1]}", json);
+        }
+
+        [Test]
+        public void TextureTransformOffset()
+        {
+            var json = JsonSerializer.Serialize(
+                new TextureTransform { Offset = new[] { 0.5f, 0.25f } },
+                GltfRootSourceGenerator.Default.TextureTransform);
+            Assert.AreEqual(@"{""offset"":[0.5,0.25],""scale"":[1,1]}", json);
+        }
+
+        [Test]
+        public void TextureTransformRotation()
+        {
+            var json = JsonSerializer.Serialize(
+                new TextureTransform { Rotation = 0.5f },
+                GltfRootSourceGenerator.Default.TextureTransform);
+            Assert.AreEqual(@"{""offset"":[0,0],""rotation"":0.5,""scale"":[1,1]}", json);
+        }
+
+        [Test]
+        public void TextureTransformScale()
+        {
+            var json = JsonSerializer.Serialize(
+                new TextureTransform { Scale = new[] { 0.5f, 0.5f } },
+                GltfRootSourceGenerator.Default.TextureTransform);
+            Assert.AreEqual(@"{""offset"":[0,0],""scale"":[0.5,0.5]}", json);
+        }
+
+        [Test]
+        public void TextureTransformTexCoord()
+        {
+            var json = JsonSerializer.Serialize(
+                new TextureTransform { TexCoord = 1 },
+                GltfRootSourceGenerator.Default.TextureTransform);
+            Assert.AreEqual(@"{""offset"":[0,0],""scale"":[1,1],""texCoord"":1}", json);
+        }
+
+        [Test]
+        public void UnclassifiedDataDefault()
+        {
+            var json = JsonSerializer.Serialize(new UnclassifiedData(), GltfRootSourceGenerator.Default.UnclassifiedData);
+            Assert.AreEqual("{}", json);
         }
     }
 }

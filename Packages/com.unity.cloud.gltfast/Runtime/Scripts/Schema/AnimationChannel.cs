@@ -16,8 +16,15 @@ namespace GLTFast.Schema
         /// The index of a sampler in this animation used to compute the value for the
         /// target, e.g., a node's translation, rotation, or scale (TRS).
         /// </summary>
-        [JsonPropertyName("sampler")]
-        public int Sampler { get; set; }
+        [JsonIgnore]
+        public int Sampler { get; set; } = Constants.UnsetIndex;
+
+        [JsonPropertyName("sampler"), JsonInclude]
+        internal int? SamplerSerialized
+        {
+            get => Sampler < 0 ? null : Sampler;
+            set => Sampler = value ?? Constants.UnsetIndex;
+        }
 
         /// <summary>
         /// The index of the node and TRS property to target.

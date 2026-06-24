@@ -15,8 +15,12 @@ namespace GLTFast.Schema
         /// <summary>
         /// The index of the node to target.
         /// </summary>
+        /// <remarks>
+        /// Optional per the glTF specification. <see langword="null"/> signals an absent target;
+        /// when undefined, the animated object may be defined by an extension.
+        /// </remarks>
         [JsonPropertyName("node")]
-        public int Node { get; set; }
+        public int? Node { get; set; }
 
         /// <inheritdoc cref="AnimationPath"/>
         [JsonPropertyName("path")]

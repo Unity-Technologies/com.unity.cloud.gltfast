@@ -17,8 +17,15 @@ namespace GLTFast.Schema
         /// <summary>
         /// The index of the buffer.
         /// </summary>
-        [JsonPropertyName("buffer")]
-        public int Buffer { get; set; }
+        [JsonIgnore]
+        public int Buffer { get; set; } = Constants.UnsetIndex;
+
+        [JsonPropertyName("buffer"), JsonInclude]
+        internal int? BufferSerialized
+        {
+            get => Buffer < 0 ? null : Buffer;
+            set => Buffer = value ?? Constants.UnsetIndex;
+        }
 
         /// <summary>
         /// The offset into the buffer in bytes.
@@ -29,8 +36,15 @@ namespace GLTFast.Schema
         /// <summary>
         /// The length of the bufferView in bytes.
         /// </summary>
-        [JsonPropertyName("byteLength")]
-        public int ByteLength { get; set; }
+        [JsonIgnore]
+        public int ByteLength { get; set; } = Constants.UnsetIndex;
+
+        [JsonPropertyName("byteLength"), JsonInclude]
+        internal int? ByteLengthSerialized
+        {
+            get => ByteLength < 0 ? null : ByteLength;
+            set => ByteLength = value ?? Constants.UnsetIndex;
+        }
 
         /// <summary>
         /// The stride, in bytes, between vertex attributes or other interleaved data.
@@ -63,8 +77,14 @@ namespace GLTFast.Schema
         internal void GltfSerialize(JsonWriter writer)
         {
             writer.AddObject();
-            writer.AddProperty("buffer", Buffer);
-            writer.AddProperty("byteLength", ByteLength);
+            if (Buffer >= 0)
+            {
+                writer.AddProperty("buffer", Buffer);
+            }
+            if (ByteLength >= 0)
+            {
+                writer.AddProperty("byteLength", ByteLength);
+            }
             if (ByteOffset > 0)
             {
                 writer.AddProperty("byteOffset", ByteOffset);

@@ -150,6 +150,7 @@ namespace GLTFast.Schema
         }
 
 #if UNITY_ANIMATION || GLTFAST_ANIMATION
+        [JsonIgnore]
         public bool HasAnimation => Animations is { Count: > 0 };
 #endif // UNITY_ANIMATION || GLTFAST_ANIMATION
 
@@ -350,6 +351,7 @@ namespace GLTFast.Schema
         /// Number of materials variants.
         /// </summary>
         /// <seealso href="https://github.com/KhronosGroup/glTF/tree/main/extensions/2.0/Khronos/KHR_materials_variants"/>
+        [JsonIgnore]
         public int MaterialsVariantsCount => Extensions?.MaterialsVariants?.Variants?.Count ?? 0;
 
         /// <summary>

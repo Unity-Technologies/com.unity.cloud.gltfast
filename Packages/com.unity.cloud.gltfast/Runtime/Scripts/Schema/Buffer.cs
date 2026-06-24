@@ -16,8 +16,15 @@ namespace GLTFast.Schema
         /// <summary>
         /// The length of the buffer in bytes.
         /// </summary>
-        [JsonPropertyName("byteLength")]
-        public uint ByteLength { get; set; }
+        [JsonIgnore]
+        public long ByteLength { get; set; } = Constants.UnsetByteLength;
+
+        [JsonPropertyName("byteLength"), JsonInclude]
+        internal long? ByteLengthSerialized
+        {
+            get => ByteLength < 0 ? null : ByteLength;
+            set => ByteLength = value ?? Constants.UnsetByteLength;
+        }
 
         /// <summary>
         /// The URI (or IRI) of the buffer.
@@ -49,7 +56,10 @@ namespace GLTFast.Schema
             {
                 writer.AddPropertySafe("uri", Uri.AsString());
             }
-            writer.AddProperty("byteLength", ByteLength);
+            if (ByteLength >= 0)
+            {
+                writer.AddProperty("byteLength", ByteLength);
+            }
             writer.Close();
         }
     }

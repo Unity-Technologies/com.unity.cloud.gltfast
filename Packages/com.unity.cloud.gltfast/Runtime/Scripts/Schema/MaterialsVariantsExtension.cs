@@ -100,8 +100,15 @@ namespace GLTFast.Schema
     public class MaterialVariantsMapping
     {
         /// <summary>Material index.</summary>
-        [JsonPropertyName("material")]
-        public int Material { get; set; }
+        [JsonIgnore]
+        public int Material { get; set; } = Constants.UnsetIndex;
+
+        [JsonPropertyName("material"), JsonInclude]
+        internal int? MaterialSerialized
+        {
+            get => Material < 0 ? null : Material;
+            set => Material = value ?? Constants.UnsetIndex;
+        }
 
         /// <summary>Materials variants indices.</summary>
         [JsonPropertyName("variants")]
@@ -110,7 +117,10 @@ namespace GLTFast.Schema
         internal void GltfSerialize(JsonWriter writer)
         {
             writer.AddObject();
-            writer.AddProperty("material", Material);
+            if (Material >= 0)
+            {
+                writer.AddProperty("material", Material);
+            }
             writer.AddArrayProperty("variants", Variants);
             writer.Close();
         }

@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `COLOR_n` for `n ≥ 1`
   - `JOINTS_n`/`WEIGHTS_n` for `n ≥ 1` (required for multi-influence skinning)
   - Application-specific attribute semantics (starting with underscore `_`)
+- `Constants.UnsetIndex` (`-1`) and `Constants.UnsetByteLength` (`-1L`) — sentinel values that signal absence for spec-required scalar schema fields whose `0` is valid (e.g. accessor at index `0`).
 
 ### Changed
 - JSON de-serialization is performed by [System.Text.Json](https://www.nuget.org/packages/system.text.json/) (or `Unity.Gltfast.Text.Json`, a copy of it for Unity 6.4 and older to avoid conflicts).
@@ -66,6 +67,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
       - [Skin.Joints](xref:GLTFast.Schema.Skin.Joints)
     - `int` ⇒ `int?` for index properties that are optional in the glTF specification. `null` now represents an absent value; the legacy `-1` sentinel is gone.
       - [Accessor.BufferView](xref:GLTFast.Schema.Accessor.BufferView)
+      - `AnimationChannelTarget.Node`
       - [BufferView.ByteStride](xref:GLTFast.Schema.BufferView.ByteStride) (also on [IBufferView](xref:GLTFast.Schema.IBufferView))
       - [Image.BufferView](xref:GLTFast.Schema.Image.BufferView)
       - `InstancesAttributes.Translation`, `.Rotation`, `.Scale`
@@ -81,6 +83,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
       - [TextureInfo.Index](xref:GLTFast.Schema.TextureInfo.Index)
       - `TextureTransform.TexCoord`
     - `int` ⇒ [BufferViewTarget](xref:GLTFast.Schema.BufferViewTarget) for [BufferView.Target](xref:GLTFast.Schema.BufferView.Target).
+    - `uint` ⇒ `long` for [Buffer.ByteLength](xref:GLTFast.Schema.Buffer.ByteLength). First step toward `>4 GB` buffer support.
+    - `uint` ⇒ `int` for `AccessorSparseIndices.BufferView` and `AccessorSparseValues.BufferView`. Aligns with the sibling index convention; drops the `(int)` cast at consumer call sites.
+  - Spec-required scalar fields use a negative sentinel (`Constants.UnsetIndex`/`UnsetByteLength`) for "unset" so explicit zero values round-trip and absence (e.g. extension-relaxed requirements) survives deserialization. Non-nullable type and hot-path call sites are unchanged; validating consumers report `< 0` as missing/invalid.
   - [Attributes](xref:GLTFast.Schema.Attributes) reshaped — the per-index properties `TexCoord0..TexCoord8`, `Color0`, `Joints0`, `Weights0` are replaced with per-family `List<int?>` collections (`TexCoords`, `Colors`, `Joints`, `Weights`). Bounds-checked index access is provided by extension methods on [AttributesExtensions](xref:GLTFast.Schema.AttributesExtensions): `attrs.GetTexCoord(n)` / `attrs.SetTexCoord(n, value)` (and the matching `Color`/`Joint`/`Weight` pairs). `Attributes.GetTexCoordsCount()` was moved to `AttributesExtensions`. `Attributes.TryGetAllUVAccessors` declared obsolete.
   - (Performance) Data URIs are decoded directly to unmanaged buffers during JSON deserialization eliminating allocation of a UTF-16 string twice the size of the data URI.
   - (Performance) `Root.ExtensionsUsed`/`Root.ExtensionsRequired` entries that match a recognized [Extension](xref:GLTFast.Extension) deserialize directly into the enum, avoiding the managed string allocation per entry. Extension-support checks (`GltfImport`) now use `HashSet<Extension>` instead of `HashSet<string>`.

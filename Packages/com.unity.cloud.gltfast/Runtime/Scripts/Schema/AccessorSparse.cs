@@ -16,8 +16,15 @@ namespace GLTFast.Schema
         /// <summary>
         /// Number of entries stored in the sparse array.
         /// </summary>
-        [JsonPropertyName("count")]
-        public int Count { get; set; }
+        [JsonIgnore]
+        public int Count { get; set; } = Constants.UnsetIndex;
+
+        [JsonPropertyName("count"), JsonInclude]
+        internal int? CountSerialized
+        {
+            get => Count < 0 ? null : Count;
+            set => Count = value ?? Constants.UnsetIndex;
+        }
 
         /// <summary>
         /// Index array of size `count` that points to those accessor attributes that
@@ -54,7 +61,10 @@ namespace GLTFast.Schema
         internal void GltfSerialize(JsonWriter writer)
         {
             writer.AddObject();
-            writer.AddProperty("count", Count);
+            if (Count >= 0)
+            {
+                writer.AddProperty("count", Count);
+            }
             if (Indices != null)
             {
                 writer.AddProperty("indices");

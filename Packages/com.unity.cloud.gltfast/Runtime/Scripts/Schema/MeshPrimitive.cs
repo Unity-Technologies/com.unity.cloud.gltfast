@@ -91,6 +91,7 @@ namespace GLTFast.Schema
         }
 
 #if DRACO_IS_INSTALLED
+        [JsonIgnore]
         public bool IsDracoCompressed => Extensions != null && Extensions.DracoMeshCompression != null;
 #endif
 

@@ -18,8 +18,30 @@ namespace GLTFast.Schema
         /// seconds with `time[0] >= 0.0`, and strictly increasing values,
         /// i.e., `time[n + 1] > time[n]`
         /// </summary>
-        [JsonPropertyName("input")]
-        public int Input { get; set; }
+        [JsonIgnore]
+        public int Input { get; set; } = Constants.UnsetIndex;
+
+        [JsonPropertyName("input"), JsonInclude]
+        internal int? InputSerialized
+        {
+            get => Input < 0 ? null : Input;
+            set => Input = value ?? Constants.UnsetIndex;
+        }
+
+        /// <summary>
+        /// The index of an accessor, containing keyframe output values. Output and input
+        /// accessors must have the same `count`. When sampler is used with TRS target,
+        /// output accessor's componentType must be `FLOAT`.
+        /// </summary>
+        [JsonIgnore]
+        public int Output { get; set; } = Constants.UnsetIndex;
+
+        [JsonPropertyName("output"), JsonInclude]
+        internal int? OutputSerialized
+        {
+            get => Output < 0 ? null : Output;
+            set => Output = value ?? Constants.UnsetIndex;
+        }
 
         /// <summary>
         /// Interpolation algorithm. When an animation targets a node's rotation,
@@ -31,14 +53,6 @@ namespace GLTFast.Schema
         [JsonPropertyName("interpolation")]
         [JsonConverter(typeof(InterpolationValueConverter))]
         public EnumOrRawValue<Interpolation> Interpolation { get; set; }
-
-        /// <summary>
-        /// The index of an accessor, containing keyframe output values. Output and input
-        /// accessors must have the same `count`. When sampler is used with TRS target,
-        /// output accessor's componentType must be `FLOAT`.
-        /// </summary>
-        [JsonPropertyName("output")]
-        public int Output { get; set; }
 
         /// <inheritdoc cref="Asset.Extensions"/>
         [JsonPropertyName("extensions")]

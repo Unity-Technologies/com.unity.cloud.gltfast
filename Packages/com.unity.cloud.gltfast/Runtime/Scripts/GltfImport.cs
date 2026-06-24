@@ -2497,13 +2497,13 @@ namespace GLTFast
                         Logger?.Error(LogCode.AnimationChannelSamplerInvalid, j.ToString());
                         continue;
                     }
-                    if (channel.Target.Node < 0 || channel.Target.Node >= Root.Nodes.Count)
+                    if (channel.Target?.Node is not int targetNode || targetNode < 0 || targetNode >= Root.Nodes.Count)
                     {
                         Logger?.Error(LogCode.AnimationChannelNodeInvalid, j.ToString());
                         continue;
                     }
 
-                    var targetNode = channel.Target.Node;
+
                     var nodeHierarchyInfo = new NodeHierarchyInfo(m_NodeNames, parentIndex);
                     var times = GetAccessorData<float>(sampler.Input);
                     if (!times.IsCreated)
@@ -2571,7 +2571,7 @@ namespace GLTFast
                         }
                         case AnimationPath.Weights:
                         {
-                            var node = Root.Nodes[channel.Target.Node];
+                            var node = Root.Nodes[targetNode];
                             if (!node.Mesh.HasValue || node.Mesh.Value >= Root.Meshes.Count)
                             {
                                 break;
@@ -4050,12 +4050,18 @@ namespace GLTFast
         /// <param name="data">Pointer to accessor's data in memory</param>
         public unsafe void GetAccessorSparseIndices(AccessorSparseIndices sparseIndices, out void* data)
         {
-            var bufferView = Root.BufferViews[(int)sparseIndices.BufferView];
+            if (sparseIndices.BufferView < 0 || sparseIndices.BufferView >= Root.BufferViews.Count)
+            {
+                Logger?.Error(LogCode.AccessorAccessFailed, sparseIndices.BufferView.ToString());
+                data = null;
+                return;
+            }
+            var bufferView = Root.BufferViews[sparseIndices.BufferView];
 #if MESHOPT_IS_ENABLED
             var meshopt = bufferView.Extensions?.ExtMeshoptCompression;
             if (meshopt != null)
             {
-                data = (byte*)m_MeshoptBufferViews[(int)sparseIndices.BufferView].GetUnsafeReadOnlyPtr() + sparseIndices.ByteOffset;
+                data = (byte*)m_MeshoptBufferViews[sparseIndices.BufferView].GetUnsafeReadOnlyPtr() + sparseIndices.ByteOffset;
             }
             else
 #endif
@@ -4074,12 +4080,18 @@ namespace GLTFast
         /// <param name="data">Pointer to accessor's data in memory</param>
         public unsafe void GetAccessorSparseValues(AccessorSparseValues sparseValues, out void* data)
         {
-            var bufferView = Root.BufferViews[(int)sparseValues.BufferView];
+            if (sparseValues.BufferView < 0 || sparseValues.BufferView >= Root.BufferViews.Count)
+            {
+                Logger?.Error(LogCode.AccessorAccessFailed, sparseValues.BufferView.ToString());
+                data = null;
+                return;
+            }
+            var bufferView = Root.BufferViews[sparseValues.BufferView];
 #if MESHOPT_IS_ENABLED
             var meshopt = bufferView.Extensions?.ExtMeshoptCompression;
             if (meshopt != null)
             {
-                data = (byte*)m_MeshoptBufferViews[(int)sparseValues.BufferView].GetUnsafeReadOnlyPtr() + sparseValues.ByteOffset;
+                data = (byte*)m_MeshoptBufferViews[sparseValues.BufferView].GetUnsafeReadOnlyPtr() + sparseValues.ByteOffset;
             }
             else
 #endif

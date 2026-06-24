@@ -96,6 +96,7 @@ Schema properties that hold indices into root-level arrays (and are optional in 
 This applies to (non-exhaustive — see the changelog for the full list):
 
 - `Accessor.BufferView`
+- `AnimationChannelTarget.Node` (absent target is permitted by an extension)
 - `BufferView.ByteStride` (and the [IBufferView](xref:GLTFast.Schema.IBufferView) interface)
 - `Image.BufferView`
 - `MeshPrimitive.Indices`, `MeshPrimitive.Material`
@@ -136,6 +137,57 @@ The corresponding `GltfSerialize` writers omit the property when `null`. Existin
 | `IGltfBuffers.GetBufferView` / `GetAccessorAndData` `byteStride` out param | `int` | `int?` |
 
 Custom implementations of [IMaterialsVariantsSlot](xref:GLTFast.IMaterialsVariantsSlot), [IBufferView](xref:GLTFast.Schema.IBufferView) or [IGltfBuffers](xref:GLTFast.IGltfBuffers) need to update their member signatures accordingly.
+
+### Spec-required scalar fields use a negative "unset" sentinel
+
+Schema properties that the glTF specification marks as **required** and that the runtime previously stored as non-nullable `int`/`uint` now default to a negative sentinel (`Constants.UnsetIndex` = `-1`, or `Constants.UnsetByteLength` = `-1L`). Any negative value serializes as "absent" and reads back as "absent" again. The non-nullable type is preserved so hot-path call sites (e.g. iterating up to `Accessor.Count`) don't need `.Value`.
+
+This is the counterpart to the `int?`-for-optional convention above:
+
+| Spec optionality | C# type | Absent value |
+| ---------------- | ------- | ------------ |
+| Optional in glTF | `int?` | `null` |
+| Required in glTF | `int` (or `long`) | `Constants.UnsetIndex` / `Constants.UnsetByteLength` (`< 0`) |
+
+The change fixes a JSON-serializer bug where the framework's `JsonIgnoreCondition.WhenWritingDefault` silently dropped properties whose value was `0` — for example an `AnimationSampler` whose input accessor was at index `0` (the typical time accessor).
+
+Affected fields:
+
+| Property | Before | After |
+| -------- | ------ | ----- |
+| `Accessor.Count` | `int`, default `0` | `int`, default `Constants.UnsetIndex` |
+| `AccessorSparse.Count` | `int`, default `0` | `int`, default `Constants.UnsetIndex` |
+| `AccessorSparseIndices.BufferView` | `uint`, default `0u` | `int`, default `Constants.UnsetIndex` |
+| `AccessorSparseValues.BufferView` | `uint`, default `0u` | `int`, default `Constants.UnsetIndex` |
+| `AnimationChannel.Sampler` | `int`, default `0` | `int`, default `Constants.UnsetIndex` |
+| `AnimationSampler.Input`/`.Output` | `int`, default `0` | `int`, default `Constants.UnsetIndex` |
+| `Buffer.ByteLength` | `uint`, default `0u` | `long`, default `Constants.UnsetByteLength` |
+| `BufferView.Buffer`/`.ByteLength` | `int`, default `0` | `int`, default `Constants.UnsetIndex` |
+| `BufferViewMeshoptExtension.Buffer` (`MESHOPT_IS_RECENT`) | `int`, default `0` | `int`, default `Constants.UnsetIndex` |
+| `MaterialVariantsMapping.Material` | `int`, default `0` | `int`, default `Constants.UnsetIndex` |
+
+#### Reading
+
+Most call sites are unchanged. Validating consumers should check `< 0` before using the value as an index/length.
+
+Extension add-ons that relax a previously-required field can detect absence with the same `< 0` check and skip their own consumption logic accordingly.
+
+#### `uint` → `int` for sparse accessor `BufferView`
+
+`AccessorSparseIndices.BufferView` and `AccessorSparseValues.BufferView` changed from `uint` to `int`. Indexing call sites can drop the `(int)` cast:
+
+| Before | After |
+| ------ | ----- |
+| `Root.BufferViews[(int)sparseIndices.BufferView]` | `Root.BufferViews[sparseIndices.BufferView]` |
+
+#### `Buffer.ByteLength` typed as `long`
+
+`Buffer.ByteLength` changed from `uint` to `long`. Sentinel needs a signed type; this is also a first step toward eventual `>4 GB` buffer support. Assignments from `Stream.Length` (already `long`) drop the `(uint)` cast; comparisons against `int` widen automatically:
+
+| Before | After |
+| ------ | ----- |
+| `new Buffer { ByteLength = (uint)stream.Length }` | `new Buffer { ByteLength = stream.Length }` |
+| `if (data.Length < buffer.ByteLength) …` | `if (data.Length < buffer.ByteLength) …` (unchanged; `int < long` widens) |
 
 ### `BufferView.Target` typed as `BufferViewTarget`
 

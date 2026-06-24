@@ -812,7 +812,7 @@ namespace GLTFast.Export
                 m_Gltf.Buffers = new List<Buffer> {
                     new Buffer {
                         Uri = string.IsNullOrEmpty(bufferPath) ? null : new UriValue(bufferPath),
-                        ByteLength = (uint) m_BufferStream.Length
+                        ByteLength = m_BufferStream.Length
                     }
                 };
             }

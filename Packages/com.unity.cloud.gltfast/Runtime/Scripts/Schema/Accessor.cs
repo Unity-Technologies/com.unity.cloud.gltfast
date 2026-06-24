@@ -66,8 +66,15 @@ namespace GLTFast.Schema
         /// The number of attributes referenced by this accessor, not to be confused
         /// with the number of bytes or number of components.
         /// </summary>
-        [JsonPropertyName("count")]
-        public int Count { get; set; }
+        [JsonIgnore]
+        public int Count { get; set; } = Constants.UnsetIndex;
+
+        [JsonPropertyName("count"), JsonInclude]
+        internal int? CountSerialized
+        {
+            get => Count < 0 ? null : Count;
+            set => Count = value ?? Constants.UnsetIndex;
+        }
 
         /// <inheritdoc cref="AccessorType"/>
         [JsonPropertyName("type")]
@@ -278,6 +285,7 @@ namespace GLTFast.Schema
         /// <summary>
         /// True if the accessor is <a href="https://www.khronos.org/registry/glTF/specs/2.0/glTF-2.0.html#sparse-accessors">sparse</a>
         /// </summary>
+        [JsonIgnore]
         public bool IsSparse => Sparse != null;
 
         /// <summary>
@@ -301,7 +309,10 @@ namespace GLTFast.Schema
                 writer.AddProperty("bufferView", BufferView.Value);
             }
             writer.AddProperty("componentType", (int)ComponentType);
-            writer.AddProperty("count", Count);
+            if (Count >= 0)
+            {
+                writer.AddProperty("count", Count);
+            }
             if (Type.RawValue != null)
             {
                 writer.AddProperty("type", System.Text.Encoding.UTF8.GetString(Type.RawValue));
