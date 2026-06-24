@@ -1167,37 +1167,23 @@ namespace GLTFast.Export
                         attributes.Tangent = accessorId;
                         break;
                     case VertexAttribute.Color:
-                        attributes.Color0 = accessorId;
+                        attributes.SetColor(0, accessorId);
                         break;
                     case VertexAttribute.TexCoord0:
-                        attributes.TexCoord0 = accessorId;
-                        break;
                     case VertexAttribute.TexCoord1:
-                        attributes.TexCoord1 = accessorId;
-                        break;
                     case VertexAttribute.TexCoord2:
-                        attributes.TexCoord2 = accessorId;
-                        break;
                     case VertexAttribute.TexCoord3:
-                        attributes.TexCoord3 = accessorId;
-                        break;
                     case VertexAttribute.TexCoord4:
-                        attributes.TexCoord4 = accessorId;
-                        break;
                     case VertexAttribute.TexCoord5:
-                        attributes.TexCoord5 = accessorId;
-                        break;
                     case VertexAttribute.TexCoord6:
-                        attributes.TexCoord6 = accessorId;
-                        break;
                     case VertexAttribute.TexCoord7:
-                        attributes.TexCoord7 = accessorId;
+                        attributes.SetTexCoord((int)attribute.attribute - (int)VertexAttribute.TexCoord0, accessorId);
                         break;
                     case VertexAttribute.BlendWeight:
-                        attributes.Weights0 = accessorId;
+                        attributes.SetWeight(0, accessorId);
                         break;
                     case VertexAttribute.BlendIndices:
-                        attributes.Joints0 = accessorId;
+                        attributes.SetJoint(0, accessorId);
                         accessor.ComponentType = AccessorDataType.UnsignedShort;
                         break;
                     default:
@@ -1737,48 +1723,28 @@ namespace GLTFast.Export
                     dracoAttributes.Tangent = dracoId;
                     break;
                 case VertexAttribute.Color:
-                    attributes.Color0 = accessorId;
-                    dracoAttributes.Color0 = dracoId;
+                    attributes.SetColor(0, accessorId);
+                    dracoAttributes.SetColor(0, dracoId);
                     break;
                 case VertexAttribute.TexCoord0:
-                    attributes.TexCoord0 = accessorId;
-                    dracoAttributes.TexCoord0 = dracoId;
-                    break;
                 case VertexAttribute.TexCoord1:
-                    attributes.TexCoord1 = accessorId;
-                    dracoAttributes.TexCoord1 = dracoId;
-                    break;
                 case VertexAttribute.TexCoord2:
-                    attributes.TexCoord2 = accessorId;
-                    dracoAttributes.TexCoord2 = dracoId;
-                    break;
                 case VertexAttribute.TexCoord3:
-                    attributes.TexCoord3 = accessorId;
-                    dracoAttributes.TexCoord3 = dracoId;
-                    break;
                 case VertexAttribute.TexCoord4:
-                    attributes.TexCoord4 = accessorId;
-                    dracoAttributes.TexCoord4 = dracoId;
-                    break;
                 case VertexAttribute.TexCoord5:
-                    attributes.TexCoord5 = accessorId;
-                    dracoAttributes.TexCoord5 = dracoId;
-                    break;
                 case VertexAttribute.TexCoord6:
-                    attributes.TexCoord6 = accessorId;
-                    dracoAttributes.TexCoord6 = dracoId;
-                    break;
                 case VertexAttribute.TexCoord7:
-                    attributes.TexCoord7 = accessorId;
-                    dracoAttributes.TexCoord7 = dracoId;
+                    var uvSet = (int)type - (int)VertexAttribute.TexCoord0;
+                    attributes.SetTexCoord(uvSet, accessorId);
+                    dracoAttributes.SetTexCoord(uvSet, dracoId);
                     break;
                 case VertexAttribute.BlendWeight:
-                    attributes.Weights0 = accessorId;
-                    dracoAttributes.Weights0 = dracoId;
+                    attributes.SetWeight(0, accessorId);
+                    dracoAttributes.SetWeight(0, dracoId);
                     break;
                 case VertexAttribute.BlendIndices:
-                    attributes.Joints0 = accessorId;
-                    dracoAttributes.Joints0 = dracoId;
+                    attributes.SetJoint(0, accessorId);
+                    dracoAttributes.SetJoint(0, dracoId);
                     break;
             }
         }

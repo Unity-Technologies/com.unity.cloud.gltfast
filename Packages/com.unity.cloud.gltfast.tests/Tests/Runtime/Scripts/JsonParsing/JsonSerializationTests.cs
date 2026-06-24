@@ -85,5 +85,80 @@ namespace GLTFast.Tests.JsonParsing
             var json = JsonSerializer.Serialize(obj, GltfRootSourceGenerator.Default.BufferView);
             Assert.AreEqual(expected.HasValue ? $@"{{""target"":{expected}}}" : "{}", json);
         }
+
+        [Test]
+        public void AttributesDefault()
+        {
+            var json = JsonSerializer.Serialize(new Attributes(), GltfRootSourceGenerator.Default.Attributes);
+            Assert.AreEqual("{}", json);
+        }
+
+        [Test]
+        public void AttributesScalars()
+        {
+            var json = JsonSerializer.Serialize(
+                new Attributes { Position = 1, Normal = 2, Tangent = 3 },
+                GltfRootSourceGenerator.Default.Attributes);
+            Assert.AreEqual(@"{""POSITION"":1,""NORMAL"":2,""TANGENT"":3}", json);
+        }
+
+        [Test]
+        public void AttributesTexCoordsContiguous()
+        {
+            var attrs = new Attributes();
+            for (var i = 0; i < 9; i++) attrs.SetTexCoord(i, 10 + i);
+            var json = JsonSerializer.Serialize(attrs, GltfRootSourceGenerator.Default.Attributes);
+            Assert.AreEqual(
+                @"{""TEXCOORD_0"":10,""TEXCOORD_1"":11,""TEXCOORD_2"":12,""TEXCOORD_3"":13,""TEXCOORD_4"":14,""TEXCOORD_5"":15,""TEXCOORD_6"":16,""TEXCOORD_7"":17,""TEXCOORD_8"":18}",
+                json);
+        }
+
+        [Test]
+        public void AttributesTexCoordsSparse()
+        {
+            var attrs = new Attributes();
+            attrs.SetTexCoord(2, 7);
+            var json = JsonSerializer.Serialize(attrs, GltfRootSourceGenerator.Default.Attributes);
+            Assert.AreEqual(@"{""TEXCOORD_2"":7}", json);
+            Assert.AreEqual(3, attrs.TexCoords.Count);
+            Assert.IsFalse(attrs.GetTexCoord(0).HasValue);
+            Assert.IsFalse(attrs.GetTexCoord(1).HasValue);
+        }
+
+        [Test]
+        public void AttributesMultiInfluenceSkinning()
+        {
+            var attrs = new Attributes();
+            attrs.SetColor(0, 11);
+            attrs.SetColor(1, 12);
+            attrs.SetJoint(0, 20);
+            attrs.SetJoint(1, 21);
+            attrs.SetWeight(0, 30);
+            attrs.SetWeight(1, 31);
+            var json = JsonSerializer.Serialize(attrs, GltfRootSourceGenerator.Default.Attributes);
+            Assert.AreEqual(
+                @"{""COLOR_0"":11,""COLOR_1"":12,""JOINTS_0"":20,""JOINTS_1"":21,""WEIGHTS_0"":30,""WEIGHTS_1"":31}",
+                json);
+        }
+
+        [Test]
+        public void AttributesHighIndex()
+        {
+            var attrs = new Attributes();
+            attrs.SetTexCoord(12, 99);
+            var json = JsonSerializer.Serialize(attrs, GltfRootSourceGenerator.Default.Attributes);
+            Assert.AreEqual(@"{""TEXCOORD_12"":99}", json);
+        }
+
+        [Test]
+        public void AttributesCustomSemantic()
+        {
+            // TODO: Construct attrs via constructor once attrs.ExtensionsData becomes writable.
+            var attrs = JsonSerializer.Deserialize(
+                @"{""POSITION"":0,""_TEMPERATURE"":5}",
+                GltfRootSourceGenerator.Default.Attributes);
+            var json = JsonSerializer.Serialize(attrs, GltfRootSourceGenerator.Default.Attributes);
+            Assert.AreEqual(@"{""POSITION"":0,""_TEMPERATURE"":5}", json);
+        }
     }
 }

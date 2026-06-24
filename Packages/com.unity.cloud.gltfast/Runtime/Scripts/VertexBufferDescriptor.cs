@@ -38,11 +38,11 @@ namespace GLTFast
         public static VertexBufferDescriptor FromPrimitive(MeshPrimitive primitive)
         {
             return new VertexBufferDescriptor(
-                primitive.Attributes.Normal >= 0,
-                primitive.Attributes.Tangent >= 0,
+                primitive.Attributes.Normal.HasValue,
+                primitive.Attributes.Tangent.HasValue,
                 primitive.Attributes.GetTexCoordsCount(),
-                primitive.Attributes.Color0 >= 0,
-                primitive.Attributes.Weights0 >= 0 && primitive.Attributes.Joints0 >= 0,
+                primitive.Attributes.GetColor(0).HasValue,
+                primitive.Attributes.GetWeight(0).HasValue && primitive.Attributes.GetJoint(0).HasValue,
                 primitive.Targets?.Count ?? 0
             );
         }

@@ -14,6 +14,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `UriValue`, a wrapper for serialization of URIs.
 - [Color](xref:GLTFast.Schema.Color) and [ColorAlpha](xref:GLTFast.Schema.ColorAlpha) structs for serialization of glTF color values.
 - [ImageMimeType](xref:GLTFast.Schema.ImageMimeType) for type-safe access to glTF image MIME types.
+- [Attributes](xref:GLTFast.Schema.Attributes): Additional vertex attribute accessor properties are (de-)serialized from/to JSON.
+  - `TEXCOORD_n` for `n ≥ 8`
+  - `COLOR_n` for `n ≥ 1`
+  - `JOINTS_n`/`WEIGHTS_n` for `n ≥ 1` (required for multi-influence skinning)
+  - Application-specific attribute semantics (starting with underscore `_`)
 
 ### Changed
 - JSON de-serialization is performed by [System.Text.Json](https://www.nuget.org/packages/system.text.json/) (or `Unity.Gltfast.Text.Json`, a copy of it for Unity 6.4 and older to avoid conflicts).
@@ -76,6 +81,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
       - [TextureInfo.Index](xref:GLTFast.Schema.TextureInfo.Index)
       - `TextureTransform.TexCoord`
     - `int` ⇒ [BufferViewTarget](xref:GLTFast.Schema.BufferViewTarget) for [BufferView.Target](xref:GLTFast.Schema.BufferView.Target).
+  - [Attributes](xref:GLTFast.Schema.Attributes) reshaped — the per-index properties `TexCoord0..TexCoord8`, `Color0`, `Joints0`, `Weights0` are replaced with per-family `List<int?>` collections (`TexCoords`, `Colors`, `Joints`, `Weights`). Bounds-checked index access is provided by extension methods on [AttributesExtensions](xref:GLTFast.Schema.AttributesExtensions): `attrs.GetTexCoord(n)` / `attrs.SetTexCoord(n, value)` (and the matching `Color`/`Joint`/`Weight` pairs). `Attributes.GetTexCoordsCount()` was moved to `AttributesExtensions`. `Attributes.TryGetAllUVAccessors` declared obsolete.
   - (Performance) Data URIs are decoded directly to unmanaged buffers during JSON deserialization eliminating allocation of a UTF-16 string twice the size of the data URI.
   - (Performance) `Root.ExtensionsUsed`/`Root.ExtensionsRequired` entries that match a recognized [Extension](xref:GLTFast.Extension) deserialize directly into the enum, avoiding the managed string allocation per entry. Extension-support checks (`GltfImport`) now use `HashSet<Extension>` instead of `HashSet<string>`.
   - JSON string to enum deserialization via `EnumOrRawValue<TEnum>` preserves access to unknown values (not in the glTF specification but potentially introduced by a glTF extension).

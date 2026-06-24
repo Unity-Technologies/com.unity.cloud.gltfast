@@ -148,6 +148,29 @@ Custom implementations of [IMaterialsVariantsSlot](xref:GLTFast.IMaterialsVarian
 | `if (bufferView.Target > 0) …` | `if (bufferView.Target != BufferViewTarget.Undefined) …` |
 | `var raw = bufferView.Target;` (was `int`) | `var raw = (int)bufferView.Target;` if you still need the WebGL constant |
 
+### `Attributes` indexed channels
+
+[Attributes](xref:GLTFast.Schema.Attributes) replaces the per-index properties with per-family `List<int?>` collections. Bounds-checked index access is provided by extension methods on [AttributesExtensions](xref:GLTFast.Schema.AttributesExtensions); unrecognized JSON properties (extensions, application-specific semantics) are captured via `[JsonExtensionData]` and exposed through [IGltfObject](xref:GLTFast.IGltfObject).
+
+| Property | Before | After |
+| -------- | ------ | ----- |
+| `TexCoord0`–`TexCoord8` | nine `int` properties | `List<int?> TexCoords` + `GetTexCoord(n)`/`SetTexCoord(n, v)` extensions |
+| `Color0` | single `int` (`COLOR_0` only) | `List<int?> Colors` + `GetColor(n)`/`SetColor(n, v)` extensions (round-trip `COLOR_n` for any `n`) |
+| `Joints0` | single `int` (`JOINTS_0` only) | `List<int?> Joints` + `GetJoint(n)`/`SetJoint(n, v)` extensions |
+| `Weights0` | single `int` (`WEIGHTS_0` only) | `List<int?> Weights` + `GetWeight(n)`/`SetWeight(n, v)` extensions |
+| (unrepresentable: `_TEMPERATURE` etc.) | silently dropped | reached through `attrs.TryGetValue<T>("_TEMPERATURE", out var v)` (`Attributes` implements `IGltfObject`) |
+
+The `Get…` extensions return `null` past the end of the underlying list. The `Set…` extensions lazily allocate and null-pad as needed. Iterate the underlying list directly for bulk operations.
+
+| Before | After |
+| ------ | ----- |
+| `attrs.TexCoord3` | `attrs.GetTexCoord(3)` |
+| `attrs.TexCoord3 = 7;` | `attrs.SetTexCoord(3, 7);` |
+| `attrs.Color0` / `.Joints0` / `.Weights0` | `attrs.GetColor(0)` / `attrs.GetJoint(0)` / `attrs.GetWeight(0)` (read) — `attrs.SetColor(0, v)` / `attrs.SetJoint(0, v)` / `attrs.SetWeight(0, v)` (write) |
+| (previously unrepresentable) `COLOR_1`, `JOINTS_1`, `_TEMPERATURE` | `attrs.SetColor(1, v)`, `attrs.SetJoint(1, v)`, `attrs.TryGetValue("_TEMPERATURE", out int idx)` |
+
+Helper method `Attributes.GetTexCoordsCount()` was moved to `AttributesExtensions` and `Attributes.TryGetAllUVAccessors` declared obsolete.
+
 ### Schema collection properties moved from `T[]` to `List<T>`
 
 Variable-length collection properties on `GLTFast.Schema` types are now `List<T>` instead of `T[]`, completing the migration started with `Root.Accessors`, `Root.Materials`, `Mesh.Primitives`, etc. Fixed-size mathematical arrays (`Node.Matrix`/`.Rotation`/`.Scale`/`.Translation`, `TextureTransform.Offset`/`.Scale`) keep their array type — their length is part of the contract enforced by the JSON converters.

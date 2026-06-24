@@ -137,14 +137,14 @@ namespace GLTFast
                 };
             }
 
-            m_HasColors = firstAttributes.Color0 >= 0;
+            m_HasColors = firstAttributes.GetColor(0).HasValue;
             if (m_HasColors)
             {
                 jobCount += m_Attributes.Length;
                 m_Colors = new VertexBufferColors(VertexCount, m_Logger);
             }
 
-            m_HasBones = firstAttributes.Weights0 >= 0 && firstAttributes.Joints0 >= 0;
+            m_HasBones = firstAttributes.GetWeight(0).HasValue && firstAttributes.GetJoint(0).HasValue;
             if (m_HasBones)
             {
                 jobCount++;
@@ -344,9 +344,11 @@ namespace GLTFast
 
         int ScheduleTexCoordJobs(Attributes att, int uvSetCount, int i, NativeArray<JobHandle> handles, int handleIndex)
         {
-            var uvSuccess = att.TryGetAllUVAccessors(out var uvAccessors, out _);
-            Assert.IsTrue(uvSuccess);
-            Assert.AreEqual(uvSetCount, uvAccessors.Length);
+            var uvAccessors = new int[uvSetCount];
+            for (var uv = 0; uv < uvSetCount; uv++)
+            {
+                uvAccessors[uv] = att.GetTexCoord(uv) ?? -1;
+            }
 
             m_TexCoords.ScheduleVertexUVJobs(
                 VertexIntervals[i],
@@ -361,7 +363,7 @@ namespace GLTFast
         bool ScheduleColorsJobs(Attributes att, int i, NativeArray<JobHandle> handles, ref int handleIndex)
         {
             var success = m_Colors.ScheduleVertexColorJob(
-                att.Color0.Value,
+                att.GetColor(0).Value,
                 VertexIntervals[i],
                 handles.GetSubArray(handleIndex, 1),
                 m_Buffers
@@ -403,8 +405,8 @@ namespace GLTFast
                 var att = attributes[i];
 
                 var h = m_Bones.ScheduleVertexBonesJob(
-                    att.Weights0.Value,
-                    att.Joints0.Value,
+                    att.GetWeight(0).Value,
+                    att.GetJoint(0).Value,
                     VertexIntervals[i],
                     m_Buffers
                 );

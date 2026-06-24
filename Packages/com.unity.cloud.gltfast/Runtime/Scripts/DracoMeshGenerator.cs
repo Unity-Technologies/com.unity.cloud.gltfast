@@ -247,28 +247,18 @@ namespace GLTFast
                     result[VertexAttribute.Normal] = attributes.Normal.Value;
                 if (attributes.Tangent.HasValue)
                     result[VertexAttribute.Tangent] = attributes.Tangent.Value;
-                if (attributes.Color0.HasValue)
-                    result[VertexAttribute.Color] = attributes.Color0.Value;
-                if (attributes.TexCoord0.HasValue)
-                    result[VertexAttribute.TexCoord0] = attributes.TexCoord0.Value;
-                if (attributes.TexCoord1.HasValue)
-                    result[VertexAttribute.TexCoord1] = attributes.TexCoord1.Value;
-                if (attributes.TexCoord2.HasValue)
-                    result[VertexAttribute.TexCoord2] = attributes.TexCoord2.Value;
-                if (attributes.TexCoord3.HasValue)
-                    result[VertexAttribute.TexCoord3] = attributes.TexCoord3.Value;
-                if (attributes.TexCoord4.HasValue)
-                    result[VertexAttribute.TexCoord4] = attributes.TexCoord4.Value;
-                if (attributes.TexCoord5.HasValue)
-                    result[VertexAttribute.TexCoord5] = attributes.TexCoord5.Value;
-                if (attributes.TexCoord6.HasValue)
-                    result[VertexAttribute.TexCoord6] = attributes.TexCoord6.Value;
-                if (attributes.TexCoord7.HasValue)
-                    result[VertexAttribute.TexCoord7] = attributes.TexCoord7.Value;
-                if (attributes.Weights0.HasValue)
-                    result[VertexAttribute.BlendWeight] = attributes.Weights0.Value;
-                if (attributes.Joints0.HasValue)
-                    result[VertexAttribute.BlendIndices] = attributes.Joints0.Value;
+                if (attributes.GetColor(0) is { } color)
+                    result[VertexAttribute.Color] = color;
+                var uvCount = Math.Min(attributes.GetTexCoordsCount(), VertexBufferGeneratorBase.maxUvSetCount);
+                for (var uv = 0; uv < uvCount; uv++)
+                {
+                    if (attributes.GetTexCoord(uv) is { } accessor)
+                        result[(VertexAttribute)((int)VertexAttribute.TexCoord0 + uv)] = accessor;
+                }
+                if (attributes.GetWeight(0) is { } weights)
+                    result[VertexAttribute.BlendWeight] = weights;
+                if (attributes.GetJoint(0) is { } joints)
+                    result[VertexAttribute.BlendIndices] = joints;
             }
 
             return results;

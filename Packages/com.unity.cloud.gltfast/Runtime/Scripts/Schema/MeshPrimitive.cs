@@ -145,83 +145,55 @@ namespace GLTFast.Schema
     /// Mesh vertex attribute collection. Each property value is the index of
     /// the accessor containing attribute’s data.
     /// </summary>
-    public class Attributes
+    [JsonConverter(typeof(AttributesConverter))]
+    public class Attributes : IGltfObject
     {
         /// <summary>Vertex position accessor index.</summary>
-        [JsonPropertyName("POSITION")]
         public int? Position { get; set; }
 
         /// <summary>Vertex normals accessor index.</summary>
-        [JsonPropertyName("NORMAL")]
         public int? Normal { get; set; }
 
         /// <summary>Vertex tangents accessor index.</summary>
-        [JsonPropertyName("TANGENT")]
         public int? Tangent { get; set; }
 
-        /// <summary>Texture coordinates accessor index.</summary>
-        [JsonPropertyName("TEXCOORD_0")]
-        public int? TexCoord0 { get; set; }
-
-        /// <summary>Texture coordinates accessor index (second UV set).</summary>
-        [JsonPropertyName("TEXCOORD_1")]
-        public int? TexCoord1 { get; set; }
-
-        /// <summary>Texture coordinates accessor index (third UV set).</summary>
-        [JsonPropertyName("TEXCOORD_2")]
-        public int? TexCoord2 { get; set; }
-
-        /// <summary>Texture coordinates accessor index (fourth UV set).</summary>
-        [JsonPropertyName("TEXCOORD_3")]
-        public int? TexCoord3 { get; set; }
-
-        /// <summary>Texture coordinates accessor index (fifth UV set).</summary>
-        [JsonPropertyName("TEXCOORD_4")]
-        public int? TexCoord4 { get; set; }
-
-        /// <summary>Texture coordinates accessor index (sixth UV set).</summary>
-        [JsonPropertyName("TEXCOORD_5")]
-        public int? TexCoord5 { get; set; }
-
-        /// <summary>Texture coordinates accessor index (seventh UV set).</summary>
-        [JsonPropertyName("TEXCOORD_6")]
-        public int? TexCoord6 { get; set; }
-
-        /// <summary>Texture coordinates accessor index (eighth UV set).</summary>
-        [JsonPropertyName("TEXCOORD_7")]
-        public int? TexCoord7 { get; set; }
-
-        /// <summary>Texture coordinates accessor index (ninth UV set).</summary>
-        [JsonPropertyName("TEXCOORD_8")]
-        public int? TexCoord8 { get; set; }
-
-        /// <summary>Vertex color accessor index.</summary>
-        [JsonPropertyName("COLOR_0")]
-        public int? Color0 { get; set; }
-
-        /// <summary>Bone joints accessor index.</summary>
-        [JsonPropertyName("JOINTS_0")]
-        public int? Joints0 { get; set; }
-
-        /// <summary>Bone weights accessor index.</summary>
-        [JsonPropertyName("WEIGHTS_0")]
-        public int? Weights0 { get; set; }
+        /// <summary>
+        /// Texture coordinate accessor indices. List index <c>n</c> corresponds
+        /// to the glTF semantic <c>TEXCOORD_n</c>. Sparse holes are
+        /// <see langword="null"/>. Use the
+        /// <see cref="AttributesExtensions.GetTexCoord"/>/<see cref="AttributesExtensions.SetTexCoord"/>
+        /// extension methods for bounds-checked index access.
+        /// </summary>
+        public List<int?> TexCoords { get; set; }
 
         /// <summary>
-        /// Calculates the texture coordinate set quantity.
+        /// Vertex color accessor indices (<c>COLOR_n</c>). Same semantics as
+        /// <see cref="TexCoords"/>; see
+        /// <see cref="AttributesExtensions.GetColor"/>/<see cref="AttributesExtensions.SetColor"/>.
         /// </summary>
-        /// <returns>Texture coordinate set quantity.</returns>
-        public int GetTexCoordsCount()
+        public List<int?> Colors { get; set; }
+
+        /// <summary>
+        /// Bone joint accessor indices (<c>JOINTS_n</c>). Same semantics as
+        /// <see cref="TexCoords"/>; see
+        /// <see cref="AttributesExtensions.GetJoint"/>/<see cref="AttributesExtensions.SetJoint"/>.
+        /// </summary>
+        public List<int?> Joints { get; set; }
+
+        /// <summary>
+        /// Bone weight accessor indices (<c>WEIGHTS_n</c>). Same semantics as
+        /// <see cref="TexCoords"/>; see
+        /// <see cref="AttributesExtensions.GetWeight"/>/<see cref="AttributesExtensions.SetWeight"/>.
+        /// </summary>
+        public List<int?> Weights { get; set; }
+
+        /// <summary>JSON properties without a matching member (e.g. application-defined attribute semantics such as <c>_TEMPERATURE</c>).</summary>
+        [JsonExtensionData, JsonInclude] internal Dictionary<string, JsonElement> ExtensionsData { get; set; }
+
+        /// <inheritdoc/>
+        public bool TryGetValue<T>(string key, out T value)
         {
-            if (!TexCoord0.HasValue) return 0;
-            if (!TexCoord1.HasValue) return 1;
-            if (!TexCoord2.HasValue) return 2;
-            if (!TexCoord3.HasValue) return 3;
-            if (!TexCoord4.HasValue) return 4;
-            if (!TexCoord5.HasValue) return 5;
-            if (!TexCoord6.HasValue) return 6;
-            if (!TexCoord7.HasValue) return 7;
-            return !TexCoord8.HasValue ? 8 : 9;
+            return ExtensionsData.TryGetValue(key, out value);
         }
 
         /// <summary>
@@ -232,9 +204,10 @@ namespace GLTFast.Schema
         /// <param name="limitExceeded">If true, the attributes has more UV sets than Unity supports
         /// and uvAccessors is delimited.</param>
         /// <returns>True if there's one or more UV sets and the result is valid. False otherwise.</returns>
+        [Obsolete("Access TexCoords directly instead")]
         public bool TryGetAllUVAccessors(out int[] uvAccessors, out bool limitExceeded)
         {
-            var uvCount = GetTexCoordsCount();
+            var uvCount = TexCoords?.Count ?? 0;
             if (uvCount < 1)
             {
                 uvAccessors = null;
@@ -249,35 +222,11 @@ namespace GLTFast.Schema
             }
 
             uvAccessors = new int[uvCount];
-            uvAccessors[0] = TexCoord0.Value;
-            if (uvAccessors.Length >= 2)
+            for (var i = 0; i < uvCount; i++)
             {
-                uvAccessors[1] = TexCoord1.Value;
+                uvAccessors[i] = TexCoords[i] ?? -1;
             }
-            if (uvAccessors.Length >= 3)
-            {
-                uvAccessors[2] = TexCoord2.Value;
-            }
-            if (uvAccessors.Length >= 4)
-            {
-                uvAccessors[3] = TexCoord3.Value;
-            }
-            if (uvAccessors.Length >= 5)
-            {
-                uvAccessors[4] = TexCoord4.Value;
-            }
-            if (uvAccessors.Length >= 6)
-            {
-                uvAccessors[5] = TexCoord5.Value;
-            }
-            if (uvAccessors.Length >= 7)
-            {
-                uvAccessors[6] = TexCoord6.Value;
-            }
-            if (uvAccessors.Length >= 8)
-            {
-                uvAccessors[7] = TexCoord7.Value;
-            }
+
             return true;
         }
 
@@ -287,18 +236,23 @@ namespace GLTFast.Schema
             if (Position.HasValue) writer.AddProperty("POSITION", Position.Value);
             if (Normal.HasValue) writer.AddProperty("NORMAL", Normal.Value);
             if (Tangent.HasValue) writer.AddProperty("TANGENT", Tangent.Value);
-            if (TexCoord0.HasValue) writer.AddProperty("TEXCOORD_0", TexCoord0.Value);
-            if (TexCoord1.HasValue) writer.AddProperty("TEXCOORD_1", TexCoord1.Value);
-            if (TexCoord2.HasValue) writer.AddProperty("TEXCOORD_2", TexCoord2.Value);
-            if (TexCoord3.HasValue) writer.AddProperty("TEXCOORD_3", TexCoord3.Value);
-            if (TexCoord4.HasValue) writer.AddProperty("TEXCOORD_4", TexCoord4.Value);
-            if (TexCoord5.HasValue) writer.AddProperty("TEXCOORD_5", TexCoord5.Value);
-            if (TexCoord6.HasValue) writer.AddProperty("TEXCOORD_6", TexCoord6.Value);
-            if (TexCoord7.HasValue) writer.AddProperty("TEXCOORD_7", TexCoord7.Value);
-            if (Color0.HasValue) writer.AddProperty("COLOR_0", Color0.Value);
-            if (Joints0.HasValue) writer.AddProperty("JOINTS_0", Joints0.Value);
-            if (Weights0.HasValue) writer.AddProperty("WEIGHTS_0", Weights0.Value);
+            WriteChannel(writer, "TEXCOORD_", TexCoords);
+            WriteChannel(writer, "COLOR_", Colors);
+            WriteChannel(writer, "JOINTS_", Joints);
+            WriteChannel(writer, "WEIGHTS_", Weights);
             writer.Close();
+        }
+
+        static void WriteChannel(JsonWriter writer, string prefix, List<int?> list)
+        {
+            if (list == null) return;
+            for (var i = 0; i < list.Count; i++)
+            {
+                if (list[i].HasValue)
+                {
+                    writer.AddProperty($"{prefix}{i}", list[i].Value);
+                }
+            }
         }
     }
 
