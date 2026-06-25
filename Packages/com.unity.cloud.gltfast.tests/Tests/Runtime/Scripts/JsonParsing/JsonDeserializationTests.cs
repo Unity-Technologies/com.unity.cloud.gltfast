@@ -393,20 +393,12 @@ namespace GLTFast.Tests.JsonParsing
         {
             var obj = JsonSerializer.Deserialize("{}", GltfRootSourceGenerator.Default.Asset);
             Assert.IsNotNull(obj);
-            Assert.IsNull(obj.Name);
             Assert.IsNull(obj.Copyright);
             Assert.IsNull(obj.Generator);
             Assert.IsNull(obj.Version);
             Assert.IsNull(obj.MinVersion);
             Assert.IsNull(obj.Extensions);
             Assert.IsNull(obj.Extras);
-        }
-
-        [Test]
-        public void AssetName()
-        {
-            var obj = JsonSerializer.Deserialize(@"{""name"":""A""}", GltfRootSourceGenerator.Default.Asset);
-            Assert.AreEqual("A", obj.Name);
         }
 
         [Test]

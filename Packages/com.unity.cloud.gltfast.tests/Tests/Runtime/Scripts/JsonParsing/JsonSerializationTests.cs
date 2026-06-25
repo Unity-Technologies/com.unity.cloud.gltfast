@@ -355,13 +355,6 @@ namespace GLTFast.Tests.JsonParsing
         }
 
         [Test]
-        public void AssetName()
-        {
-            var json = JsonSerializer.Serialize(new Asset { Name = "A" }, GltfRootSourceGenerator.Default.Asset);
-            Assert.AreEqual(@"{""name"":""A""}", json);
-        }
-
-        [Test]
         public void AssetCopyright()
         {
             var json = JsonSerializer.Serialize(new Asset { Copyright = "C" }, GltfRootSourceGenerator.Default.Asset);

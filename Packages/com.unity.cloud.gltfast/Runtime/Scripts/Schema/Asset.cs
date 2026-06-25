@@ -11,7 +11,7 @@ namespace GLTFast.Schema
     /// <summary>
     /// Metadata about the glTF asset.
     /// </summary>
-    public class Asset : NamedObject, IGltfObject
+    public class Asset : IGltfObject
     {
         /// <summary>
         /// A copyright message suitable for display to credit the content creator.

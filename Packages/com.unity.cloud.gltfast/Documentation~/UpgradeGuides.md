@@ -288,6 +288,15 @@ writer.AddNode(children: children);
 
 Custom subclasses or implementations of these interfaces and delegates need to update their member signatures to match.
 
+### `Asset.Name` removed
+
+[Asset](xref:GLTFast.Schema.Asset) no longer derives from `NamedObject` and therefore no longer carries a `Name` property. The glTF 2.0 specification's `asset` object is not a "child of root" property and does not define a `name` field. Any code reading or writing `asset.Name` must be removed.
+
+| Before | After |
+| ------ | ----- |
+| `root.Asset.Name = "Hero";` | Code must be removed |
+| `var name = root.Asset.Name;` | Code must be removed |
+
 ### Export image format and MIME type
 
 The redundant `GLTFast.Export.ImageFormat` enum was removed and merged into the canonical [GLTFast.ImageFormat](xref:GLTFast.ImageFormat). The enum value `Jpg` was renamed to `Jpeg` to match.

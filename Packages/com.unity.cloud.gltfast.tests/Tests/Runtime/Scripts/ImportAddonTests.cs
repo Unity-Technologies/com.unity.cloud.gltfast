@@ -42,8 +42,8 @@ namespace GLTFast.Tests
                 new PostJsonDeserializationAddon().Inject(gltf);
                 Assert.IsTrue(await gltf.LoadGltfJson(@"{""asset"":{""copyright"":""© 2026 Unity Technologies and the glTFast authors.""}}"));
                 var root = gltf.Root;
-                Assert.NotNull(root?.Asset?.Name);
-                Assert.AreEqual("My Custom Asset Name", root.Asset.Name);
+                Assert.NotNull(root?.Asset?.Generator);
+                Assert.AreEqual("My Custom Generator", root.Asset.Generator);
             }
         }
 
@@ -89,7 +89,7 @@ namespace GLTFast.Tests
             public bool PostJsonDeserialization()
             {
                 var gltf = m_GltfImport.Root;
-                gltf.Asset.Name ??= "My Custom Asset Name";
+                gltf.Asset.Generator ??= "My Custom Generator";
                 if (string.IsNullOrEmpty(gltf.Asset.Copyright))
                 {
                     m_GltfImport.Logger.Error("Asset copyright is missing.");
