@@ -19,7 +19,7 @@ namespace GLTFast.Tests.JsonParsing
         {
             const string json =
                 @"{""extensionsUsed"":[""KHR_materials_unlit"",""KHR_draco_mesh_compression""]}";
-            var gltf = JsonSerializer.Deserialize(json, GltfRootSourceGenerator.Default.Root);
+            var gltf = JsonSerializer.Deserialize(json, GltfJsonContext.Default.Root);
             Assert.NotNull(gltf);
             Assert.NotNull(gltf.ExtensionsUsed);
             Assert.AreEqual(2, gltf.ExtensionsUsed.Count);
@@ -36,7 +36,7 @@ namespace GLTFast.Tests.JsonParsing
         {
             const string json =
                 @"{""extensionsRequired"":[""KHR_some_future_extension""]}";
-            var gltf = JsonSerializer.Deserialize(json, GltfRootSourceGenerator.Default.Root);
+            var gltf = JsonSerializer.Deserialize(json, GltfJsonContext.Default.Root);
             Assert.NotNull(gltf);
             Assert.NotNull(gltf.ExtensionsRequired);
             Assert.AreEqual(1, gltf.ExtensionsRequired.Count);
@@ -53,7 +53,7 @@ namespace GLTFast.Tests.JsonParsing
         {
             const string json =
                 @"{""extensionsUsed"":[""KHR_materials_unlit"",""CUSTOM_my_extension""]}";
-            var gltf = JsonSerializer.Deserialize(json, GltfRootSourceGenerator.Default.Root);
+            var gltf = JsonSerializer.Deserialize(json, GltfJsonContext.Default.Root);
             Assert.NotNull(gltf.ExtensionsUsed);
             Assert.AreEqual(2, gltf.ExtensionsUsed.Count);
 
@@ -118,7 +118,7 @@ namespace GLTFast.Tests.JsonParsing
                 var expected = value.GetName();
                 Assert.NotNull(expected, $"ExtensionName.GetName returned null for {value}");
                 var serialized = JsonSerializer.Serialize(
-                    value, GltfRootSourceGenerator.Default.Extension);
+                    value, GltfJsonContext.Default.Extension);
                 Assert.AreEqual(
                     $"\"{expected}\"",
                     serialized,

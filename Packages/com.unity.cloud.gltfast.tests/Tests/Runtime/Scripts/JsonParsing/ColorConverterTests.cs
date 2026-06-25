@@ -19,14 +19,14 @@ namespace GLTFast.Tests.JsonParsing
         {
             var material = JsonSerializer.Deserialize(
                 @"{""emissiveFactor"":[0.1,0.2,0.3]}",
-                GltfRootSourceGenerator.Default.Material);
+                GltfJsonContext.Default.Material);
             Assert.AreEqual(new Color(0.1f, 0.2f, 0.3f), material.EmissiveFactor);
         }
 
         [Test]
         public void ColorDeserializationDefault()
         {
-            var material = JsonSerializer.Deserialize("{}", GltfRootSourceGenerator.Default.Material);
+            var material = JsonSerializer.Deserialize("{}", GltfJsonContext.Default.Material);
             Assert.AreEqual(Color.Black, material.EmissiveFactor);
         }
 
@@ -35,7 +35,7 @@ namespace GLTFast.Tests.JsonParsing
         {
             Assert.Throws<JsonException>(() =>
                 JsonSerializer.Deserialize(@"{""emissiveFactor"":[0.1,0.2]}",
-                    GltfRootSourceGenerator.Default.Material));
+                    GltfJsonContext.Default.Material));
         }
 
         [Test]
@@ -43,7 +43,7 @@ namespace GLTFast.Tests.JsonParsing
         {
             Assert.Throws<JsonException>(() =>
                 JsonSerializer.Deserialize(@"{""emissiveFactor"":[0.1,0.2,0.3,0.4]}",
-                    GltfRootSourceGenerator.Default.Material));
+                    GltfJsonContext.Default.Material));
         }
 
         [Test]
@@ -51,7 +51,7 @@ namespace GLTFast.Tests.JsonParsing
         {
             Assert.Throws<JsonException>(() =>
                 JsonSerializer.Deserialize(@"{""emissiveFactor"":0.1}",
-                    GltfRootSourceGenerator.Default.Material));
+                    GltfJsonContext.Default.Material));
         }
 
         [Test]
@@ -59,14 +59,14 @@ namespace GLTFast.Tests.JsonParsing
         {
             Assert.Throws<JsonException>(() =>
                 JsonSerializer.Deserialize(@"{""emissiveFactor"":[0.1,""string"",0.3]}",
-                    GltfRootSourceGenerator.Default.Material));
+                    GltfJsonContext.Default.Material));
         }
 
         [Test]
         public void ColorSerialization()
         {
             var material = new Material { EmissiveFactor = new Color(0.5f, 0.25f, 0.75f) };
-            var json = JsonSerializer.Serialize(material, GltfRootSourceGenerator.Default.Material);
+            var json = JsonSerializer.Serialize(material, GltfJsonContext.Default.Material);
             Assert.AreEqual(@"{""emissiveFactor"":[0.5,0.25,0.75]}", json);
         }
 
@@ -74,7 +74,7 @@ namespace GLTFast.Tests.JsonParsing
         public void ColorSerializationDefault()
         {
             var material = new Material();
-            var json = JsonSerializer.Serialize(material, GltfRootSourceGenerator.Default.Material);
+            var json = JsonSerializer.Serialize(material, GltfJsonContext.Default.Material);
             Assert.AreEqual("{}", json);
         }
 
@@ -83,7 +83,7 @@ namespace GLTFast.Tests.JsonParsing
         {
             var pbr = JsonSerializer.Deserialize(
                 @"{""baseColorFactor"":[0.1,0.2,0.3,0.4]}",
-                GltfRootSourceGenerator.Default.PbrMetallicRoughness);
+                GltfJsonContext.Default.PbrMetallicRoughness);
             Assert.AreEqual(new ColorAlpha(0.1f, 0.2f, 0.3f, 0.4f), pbr.BaseColorFactor);
         }
 
@@ -92,14 +92,14 @@ namespace GLTFast.Tests.JsonParsing
         {
             var pbr = JsonSerializer.Deserialize(
                 @"{""baseColorFactor"":[0.1,0.2,0.3]}",
-                GltfRootSourceGenerator.Default.PbrMetallicRoughness);
+                GltfJsonContext.Default.PbrMetallicRoughness);
             Assert.AreEqual(new ColorAlpha(0.1f, 0.2f, 0.3f, 1f), pbr.BaseColorFactor);
         }
 
         [Test]
         public void ColorAlphaDeserializationDefault()
         {
-            var pbr = JsonSerializer.Deserialize("{}", GltfRootSourceGenerator.Default.PbrMetallicRoughness);
+            var pbr = JsonSerializer.Deserialize("{}", GltfJsonContext.Default.PbrMetallicRoughness);
             Assert.AreEqual(ColorAlpha.White, pbr.BaseColorFactor);
         }
 
@@ -108,7 +108,7 @@ namespace GLTFast.Tests.JsonParsing
         {
             Assert.Throws<JsonException>(() =>
                 JsonSerializer.Deserialize(@"{""baseColorFactor"":[0.1,0.2]}",
-                    GltfRootSourceGenerator.Default.PbrMetallicRoughness));
+                    GltfJsonContext.Default.PbrMetallicRoughness));
         }
 
         [Test]
@@ -116,7 +116,7 @@ namespace GLTFast.Tests.JsonParsing
         {
             Assert.Throws<JsonException>(() =>
                 JsonSerializer.Deserialize(@"{""baseColorFactor"":[0.1,0.2,0.3,0.4,0.5]}",
-                    GltfRootSourceGenerator.Default.PbrMetallicRoughness));
+                    GltfJsonContext.Default.PbrMetallicRoughness));
         }
 
         [Test]
@@ -124,7 +124,7 @@ namespace GLTFast.Tests.JsonParsing
         {
             Assert.Throws<JsonException>(() =>
                 JsonSerializer.Deserialize(@"{""baseColorFactor"":0.1}",
-                    GltfRootSourceGenerator.Default.PbrMetallicRoughness));
+                    GltfJsonContext.Default.PbrMetallicRoughness));
         }
 
         [Test]
@@ -132,7 +132,7 @@ namespace GLTFast.Tests.JsonParsing
         {
             Assert.Throws<JsonException>(() =>
                 JsonSerializer.Deserialize(@"{""baseColorFactor"":[0.1,0.2,0.3,""string""]}",
-                    GltfRootSourceGenerator.Default.PbrMetallicRoughness));
+                    GltfJsonContext.Default.PbrMetallicRoughness));
         }
 
         [Test]
@@ -142,7 +142,7 @@ namespace GLTFast.Tests.JsonParsing
             {
                 BaseColorFactor = new ColorAlpha(0.5f, 0.25f, 0.75f, 0.125f)
             };
-            var json = JsonSerializer.Serialize(pbr, GltfRootSourceGenerator.Default.PbrMetallicRoughness);
+            var json = JsonSerializer.Serialize(pbr, GltfJsonContext.Default.PbrMetallicRoughness);
             Assert.AreEqual(@"{""baseColorFactor"":[0.5,0.25,0.75,0.125]}", json);
         }
 
@@ -150,7 +150,7 @@ namespace GLTFast.Tests.JsonParsing
         public void ColorAlphaSerializationWhite()
         {
             var pbr = new PbrMetallicRoughness();
-            var json = JsonSerializer.Serialize(pbr, GltfRootSourceGenerator.Default.PbrMetallicRoughness);
+            var json = JsonSerializer.Serialize(pbr, GltfJsonContext.Default.PbrMetallicRoughness);
             Assert.AreEqual("{}", json);
         }
 

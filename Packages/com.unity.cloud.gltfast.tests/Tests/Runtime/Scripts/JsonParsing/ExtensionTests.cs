@@ -116,7 +116,7 @@ $@"
                 }
             }";
 
-            var gltf = JsonSerializer.Deserialize(json, GltfRootSourceGenerator.Default.Root);
+            var gltf = JsonSerializer.Deserialize(json, GltfJsonContext.Default.Root);
             Assert.NotNull(gltf);
             Assert.NotNull(gltf.Extensions);
             Assert.NotNull(gltf.Extensions.LightsPunctual);
@@ -137,7 +137,7 @@ $@"
                 }}
             }}";
 
-            var gltf = JsonSerializer.Deserialize(json, GltfRootSourceGenerator.Default.Root);
+            var gltf = JsonSerializer.Deserialize(json, GltfJsonContext.Default.Root);
             Assert.NotNull(gltf);
             Assert.NotNull(gltf.Extensions);
             Assert.IsNull(gltf.Extensions.LightsPunctual);
@@ -148,7 +148,7 @@ $@"
         [Test]
         public void CustomExtension()
         {
-            var gltf = JsonSerializer.Deserialize(k_CustomExtensionJson, GltfRootSourceGenerator.Default.Root);
+            var gltf = JsonSerializer.Deserialize(k_CustomExtensionJson, GltfJsonContext.Default.Root);
             Assert.NotNull(gltf);
             Assert.NotNull(gltf.Extensions);
             Assert.NotNull(gltf.Extensions.LightsPunctual);
@@ -160,7 +160,7 @@ $@"
         [Test]
         public void CustomExtensionExtras()
         {
-            var gltf = JsonSerializer.Deserialize(k_CustomExtensionJson, GltfRootSourceGenerator.Default.Root);
+            var gltf = JsonSerializer.Deserialize(k_CustomExtensionJson, GltfJsonContext.Default.Root);
             Assert.NotNull(gltf);
             Assert.NotNull(gltf.Extensions);
             Assert.NotNull(gltf.Extensions.LightsPunctual);
@@ -330,7 +330,7 @@ $@"
     }}]
 }}";
 
-            var gltf = JsonSerializer.Deserialize(json, GltfRootSourceGenerator.Default.Root);
+            var gltf = JsonSerializer.Deserialize(json, GltfJsonContext.Default.Root);
 
             CertifyCustomData(gltf, 48);
             CertifyCustomExtensions(gltf.Extensions);
@@ -533,7 +533,7 @@ $@"
 }
             ";
 
-            var gltf = JsonSerializer.Deserialize(json, GltfRootSourceGenerator.Default.Root);
+            var gltf = JsonSerializer.Deserialize(json, GltfJsonContext.Default.Root);
 
             Assert.NotNull(gltf);
             Assert.IsNull(gltf.Extras);

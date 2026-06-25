@@ -92,7 +92,7 @@ namespace GLTFast.Tests.Export
 
             var gltf = JsonSerializer.Deserialize(
                 await File.ReadAllTextAsync(path),
-                GltfRootSourceGenerator.Default.Root
+                GltfJsonContext.Default.Root
                 );
 
             Assert.IsNotNull(gltf?.Nodes);

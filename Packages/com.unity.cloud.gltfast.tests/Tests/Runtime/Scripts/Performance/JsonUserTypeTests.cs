@@ -60,7 +60,7 @@ namespace GLTFast.Tests.Performance
         [Test]
         public void HeavyExtensionDataCheck()
         {
-            var options = GltfRootSourceGenerator.Default.Options;
+            var options = GltfJsonContext.Default.Options;
             var typeInfo = options.TypeInfoResolver?.GetTypeInfo(typeof(HeavyExtension), options);
             Assert.IsNull(typeInfo);
 

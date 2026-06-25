@@ -20,7 +20,7 @@ namespace GLTFast.Tests.JsonParsing
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            m_Gltf = JsonSerializer.Deserialize(k_ValueArraysJson, GltfRootSourceGenerator.Default.Root);
+            m_Gltf = JsonSerializer.Deserialize(k_ValueArraysJson, GltfJsonContext.Default.Root);
         }
 
         [Test]

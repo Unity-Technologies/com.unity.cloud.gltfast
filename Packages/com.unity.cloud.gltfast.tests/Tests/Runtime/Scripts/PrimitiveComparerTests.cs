@@ -11,7 +11,7 @@ namespace GLTFast.Tests
     {
         static Attributes Deserialize(string json)
         {
-            return JsonSerializer.Deserialize(json, GltfRootSourceGenerator.Default.Attributes);
+            return JsonSerializer.Deserialize(json, GltfJsonContext.Default.Attributes);
         }
 
         [Test]

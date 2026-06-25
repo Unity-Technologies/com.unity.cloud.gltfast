@@ -264,7 +264,7 @@ namespace GLTFast.Tests.Import
             if (json == null)
                 return null;
 
-            var gltf = JsonSerializer.Deserialize(json, GltfRootSourceGenerator.Default.Root);
+            var gltf = JsonSerializer.Deserialize(json, GltfJsonContext.Default.Root);
 
             if (gltf.ExtensionsRequired != null)
             {

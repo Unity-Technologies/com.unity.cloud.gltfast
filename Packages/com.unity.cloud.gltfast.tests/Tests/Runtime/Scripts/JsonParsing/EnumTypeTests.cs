@@ -26,7 +26,7 @@ namespace GLTFast.Tests.JsonParsing
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            m_Gltf = JsonSerializer.Deserialize(k_EnumTypesJson, GltfRootSourceGenerator.Default.Root);
+            m_Gltf = JsonSerializer.Deserialize(k_EnumTypesJson, GltfJsonContext.Default.Root);
         }
 
         [Test]
@@ -89,7 +89,7 @@ namespace GLTFast.Tests.JsonParsing
         [TestCase(AccessorType.Matrix4x4, "MAT4")]
         public void AccessorTypeDeserialization(AccessorType expected, string value)
         {
-            var accessor = JsonSerializer.Deserialize($@"{{""type"":""{value}""}}", GltfRootSourceGenerator.Default.Accessor);
+            var accessor = JsonSerializer.Deserialize($@"{{""type"":""{value}""}}", GltfJsonContext.Default.Accessor);
             Assert.AreEqual(expected, accessor.Type.Value);
             Assert.IsNull(accessor.Type.RawValue);
         }
@@ -97,12 +97,12 @@ namespace GLTFast.Tests.JsonParsing
         [Test]
         public void AccessorTypeUnknownDeserialization()
         {
-            var accessor = JsonSerializer.Deserialize(@"{""type"":""Unknown\u00B9Type""}", GltfRootSourceGenerator.Default.Accessor);
+            var accessor = JsonSerializer.Deserialize(@"{""type"":""Unknown\u00B9Type""}", GltfJsonContext.Default.Accessor);
             Assert.AreEqual(AccessorType.Undefined, accessor.Type.Value);
             Assert.AreEqual(System.Text.Encoding.UTF8.GetBytes("Unknown¹Type"), accessor.Type.RawValue);
 
             Assert.Throws<JsonException>(() =>
-                JsonSerializer.Deserialize(@"{""type"":42}", GltfRootSourceGenerator.Default.Accessor));
+                JsonSerializer.Deserialize(@"{""type"":42}", GltfJsonContext.Default.Accessor));
         }
 
         [Test]
@@ -115,11 +115,11 @@ namespace GLTFast.Tests.JsonParsing
         [TestCase(AccessorType.Matrix4x4, "MAT4")]
         public void AccessorTypeSerialization(AccessorType value, string expected)
         {
-            var json = JsonSerializer.Serialize(value, GltfRootSourceGenerator.Default.AccessorType);
+            var json = JsonSerializer.Serialize(value, GltfJsonContext.Default.AccessorType);
             Assert.AreEqual($@"""{expected}""", json);
 
             var accessor = new Accessor { Type = new EnumOrRawValue<AccessorType>(value) };
-            json = JsonSerializer.Serialize(accessor, GltfRootSourceGenerator.Default.Accessor);
+            json = JsonSerializer.Serialize(accessor, GltfJsonContext.Default.Accessor);
             Assert.AreEqual($@"{{""type"":""{expected}""}}", json);
         }
 
@@ -129,7 +129,7 @@ namespace GLTFast.Tests.JsonParsing
             const string type = "UnknownType";
             var typeBytes = System.Text.Encoding.UTF8.GetBytes(type);
             var accessor = new Accessor { Type = new EnumOrRawValue<AccessorType>(typeBytes) };
-            var json = JsonSerializer.Serialize(accessor, GltfRootSourceGenerator.Default.Accessor);
+            var json = JsonSerializer.Serialize(accessor, GltfJsonContext.Default.Accessor);
             Assert.AreEqual($@"{{""type"":""UnknownType""}}", json);
         }
 
@@ -143,7 +143,7 @@ namespace GLTFast.Tests.JsonParsing
         public void AnimationPathDeserialization(AnimationPath expected, string value)
         {
             var target = JsonSerializer.Deserialize(
-                $"{{\"path\":\"{value}\"}}", GltfRootSourceGenerator.Default.AnimationChannelTarget);
+                $"{{\"path\":\"{value}\"}}", GltfJsonContext.Default.AnimationChannelTarget);
             Assert.AreEqual(expected, target.Path.Value);
             Assert.IsNull(target.Path.RawValue);
         }
@@ -154,7 +154,7 @@ namespace GLTFast.Tests.JsonParsing
         {
 #if UNITY_ANIMATION
             var target = JsonSerializer.Deserialize(
-                "{\"path\":\"Unknown\\u00B9Path\"}", GltfRootSourceGenerator.Default.AnimationChannelTarget);
+                "{\"path\":\"Unknown\\u00B9Path\"}", GltfJsonContext.Default.AnimationChannelTarget);
             Assert.AreEqual(AnimationPath.Undefined, target.Path.Value);
             Assert.AreEqual(System.Text.Encoding.UTF8.GetBytes("Unknown¹Path"), target.Path.RawValue);
 #else
@@ -172,7 +172,7 @@ namespace GLTFast.Tests.JsonParsing
 #if UNITY_ANIMATION
             var json = value == null ? "{}" : $@"{{""interpolation"":""{value}""}}";
             Assert.AreEqual(expected,
-                JsonSerializer.Deserialize(json, GltfRootSourceGenerator.Default.AnimationSampler).Interpolation.Value);
+                JsonSerializer.Deserialize(json, GltfJsonContext.Default.AnimationSampler).Interpolation.Value);
 #else
             Assert.Ignore("Requires Animation module to be enabled.");
 #endif
@@ -184,7 +184,7 @@ namespace GLTFast.Tests.JsonParsing
 #if UNITY_ANIMATION
             var sampler = JsonSerializer.Deserialize(
                 @"{""interpolation"":""Unknown¹Interpolation""}",
-                GltfRootSourceGenerator.Default.AnimationSampler);
+                GltfJsonContext.Default.AnimationSampler);
             Assert.AreEqual(Interpolation.Linear, sampler.Interpolation.Value);
             Assert.AreEqual(System.Text.Encoding.UTF8.GetBytes("Unknown¹Interpolation"), sampler.Interpolation.RawValue);
 #else
@@ -201,7 +201,7 @@ namespace GLTFast.Tests.JsonParsing
         {
 #if MESHOPT_IS_RECENT
             Assert.AreEqual(expected, JsonSerializer.Deserialize($@"{{""mode"":""{value}""}}",
-                GltfRootSourceGenerator.Default.BufferViewMeshoptExtension).Mode);
+                GltfJsonContext.Default.BufferViewMeshoptExtension).Mode);
 #else
             Assert.Ignore("Requires meshoptimizer decompression for Unity package to be installed.");
 #endif
@@ -217,7 +217,7 @@ namespace GLTFast.Tests.JsonParsing
 #if MESHOPT_IS_RECENT
             Assert.AreEqual(expected,
                 JsonSerializer.Serialize(new BufferViewMeshoptExtension { Mode = mode },
-                    GltfRootSourceGenerator.Default.BufferViewMeshoptExtension));
+                    GltfJsonContext.Default.BufferViewMeshoptExtension));
 #else
             Assert.Ignore("Requires meshoptimizer decompression for Unity package to be installed.");
 #endif
@@ -232,7 +232,7 @@ namespace GLTFast.Tests.JsonParsing
         {
 #if MESHOPT_IS_RECENT
             Assert.AreEqual(expected, JsonSerializer.Deserialize($@"{{""filter"":""{value}""}}",
-                GltfRootSourceGenerator.Default.BufferViewMeshoptExtension).Filter);
+                GltfJsonContext.Default.BufferViewMeshoptExtension).Filter);
 #else
             Assert.Ignore("Requires meshoptimizer decompression for Unity package to be installed.");
 #endif
@@ -248,7 +248,7 @@ namespace GLTFast.Tests.JsonParsing
 #if MESHOPT_IS_RECENT
             Assert.AreEqual(expected,
                 JsonSerializer.Serialize(new BufferViewMeshoptExtension { Filter = value },
-                    GltfRootSourceGenerator.Default.BufferViewMeshoptExtension));
+                    GltfJsonContext.Default.BufferViewMeshoptExtension));
 #else
             Assert.Ignore("Requires meshoptimizer decompression for Unity package to be installed.");
 #endif
@@ -262,11 +262,11 @@ namespace GLTFast.Tests.JsonParsing
                 Type = CameraType.Orthographic,
                 Orthographic = new CameraOrthographic()
             };
-            var json = JsonSerializer.Serialize(obj, GltfRootSourceGenerator.Default.Camera);
+            var json = JsonSerializer.Serialize(obj, GltfJsonContext.Default.Camera);
             Assert.AreEqual("{\"orthographic\":{},\"type\":\"orthographic\"}", json);
 
             obj = new Camera();
-            json = JsonSerializer.Serialize(obj, GltfRootSourceGenerator.Default.Camera);
+            json = JsonSerializer.Serialize(obj, GltfJsonContext.Default.Camera);
             Assert.AreEqual("{}", json);
 
             obj = new Camera
@@ -274,7 +274,7 @@ namespace GLTFast.Tests.JsonParsing
                 Type = CameraType.Perspective,
                 Perspective = new CameraPerspective()
             };
-            json = JsonSerializer.Serialize(obj, GltfRootSourceGenerator.Default.Camera);
+            json = JsonSerializer.Serialize(obj, GltfJsonContext.Default.Camera);
             Assert.AreEqual("{\"perspective\":{},\"type\":\"perspective\"}", json);
         }
 
@@ -292,7 +292,7 @@ namespace GLTFast.Tests.JsonParsing
         public void PrimitiveModeDeserialization(int? value, PrimitiveMode? expected)
         {
             var json = value == null ? "{}" : $@"{{""mode"":{value}}}";
-            var primitive = JsonSerializer.Deserialize(json, GltfRootSourceGenerator.Default.MeshPrimitive);
+            var primitive = JsonSerializer.Deserialize(json, GltfJsonContext.Default.MeshPrimitive);
             Assert.AreEqual(expected, primitive.Mode);
         }
 
@@ -303,7 +303,7 @@ namespace GLTFast.Tests.JsonParsing
         public void LightTypeDeserialization(LightType expected, string value)
         {
             var light = JsonSerializer.Deserialize(
-                $"{{\"type\":\"{value}\"}}", GltfRootSourceGenerator.Default.LightPunctual);
+                $"{{\"type\":\"{value}\"}}", GltfJsonContext.Default.LightPunctual);
             Assert.AreEqual(expected, light.Type.Value);
             Assert.IsNull(light.Type.RawValue);
         }
@@ -312,7 +312,7 @@ namespace GLTFast.Tests.JsonParsing
         public void LightTypeUnknownDeserialization()
         {
             var light = JsonSerializer.Deserialize(
-                "{\"type\":\"Unknown\\u00B9Light\"}", GltfRootSourceGenerator.Default.LightPunctual);
+                "{\"type\":\"Unknown\\u00B9Light\"}", GltfJsonContext.Default.LightPunctual);
             Assert.AreEqual(LightType.Undefined, light.Type.Value);
             Assert.AreEqual(System.Text.Encoding.UTF8.GetBytes("Unknown¹Light"), light.Type.RawValue);
         }
@@ -325,7 +325,7 @@ namespace GLTFast.Tests.JsonParsing
         public void ImageMimeTypeDeserialization(ImageMimeType expected, string value)
         {
             var image = JsonSerializer.Deserialize(
-                $@"{{""mimeType"":""{value}""}}", GltfRootSourceGenerator.Default.Image);
+                $@"{{""mimeType"":""{value}""}}", GltfJsonContext.Default.Image);
             Assert.AreEqual(expected, image.MimeType.Value);
             Assert.IsNull(image.MimeType.RawValue);
         }
@@ -334,7 +334,7 @@ namespace GLTFast.Tests.JsonParsing
         public void ImageMimeTypeUnknownDeserialization()
         {
             var image = JsonSerializer.Deserialize(
-                @"{""mimeType"":""image/avif""}", GltfRootSourceGenerator.Default.Image);
+                @"{""mimeType"":""image/avif""}", GltfJsonContext.Default.Image);
             Assert.AreEqual(ImageMimeType.Undefined, image.MimeType.Value);
             Assert.AreEqual(System.Text.Encoding.UTF8.GetBytes("image/avif"), image.MimeType.RawValue);
         }
@@ -343,7 +343,7 @@ namespace GLTFast.Tests.JsonParsing
         public void ImageMimeTypeLegacyKtxDeserialization()
         {
             var image = JsonSerializer.Deserialize(
-                @"{""mimeType"":""image/ktx""}", GltfRootSourceGenerator.Default.Image);
+                @"{""mimeType"":""image/ktx""}", GltfJsonContext.Default.Image);
             Assert.AreEqual(ImageMimeType.Undefined, image.MimeType.Value);
             Assert.AreEqual(System.Text.Encoding.UTF8.GetBytes("image/ktx"), image.MimeType.RawValue);
             Assert.AreEqual(ImageFormat.Unknown, ImageFormatExtensions.FromMimeType(image.MimeType));
@@ -352,12 +352,12 @@ namespace GLTFast.Tests.JsonParsing
         [Test]
         public void ImageMimeTypeAbsentDeserialization()
         {
-            var image = JsonSerializer.Deserialize("{}", GltfRootSourceGenerator.Default.Image);
+            var image = JsonSerializer.Deserialize("{}", GltfJsonContext.Default.Image);
             Assert.AreEqual(default(EnumOrRawValue<ImageMimeType>), image.MimeType);
             Assert.AreEqual(ImageMimeType.Undefined, image.MimeType.Value);
             Assert.IsNull(image.MimeType.RawValue);
 
-            var json = JsonSerializer.Serialize(image, GltfRootSourceGenerator.Default.Image);
+            var json = JsonSerializer.Serialize(image, GltfJsonContext.Default.Image);
             Assert.AreEqual("{}", json);
         }
 
@@ -369,7 +369,7 @@ namespace GLTFast.Tests.JsonParsing
         public void ImageMimeTypeSerialization(ImageMimeType value, string expected)
         {
             var image = new Image { MimeType = value };
-            var json = JsonSerializer.Serialize(image, GltfRootSourceGenerator.Default.Image);
+            var json = JsonSerializer.Serialize(image, GltfJsonContext.Default.Image);
             Assert.AreEqual($@"{{""mimeType"":""{expected}""}}", json);
         }
 
@@ -381,7 +381,7 @@ namespace GLTFast.Tests.JsonParsing
             {
                 MimeType = new EnumOrRawValue<ImageMimeType>(System.Text.Encoding.UTF8.GetBytes(mime))
             };
-            var json = JsonSerializer.Serialize(image, GltfRootSourceGenerator.Default.Image);
+            var json = JsonSerializer.Serialize(image, GltfJsonContext.Default.Image);
             Assert.AreEqual($@"{{""mimeType"":""{mime}""}}", json);
         }
 
@@ -395,8 +395,8 @@ namespace GLTFast.Tests.JsonParsing
         public void ImageMimeTypeRoundtrip(string mime)
         {
             var image = JsonSerializer.Deserialize(
-                $@"{{""mimeType"":""{mime}""}}", GltfRootSourceGenerator.Default.Image);
-            var json = JsonSerializer.Serialize(image, GltfRootSourceGenerator.Default.Image);
+                $@"{{""mimeType"":""{mime}""}}", GltfJsonContext.Default.Image);
+            var json = JsonSerializer.Serialize(image, GltfJsonContext.Default.Image);
             Assert.AreEqual($@"{{""mimeType"":""{mime}""}}", json);
         }
 
@@ -408,7 +408,7 @@ namespace GLTFast.Tests.JsonParsing
                 AccessorDataType.Byte,
                 JsonSerializer.Deserialize(
                     "5120",
-                    GltfRootSourceGenerator.Default.AccessorDataType)
+                    GltfJsonContext.Default.AccessorDataType)
             );
 
             // Unknown Value
@@ -416,7 +416,7 @@ namespace GLTFast.Tests.JsonParsing
                 (AccessorDataType)42,
                 JsonSerializer.Deserialize(
                     "42",
-                    GltfRootSourceGenerator.Default.AccessorDataType)
+                    GltfJsonContext.Default.AccessorDataType)
                 );
         }
 

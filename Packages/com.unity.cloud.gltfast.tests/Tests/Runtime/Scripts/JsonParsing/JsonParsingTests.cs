@@ -282,7 +282,7 @@ namespace GLTFast.Tests.JsonParsing
 
         public void MaterialAlphaMode(AlphaMode expected, string value, string expectedValue)
         {
-            var material = JsonSerializer.Deserialize(value, GltfRootSourceGenerator.Default.Material);
+            var material = JsonSerializer.Deserialize(value, GltfJsonContext.Default.Material);
             Assert.AreEqual(expected, material.AlphaMode.Value);
             if (expectedValue != null)
             {
@@ -337,17 +337,17 @@ namespace GLTFast.Tests.JsonParsing
         public void Camera()
         {
             var camera = JsonSerializer.Deserialize(
-                @"{""perspective"":{},""type"":""perspective""}", GltfRootSourceGenerator.Default.Camera);
+                @"{""perspective"":{},""type"":""perspective""}", GltfJsonContext.Default.Camera);
             Assert.AreEqual(null, camera.Perspective.Zfar);
 
             camera = JsonSerializer.Deserialize(
-                @"{""perspective"":{""zfar"":42},""type"":""perspective""}", GltfRootSourceGenerator.Default.Camera);
+                @"{""perspective"":{""zfar"":42},""type"":""perspective""}", GltfJsonContext.Default.Camera);
             Assert.AreEqual(42f, camera.Perspective.Zfar);
         }
 
         static void Parse(string gltf, Action<Root> validationCallback)
         {
-            var root = JsonSerializer.Deserialize(gltf, GltfRootSourceGenerator.Default.Root);
+            var root = JsonSerializer.Deserialize(gltf, GltfJsonContext.Default.Root);
             validationCallback(root);
         }
 

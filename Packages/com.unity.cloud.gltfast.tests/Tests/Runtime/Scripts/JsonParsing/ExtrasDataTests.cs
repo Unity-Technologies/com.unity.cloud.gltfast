@@ -153,7 +153,7 @@ namespace GLTFast.Tests.JsonParsing
         [Test]
         public void ExtrasDataTest()
         {
-            var gltf = JsonSerializer.Deserialize(k_ExtrasDataJson, GltfRootSourceGenerator.Default.Root);
+            var gltf = JsonSerializer.Deserialize(k_ExtrasDataJson, GltfJsonContext.Default.Root);
 
             Assert.NotNull(gltf);
             Assert.NotNull(gltf.Nodes);

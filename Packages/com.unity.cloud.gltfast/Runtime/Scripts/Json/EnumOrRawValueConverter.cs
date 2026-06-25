@@ -59,43 +59,43 @@ namespace GLTFast.Schema
 
     class AccessorTypeValueConverter : EnumOrRawValueConverter<AccessorType>
     {
-        protected override JsonTypeInfo<AccessorType> TypeInfo => GltfRootSourceGenerator.Default.AccessorType;
+        protected override JsonTypeInfo<AccessorType> TypeInfo => GltfJsonContext.Default.AccessorType;
     }
 
     class AlphaModeValueConverter : EnumOrRawValueConverter<AlphaMode>
     {
-        protected override JsonTypeInfo<AlphaMode> TypeInfo => GltfRootSourceGenerator.Default.AlphaMode;
+        protected override JsonTypeInfo<AlphaMode> TypeInfo => GltfJsonContext.Default.AlphaMode;
     }
 
     class CameraTypeValueConverter : EnumOrRawValueConverter<CameraType>
     {
-        protected override JsonTypeInfo<CameraType> TypeInfo => GltfRootSourceGenerator.Default.CameraType;
+        protected override JsonTypeInfo<CameraType> TypeInfo => GltfJsonContext.Default.CameraType;
     }
 
     class ImageMimeTypeValueConverter : EnumOrRawValueConverter<ImageMimeType>
     {
-        protected override JsonTypeInfo<ImageMimeType> TypeInfo => GltfRootSourceGenerator.Default.ImageMimeType;
+        protected override JsonTypeInfo<ImageMimeType> TypeInfo => GltfJsonContext.Default.ImageMimeType;
     }
 
     class ExtensionValueConverter : EnumOrRawValueConverter<Extension>
     {
-        protected override JsonTypeInfo<Extension> TypeInfo => GltfRootSourceGenerator.Default.Extension;
+        protected override JsonTypeInfo<Extension> TypeInfo => GltfJsonContext.Default.Extension;
     }
 
     class LightTypeValueConverter : EnumOrRawValueConverter<LightType>
     {
-        protected override JsonTypeInfo<LightType> TypeInfo => GltfRootSourceGenerator.Default.LightType;
+        protected override JsonTypeInfo<LightType> TypeInfo => GltfJsonContext.Default.LightType;
     }
 
 #if UNITY_ANIMATION || GLTFAST_ANIMATION
     class AnimationPathValueConverter : EnumOrRawValueConverter<AnimationPath>
     {
-        protected override JsonTypeInfo<AnimationPath> TypeInfo => GltfRootSourceGenerator.Default.AnimationPath;
+        protected override JsonTypeInfo<AnimationPath> TypeInfo => GltfJsonContext.Default.AnimationPath;
     }
 
     class InterpolationValueConverter : EnumOrRawValueConverter<Interpolation>
     {
-        protected override JsonTypeInfo<Interpolation> TypeInfo => GltfRootSourceGenerator.Default.Interpolation;
+        protected override JsonTypeInfo<Interpolation> TypeInfo => GltfJsonContext.Default.Interpolation;
     }
 #endif
 }

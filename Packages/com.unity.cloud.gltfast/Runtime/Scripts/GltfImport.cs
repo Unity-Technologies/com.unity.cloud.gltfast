@@ -1384,7 +1384,7 @@ namespace GLTFast
             UriValueConverter.BeginCollect();
             try
             {
-                var root = JsonSerializer.Deserialize(json, GltfRootSourceGenerator.Default.Root);
+                var root = JsonSerializer.Deserialize(json, GltfJsonContext.Default.Root);
                 var pending = UriValueConverter.EndCollect();
                 return (root, pending);
             }

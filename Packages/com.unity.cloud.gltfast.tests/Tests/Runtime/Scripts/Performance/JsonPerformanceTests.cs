@@ -105,7 +105,7 @@ namespace GLTFast.Tests.Performance
         internal static Root DeserializeWrapper(NativeArray<byte>.ReadOnly json)
         {
             Profiler.BeginSample("JsonPerformanceTests.DeserializeWrapper");
-            var result = JsonSerializer.Deserialize(json.AsReadOnlySpan(), GltfRootSourceGenerator.Default.Root);
+            var result = JsonSerializer.Deserialize(json.AsReadOnlySpan(), GltfJsonContext.Default.Root);
             Profiler.EndSample();
             return result;
         }

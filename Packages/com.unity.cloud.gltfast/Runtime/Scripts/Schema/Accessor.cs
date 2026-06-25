@@ -320,7 +320,7 @@ namespace GLTFast.Schema
             else
             {
                 Assert.AreNotEqual(AccessorType.Undefined, Type.Value);
-                var type = JsonSerializer.Serialize(Type.Value, GltfRootSourceGenerator.Default.AccessorType);
+                var type = JsonSerializer.Serialize(Type.Value, GltfJsonContext.Default.AccessorType);
                 writer.AddProperty("type", type.AsSpan(1, type.Length - 2));
             }
             if (ByteOffset > 0)
