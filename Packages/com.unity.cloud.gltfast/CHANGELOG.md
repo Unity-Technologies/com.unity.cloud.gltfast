@@ -75,7 +75,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
       - [Image.BufferView](xref:GLTFast.Schema.Image.BufferView)
       - `InstancesAttributes.Translation`, `.Rotation`, `.Scale`
       - `MeshPrimitive.Indices`, `.Material`
-      - `Attributes.Position`, `.Normal`, `.Tangent`, `.TexCoord0`–`.TexCoord8`, `.Color0`, `.Joints0`, `.Weights0`
+      - `Attributes.Position`, `.Normal`, `.Tangent`
       - `MorphTarget.Position`, `.Normal`, `.Tangent`
       - [Node.Mesh](xref:GLTFast.Schema.Node.Mesh), [Node.Skin](xref:GLTFast.Schema.Node.Skin), [Node.Camera](xref:GLTFast.Schema.Node.Camera)
       - `NodeLightsPunctual.Light`

@@ -100,7 +100,7 @@ This applies to (non-exhaustive — see the changelog for the full list):
 - `BufferView.ByteStride` (and the [IBufferView](xref:GLTFast.Schema.IBufferView) interface)
 - `Image.BufferView`
 - `MeshPrimitive.Indices`, `MeshPrimitive.Material`
-- `Attributes` (`POSITION`, `NORMAL`, `TANGENT`, `TEXCOORD_*`, `COLOR_0`, `JOINTS_0`, `WEIGHTS_0`) and `MorphTarget` (`POSITION`, `NORMAL`, `TANGENT`)
+- `Attributes` (`Position`, `Normal`, `Tangent`, `TexCoords`, `Colors`, `Joints`, `Weights`) and `MorphTarget` (`Position`, `Normal`, `Tangent`)
 - `Node.Mesh`, `Node.Skin`, `Node.Camera`
 - `Root.Scene`
 - `Skin.InverseBindMatrices`, `Skin.Skeleton`
@@ -206,19 +206,19 @@ Extension add-ons that relax a previously-required field can detect absence with
 
 | Property | Before | After |
 | -------- | ------ | ----- |
-| `TexCoord0`–`TexCoord8` | nine `int` properties | `List<int?> TexCoords` + `GetTexCoord(n)`/`SetTexCoord(n, v)` extensions |
-| `Color0` | single `int` (`COLOR_0` only) | `List<int?> Colors` + `GetColor(n)`/`SetColor(n, v)` extensions (round-trip `COLOR_n` for any `n`) |
-| `Joints0` | single `int` (`JOINTS_0` only) | `List<int?> Joints` + `GetJoint(n)`/`SetJoint(n, v)` extensions |
-| `Weights0` | single `int` (`WEIGHTS_0` only) | `List<int?> Weights` + `GetWeight(n)`/`SetWeight(n, v)` extensions |
+| `TEXCOORD_0`–`TEXCOORD_8` | nine `int` properties | `List<int?> TexCoords` + `GetTexCoord(n)`/`SetTexCoord(n, v)` extensions |
+| `COLOR_0` | single `int` (`COLOR_0` only) | `List<int?> Colors` + `GetColor(n)`/`SetColor(n, v)` extensions (round-trip `COLOR_n` for any `n`) |
+| `JOINTS_0` | single `int` (`JOINTS_0` only) | `List<int?> Joints` + `GetJoint(n)`/`SetJoint(n, v)` extensions |
+| `WEIGHTS_0` | single `int` (`WEIGHTS_0` only) | `List<int?> Weights` + `GetWeight(n)`/`SetWeight(n, v)` extensions |
 | (unrepresentable: `_TEMPERATURE` etc.) | silently dropped | reached through `attrs.TryGetValue<T>("_TEMPERATURE", out var v)` (`Attributes` implements `IGltfObject`) |
 
 The `Get…` extensions return `null` past the end of the underlying list. The `Set…` extensions lazily allocate and null-pad as needed. Iterate the underlying list directly for bulk operations.
 
 | Before | After |
 | ------ | ----- |
-| `attrs.TexCoord3` | `attrs.GetTexCoord(3)` |
-| `attrs.TexCoord3 = 7;` | `attrs.SetTexCoord(3, 7);` |
-| `attrs.Color0` / `.Joints0` / `.Weights0` | `attrs.GetColor(0)` / `attrs.GetJoint(0)` / `attrs.GetWeight(0)` (read) — `attrs.SetColor(0, v)` / `attrs.SetJoint(0, v)` / `attrs.SetWeight(0, v)` (write) |
+| `attrs.TEXCOORD_3` | `attrs.GetTexCoord(3)` |
+| `attrs.TEXCOORD_3 = 7;` | `attrs.SetTexCoord(3, 7);` |
+| `attrs.COLOR_0` / `.JOINTS_0` / `.WEIGHTS_0` | `attrs.GetColor(0)` / `attrs.GetJoint(0)` / `attrs.GetWeight(0)` (read) — `attrs.SetColor(0, v)` / `attrs.SetJoint(0, v)` / `attrs.SetWeight(0, v)` (write) |
 | (previously unrepresentable) `COLOR_1`, `JOINTS_1`, `_TEMPERATURE` | `attrs.SetColor(1, v)`, `attrs.SetJoint(1, v)`, `attrs.TryGetValue("_TEMPERATURE", out int idx)` |
 
 Helper method `Attributes.GetTexCoordsCount()` was moved to `AttributesExtensions` and `Attributes.TryGetAllUVAccessors` declared obsolete.
