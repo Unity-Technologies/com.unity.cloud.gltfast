@@ -40,9 +40,16 @@ namespace GLTFast.Schema
         /// The fourth component (A) is the opacity of the material.
         /// These values are linear.
         /// </summary>
-        [JsonPropertyName("baseColorFactor")]
-        [JsonConverter(typeof(ColorAlphaConverter))]
+        [JsonIgnore]
         public ColorAlpha BaseColorFactor { get; set; } = ColorAlpha.White;
+
+        [JsonPropertyName("baseColorFactor"), JsonInclude]
+        [JsonConverter(typeof(ColorAlphaConverter))]
+        internal ColorAlpha? BaseColorFactorSerialized
+        {
+            get => BaseColorFactor == ColorAlpha.White ? null : BaseColorFactor;
+            set => BaseColorFactor = value ?? ColorAlpha.White;
+        }
 
         /// <summary>
         /// The metalness of the material.

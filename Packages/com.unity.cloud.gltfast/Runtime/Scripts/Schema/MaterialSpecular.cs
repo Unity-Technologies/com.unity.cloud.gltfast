@@ -36,9 +36,16 @@ namespace GLTFast.Schema
         /// <summary>
         /// The F0 color of the specular reflection (linear RGB).
         /// </summary>
-        [JsonPropertyName("specularColorFactor")]
-        [JsonConverter(typeof(ColorConverter))]
+        [JsonIgnore]
         public Color SpecularColorFactor { get; set; } = Color.White;
+
+        [JsonPropertyName("specularColorFactor"), JsonInclude]
+        [JsonConverter(typeof(ColorConverter))]
+        internal Color? SpecularColorFactorSerialized
+        {
+            get => SpecularColorFactor == Color.White ? null : SpecularColorFactor;
+            set => SpecularColorFactor = value ?? Color.White;
+        }
 
         /// <summary>
         /// A texture that defines the F0 color of the specular reflection, stored in the RGB channels and encoded in

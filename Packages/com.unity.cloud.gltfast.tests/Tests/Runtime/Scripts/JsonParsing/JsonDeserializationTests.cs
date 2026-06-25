@@ -5,14 +5,10 @@ using System.Text;
 using GLTFast.Schema;
 using NUnit.Framework;
 using Unity.Gltfast.Text.Json;
-using Camera = GLTFast.Schema.Camera;
 using CameraType = GLTFast.Schema.CameraType;
 using Color = GLTFast.Schema.Color;
 using LightType = GLTFast.Schema.LightType;
-using Material = GLTFast.Schema.Material;
-using Mesh = GLTFast.Schema.Mesh;
 using SchemaConstants = GLTFast.Schema.Constants;
-using Texture = GLTFast.Schema.Texture;
 
 namespace GLTFast.Tests.JsonParsing
 {
@@ -1410,7 +1406,7 @@ namespace GLTFast.Tests.JsonParsing
         {
             var obj = JsonSerializer.Deserialize("{}", GltfRootSourceGenerator.Default.Sheen);
             Assert.IsNotNull(obj);
-            Assert.AreEqual(Color.White, obj.SheenColorFactor);
+            Assert.AreEqual(Color.Black, obj.SheenColorFactor);
             Assert.IsNull(obj.SheenColorTexture);
             Assert.AreEqual(0f, obj.SheenRoughnessFactor);
             Assert.IsNull(obj.SheenRoughnessTexture);

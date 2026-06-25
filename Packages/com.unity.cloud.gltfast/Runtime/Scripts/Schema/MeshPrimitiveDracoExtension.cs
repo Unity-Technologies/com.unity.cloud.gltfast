@@ -10,8 +10,16 @@ namespace GLTFast.Schema
 {
     public class MeshPrimitiveDracoExtension
     {
-        [JsonPropertyName("bufferView")]
-        public int BufferView { get; set; }
+        [JsonIgnore]
+        public int BufferView { get; set; } = Constants.UnsetIndex;
+
+        [JsonPropertyName("bufferView"), JsonInclude]
+        internal int? BufferViewSerialized
+        {
+            get => BufferView < 0 ? null : BufferView;
+            set => BufferView = value ?? Constants.UnsetIndex;
+        }
+
         [JsonPropertyName("attributes")]
         public Attributes Attributes { get; set; }
 

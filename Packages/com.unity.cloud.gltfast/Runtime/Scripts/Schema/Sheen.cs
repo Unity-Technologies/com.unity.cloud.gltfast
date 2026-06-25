@@ -22,7 +22,7 @@ namespace GLTFast.Schema
         /// </summary>
         [JsonPropertyName("sheenColorFactor")]
         [JsonConverter(typeof(ColorConverter))]
-        public Color SheenColorFactor { get; set; } = Color.White;
+        public Color SheenColorFactor { get; set; }
 
         /// <summary>
         /// The sheen color texture.
@@ -45,7 +45,7 @@ namespace GLTFast.Schema
         internal void GltfSerialize(JsonWriter writer)
         {
             writer.AddObject();
-            if (SheenColorFactor != Color.White)
+            if (SheenColorFactor != Color.Black)
             {
                 writer.AddColorProperty("sheenColorFactor", SheenColorFactor);
             }

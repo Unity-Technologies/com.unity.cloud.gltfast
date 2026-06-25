@@ -17,9 +17,16 @@ namespace GLTFast.Schema
         /// <summary>
         /// Diffuse color red, green, blue and alpha components in linear space.
         /// </summary>
-        [JsonPropertyName("diffuseFactor")]
-        [JsonConverter(typeof(ColorAlphaConverter))]
+        [JsonIgnore]
         public ColorAlpha DiffuseFactor { get; set; } = ColorAlpha.White;
+
+        [JsonPropertyName("diffuseFactor"), JsonInclude]
+        [JsonConverter(typeof(ColorAlphaConverter))]
+        internal ColorAlpha? DiffuseFactorSerialized
+        {
+            get => DiffuseFactor == ColorAlpha.White ? null : DiffuseFactor;
+            set => DiffuseFactor = value ?? ColorAlpha.White;
+        }
 
         /// <summary>
         /// Diffuse color texture info.
@@ -30,9 +37,16 @@ namespace GLTFast.Schema
         /// <summary>
         /// Specular color red, green and blue components in linear space.
         /// </summary>
-        [JsonPropertyName("specularFactor")]
-        [JsonConverter(typeof(ColorConverter))]
+        [JsonIgnore]
         public Color SpecularFactor { get; set; } = Color.White;
+
+        [JsonPropertyName("specularFactor"), JsonInclude]
+        [JsonConverter(typeof(ColorConverter))]
+        internal Color? SpecularFactorSerialized
+        {
+            get => SpecularFactor == Color.White ? null : SpecularFactor;
+            set => SpecularFactor = value ?? Color.White;
+        }
 
         /// <summary>
         /// The glossiness or smoothness of the material.

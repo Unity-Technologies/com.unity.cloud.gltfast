@@ -1020,7 +1020,7 @@ namespace GLTFast.Tests.JsonParsing
             var json = JsonSerializer.Serialize(
                 new Material { PbrMetallicRoughness = new PbrMetallicRoughness() },
                 GltfRootSourceGenerator.Default.Material);
-            Assert.AreEqual(@"{""pbrMetallicRoughness"":{""baseColorFactor"":[1,1,1,1]}}", json);
+            Assert.AreEqual(@"{""pbrMetallicRoughness"":{}}", json);
         }
 
         [Test]
@@ -1111,7 +1111,7 @@ namespace GLTFast.Tests.JsonParsing
             var json = JsonSerializer.Serialize(
                 new MaterialExtensions { PbrSpecularGlossiness = new PbrSpecularGlossiness() },
                 GltfRootSourceGenerator.Default.MaterialExtensions);
-            Assert.AreEqual(@"{""KHR_materials_pbrSpecularGlossiness"":{""diffuseFactor"":[1,1,1,1],""specularFactor"":[1,1,1]}}", json);
+            Assert.AreEqual(@"{""KHR_materials_pbrSpecularGlossiness"":{}}", json);
         }
 
         [Test]
@@ -1147,7 +1147,7 @@ namespace GLTFast.Tests.JsonParsing
             var json = JsonSerializer.Serialize(
                 new MaterialExtensions { Sheen = new Sheen() },
                 GltfRootSourceGenerator.Default.MaterialExtensions);
-            Assert.AreEqual(@"{""KHR_materials_sheen"":{""sheenColorFactor"":[1,1,1]}}", json);
+            Assert.AreEqual(@"{""KHR_materials_sheen"":{}}", json);
         }
 
         [Test]
@@ -1156,7 +1156,7 @@ namespace GLTFast.Tests.JsonParsing
             var json = JsonSerializer.Serialize(
                 new MaterialExtensions { Specular = new MaterialSpecular() },
                 GltfRootSourceGenerator.Default.MaterialExtensions);
-            Assert.AreEqual(@"{""KHR_materials_specular"":{""specularColorFactor"":[1,1,1]}}", json);
+            Assert.AreEqual(@"{""KHR_materials_specular"":{}}", json);
         }
 
         [Test]
@@ -1172,7 +1172,7 @@ namespace GLTFast.Tests.JsonParsing
         public void PbrMetallicRoughnessDefault()
         {
             var json = JsonSerializer.Serialize(new PbrMetallicRoughness(), GltfRootSourceGenerator.Default.PbrMetallicRoughness);
-            Assert.AreEqual(@"{""baseColorFactor"":[1,1,1,1]}", json);
+            Assert.AreEqual("{}", json);
         }
 
         [Test]
@@ -1181,7 +1181,7 @@ namespace GLTFast.Tests.JsonParsing
             var json = JsonSerializer.Serialize(
                 new PbrMetallicRoughness { BaseColorTexture = new TextureInfo { Index = 0 } },
                 GltfRootSourceGenerator.Default.PbrMetallicRoughness);
-            Assert.AreEqual(@"{""baseColorTexture"":{""index"":0},""baseColorFactor"":[1,1,1,1]}", json);
+            Assert.AreEqual(@"{""baseColorTexture"":{""index"":0}}", json);
         }
 
         [Test]
@@ -1190,7 +1190,7 @@ namespace GLTFast.Tests.JsonParsing
             var json = JsonSerializer.Serialize(
                 new PbrMetallicRoughness { MetallicRoughnessTexture = new TextureInfo { Index = 1 } },
                 GltfRootSourceGenerator.Default.PbrMetallicRoughness);
-            Assert.AreEqual(@"{""metallicRoughnessTexture"":{""index"":1},""baseColorFactor"":[1,1,1,1]}", json);
+            Assert.AreEqual(@"{""metallicRoughnessTexture"":{""index"":1}}", json);
         }
 
         [Test]
@@ -1208,7 +1208,7 @@ namespace GLTFast.Tests.JsonParsing
             var json = JsonSerializer.Serialize(
                 new PbrMetallicRoughness { MetallicFactor = 0.25f },
                 GltfRootSourceGenerator.Default.PbrMetallicRoughness);
-            Assert.AreEqual(@"{""baseColorFactor"":[1,1,1,1],""metallicFactor"":0.25}", json);
+            Assert.AreEqual(@"{""metallicFactor"":0.25}", json);
         }
 
         [Test]
@@ -1217,14 +1217,14 @@ namespace GLTFast.Tests.JsonParsing
             var json = JsonSerializer.Serialize(
                 new PbrMetallicRoughness { RoughnessFactor = 0.5f },
                 GltfRootSourceGenerator.Default.PbrMetallicRoughness);
-            Assert.AreEqual(@"{""baseColorFactor"":[1,1,1,1],""roughnessFactor"":0.5}", json);
+            Assert.AreEqual(@"{""roughnessFactor"":0.5}", json);
         }
 
         [Test]
         public void PbrSpecularGlossinessDefault()
         {
             var json = JsonSerializer.Serialize(new PbrSpecularGlossiness(), GltfRootSourceGenerator.Default.PbrSpecularGlossiness);
-            Assert.AreEqual(@"{""diffuseFactor"":[1,1,1,1],""specularFactor"":[1,1,1]}", json);
+            Assert.AreEqual("{}", json);
         }
 
         [Test]
@@ -1233,7 +1233,7 @@ namespace GLTFast.Tests.JsonParsing
             var json = JsonSerializer.Serialize(
                 new PbrSpecularGlossiness { DiffuseFactor = new ColorAlpha(0.5f, 0.5f, 0.5f, 0.5f) },
                 GltfRootSourceGenerator.Default.PbrSpecularGlossiness);
-            Assert.AreEqual(@"{""diffuseFactor"":[0.5,0.5,0.5,0.5],""specularFactor"":[1,1,1]}", json);
+            Assert.AreEqual(@"{""diffuseFactor"":[0.5,0.5,0.5,0.5]}", json);
         }
 
         [Test]
@@ -1242,7 +1242,7 @@ namespace GLTFast.Tests.JsonParsing
             var json = JsonSerializer.Serialize(
                 new PbrSpecularGlossiness { DiffuseTexture = new TextureInfo { Index = 0 } },
                 GltfRootSourceGenerator.Default.PbrSpecularGlossiness);
-            Assert.AreEqual(@"{""diffuseFactor"":[1,1,1,1],""diffuseTexture"":{""index"":0},""specularFactor"":[1,1,1]}", json);
+            Assert.AreEqual(@"{""diffuseTexture"":{""index"":0}}", json);
         }
 
         [Test]
@@ -1251,7 +1251,7 @@ namespace GLTFast.Tests.JsonParsing
             var json = JsonSerializer.Serialize(
                 new PbrSpecularGlossiness { SpecularFactor = new Color(0.5f, 0.5f, 0.5f) },
                 GltfRootSourceGenerator.Default.PbrSpecularGlossiness);
-            Assert.AreEqual(@"{""diffuseFactor"":[1,1,1,1],""specularFactor"":[0.5,0.5,0.5]}", json);
+            Assert.AreEqual(@"{""specularFactor"":[0.5,0.5,0.5]}", json);
         }
 
         [Test]
@@ -1260,7 +1260,7 @@ namespace GLTFast.Tests.JsonParsing
             var json = JsonSerializer.Serialize(
                 new PbrSpecularGlossiness { GlossinessFactor = 0.5f },
                 GltfRootSourceGenerator.Default.PbrSpecularGlossiness);
-            Assert.AreEqual(@"{""diffuseFactor"":[1,1,1,1],""specularFactor"":[1,1,1],""glossinessFactor"":0.5}", json);
+            Assert.AreEqual(@"{""glossinessFactor"":0.5}", json);
         }
 
         [Test]
@@ -1269,7 +1269,7 @@ namespace GLTFast.Tests.JsonParsing
             var json = JsonSerializer.Serialize(
                 new PbrSpecularGlossiness { SpecularGlossinessTexture = new TextureInfo { Index = 0 } },
                 GltfRootSourceGenerator.Default.PbrSpecularGlossiness);
-            Assert.AreEqual(@"{""diffuseFactor"":[1,1,1,1],""specularFactor"":[1,1,1],""specularGlossinessTexture"":{""index"":0}}", json);
+            Assert.AreEqual(@"{""specularGlossinessTexture"":{""index"":0}}", json);
         }
 
         [Test]
@@ -1354,7 +1354,7 @@ namespace GLTFast.Tests.JsonParsing
         public void SheenDefault()
         {
             var json = JsonSerializer.Serialize(new Sheen(), GltfRootSourceGenerator.Default.Sheen);
-            Assert.AreEqual(@"{""sheenColorFactor"":[1,1,1]}", json);
+            Assert.AreEqual("{}", json);
         }
 
         [Test]
@@ -1368,7 +1368,7 @@ namespace GLTFast.Tests.JsonParsing
         public void SheenColorTexture()
         {
             var json = JsonSerializer.Serialize(
-                new Sheen { SheenColorTexture = new TextureInfo { Index = 0 } },
+                new Sheen { SheenColorFactor = Color.White, SheenColorTexture = new TextureInfo { Index = 0 } },
                 GltfRootSourceGenerator.Default.Sheen);
             Assert.AreEqual(@"{""sheenColorFactor"":[1,1,1],""sheenColorTexture"":{""index"":0}}", json);
         }
@@ -1377,7 +1377,7 @@ namespace GLTFast.Tests.JsonParsing
         public void SheenRoughnessFactor()
         {
             var json = JsonSerializer.Serialize(new Sheen { SheenRoughnessFactor = 0.5f }, GltfRootSourceGenerator.Default.Sheen);
-            Assert.AreEqual(@"{""sheenColorFactor"":[1,1,1],""sheenRoughnessFactor"":0.5}", json);
+            Assert.AreEqual(@"{""sheenRoughnessFactor"":0.5}", json);
         }
 
         [Test]
@@ -1386,21 +1386,21 @@ namespace GLTFast.Tests.JsonParsing
             var json = JsonSerializer.Serialize(
                 new Sheen { SheenRoughnessTexture = new TextureInfo { Index = 0 } },
                 GltfRootSourceGenerator.Default.Sheen);
-            Assert.AreEqual(@"{""sheenColorFactor"":[1,1,1],""sheenRoughnessTexture"":{""index"":0}}", json);
+            Assert.AreEqual(@"{""sheenRoughnessTexture"":{""index"":0}}", json);
         }
 
         [Test]
         public void MaterialSpecularDefault()
         {
             var json = JsonSerializer.Serialize(new MaterialSpecular(), GltfRootSourceGenerator.Default.MaterialSpecular);
-            Assert.AreEqual(@"{""specularColorFactor"":[1,1,1]}", json);
+            Assert.AreEqual("{}", json);
         }
 
         [Test]
         public void MaterialSpecularFactor()
         {
             var json = JsonSerializer.Serialize(new MaterialSpecular { SpecularFactor = 0.5f }, GltfRootSourceGenerator.Default.MaterialSpecular);
-            Assert.AreEqual(@"{""specularFactor"":0.5,""specularColorFactor"":[1,1,1]}", json);
+            Assert.AreEqual(@"{""specularFactor"":0.5}", json);
         }
 
         [Test]
@@ -1409,7 +1409,7 @@ namespace GLTFast.Tests.JsonParsing
             var json = JsonSerializer.Serialize(
                 new MaterialSpecular { SpecularTexture = new TextureInfo { Index = 0 } },
                 GltfRootSourceGenerator.Default.MaterialSpecular);
-            Assert.AreEqual(@"{""specularTexture"":{""index"":0},""specularColorFactor"":[1,1,1]}", json);
+            Assert.AreEqual(@"{""specularTexture"":{""index"":0}}", json);
         }
 
         [Test]
@@ -1427,7 +1427,7 @@ namespace GLTFast.Tests.JsonParsing
             var json = JsonSerializer.Serialize(
                 new MaterialSpecular { SpecularColorTexture = new TextureInfo { Index = 0 } },
                 GltfRootSourceGenerator.Default.MaterialSpecular);
-            Assert.AreEqual(@"{""specularColorFactor"":[1,1,1],""specularColorTexture"":{""index"":0}}", json);
+            Assert.AreEqual(@"{""specularColorTexture"":{""index"":0}}", json);
         }
 
         [Test]
@@ -1918,21 +1918,21 @@ namespace GLTFast.Tests.JsonParsing
             var json = JsonSerializer.Serialize(
                 new LightsPunctual { Lights = new List<LightPunctual> { new() { Type = LightType.Directional } } },
                 GltfRootSourceGenerator.Default.LightsPunctual);
-            Assert.AreEqual(@"{""lights"":[{""color"":[1,1,1],""type"":""directional""}]}", json);
+            Assert.AreEqual(@"{""lights"":[{""type"":""directional""}]}", json);
         }
 
         [Test]
         public void LightPunctualDefault()
         {
             var json = JsonSerializer.Serialize(new LightPunctual(), GltfRootSourceGenerator.Default.LightPunctual);
-            Assert.AreEqual(@"{""color"":[1,1,1]}", json);
+            Assert.AreEqual("{}", json);
         }
 
         [Test]
         public void LightPunctualName()
         {
             var json = JsonSerializer.Serialize(new LightPunctual { Name = "L" }, GltfRootSourceGenerator.Default.LightPunctual);
-            Assert.AreEqual(@"{""color"":[1,1,1],""name"":""L""}", json);
+            Assert.AreEqual(@"{""name"":""L""}", json);
         }
 
         [Test]
@@ -1946,21 +1946,21 @@ namespace GLTFast.Tests.JsonParsing
         public void LightPunctualIntensity()
         {
             var json = JsonSerializer.Serialize(new LightPunctual { Intensity = 2f }, GltfRootSourceGenerator.Default.LightPunctual);
-            Assert.AreEqual(@"{""color"":[1,1,1],""intensity"":2}", json);
+            Assert.AreEqual(@"{""intensity"":2}", json);
         }
 
         [Test]
         public void LightPunctualRange()
         {
             var json = JsonSerializer.Serialize(new LightPunctual { Range = 10f }, GltfRootSourceGenerator.Default.LightPunctual);
-            Assert.AreEqual(@"{""color"":[1,1,1],""range"":10}", json);
+            Assert.AreEqual(@"{""range"":10}", json);
         }
 
         [Test]
         public void LightPunctualSpot()
         {
             var json = JsonSerializer.Serialize(new LightPunctual { Spot = new SpotLight() }, GltfRootSourceGenerator.Default.LightPunctual);
-            Assert.AreEqual(@"{""color"":[1,1,1],""spot"":{}}", json);
+            Assert.AreEqual(@"{""spot"":{}}", json);
         }
 
         [Test]
@@ -1970,7 +1970,7 @@ namespace GLTFast.Tests.JsonParsing
         public void LightPunctualType(LightType value, string expected)
         {
             var json = JsonSerializer.Serialize(new LightPunctual { Type = value }, GltfRootSourceGenerator.Default.LightPunctual);
-            Assert.AreEqual($@"{{""color"":[1,1,1],""type"":""{expected}""}}", json);
+            Assert.AreEqual($@"{{""type"":""{expected}""}}", json);
         }
 
         [Test]

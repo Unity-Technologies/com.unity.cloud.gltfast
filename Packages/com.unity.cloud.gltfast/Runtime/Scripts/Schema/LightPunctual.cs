@@ -14,9 +14,16 @@ namespace GLTFast.Schema
         /// <summary>
         /// Light's color in linear space
         /// </summary>
-        [JsonPropertyName("color")]
-        [JsonConverter(typeof(ColorConverter))]
+        [JsonIgnore]
         public Color Color { get; set; } = Color.White;
+
+        [JsonPropertyName("color"), JsonInclude]
+        [JsonConverter(typeof(ColorConverter))]
+        internal Color? ColorSerialized
+        {
+            get => Color == Color.White ? null : Color;
+            set => Color = value ?? Color.White;
+        }
 
         /// <summary>
         /// Brightness of light in. The units that this is defined in depend on

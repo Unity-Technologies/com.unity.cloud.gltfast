@@ -151,7 +151,7 @@ namespace GLTFast.Tests.JsonParsing
         {
             var pbr = new PbrMetallicRoughness();
             var json = JsonSerializer.Serialize(pbr, GltfRootSourceGenerator.Default.PbrMetallicRoughness);
-            Assert.AreEqual(@"{""baseColorFactor"":[1,1,1,1]}", json);
+            Assert.AreEqual("{}", json);
         }
 
         [Test]

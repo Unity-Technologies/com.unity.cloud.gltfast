@@ -165,6 +165,7 @@ Affected fields:
 | `BufferView.Buffer`/`.ByteLength` | `int`, default `0` | `int`, default `Constants.UnsetIndex` |
 | `BufferViewMeshoptExtension.Buffer` (`MESHOPT_IS_RECENT`) | `int`, default `0` | `int`, default `Constants.UnsetIndex` |
 | `MaterialVariantsMapping.Material` | `int`, default `0` | `int`, default `Constants.UnsetIndex` |
+| `MeshPrimitiveDracoExtension.BufferView` | `int`, default `0` | `int`, default `Constants.UnsetIndex` |
 
 #### Reading
 

@@ -84,7 +84,10 @@ namespace GLTFast.Export
             }
 
             light.Color = uLight.color.linear;
-            light.Range = uLight.range;
+            if (lightType != LightType.Directional)
+            {
+                light.Range = uLight.range;
+            }
 
             // Set Light intensity
             switch (renderPipeline)
