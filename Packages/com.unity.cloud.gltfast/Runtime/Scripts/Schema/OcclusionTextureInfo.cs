@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using Unity.Gltfast.Text.Json.Serialization;
-using Unity.Mathematics;
 
 namespace GLTFast.Schema
 {

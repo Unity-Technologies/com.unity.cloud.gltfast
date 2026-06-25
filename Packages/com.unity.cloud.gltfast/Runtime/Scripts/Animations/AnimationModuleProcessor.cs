@@ -12,6 +12,7 @@ using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Profiling;
+using WrapMode = UnityEngine.WrapMode;
 
 namespace GLTFast.Animations
 {

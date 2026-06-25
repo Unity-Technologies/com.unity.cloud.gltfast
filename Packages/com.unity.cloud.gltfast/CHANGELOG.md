@@ -37,6 +37,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - `Camera.Type` ⇒ `CameraType`
     - `Material.AlphaMode` ⇒ `AlphaMode`
     - `MeshGpuInstancing.Attributes` ⇒ `InstancesAttributes`
+    - `Sampler.MagFilterMode` ⇒ `MagFilterMode` (promoted to top-level `GLTFast.Schema` enum)
+    - `Sampler.MinFilterMode` ⇒ `MinFilterMode` (promoted to top-level `GLTFast.Schema` enum)
+    - `Sampler.WrapMode` ⇒ `WrapMode` (promoted to top-level `GLTFast.Schema` enum)
     - Applied PascalCase on `MaterialIor.DefaultIndexOfRefraction`
   - Type changes
     - `float[]` ⇒ `List<float>`

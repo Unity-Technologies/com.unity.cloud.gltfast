@@ -529,43 +529,43 @@ namespace GLTFast.Tests.JsonParsing
 
             var sampler0 = gltf.Samplers[0];
             Assert.NotNull(sampler0);
-            Assert.AreEqual(Sampler.MagFilterMode.Undefined, sampler0.MagFilter);
-            Assert.AreEqual(Sampler.MinFilterMode.Undefined, sampler0.MinFilter);
+            Assert.AreEqual(MagFilterMode.Undefined, sampler0.MagFilter);
+            Assert.AreEqual(MinFilterMode.Undefined, sampler0.MinFilter);
 
             var sampler1 = gltf.Samplers[1];
             Assert.NotNull(sampler1);
-            Assert.AreEqual((Sampler.MagFilterMode)100, sampler1.MagFilter);
-            Assert.AreEqual((Sampler.MinFilterMode)100, sampler1.MinFilter);
+            Assert.AreEqual((MagFilterMode)100, sampler1.MagFilter);
+            Assert.AreEqual((MinFilterMode)100, sampler1.MinFilter);
 
             var sampler2 = gltf.Samplers[2];
             Assert.NotNull(sampler2);
-            Assert.AreEqual(Sampler.MagFilterMode.Nearest, sampler2.MagFilter);
-            Assert.AreEqual(Sampler.MinFilterMode.Nearest, sampler2.MinFilter);
+            Assert.AreEqual(MagFilterMode.Nearest, sampler2.MagFilter);
+            Assert.AreEqual(MinFilterMode.Nearest, sampler2.MinFilter);
 
             var sampler3 = gltf.Samplers[3];
             Assert.NotNull(sampler3);
-            Assert.AreEqual(Sampler.MagFilterMode.Linear, sampler3.MagFilter);
-            Assert.AreEqual(Sampler.MinFilterMode.Linear, sampler3.MinFilter);
+            Assert.AreEqual(MagFilterMode.Linear, sampler3.MagFilter);
+            Assert.AreEqual(MinFilterMode.Linear, sampler3.MinFilter);
 
             var sampler4 = gltf.Samplers[4];
             Assert.NotNull(sampler4);
-            Assert.AreEqual(Sampler.MagFilterMode.Undefined, sampler4.MagFilter);
-            Assert.AreEqual(Sampler.MinFilterMode.NearestMipmapNearest, sampler4.MinFilter);
+            Assert.AreEqual(MagFilterMode.Undefined, sampler4.MagFilter);
+            Assert.AreEqual(MinFilterMode.NearestMipmapNearest, sampler4.MinFilter);
 
             var sampler5 = gltf.Samplers[5];
             Assert.NotNull(sampler5);
-            Assert.AreEqual(Sampler.MagFilterMode.Undefined, sampler5.MagFilter);
-            Assert.AreEqual(Sampler.MinFilterMode.LinearMipmapNearest, sampler5.MinFilter);
+            Assert.AreEqual(MagFilterMode.Undefined, sampler5.MagFilter);
+            Assert.AreEqual(MinFilterMode.LinearMipmapNearest, sampler5.MinFilter);
 
             var sampler6 = gltf.Samplers[6];
             Assert.NotNull(sampler6);
-            Assert.AreEqual(Sampler.MagFilterMode.Undefined, sampler6.MagFilter);
-            Assert.AreEqual(Sampler.MinFilterMode.NearestMipmapLinear, sampler6.MinFilter);
+            Assert.AreEqual(MagFilterMode.Undefined, sampler6.MagFilter);
+            Assert.AreEqual(MinFilterMode.NearestMipmapLinear, sampler6.MinFilter);
 
             var sampler7 = gltf.Samplers[7];
             Assert.NotNull(sampler7);
-            Assert.AreEqual(Sampler.MagFilterMode.Undefined, sampler7.MagFilter);
-            Assert.AreEqual(Sampler.MinFilterMode.LinearMipmapLinear, sampler7.MinFilter);
+            Assert.AreEqual(MagFilterMode.Undefined, sampler7.MagFilter);
+            Assert.AreEqual(MinFilterMode.LinearMipmapLinear, sampler7.MinFilter);
         }
 
         static void AssertUnknownNodeExtensionResult(Root gltf)

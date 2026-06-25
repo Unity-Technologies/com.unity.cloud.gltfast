@@ -13,6 +13,7 @@ using Camera = GLTFast.Schema.Camera;
 using CameraType = GLTFast.Schema.CameraType;
 using LightType = GLTFast.Schema.LightType;
 using Material = GLTFast.Schema.Material;
+using WrapMode = GLTFast.Schema.WrapMode;
 
 namespace GLTFast.Tests.JsonParsing
 {
@@ -491,9 +492,9 @@ namespace GLTFast.Tests.JsonParsing
             Assert.NotNull(gltf);
             Assert.NotNull(gltf.Samplers);
             Assert.AreEqual(1, gltf.Samplers.Count);
-            Assert.AreEqual(Sampler.MagFilterMode.Nearest, gltf.Samplers[0].MagFilter);
-            Assert.AreEqual(Sampler.WrapMode.MirroredRepeat, gltf.Samplers[0].WrapS);
-            Assert.AreEqual(Sampler.WrapMode.Undefined, gltf.Samplers[0].WrapT);
+            Assert.AreEqual(MagFilterMode.Nearest, gltf.Samplers[0].MagFilter);
+            Assert.AreEqual(WrapMode.MirroredRepeat, gltf.Samplers[0].WrapS);
+            Assert.AreEqual(WrapMode.Undefined, gltf.Samplers[0].WrapT);
         }
 
         const string k_EnumTypesJson = @"

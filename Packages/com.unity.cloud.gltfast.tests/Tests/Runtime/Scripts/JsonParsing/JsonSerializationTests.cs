@@ -53,11 +53,11 @@ namespace GLTFast.Tests.JsonParsing
         }
 
         [Test]
-        [TestCase(null, Sampler.WrapMode.Undefined)]
-        [TestCase(null, Sampler.WrapMode.Repeat)]
-        [TestCase(33071, Sampler.WrapMode.ClampToEdge)]
-        [TestCase(33648, Sampler.WrapMode.MirroredRepeat)]
-        public void SamplerWrapS(int? expected, Sampler.WrapMode value)
+        [TestCase(null, WrapMode.Undefined)]
+        [TestCase(null, WrapMode.Repeat)]
+        [TestCase(33071, WrapMode.ClampToEdge)]
+        [TestCase(33648, WrapMode.MirroredRepeat)]
+        public void SamplerWrapS(int? expected, WrapMode value)
         {
             var obj = new Sampler { WrapS = value };
             var json = JsonSerializer.Serialize(obj, GltfRootSourceGenerator.Default.Sampler);
@@ -65,11 +65,11 @@ namespace GLTFast.Tests.JsonParsing
         }
 
         [Test]
-        [TestCase(null, Sampler.WrapMode.Undefined)]
-        [TestCase(null, Sampler.WrapMode.Repeat)]
-        [TestCase(33071, Sampler.WrapMode.ClampToEdge)]
-        [TestCase(33648, Sampler.WrapMode.MirroredRepeat)]
-        public void SamplerWrapT(int? expected, Sampler.WrapMode value)
+        [TestCase(null, WrapMode.Undefined)]
+        [TestCase(null, WrapMode.Repeat)]
+        [TestCase(33071, WrapMode.ClampToEdge)]
+        [TestCase(33648, WrapMode.MirroredRepeat)]
+        public void SamplerWrapT(int? expected, WrapMode value)
         {
             var obj = new Sampler { WrapT = value };
             var json = JsonSerializer.Serialize(obj, GltfRootSourceGenerator.Default.Sampler);
@@ -85,10 +85,10 @@ namespace GLTFast.Tests.JsonParsing
         }
 
         [Test]
-        [TestCase(Sampler.MagFilterMode.Undefined, "{}")]
-        [TestCase(Sampler.MagFilterMode.Nearest, @"{""magFilter"":9728}")]
-        [TestCase(Sampler.MagFilterMode.Linear, @"{""magFilter"":9729}")]
-        public void SamplerMagFilter(Sampler.MagFilterMode value, string expected)
+        [TestCase(MagFilterMode.Undefined, "{}")]
+        [TestCase(MagFilterMode.Nearest, @"{""magFilter"":9728}")]
+        [TestCase(MagFilterMode.Linear, @"{""magFilter"":9729}")]
+        public void SamplerMagFilter(MagFilterMode value, string expected)
         {
             var obj = new Sampler { MagFilter = value };
             var json = JsonSerializer.Serialize(obj, GltfRootSourceGenerator.Default.Sampler);
@@ -96,14 +96,14 @@ namespace GLTFast.Tests.JsonParsing
         }
 
         [Test]
-        [TestCase(Sampler.MinFilterMode.Undefined, "{}")]
-        [TestCase(Sampler.MinFilterMode.Nearest, @"{""minFilter"":9728}")]
-        [TestCase(Sampler.MinFilterMode.Linear, @"{""minFilter"":9729}")]
-        [TestCase(Sampler.MinFilterMode.NearestMipmapNearest, @"{""minFilter"":9984}")]
-        [TestCase(Sampler.MinFilterMode.LinearMipmapNearest, @"{""minFilter"":9985}")]
-        [TestCase(Sampler.MinFilterMode.NearestMipmapLinear, @"{""minFilter"":9986}")]
-        [TestCase(Sampler.MinFilterMode.LinearMipmapLinear, @"{""minFilter"":9987}")]
-        public void SamplerMinFilter(Sampler.MinFilterMode value, string expected)
+        [TestCase(MinFilterMode.Undefined, "{}")]
+        [TestCase(MinFilterMode.Nearest, @"{""minFilter"":9728}")]
+        [TestCase(MinFilterMode.Linear, @"{""minFilter"":9729}")]
+        [TestCase(MinFilterMode.NearestMipmapNearest, @"{""minFilter"":9984}")]
+        [TestCase(MinFilterMode.LinearMipmapNearest, @"{""minFilter"":9985}")]
+        [TestCase(MinFilterMode.NearestMipmapLinear, @"{""minFilter"":9986}")]
+        [TestCase(MinFilterMode.LinearMipmapLinear, @"{""minFilter"":9987}")]
+        public void SamplerMinFilter(MinFilterMode value, string expected)
         {
             var obj = new Sampler { MinFilter = value };
             var json = JsonSerializer.Serialize(obj, GltfRootSourceGenerator.Default.Sampler);
@@ -268,7 +268,7 @@ namespace GLTFast.Tests.JsonParsing
         public void RootSamplers()
         {
             var json = JsonSerializer.Serialize(
-                new Root { Samplers = new List<Sampler> { new() { MagFilter = Sampler.MagFilterMode.Nearest } } },
+                new Root { Samplers = new List<Sampler> { new() { MagFilter = MagFilterMode.Nearest } } },
                 GltfRootSourceGenerator.Default.Root);
             Assert.AreEqual(@"{""samplers"":[{""magFilter"":9728}]}", json);
         }

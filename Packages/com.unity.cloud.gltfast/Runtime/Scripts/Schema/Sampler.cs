@@ -14,55 +14,6 @@ namespace GLTFast.Schema
     public class Sampler : NamedObject, IGltfObject
     {
         /// <summary>
-        /// Magnification filter mode.
-        /// </summary>
-        public enum MagFilterMode
-        {
-            /// <summary>Undefined</summary>
-            Undefined = 0,
-            /// <summary>Nearest pixel sampling</summary>
-            Nearest = 9728,
-            /// <summary>Linear pixel interpolation sampling</summary>
-            Linear = 9729,
-        }
-
-        /// <summary>
-        /// Minification filter mode.
-        /// </summary>
-        public enum MinFilterMode
-        {
-            /// <summary>Undefined</summary>
-            Undefined = 0,
-            /// <summary>Nearest pixel sampling</summary>
-            Nearest = 9728,
-            /// <summary>Linear pixel interpolation sampling</summary>
-            Linear = 9729,
-            /// <summary>Nearest pixel and nearest mipmap sampling</summary>
-            NearestMipmapNearest = 9984,
-            /// <summary>Linear pixel interpolation and nearest mipmap sampling</summary>
-            LinearMipmapNearest = 9985,
-            /// <summary>Nearest pixel and linear mipmap interpolation sampling</summary>
-            NearestMipmapLinear = 9986,
-            /// <summary>Linear pixel interpolation and linear mipmap interpolation sampling</summary>
-            LinearMipmapLinear = 9987
-        }
-
-        /// <summary>
-        /// Texture wrap mode.
-        /// </summary>
-        public enum WrapMode
-        {
-            /// <summary>Undefined</summary>
-            Undefined = 0,
-            /// <summary>Clamp to edge</summary>
-            ClampToEdge = 33071,
-            /// <summary>Mirrored repeat</summary>
-            MirroredRepeat = 33648,
-            /// <summary>Repeat</summary>
-            Repeat = 10497
-        }
-
-        /// <summary>
         /// Magnification filter.
         /// Valid values correspond to WebGL enums: `9728` (NEAREST) and `9729` (LINEAR).
         /// </summary>

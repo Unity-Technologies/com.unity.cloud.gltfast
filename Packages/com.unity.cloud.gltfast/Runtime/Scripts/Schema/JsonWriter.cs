@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Assertions;
 

@@ -3,7 +3,6 @@
 
 using System;
 using Unity.Gltfast.Text.Json.Serialization;
-using Unity.Mathematics;
 using UnityEngine;
 
 namespace GLTFast.Schema

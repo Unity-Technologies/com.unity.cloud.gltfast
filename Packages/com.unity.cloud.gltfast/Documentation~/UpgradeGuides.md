@@ -288,6 +288,19 @@ writer.AddNode(children: children);
 
 Custom subclasses or implementations of these interfaces and delegates need to update their member signatures to match.
 
+### `Sampler` nested enums promoted to top-level
+
+`Sampler.MagFilterMode`, `Sampler.MinFilterMode` and `Sampler.WrapMode` used to be nested inside the [Sampler](xref:GLTFast.Schema.Sampler) class. They are now top-level enums in the `GLTFast.Schema` namespace, matching every other glTF schema enum (`AlphaMode`, `CameraType`, `PrimitiveMode`, …). Qualified references and `using` aliases must drop the `Sampler.` prefix.
+
+| Before | After |
+| ------ | ----- |
+| `Sampler.MagFilterMode` | `MagFilterMode` |
+| `Sampler.MinFilterMode` | `MinFilterMode` |
+| `Sampler.WrapMode` | `WrapMode` |
+| `using MagFilterMode = GLTFast.Schema.Sampler.MagFilterMode;` | `using MagFilterMode = GLTFast.Schema.MagFilterMode;` (and likewise for `MinFilterMode`/`WrapMode`) |
+
+Enum member names and underlying values are unchanged, so assignments such as `sampler.MagFilter = MagFilterMode.Linear;` keep working with the import already in scope.
+
 ### `Asset.Name` removed
 
 [Asset](xref:GLTFast.Schema.Asset) no longer derives from `NamedObject` and therefore no longer carries a `Name` property. The glTF 2.0 specification's `asset` object is not a "child of root" property and does not define a `name` field. Any code reading or writing `asset.Name` must be removed.

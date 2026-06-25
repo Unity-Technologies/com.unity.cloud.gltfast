@@ -30,29 +30,29 @@ namespace GLTFast.Tests.JsonParsing
         }
 
         [Test]
-        [TestCase(null, Sampler.WrapMode.Repeat)]
-        [TestCase(33071, Sampler.WrapMode.ClampToEdge)]
-        [TestCase(33648, Sampler.WrapMode.MirroredRepeat)]
-        [TestCase(10497, Sampler.WrapMode.Repeat)]
-        public void SamplerWrapS(int? written, Sampler.WrapMode value)
+        [TestCase(null, WrapMode.Repeat)]
+        [TestCase(33071, WrapMode.ClampToEdge)]
+        [TestCase(33648, WrapMode.MirroredRepeat)]
+        [TestCase(10497, WrapMode.Repeat)]
+        public void SamplerWrapS(int? written, WrapMode value)
         {
             var json = written.HasValue ? $@"{{""wrapS"":{written}}}" : "{}";
             var obj = JsonSerializer.Deserialize(json, GltfRootSourceGenerator.Default.Sampler);
             Assert.AreEqual(value, obj.WrapS);
-            Assert.AreEqual(Sampler.WrapMode.Repeat, obj.WrapT);
+            Assert.AreEqual(WrapMode.Repeat, obj.WrapT);
         }
 
         [Test]
-        [TestCase(null, Sampler.WrapMode.Repeat)]
-        [TestCase(33071, Sampler.WrapMode.ClampToEdge)]
-        [TestCase(33648, Sampler.WrapMode.MirroredRepeat)]
-        [TestCase(10497, Sampler.WrapMode.Repeat)]
-        public void SamplerWrapT(int? written, Sampler.WrapMode value)
+        [TestCase(null, WrapMode.Repeat)]
+        [TestCase(33071, WrapMode.ClampToEdge)]
+        [TestCase(33648, WrapMode.MirroredRepeat)]
+        [TestCase(10497, WrapMode.Repeat)]
+        public void SamplerWrapT(int? written, WrapMode value)
         {
             var json = written.HasValue ? $@"{{""wrapT"":{written}}}" : "{}";
             var obj = JsonSerializer.Deserialize(json, GltfRootSourceGenerator.Default.Sampler);
             Assert.AreEqual(value, obj.WrapT);
-            Assert.AreEqual(Sampler.WrapMode.Repeat, obj.WrapS);
+            Assert.AreEqual(WrapMode.Repeat, obj.WrapS);
         }
 
         [Test]
@@ -72,10 +72,10 @@ namespace GLTFast.Tests.JsonParsing
             var obj = JsonSerializer.Deserialize("{}", GltfRootSourceGenerator.Default.Sampler);
             Assert.IsNotNull(obj);
             Assert.IsNull(obj.Name);
-            Assert.AreEqual(Sampler.MagFilterMode.Undefined, obj.MagFilter);
-            Assert.AreEqual(Sampler.MinFilterMode.Undefined, obj.MinFilter);
-            Assert.AreEqual(Sampler.WrapMode.Repeat, obj.WrapS);
-            Assert.AreEqual(Sampler.WrapMode.Repeat, obj.WrapT);
+            Assert.AreEqual(MagFilterMode.Undefined, obj.MagFilter);
+            Assert.AreEqual(MinFilterMode.Undefined, obj.MinFilter);
+            Assert.AreEqual(WrapMode.Repeat, obj.WrapS);
+            Assert.AreEqual(WrapMode.Repeat, obj.WrapT);
         }
 
         [Test]
@@ -86,22 +86,22 @@ namespace GLTFast.Tests.JsonParsing
         }
 
         [Test]
-        [TestCase(9728, Sampler.MagFilterMode.Nearest)]
-        [TestCase(9729, Sampler.MagFilterMode.Linear)]
-        public void SamplerMagFilter(int written, Sampler.MagFilterMode expected)
+        [TestCase(9728, MagFilterMode.Nearest)]
+        [TestCase(9729, MagFilterMode.Linear)]
+        public void SamplerMagFilter(int written, MagFilterMode expected)
         {
             var obj = JsonSerializer.Deserialize($@"{{""magFilter"":{written}}}", GltfRootSourceGenerator.Default.Sampler);
             Assert.AreEqual(expected, obj.MagFilter);
         }
 
         [Test]
-        [TestCase(9728, Sampler.MinFilterMode.Nearest)]
-        [TestCase(9729, Sampler.MinFilterMode.Linear)]
-        [TestCase(9984, Sampler.MinFilterMode.NearestMipmapNearest)]
-        [TestCase(9985, Sampler.MinFilterMode.LinearMipmapNearest)]
-        [TestCase(9986, Sampler.MinFilterMode.NearestMipmapLinear)]
-        [TestCase(9987, Sampler.MinFilterMode.LinearMipmapLinear)]
-        public void SamplerMinFilter(int written, Sampler.MinFilterMode expected)
+        [TestCase(9728, MinFilterMode.Nearest)]
+        [TestCase(9729, MinFilterMode.Linear)]
+        [TestCase(9984, MinFilterMode.NearestMipmapNearest)]
+        [TestCase(9985, MinFilterMode.LinearMipmapNearest)]
+        [TestCase(9986, MinFilterMode.NearestMipmapLinear)]
+        [TestCase(9987, MinFilterMode.LinearMipmapLinear)]
+        public void SamplerMinFilter(int written, MinFilterMode expected)
         {
             var obj = JsonSerializer.Deserialize($@"{{""minFilter"":{written}}}", GltfRootSourceGenerator.Default.Sampler);
             Assert.AreEqual(expected, obj.MinFilter);
@@ -318,7 +318,7 @@ namespace GLTFast.Tests.JsonParsing
         {
             var obj = JsonSerializer.Deserialize(@"{""samplers"":[{""magFilter"":9728}]}", GltfRootSourceGenerator.Default.Root);
             Assert.AreEqual(1, obj.Samplers.Count);
-            Assert.AreEqual(Sampler.MagFilterMode.Nearest, obj.Samplers[0].MagFilter);
+            Assert.AreEqual(MagFilterMode.Nearest, obj.Samplers[0].MagFilter);
         }
 
         [Test]
@@ -1595,6 +1595,17 @@ namespace GLTFast.Tests.JsonParsing
             {
                 Assert.AreEqual(10 + i, obj.GetTexCoord(i));
             }
+
+#pragma warning disable CS0618 // Type or member is obsolete
+            Assert.IsTrue(obj.TryGetAllUVAccessors(out var oldAccessors, out var limitExceeded));
+#pragma warning restore CS0618 // Type or member is obsolete
+            Assert.IsTrue(limitExceeded);
+            Assert.NotNull(oldAccessors);
+            Assert.AreEqual(8, oldAccessors.Length);
+            for (var i = 0; i < 8; i++)
+            {
+                Assert.AreEqual(10 + i, oldAccessors[i]);
+            }
         }
 
         [Test]
@@ -1607,6 +1618,16 @@ namespace GLTFast.Tests.JsonParsing
             Assert.IsFalse(obj.GetTexCoord(0).HasValue);
             Assert.IsFalse(obj.GetTexCoord(1).HasValue);
             Assert.AreEqual(7, obj.GetTexCoord(2));
+
+#pragma warning disable CS0618 // Type or member is obsolete
+            Assert.IsTrue(obj.TryGetAllUVAccessors(out var oldAccessors, out var limitExceeded));
+#pragma warning restore CS0618 // Type or member is obsolete
+            Assert.IsFalse(limitExceeded);
+            Assert.NotNull(oldAccessors);
+            Assert.AreEqual(3, oldAccessors.Length);
+            Assert.AreEqual(-1, oldAccessors[0]);
+            Assert.AreEqual(-1, oldAccessors[1]);
+            Assert.AreEqual(7, oldAccessors[2]);
         }
 
         [Test]
