@@ -114,8 +114,8 @@ namespace GLTFast.Schema
         /// applied.
         /// </summary>
         [JsonPropertyName("max")]
-        [JsonConverter(typeof(FloatListConverter))]
-        public List<float> Max { get; set; }
+        [JsonConverter(typeof(DoubleListConverter))]
+        public List<double> Max { get; set; }
 
         /// <summary>
         /// Minimum value of each component in this attribute.
@@ -132,8 +132,8 @@ namespace GLTFast.Schema
         /// applied.
         /// </summary>
         [JsonPropertyName("min")]
-        [JsonConverter(typeof(FloatListConverter))]
-        public List<float> Min { get; set; }
+        [JsonConverter(typeof(DoubleListConverter))]
+        public List<double> Min { get; set; }
 
         /// <summary>
         /// Provides size of components by type
@@ -245,8 +245,8 @@ namespace GLTFast.Schema
             Assert.AreEqual(AccessorType.Vector3, Type.Value);
             if (Min is { Count: > 2 } && Max is { Count: > 2 })
             {
-                var maxBounds = new float3(-Min[0], Max[1], Max[2]);
-                var minBounds = new float3(-Max[0], Min[1], Min[2]);
+                var maxBounds = new double3(-Min[0], Max[1], Max[2]);
+                var minBounds = new double3(-Max[0], Min[1], Min[2]);
                 if (Normalized)
                 {
                     switch (ComponentType)
@@ -275,8 +275,8 @@ namespace GLTFast.Schema
                 }
                 return new Bounds
                 {
-                    max = maxBounds,
-                    min = minBounds
+                    max = maxBounds.ToVector3(),
+                    min = minBounds.ToVector3()
                 };
             }
             return null;

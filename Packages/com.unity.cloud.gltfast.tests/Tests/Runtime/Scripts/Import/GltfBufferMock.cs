@@ -21,8 +21,8 @@ namespace GLTFast.Tests
                 Sparse = index == sparseAccessorIndex
                     ? new AccessorSparse()
                     : null,
-                Min = new List<float> { -1, -1, -1 },
-                Max = new List<float> { 1, 1, 1 }
+                Min = new List<double> { -1, -1, -1 },
+                Max = new List<double> { 1, 1, 1 }
             };
         }
 

@@ -45,6 +45,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - `float[]` ⇒ `List<float>`
       - `Node.Weights`
       - `Mesh.Weights`
+    - `float[]` ⇒ `List<double>` (higher precision in preparation for double-precision component types in glTF 2.1)
       - `Accessor.Max`
       - `Accessor.Min`
     - `TEnum` ⇒ `EnumOrRawValue<TEnum>` (to preserve unknown values introduced by glTF extensions)

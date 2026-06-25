@@ -469,14 +469,14 @@ namespace GLTFast.Tests.JsonParsing
         [Test]
         public void AccessorMax()
         {
-            var json = JsonSerializer.Serialize(new Accessor { Max = new List<float> { 1f, 2f, 3f } }, GltfRootSourceGenerator.Default.Accessor);
+            var json = JsonSerializer.Serialize(new Accessor { Max = new List<double> { 1f, 2f, 3f } }, GltfRootSourceGenerator.Default.Accessor);
             Assert.AreEqual(@"{""max"":[1,2,3]}", json);
         }
 
         [Test]
         public void AccessorMin()
         {
-            var json = JsonSerializer.Serialize(new Accessor { Min = new List<float> { 0f, 0f, 0f } }, GltfRootSourceGenerator.Default.Accessor);
+            var json = JsonSerializer.Serialize(new Accessor { Min = new List<double> { 0f, 0f, 0f } }, GltfRootSourceGenerator.Default.Accessor);
             Assert.AreEqual(@"{""min"":[0,0,0]}", json);
         }
 

@@ -289,6 +289,16 @@ writer.AddNode(children: children);
 
 Custom subclasses or implementations of these interfaces and delegates need to update their member signatures to match.
 
+### `Accessor.Min`/`Accessor.Max` typed as `List<double>`
+
+[Accessor.Min](xref:GLTFast.Schema.Accessor.Min) and [Accessor.Max](xref:GLTFast.Schema.Accessor.Max) changed from `float[]` to `List<double>`. The wider element type preserves the precision of accessors whose component type is `5130` (double, introduced by the forthcoming glTF 2.1 specification) and avoids a lossy round-trip for values that exceed `float` precision.
+
+| Before | After |
+| ------ | ----- |
+| `accessor.Min = new[] { -1f, -1f, -1f };` | `accessor.Min = new List<double> { -1, -1, -1 };` |
+| `var x = accessor.Max[0];` (was `float`) | `var x = accessor.Max[0];` (now `double`) — cast to `float` at the point of use if needed |
+| `accessor.Min.Length` | `accessor.Min.Count` |
+
 ### `Sampler` nested enums promoted to top-level
 
 `Sampler.MagFilterMode`, `Sampler.MinFilterMode` and `Sampler.WrapMode` used to be nested inside the [Sampler](xref:GLTFast.Schema.Sampler) class. They are now top-level enums in the `GLTFast.Schema` namespace, matching every other glTF schema enum (`AlphaMode`, `CameraType`, `PrimitiveMode`, …). Qualified references and `using` aliases must drop the `Sampler.` prefix.
