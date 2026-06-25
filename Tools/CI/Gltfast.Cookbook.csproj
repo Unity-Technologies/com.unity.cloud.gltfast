@@ -10,7 +10,7 @@
     <ItemGroup>
       <PackageReference Include="RecipeEngine.Modules.UnifiedTestRunner" Version="8.4.0" />
       <PackageReference Include="RecipeEngine.Modules.UnityEditor" Version="7.1.0" />
-      <PackageReference Include="RecipeEngine.Modules.Wrench" Version="3.2.0" />
+      <PackageReference Include="RecipeEngine.Modules.Wrench" Version="3.2.1" />
     </ItemGroup>
 
 </Project>
