@@ -58,6 +58,62 @@ namespace GLTFast.Editor.Tests.Export
             yield return AsyncWrapper.WaitForTask(task);
         }
 
+        [Test]
+        public void ExportForceSync()
+        {
+            const string name = "ExportForceSync";
+            var cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            cube.name = name;
+            var path = Path.Combine(Application.temporaryCachePath, $"{name}.gltf");
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
+
+            try
+            {
+                var export = new global::GLTFast.Export.GameObjectExport();
+                Assert.IsTrue(export.AddScene(new[] { cube }, name));
+
+                var task = export.SaveToFileAndDispose(path, forceSync: true);
+                Assert.IsTrue(task.IsCompleted, "SaveToFileAndDispose(forceSync: true) should complete synchronously.");
+                Assert.IsTrue(task.Result, "Export returned false.");
+                FileAssert.Exists(path);
+            }
+            finally
+            {
+                Object.DestroyImmediate(cube);
+            }
+        }
+
+        [Test]
+        public void ExportStreamForceSync()
+        {
+            const string name = "ExportStreamForceSync";
+            var cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            cube.name = name;
+
+            try
+            {
+                var settings = new global::GLTFast.Export.ExportSettings
+                {
+                    Format = global::GLTFast.Export.GltfFormat.Binary
+                };
+                var export = new global::GLTFast.Export.GameObjectExport(settings);
+                Assert.IsTrue(export.AddScene(new[] { cube }, name));
+
+                using var stream = new MemoryStream();
+                var task = export.SaveToStreamAndDispose(stream, forceSync: true);
+                Assert.IsTrue(task.IsCompleted, "SaveToStreamAndDispose(forceSync: true) should complete synchronously.");
+                Assert.IsTrue(task.Result, "Export returned false.");
+                Assert.Greater(stream.Length, 0, "Expected stream to contain exported glTF data.");
+            }
+            finally
+            {
+                Object.DestroyImmediate(cube);
+            }
+        }
+
         static async Task ExportObjects(
             string name,
             GameObject[] gameObjects,
