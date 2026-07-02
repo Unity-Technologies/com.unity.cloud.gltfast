@@ -48,6 +48,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - `float[]` ⇒ `List<double>` (higher precision in preparation for double-precision component types in glTF 2.1)
       - `Accessor.Max`
       - `Accessor.Min`
+    - Fixed-size `double[]`, `float[]` ⇒ nullable `Unity.Mathematics` value-type structs (eliminates per-transform heap allocations; `null` represents an absent property)
+      - [Node.Translation](xref:GLTFast.Schema.Node.Translation) and [Node.Scale](xref:GLTFast.Schema.Node.Scale) ⇒ `double3?`
+      - [Node.Rotation](xref:GLTFast.Schema.Node.Rotation) ⇒ `double4?`
+      - [Node.Matrix](xref:GLTFast.Schema.Node.Matrix) ⇒ `double4x4?`
+      - [TextureTransform.Offset](xref:GLTFast.Schema.TextureTransform.Offset) ⇒ `float2?`
+      - [TextureTransform.Scale](xref:GLTFast.Schema.TextureTransform.Scale) ⇒ `float2?`
     - `TEnum` ⇒ `EnumOrRawValue<TEnum>` (to preserve unknown values introduced by glTF extensions)
       - `Accessor.Type`
       - `AnimationChannelTarget.Path`
@@ -60,7 +66,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - `string[]` ⇒ `List<`[EnumOrRawValue&lt;Extension&gt;](xref:GLTFast.Schema.EnumOrRawValue`1)`>`
       - [Root.ExtensionsUsed](xref:GLTFast.Schema.Root.ExtensionsUsed)
       - [Root.ExtensionsRequired](xref:GLTFast.Schema.Root.ExtensionsRequired)
-    - `T[]` ⇒ `List<T>` for the remaining variable-length collection properties in `GLTFast.Schema`. Fixed-size mathematical arrays (`Node.Matrix`/`.Rotation`/`.Scale`/`.Translation`, `TextureTransform.Offset`/`.Scale`) are unchanged.
+    - `T[]` ⇒ `List<T>` for the remaining variable-length collection properties in `GLTFast.Schema`.
       - [LightsPunctual.Lights](xref:GLTFast.Schema.LightsPunctual.Lights)
       - `MaterialVariantsMapping.Variants`
       - `MeshExtras.TargetNames`

@@ -302,7 +302,7 @@ namespace GLTFast.Export
             if (math.abs(st.z) >= float.Epsilon || math.abs(st.w) >= float.Epsilon)
             {
                 result ??= new TextureTransform();
-                result.Offset = new[] { st.z, st.w };
+                result.Offset = new float2(st.z, st.w);
             }
 
             var uvTransform = UvTransform.FromMatrix(new float2x2(st.x, st.y, r.x, r.y));
@@ -317,7 +317,7 @@ namespace GLTFast.Export
                 || math.abs(uvTransform.scale.y - 1) > math.EPSILON)
             {
                 result ??= new TextureTransform();
-                result.Scale = new[] { uvTransform.scale[0], uvTransform.scale[1] };
+                result.Scale = uvTransform.scale;
             }
 
             if (result != null)

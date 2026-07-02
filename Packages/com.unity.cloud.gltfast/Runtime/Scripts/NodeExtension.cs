@@ -2,8 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using Unity.Mathematics;
-using UnityEngine;
-using UnityEngine.Assertions;
 
 namespace GLTFast
 {
@@ -35,25 +33,26 @@ namespace GLTFast
             rotation = Mathematics.k_QuaternionIdentity;
             scale = Mathematics.k_Double3One;
 
-            if (node.Matrix != null)
+            if (node.Matrix.HasValue)
             {
+                var src = node.Matrix.Value;
                 var m = new double4x4(
-                    node.Matrix[0],
-                    -node.Matrix[4],
-                    -node.Matrix[8],
-                    -node.Matrix[12],
-                    -node.Matrix[1],
-                    node.Matrix[5],
-                    node.Matrix[9],
-                    node.Matrix[13],
-                    -node.Matrix[2],
-                    node.Matrix[6],
-                    node.Matrix[10],
-                    node.Matrix[14],
-                    node.Matrix[3],
-                    node.Matrix[7],
-                    node.Matrix[11],
-                    node.Matrix[15]
+                    src.c0.x,
+                    -src.c1.x,
+                    -src.c2.x,
+                    -src.c3.x,
+                    -src.c0.y,
+                    src.c1.y,
+                    src.c2.y,
+                    src.c3.y,
+                    -src.c0.z,
+                    src.c1.z,
+                    src.c2.z,
+                    src.c3.z,
+                    src.c0.w,
+                    src.c1.w,
+                    src.c2.w,
+                    src.c3.w
                 );
 
                 m.Decompose(out var t, out var r, out var s);
@@ -64,33 +63,28 @@ namespace GLTFast
             }
             else
             {
-                if (node.Translation != null)
+                if (node.Translation.HasValue)
                 {
-                    Assert.AreEqual(node.Translation.Length, 3);
+                    var t = node.Translation.Value;
                     position = new double3(
-                        -node.Translation[0],
-                        node.Translation[1],
-                        node.Translation[2]
+                        -t.x,
+                        t.y,
+                        t.z
                     );
                 }
-                if (node.Rotation != null)
+                if (node.Rotation.HasValue)
                 {
-                    Assert.AreEqual(node.Rotation.Length, 4);
+                    var r = node.Rotation.Value;
                     rotation = new double4(
-                        node.Rotation[0],
-                        -node.Rotation[1],
-                        -node.Rotation[2],
-                        node.Rotation[3]
+                        r.x,
+                        -r.y,
+                        -r.z,
+                        r.w
                     );
                 }
-                if (node.Scale != null)
+                if (node.Scale.HasValue)
                 {
-                    Assert.AreEqual(node.Scale.Length, 3);
-                    scale = new double3(
-                        node.Scale[0],
-                        node.Scale[1],
-                        node.Scale[2]
-                    );
+                    scale = node.Scale.Value;
                 }
             }
         }

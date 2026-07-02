@@ -8,6 +8,7 @@ using GLTFast.Schema;
 using NUnit.Framework;
 using Unity.Gltfast.Text.Json;
 using Unity.Gltfast.Text.Json.Serialization;
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace GLTFast.Tests.JsonParsing
@@ -22,23 +23,30 @@ namespace GLTFast.Tests.JsonParsing
         const string k_InvalidObjectJson = "[1.1,2.2,3.3,{\"sub-array\":[4.4,5.5],\"foo\":42}]";
 
         [Test]
-        public static void Float2ArrayConverterTest()
+        public static void Double4x4ConverterTest()
         {
-            var data = new[] { 1.1f, 2.2f };
-            var converter = new Float2ArrayConverter();
+            var data = new double4x4(1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8,
+                9.9, 10.10, 11.11, 12.12, 13.13, 14.14, 15.15, 16.16);
+            var converter = new Double4x4Converter();
             var json = WriteToConverter(converter, data);
 
             var result = ReadFromConverter(json, converter);
             Assert.NotNull(result);
-            Assert.AreEqual(2, result.Length);
-            Assert.AreEqual(1.1f, result[0]);
-            Assert.AreEqual(2.2f, result[1]);
+            Assert.That(
+                result,
+                Is.EqualTo(
+                    new double4x4(
+                        new double4(1.1, 5.5, 9.9, 13.13),
+                        new double4(2.2, 6.6, 10.10, 14.14),
+                        new double4(3.3, 7.7, 11.11, 15.15),
+                        new double4(4.4, 8.8, 12.12, 16.16)))
+                    .Using(new Double4x4EqualityComparer()));
         }
 
         [Test]
-        public static void Float2ArrayConverterInvalidStartTest()
+        public static void Double4x4ConverterInvalidStartTest()
         {
-            var converter = new Float2ArrayConverter();
+            var converter = new Double4x4Converter();
             Assert.Throws<JsonException>(delegate
             {
                 ReadFromConverter("9", converter);
@@ -46,10 +54,10 @@ namespace GLTFast.Tests.JsonParsing
         }
 
         [Test]
-        public static void Float2ArrayConverterInvalidTypeTest()
+        public static void Double4x4ConverterInvalidTypeTest()
         {
             const string json = "[1.1,\"string\"]";
-            var converter = new Float2ArrayConverter();
+            var converter = new Double4x4Converter();
             Assert.Throws<JsonException>(delegate
             {
                 ReadFromConverter(json, converter);
@@ -57,9 +65,9 @@ namespace GLTFast.Tests.JsonParsing
         }
 
         [Test]
-        public static void Float2ArrayConverterTooFewTest()
+        public static void Double4x4ConverterTooFewTest()
         {
-            var converter = new Float2ArrayConverter();
+            var converter = new Double4x4Converter();
             Assert.Throws<JsonException>(delegate
             {
                 ReadFromConverter(k_TooFewJson, converter);
@@ -67,241 +75,16 @@ namespace GLTFast.Tests.JsonParsing
         }
 
         [Test]
-        public static void Float2ArrayConverterTooManyTest()
+        public static void Double4x4ConverterTooManyTest()
         {
-            var converter = new Float2ArrayConverter();
+            var converter = new Double4x4Converter();
             Assert.Throws<JsonException>(delegate
             {
                 ReadFromConverter(k_TooManyJson, converter);
             });
         }
 
-        [Test]
-        public static void Float2ArrayConverterInvalidString()
-        {
-            var converter = new Float2ArrayConverter();
-            Assert.Throws<JsonException>(() => ReadFromConverter(k_InvalidStringJson, converter));
-        }
-
-        [Test]
-        public static void Float2ArrayConverterInvalidArray()
-        {
-            var converter = new Float2ArrayConverter();
-            Assert.Throws<JsonException>(() => ReadFromConverter(k_InvalidArrayJson, converter));
-        }
-
-        [Test]
-        public static void Float2ArrayConverterInvalidObject()
-        {
-            var converter = new Float2ArrayConverter();
-            Assert.Throws<JsonException>(() => ReadFromConverter(k_InvalidObjectJson, converter));
-        }
-
-        [Test]
-        public static void Float3ArrayConverterInvalidString()
-        {
-            var converter = new Float3ArrayConverter();
-            Assert.Throws<JsonException>(() => ReadFromConverter(k_InvalidStringJson, converter));
-        }
-
-        [Test]
-        public static void Float3ArrayConverterInvalidArray()
-        {
-            var converter = new Float3ArrayConverter();
-            Assert.Throws<JsonException>(() => ReadFromConverter(k_InvalidArrayJson, converter));
-        }
-
-        [Test]
-        public static void Float3ArrayConverterInvalidObject()
-        {
-            var converter = new Float3ArrayConverter();
-            Assert.Throws<JsonException>(() => ReadFromConverter(k_InvalidObjectJson, converter));
-        }
-
-        [Test]
-        public static void Float3ArrayConverterTest()
-        {
-            var data = new[] { 1.1f, 2.2f, 3.3f };
-            var converter = new Float3ArrayConverter();
-            var json = WriteToConverter(converter, data);
-
-            var result = ReadFromConverter(json, converter);
-            Assert.NotNull(result);
-            Assert.AreEqual(3, result.Length);
-            Assert.AreEqual(1.1f, result[0]);
-            Assert.AreEqual(2.2f, result[1]);
-            Assert.AreEqual(3.3f, result[2]);
-        }
-
-        [Test]
-        public static void Float3ArrayConverterInvalidStartTest()
-        {
-            var converter = new Float3ArrayConverter();
-            Assert.Throws<JsonException>(delegate
-            {
-                ReadFromConverter("9", converter);
-            });
-        }
-
-        [Test]
-        public static void Float3ArrayConverterInvalidTypeTest()
-        {
-            const string json = "[1.1,\"string\"]";
-            var converter = new Float3ArrayConverter();
-            Assert.Throws<JsonException>(delegate
-            {
-                ReadFromConverter(json, converter);
-            });
-        }
-
-        [Test]
-        public static void Float3ArrayConverterTooFewTest()
-        {
-            var converter = new Float3ArrayConverter();
-            Assert.Throws<JsonException>(delegate
-            {
-                ReadFromConverter(k_TooFewJson, converter);
-            });
-        }
-
-        [Test]
-        public static void Float3ArrayConverterTooManyTest()
-        {
-            var converter = new Float3ArrayConverter();
-            Assert.Throws<JsonException>(delegate
-            {
-                ReadFromConverter(k_TooManyJson, converter);
-            });
-        }
-
-        [Test]
-        public static void Float4ArrayConverterTest()
-        {
-            var data = new[] { 1.1f, 2.2f, 3.3f, 4.4f };
-            var converter = new Float4ArrayConverter();
-            var json = WriteToConverter(converter, data);
-
-            var result = ReadFromConverter(json, converter);
-            Assert.NotNull(result);
-            Assert.AreEqual(4, result.Length);
-            Assert.AreEqual(1.1f, result[0]);
-            Assert.AreEqual(2.2f, result[1]);
-            Assert.AreEqual(3.3f, result[2]);
-            Assert.AreEqual(4.4f, result[3]);
-        }
-
-        [Test]
-        public static void Float4ArrayConverterInvalidStartTest()
-        {
-            var converter = new Float4ArrayConverter();
-            Assert.Throws<JsonException>(delegate
-            {
-                ReadFromConverter("9", converter);
-            });
-        }
-
-        [Test]
-        public static void Float4ArrayConverterInvalidTypeTest()
-        {
-            const string json = "[1.1,\"string\"]";
-            var converter = new Float4ArrayConverter();
-            Assert.Throws<JsonException>(delegate
-            {
-                ReadFromConverter(json, converter);
-            });
-        }
-
-        [Test]
-        public static void Float4ArrayConverterTooFewTest()
-        {
-            var converter = new Float4ArrayConverter();
-            Assert.Throws<JsonException>(delegate
-            {
-                ReadFromConverter(k_TooFewJson, converter);
-            });
-        }
-
-        [Test]
-        public static void Float4ArrayConverterTooManyTest()
-        {
-            var converter = new Float4ArrayConverter();
-            Assert.Throws<JsonException>(delegate
-            {
-                ReadFromConverter(k_TooManyJson, converter);
-            });
-        }
-
-        [Test]
-        public static void Float16ArrayConverterTest()
-        {
-            var data = new[] { 1.1f, 2.2f, 3.3f, 4.4f, 5.5f, 6.6f, 7.7f, 8.8f,
-                9.9f, 10.10f, 11.11f, 12.12f, 13.13f, 14.14f, 15.15f, 16.16f };
-            var converter = new Float16ArrayConverter();
-            var json = WriteToConverter(converter, data);
-
-            var result = ReadFromConverter(json, converter);
-            Assert.NotNull(result);
-            Assert.AreEqual(16, result.Length);
-            Assert.AreEqual(1.1f, result[0]);
-            Assert.AreEqual(2.2f, result[1]);
-            Assert.AreEqual(3.3f, result[2]);
-            Assert.AreEqual(4.4f, result[3]);
-            Assert.AreEqual(5.5f, result[4]);
-            Assert.AreEqual(6.6f, result[5]);
-            Assert.AreEqual(7.7f, result[6]);
-            Assert.AreEqual(8.8f, result[7]);
-            Assert.AreEqual(9.9f, result[8]);
-            Assert.AreEqual(10.10f, result[9]);
-            Assert.AreEqual(11.11f, result[10]);
-            Assert.AreEqual(12.12f, result[11]);
-            Assert.AreEqual(13.13f, result[12]);
-            Assert.AreEqual(14.14f, result[13]);
-            Assert.AreEqual(15.15f, result[14]);
-            Assert.AreEqual(16.16f, result[15]);
-        }
-
-        [Test]
-        public static void Float16ArrayConverterInvalidStartTest()
-        {
-            var converter = new Float16ArrayConverter();
-            Assert.Throws<JsonException>(delegate
-            {
-                ReadFromConverter("9", converter);
-            });
-        }
-
-        [Test]
-        public static void Float16ArrayConverterInvalidTypeTest()
-        {
-            const string json = "[1.1,\"string\"]";
-            var converter = new Float16ArrayConverter();
-            Assert.Throws<JsonException>(delegate
-            {
-                ReadFromConverter(json, converter);
-            });
-        }
-
-        [Test]
-        public static void Float16ArrayConverterTooFewTest()
-        {
-            var converter = new Float16ArrayConverter();
-            Assert.Throws<JsonException>(delegate
-            {
-                ReadFromConverter(k_TooFewJson, converter);
-            });
-        }
-
-        [Test]
-        public static void Float16ArrayConverterTooManyTest()
-        {
-            var converter = new Float16ArrayConverter();
-            Assert.Throws<JsonException>(delegate
-            {
-                ReadFromConverter(k_TooManyJson, converter);
-            });
-        }
-
-        static float[] ReadFromConverter(string json, JsonConverter<float[]> converter)
+        static T ReadFromConverter<T>(string json, JsonConverter<T> converter)
         {
             var jsonUtf8 = Encoding.UTF8.GetBytes(json);
             var reader = new Utf8JsonReader(jsonUtf8);
@@ -311,7 +94,7 @@ namespace GLTFast.Tests.JsonParsing
             return result;
         }
 
-        static string WriteToConverter(JsonConverter<float[]> converter, float[] data)
+        static string WriteToConverter<T>(JsonConverter<T> converter, T data)
         {
             var stream = new MemoryStream(1000);
             var writer = new Utf8JsonWriter(stream);

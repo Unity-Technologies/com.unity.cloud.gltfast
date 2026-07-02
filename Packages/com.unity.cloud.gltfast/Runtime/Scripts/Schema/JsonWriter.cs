@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -94,6 +95,60 @@ namespace GLTFast.Schema
                 AddElement(value);
             }
             CloseArray();
+        }
+
+        public void AddArrayProperty(string name, float2 value)
+        {
+            AddArray(name);
+            Separate();
+            m_Stream.Write(value.x.ToString("R", CultureInfo.InvariantCulture));
+            Separate();
+            m_Stream.Write(value.y.ToString("R", CultureInfo.InvariantCulture));
+            CloseArray();
+        }
+
+        public void AddArrayProperty(string name, double3 value)
+        {
+            AddArray(name);
+            AddArrayElement(value.x);
+            AddArrayElement(value.y);
+            AddArrayElement(value.z);
+            CloseArray();
+        }
+
+        public void AddArrayProperty(string name, double4 value)
+        {
+            AddArray(name);
+            AddArrayElement(value.x);
+            AddArrayElement(value.y);
+            AddArrayElement(value.z);
+            AddArrayElement(value.w);
+            CloseArray();
+        }
+
+        public void AddArrayProperty(string name, double4x4 value)
+        {
+            // glTF stores the matrix as 16 doubles in column-major order, matching double4x4's column layout.
+            AddArray(name);
+            AddColumnElements(value.c0);
+            AddColumnElements(value.c1);
+            AddColumnElements(value.c2);
+            AddColumnElements(value.c3);
+            CloseArray();
+        }
+
+        void AddColumnElements(double4 column)
+        {
+            AddArrayElement(column.x);
+            AddArrayElement(column.y);
+            AddArrayElement(column.z);
+            AddArrayElement(column.w);
+        }
+
+        void AddArrayElement(double value)
+        {
+            Separate();
+            m_Stream.Write(value.ToString(CultureInfo.InvariantCulture));
         }
 
         public void AddElement(string value)

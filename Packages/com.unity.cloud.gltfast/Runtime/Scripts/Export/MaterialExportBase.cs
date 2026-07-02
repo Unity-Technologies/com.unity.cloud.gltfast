@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -275,8 +276,8 @@ namespace GLTFast.Export
                 gltf.RegisterExtensionUsage(Extension.TextureTransform);
                 def.SetTextureTransform(new TextureTransform
                 {
-                    Scale = new[] { scale.x, scale.y },
-                    Offset = new[] { offset.x, 1 - offset.y - scale.y }
+                    Scale = new float2(scale.x, scale.y),
+                    Offset = new float2(offset.x, 1 - offset.y - scale.y)
                 });
             }
         }

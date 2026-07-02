@@ -412,15 +412,20 @@ namespace GLTFast.Materials
                     texCoord = tt.TexCoord.Value;
                 }
 
-                if (tt.Offset != null)
+                if (tt.Offset.HasValue)
                 {
-                    textureScaleTranslation.z = tt.Offset[0];
-                    textureScaleTranslation.w = 1 - tt.Offset[1];
+                    textureScaleTranslation.z = tt.Offset.Value.x;
+                    textureScaleTranslation.w = 1 - tt.Offset.Value.y;
                 }
-                if (tt.Scale != null)
+                else
                 {
-                    textureScaleTranslation.x = tt.Scale[0];
-                    textureScaleTranslation.y = tt.Scale[1];
+                    textureScaleTranslation.w = 1;
+                }
+
+                if (tt.Scale.HasValue)
+                {
+                    textureScaleTranslation.x = tt.Scale.Value.x;
+                    textureScaleTranslation.y = tt.Scale.Value.y;
                 }
                 if (math.abs(tt.Rotation) >= float.Epsilon)
                 {

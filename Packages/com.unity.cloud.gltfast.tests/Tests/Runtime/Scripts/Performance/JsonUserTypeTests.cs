@@ -7,6 +7,7 @@ using GLTFast.Schema;
 using NUnit.Framework;
 using Unity.Collections;
 using Unity.Gltfast.Text.Json.Serialization;
+using Unity.Mathematics;
 using Unity.PerformanceTesting;
 
 namespace GLTFast.Tests.Performance
@@ -109,7 +110,7 @@ namespace GLTFast.Tests.Performance
 
     struct Matrix
     {
-        [JsonConverter(typeof(Float16ArrayConverter))]
-        public float[] values;
+        [JsonConverter(typeof(Double4x4Converter))]
+        public double4x4? values;
     }
 }

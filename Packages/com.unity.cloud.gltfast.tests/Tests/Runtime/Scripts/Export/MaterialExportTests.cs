@@ -6,6 +6,7 @@ using GLTFast.Export;
 using GLTFast.Logging;
 using GLTFast.Schema;
 using NUnit.Framework;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.TestTools.Utils;
 using Color = UnityEngine.Color;
@@ -58,8 +59,8 @@ namespace GLTFast.Tests.Export
             Assert.IsTrue(gltfWriter.extensions[Extension.TextureTransform]);
             var transform = texture.Extensions?.TextureTransform;
             Assert.IsNotNull(transform);
-            Assert.AreEqual(new[] { 0.4f, 0.6f }, transform.Offset);
-            Assert.AreEqual(new[] { 1f, 1f }, transform.Scale);
+            Assert.AreEqual(new float2(0.4f, 0.6f), transform.Offset);
+            Assert.IsFalse(transform.Scale.HasValue);
             Assert.AreEqual(0, transform.Rotation);
 #else
             Assert.Ignore("Texture export is disabled! " + LogMessages.GetFullMessage(LogCode.ImageConversionNotEnabled));
@@ -78,8 +79,8 @@ namespace GLTFast.Tests.Export
             Assert.IsTrue(gltfWriter.extensions[Extension.TextureTransform]);
             var transform = texture.Extensions?.TextureTransform;
             Assert.IsNotNull(transform);
-            Assert.AreEqual(new[] { 1.2f, 1.3f }, transform.Scale);
-            Assert.AreEqual(new[] { 0f, 0f }, transform.Offset);
+            Assert.AreEqual(new float2(1.2f, 1.3f), transform.Scale);
+            Assert.IsFalse(transform.Offset.HasValue);
             Assert.AreEqual(0, transform.Rotation);
 #else
             Assert.Ignore("Texture export is disabled! " + LogMessages.GetFullMessage(LogCode.ImageConversionNotEnabled));
@@ -127,9 +128,8 @@ namespace GLTFast.Tests.Export
             var transform = texture.Extensions?.TextureTransform;
             Assert.IsNotNull(transform);
             Assert.AreEqual(45, transform.Rotation);
-            Assert.AreEqual(new[] { 0f, 0f }, transform.Offset);
-            var comparer = new FloatEqualityComparer(10e-8f);
-            Assert.That(transform.Scale, Is.EquivalentTo(new[] { 1f, 1f }).Using(comparer));
+            Assert.IsFalse(transform.Offset.HasValue);
+            Assert.IsFalse(transform.Scale.HasValue);
 #else
             Assert.Ignore("Texture export is disabled! " + LogMessages.GetFullMessage(LogCode.ImageConversionNotEnabled));
 #endif
@@ -181,7 +181,7 @@ namespace GLTFast.Tests.Export
 
             var transform = mrTexture.Extensions?.TextureTransform;
             Assert.IsNotNull(transform);
-            Assert.AreEqual(new[] { 2f, 2f }, transform.Scale);
+            Assert.AreEqual(new float2(2f, 2f), transform.Scale);
 #else
             Assert.Ignore("Texture export is disabled! " + LogMessages.GetFullMessage(LogCode.ImageConversionNotEnabled));
 #endif
@@ -248,7 +248,7 @@ namespace GLTFast.Tests.Export
 
             var transform = oTexture.Extensions?.TextureTransform;
             Assert.IsNotNull(transform);
-            Assert.AreEqual(new[] { 2f, 2f }, transform.Scale);
+            Assert.AreEqual(new float2(2f, 2f), transform.Scale);
 #else
             Assert.Ignore("Texture export is disabled! " + LogMessages.GetFullMessage(LogCode.ImageConversionNotEnabled));
 #endif
@@ -300,7 +300,7 @@ namespace GLTFast.Tests.Export
 
             var transform = texture.Extensions?.TextureTransform;
             Assert.IsNotNull(transform);
-            Assert.AreEqual(new[] { 2f, 3f }, transform.Scale);
+            Assert.AreEqual(new float2(2f, 3f), transform.Scale);
 #else
             Assert.Ignore("Texture export is disabled! " + LogMessages.GetFullMessage(LogCode.ImageConversionNotEnabled));
 #endif
@@ -324,8 +324,8 @@ namespace GLTFast.Tests.Export
 
             var transform = texture.Extensions?.TextureTransform;
             Assert.IsNotNull(transform);
-            Assert.AreEqual(new[] { 1.5f, 1.2f }, transform.Scale);
-            Assert.AreEqual(new[] { 0f, 0f }, transform.Offset);
+            Assert.AreEqual(new float2(1.5f, 1.2f), transform.Scale);
+            Assert.IsFalse(transform.Offset.HasValue);
             Assert.AreEqual(0, transform.Rotation);
 #else
             Assert.Ignore("Texture export is disabled! " + LogMessages.GetFullMessage(LogCode.ImageConversionNotEnabled));
@@ -360,8 +360,8 @@ namespace GLTFast.Tests.Export
 
             var baseColorTransform = baseColorTexture.Extensions?.TextureTransform;
             Assert.IsNotNull(baseColorTransform);
-            Assert.AreEqual(new[] { 0.4f, 0.6f }, baseColorTransform.Offset);
-            Assert.AreEqual(new[] { 1f, 1f }, baseColorTransform.Scale);
+            Assert.AreEqual(new float2(0.4f, 0.6f), baseColorTransform.Offset);
+            Assert.IsFalse(baseColorTransform.Scale.HasValue);
             Assert.AreEqual(0, baseColorTransform.Rotation);
 
             var mrTexture = material.PbrMetallicRoughness?.MetallicRoughnessTexture;
@@ -369,7 +369,7 @@ namespace GLTFast.Tests.Export
 
             var mrTransform = mrTexture.Extensions?.TextureTransform;
             Assert.IsNotNull(mrTransform);
-            Assert.AreEqual(new[] { 1.11f, 1.21f }, mrTransform.Scale);
+            Assert.AreEqual(new float2(1.11f, 1.21f), mrTransform.Scale);
 
             var normalTexture = material.NormalTexture;
             Assert.NotNull(normalTexture);
@@ -377,8 +377,8 @@ namespace GLTFast.Tests.Export
 
             var normalTransform = normalTexture.Extensions?.TextureTransform;
             Assert.IsNotNull(normalTransform);
-            Assert.AreEqual(new[] { 1.5f, 1.2f }, normalTransform.Scale);
-            Assert.AreEqual(new[] { 0f, 0f }, normalTransform.Offset);
+            Assert.AreEqual(new float2(1.5f, 1.2f), normalTransform.Scale);
+            Assert.IsFalse(normalTransform.Offset.HasValue);
             Assert.AreEqual(0, normalTransform.Rotation);
 
             var oTexture = material.OcclusionTexture;
@@ -387,7 +387,7 @@ namespace GLTFast.Tests.Export
 
             var oTransform = oTexture.Extensions?.TextureTransform;
             Assert.IsNotNull(oTransform);
-            Assert.AreEqual(new[] { 1.1f, 1.2f }, oTransform.Scale);
+            Assert.AreEqual(new float2(1.1f, 1.2f), oTransform.Scale);
 #else
             Assert.Ignore("Texture export is disabled! " + LogMessages.GetFullMessage(LogCode.ImageConversionNotEnabled));
 #endif

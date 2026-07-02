@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using GLTFast.Schema;
 using NUnit.Framework;
 using Unity.Gltfast.Text.Json;
+using Unity.Mathematics;
 using UnityEngine;
 using Color = UnityEngine.Color;
 
@@ -111,8 +112,8 @@ namespace GLTFast.Tests.JsonParsing
             Assert.AreEqual(new Color(.1f, .2f, .3f, .4f), (Color)mat.PbrMetallicRoughness.BaseColorFactor);
             var transform = mat.NormalTexture?.Extensions?.TextureTransform;
             Assert.NotNull(transform);
-            CheckFloatArray(transform.Offset, 2, 1, 2);
-            CheckFloatArray(transform.Scale, 2, 3, 4);
+            Assert.AreEqual(new float2(1, 2), transform.Offset);
+            Assert.AreEqual(new float2(3, 4), transform.Scale);
             var ext = mat.Extensions;
             Assert.NotNull(ext?.Sheen);
             Assert.AreEqual(new Color(.1f, .2f, .3f), (Color)ext.Sheen.SheenColorFactor);
@@ -134,10 +135,20 @@ namespace GLTFast.Tests.JsonParsing
             Assert.NotNull(gltf?.Nodes);
             Assert.AreEqual(1, gltf.Nodes.Count);
             var node = gltf.Nodes[0];
-            CheckFloatArray(node.Matrix, 16, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
-            CheckFloatArray(node.Rotation, 4, 1, 2, 3, 4);
-            CheckFloatArray(node.Scale, 3, 1, 2, 3);
-            CheckFloatArray(node.Translation, 3, 1, 2, 3);
+            Assert.IsTrue(node.Matrix.HasValue);
+            Assert.AreEqual(
+                new double4x4(
+                    new double4(1, 2, 3, 4),
+                    new double4(5, 6, 7, 8),
+                    new double4(9, 10, 11, 12),
+                    new double4(13, 14, 15, 16)),
+                node.Matrix.Value);
+            Assert.IsTrue(node.Rotation.HasValue);
+            Assert.AreEqual(new double4(1, 2, 3, 4), node.Rotation.Value);
+            Assert.IsTrue(node.Scale.HasValue);
+            Assert.AreEqual(new double3(1, 2, 3), node.Scale.Value);
+            Assert.IsTrue(node.Translation.HasValue);
+            Assert.AreEqual(new double3(1, 2, 3), node.Translation.Value);
         }
 
         static void CheckFloatArray(IReadOnlyList<float> actual, int expectedLength, params float[] expected)

@@ -226,7 +226,7 @@ Helper method `Attributes.GetTexCoordsCount()` was moved to `AttributesExtension
 
 ### Schema collection properties moved from `T[]` to `List<T>`
 
-Variable-length collection properties on `GLTFast.Schema` types are now `List<T>` instead of `T[]`, completing the migration started with `Root.Accessors`, `Root.Materials`, `Mesh.Primitives`, etc. Fixed-size mathematical arrays (`Node.Matrix`/`.Rotation`/`.Scale`/`.Translation`, `TextureTransform.Offset`/`.Scale`) keep their array type — their length is part of the contract enforced by the JSON converters.
+Variable-length collection properties on `GLTFast.Schema` types are now `List<T>` instead of `T[]`, completing the migration started with `Root.Accessors`, `Root.Materials`, `Mesh.Primitives`, etc.
 
 | Property | Before | After |
 | -------- | ------ | ----- |
@@ -298,6 +298,33 @@ Custom subclasses or implementations of these interfaces and delegates need to u
 | `accessor.Min = new[] { -1f, -1f, -1f };` | `accessor.Min = new List<double> { -1, -1, -1 };` |
 | `var x = accessor.Max[0];` (was `float`) | `var x = accessor.Max[0];` (now `double`) — cast to `float` at the point of use if needed |
 | `accessor.Min.Length` | `accessor.Min.Count` |
+
+### `Node` transforms typed as `Unity.Mathematics` structs
+
+The node transform properties changed from `double[]` to nullable `Unity.Mathematics` value-type structs. This removes a heap allocation per transform and a fixed array length is no longer something callers need to handle. Double precision is preserved. An absent property is now `null` instead of a `null` reference, so check `.HasValue` instead of `!= null` and read the components via `.Value`.
+
+| Property | Before | After |
+| -------- | ------ | ----- |
+| [Node.Translation](xref:GLTFast.Schema.Node.Translation) | `double[]` (length 3) | `double3?` |
+| [Node.Scale](xref:GLTFast.Schema.Node.Scale) | `double[]` (length 3) | `double3?` |
+| [Node.Rotation](xref:GLTFast.Schema.Node.Rotation) | `double[]` (length 4, `x, y, z, w`) | `double4?` |
+| [Node.Matrix](xref:GLTFast.Schema.Node.Matrix) | `double[]` (length 16, column-major) | `double4x4?` |
+
+| Before | After |
+| ------ | ----- |
+| `if (node.Translation != null) …` | `if (node.Translation.HasValue) …` |
+| `var x = node.Translation[0];` | `var x = node.Translation.Value.x;` |
+| `node.Rotation = new double[] { x, y, z, w };` | `node.Rotation = new double4(x, y, z, w);` |
+| `node.Matrix = new double[] { … };` (column-major) | `node.Matrix = new double4x4(c0, c1, c2, c3);` (columns map to the glTF column-major array) |
+
+### `TextureTransform` offset/scale typed as `float2` nullable
+
+[TextureTransform.Offset](xref:GLTFast.Schema.TextureTransform.Offset) and [TextureTransform.Scale](xref:GLTFast.Schema.TextureTransform.Scale) changed from `float[]` (length 2) to nullable `Unity.Mathematics.float2`.
+
+| Before | After |
+| ------ | ----- |
+| `var u = transform.Offset[0];` | `var u = transform.Offset.Value.x;` |
+| `transform.Scale = new[] { sx, sy };` | `transform.Scale = new float2(sx, sy);` |
 
 ### `Sampler` nested enums promoted to top-level
 

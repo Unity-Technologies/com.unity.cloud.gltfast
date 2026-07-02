@@ -4,6 +4,7 @@
 using System.Collections.Generic;
 using Unity.Gltfast.Text.Json;
 using Unity.Gltfast.Text.Json.Serialization;
+using Unity.Mathematics;
 
 namespace GLTFast.Schema
 {
@@ -33,30 +34,30 @@ namespace GLTFast.Schema
         /// A floating-point 4x4 transformation matrix stored in column-major order.
         /// </summary>
         [JsonPropertyName("matrix")]
-        [JsonConverter(typeof(Double16ArrayConverter))]
-        public double[] Matrix { get; set; }
+        [JsonConverter(typeof(Double4x4Converter))]
+        public double4x4? Matrix { get; set; }
 
         /// <summary>
         /// The node's unit quaternion rotation in the order (x, y, z, w),
         /// where w is the scalar.
         /// </summary>
         [JsonPropertyName("rotation")]
-        [JsonConverter(typeof(Double4ArrayConverter))]
-        public double[] Rotation { get; set; }
+        [JsonConverter(typeof(Double4Converter))]
+        public double4? Rotation { get; set; }
 
         /// <summary>
         /// The node's non-uniform scale.
         /// </summary>
         [JsonPropertyName("scale")]
-        [JsonConverter(typeof(Double3ArrayConverter))]
-        public double[] Scale { get; set; }
+        [JsonConverter(typeof(Double3Converter))]
+        public double3? Scale { get; set; }
 
         /// <summary>
         /// The node's translation.
         /// </summary>
         [JsonPropertyName("translation")]
-        [JsonConverter(typeof(Double3ArrayConverter))]
-        public double[] Translation { get; set; }
+        [JsonConverter(typeof(Double3Converter))]
+        public double3? Translation { get; set; }
 
         /// <summary>
         /// The weights of the instantiated Morph Target.
@@ -109,24 +110,24 @@ namespace GLTFast.Schema
                 writer.AddProperty("mesh", Mesh.Value);
             }
 
-            if (Translation != null)
+            if (Translation.HasValue)
             {
-                writer.AddArrayProperty("translation", Translation);
+                writer.AddArrayProperty("translation", Translation.Value);
             }
 
-            if (Rotation != null)
+            if (Rotation.HasValue)
             {
-                writer.AddArrayProperty("rotation", Rotation);
+                writer.AddArrayProperty("rotation", Rotation.Value);
             }
 
-            if (Scale != null)
+            if (Scale.HasValue)
             {
-                writer.AddArrayProperty("scale", Scale);
+                writer.AddArrayProperty("scale", Scale.Value);
             }
 
-            if (Matrix != null)
+            if (Matrix.HasValue)
             {
-                writer.AddArrayProperty("matrix", Matrix);
+                writer.AddArrayProperty("matrix", Matrix.Value);
             }
 
             if (Weights != null)

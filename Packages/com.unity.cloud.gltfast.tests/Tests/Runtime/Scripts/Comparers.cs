@@ -40,6 +40,49 @@ namespace GLTFast.Tests
         }
     }
 
+    abstract class FloatComparer
+    {
+        const float k_DefaultError = 1e-6f;
+        protected readonly float m_AllowedError;
+
+        public FloatComparer() : this(k_DefaultError) { }
+
+        public FloatComparer(float allowedError)
+        {
+            m_AllowedError = allowedError;
+        }
+
+        protected static bool AreFloatsEqual(float expected, float actual, float epsilon)
+        {
+            if (
+                float.IsInfinity(expected)
+                || float.IsInfinity(actual)
+                || float.IsNegativeInfinity(expected)
+                || float.IsNegativeInfinity(actual)
+            )
+                return expected == actual;
+
+            return math.abs(actual - expected) <= epsilon * math.max(math.max(math.abs(actual), math.abs(expected)), 1.0f);
+        }
+    }
+
+    class Float2EqualityComparer : FloatComparer, IEqualityComparer<float2>
+    {
+        public Float2EqualityComparer() : base() { }
+        public Float2EqualityComparer(float allowedError) : base(allowedError) { }
+
+        public bool Equals(float2 x, float2 y)
+        {
+            return AreFloatsEqual(x.x, y.x, m_AllowedError) &&
+                AreFloatsEqual(x.y, y.y, m_AllowedError);
+        }
+
+        public int GetHashCode(float2 obj)
+        {
+            return 0;
+        }
+    }
+
     class Double3EqualityComparer : DoubleComparer, IEqualityComparer<double3>
     {
         public Double3EqualityComparer() : base() { }
@@ -72,6 +115,30 @@ namespace GLTFast.Tests
         }
 
         public int GetHashCode(double4 obj)
+        {
+            return 0;
+        }
+    }
+
+    class Double4x4EqualityComparer : DoubleComparer, IEqualityComparer<double4x4>
+    {
+        public Double4x4EqualityComparer() : base() { }
+        public Double4x4EqualityComparer(double allowedError) : base(allowedError) { }
+
+        public bool Equals(double4x4 x, double4x4 y)
+        {
+            for (var column = 0; column < 4; column++)
+            {
+                for (var row = 0; row < 4; row++)
+                {
+                    if (!AreDoublesEqual(x[column][row], y[column][row], m_AllowedError))
+                        return false;
+                }
+            }
+            return true;
+        }
+
+        public int GetHashCode(double4x4 obj)
         {
             return 0;
         }

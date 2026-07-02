@@ -15,8 +15,8 @@ namespace GLTFast.Schema
         /// The offset of the UV coordinate origin as a factor of the texture dimensions.
         /// </summary>
         [JsonPropertyName("offset")]
-        [JsonConverter(typeof(Float2ArrayConverter))]
-        public float[] Offset { get; set; } = { 0, 0 };
+        [JsonConverter(typeof(Float2Converter))]
+        public float2? Offset { get; set; }
 
         /// <summary>
         /// Rotate the UVs by this many radians counter-clockwise around the origin. This is equivalent to a similar rotation of the image clockwise.
@@ -28,8 +28,8 @@ namespace GLTFast.Schema
         /// The scale factor applied to the components of the UV coordinates.
         /// </summary>
         [JsonPropertyName("scale")]
-        [JsonConverter(typeof(Float2ArrayConverter))]
-        public float[] Scale { get; set; } = { 1, 1 };
+        [JsonConverter(typeof(Float2Converter))]
+        public float2? Scale { get; set; }
 
         /// <summary>
         /// Overrides the textureInfo texCoord value if supplied, and if this extension is supported.
@@ -40,13 +40,13 @@ namespace GLTFast.Schema
         internal void GltfSerialize(JsonWriter writer)
         {
             writer.AddObject();
-            if (Offset != null)
+            if (Offset.HasValue)
             {
-                writer.AddArrayProperty("offset", Offset);
+                writer.AddArrayProperty("offset", Offset.Value);
             }
-            if (Scale != null)
+            if (Scale.HasValue)
             {
-                writer.AddArrayProperty("scale", Scale);
+                writer.AddArrayProperty("scale", Scale.Value);
             }
             if (math.abs(Rotation) >= float.Epsilon)
             {

@@ -3,7 +3,7 @@
 
 using System;
 using System.IO;
-using Unity.Mathematics;
+using System.Runtime.CompilerServices;
 
 namespace GLTFast.Schema
 {
@@ -13,6 +13,10 @@ namespace GLTFast.Schema
             1e0, 1e1, 1e2, 1e3, 1e4, 1e5, 1e6, 1e7, 1e8, 1e9, 1e10,
             1e11, 1e12, 1e13, 1e14, 1e15, 1e16, 1e17, 1e18, 1e19, 1e20, 1e21, 1e22
         };
+
+        // Largest mantissa that can still absorb one more decimal digit without
+        // overflowing ulong (mantissa * 10 + 9 stays <= ulong.MaxValue).
+        const ulong k_MantissaCap = (ulong.MaxValue - 9) / 10;
 
         public static double GetDouble(ReadOnlySpan<byte> json)
         {
@@ -29,15 +33,29 @@ namespace GLTFast.Schema
                 pos++;
             }
 
-            var value = .0;
+            // All significant digits (integer and fractional) are folded into a single
+            // integer mantissa; the decimal point and exponent are tracked separately and
+            // applied once at the end.
+            ulong mantissa = 0;
             var hasDigit = false;
+
+            // Number of significant integer digits dropped after the mantissa saturated;
+            // each one still contributes a factor of ten to the value.
+            var integerExponent = 0;
+
+            // Number of fractional digits folded into the mantissa.
+            var fractionalDigits = 0;
+
             while (pos < json.Length)
             {
                 currentByte = json[pos];
                 if (currentByte >= '0' && currentByte <= '9')
                 {
                     hasDigit = true;
-                    value = value * 10L + (currentByte - 48);
+                    if (mantissa <= k_MantissaCap)
+                        mantissa = mantissa * 10 + (ulong)(currentByte - '0');
+                    else
+                        integerExponent++;
                     pos++;
                 }
                 else if (currentByte == '.')
@@ -61,10 +79,9 @@ namespace GLTFast.Schema
             if (!hasDigit)
                 throw new InvalidDataException("Missing integer digits");
 
-            return negative ? -value : value;
+            return Compose(mantissa, negative, integerExponent);
 
         Radix:
-            double factor = 1;
             var hasRadixDigit = false;
             while (pos < json.Length)
             {
@@ -72,8 +89,11 @@ namespace GLTFast.Schema
                 if (currentByte >= '0' && currentByte <= '9')
                 {
                     hasRadixDigit = true;
-                    factor *= .1;
-                    value += (currentByte - 48) * factor;
+                    if (mantissa <= k_MantissaCap)
+                    {
+                        mantissa = mantissa * 10 + (ulong)(currentByte - '0');
+                        fractionalDigits++;
+                    }
                     pos++;
                 }
                 else if ((currentByte & 0b11011111) == 'E')
@@ -96,7 +116,7 @@ namespace GLTFast.Schema
             if (!hasRadixDigit)
                 throw new InvalidDataException($"Expected digit after '.' at {pos}");
 
-            return negative ? -value : value;
+            return Compose(mantissa, negative, integerExponent - fractionalDigits);
 
         Exponent:
             short exponent = 0;
@@ -131,20 +151,28 @@ namespace GLTFast.Schema
                 }
             }
 
-            double scale;
-            if (exponent >= 0 && exponent < k_PosPowersOf10.Length)
+            var decimalExponent = (negateExponent ? -exponent : exponent) + integerExponent - fractionalDigits;
+            return Compose(mantissa, negative, decimalExponent);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        static double Compose(ulong mantissa, bool negative, int decimalExponent)
+        {
+            double value = mantissa;
+            if (decimalExponent > 0)
             {
-                scale = k_PosPowersOf10[exponent];
-                if (negateExponent)
-                {
-                    scale = 1.0 / scale;
-                }
+                value *= decimalExponent < k_PosPowersOf10.Length
+                    ? k_PosPowersOf10[decimalExponent]
+                    : Math.Pow(10, decimalExponent);
             }
-            else
+            else if (decimalExponent < 0)
             {
-                scale = Math.Pow(10, negateExponent ? -exponent : exponent);
+                var e = -decimalExponent;
+                value = e < k_PosPowersOf10.Length
+                    ? value / k_PosPowersOf10[e]
+                    : value * Math.Pow(10, decimalExponent);
             }
-            return (negative ? -value : value) * scale;
+            return negative ? -value : value;
         }
     }
 }

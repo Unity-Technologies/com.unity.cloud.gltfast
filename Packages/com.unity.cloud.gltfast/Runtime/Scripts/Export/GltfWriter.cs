@@ -2196,15 +2196,15 @@ namespace GLTFast.Export
             };
             if (translation.HasValue && !translation.Value.Equals(double3.zero))
             {
-                node.Translation = new[] { -translation.Value.x, translation.Value.y, translation.Value.z };
+                node.Translation = new double3(-translation.Value.x, translation.Value.y, translation.Value.z);
             }
             if (rotation.HasValue && !rotation.Value.Equals(Mathematics.k_QuaternionIdentity))
             {
-                node.Rotation = new[] { rotation.Value.x, -rotation.Value.y, -rotation.Value.z, rotation.Value.w };
+                node.Rotation = new double4(rotation.Value.x, -rotation.Value.y, -rotation.Value.z, rotation.Value.w);
             }
             if (scale.HasValue && !scale.Value.Equals(new double3(1f)))
             {
-                node.Scale = new[] { scale.Value.x, scale.Value.y, scale.Value.z };
+                node.Scale = scale.Value;
             }
 
             return node;

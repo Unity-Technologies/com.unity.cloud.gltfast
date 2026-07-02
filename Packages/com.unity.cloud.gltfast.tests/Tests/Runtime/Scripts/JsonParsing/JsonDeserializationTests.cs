@@ -5,6 +5,7 @@ using System.Text;
 using GLTFast.Schema;
 using NUnit.Framework;
 using Unity.Gltfast.Text.Json;
+using Unity.Mathematics;
 using CameraType = GLTFast.Schema.CameraType;
 using Color = GLTFast.Schema.Color;
 using LightType = GLTFast.Schema.LightType;
@@ -1808,28 +1809,38 @@ namespace GLTFast.Tests.JsonParsing
         public void NodeMatrix()
         {
             var obj = JsonSerializer.Deserialize(@"{""matrix"":[1,0,0,0,0,1,0,0,0,0,1,0,1,2,3,1]}", GltfJsonContext.Default.Node);
-            Assert.AreEqual(new double[] { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 2, 3, 1 }, obj.Matrix);
+            Assert.IsTrue(obj.Matrix.HasValue);
+            Assert.AreEqual(
+                new double4x4(
+                    new double4(1, 0, 0, 0),
+                    new double4(0, 1, 0, 0),
+                    new double4(0, 0, 1, 0),
+                    new double4(1, 2, 3, 1)),
+                obj.Matrix.Value);
         }
 
         [Test]
         public void NodeRotation()
         {
             var obj = JsonSerializer.Deserialize(@"{""rotation"":[0,0,0,1]}", GltfJsonContext.Default.Node);
-            Assert.AreEqual(new double[] { 0, 0, 0, 1 }, obj.Rotation);
+            Assert.IsTrue(obj.Rotation.HasValue);
+            Assert.AreEqual(new double4(0, 0, 0, 1), obj.Rotation.Value);
         }
 
         [Test]
         public void NodeScale()
         {
             var obj = JsonSerializer.Deserialize(@"{""scale"":[1,2,3]}", GltfJsonContext.Default.Node);
-            Assert.AreEqual(new double[] { 1, 2, 3 }, obj.Scale);
+            Assert.IsTrue(obj.Scale.HasValue);
+            Assert.AreEqual(new double3(1, 2, 3), obj.Scale.Value);
         }
 
         [Test]
         public void NodeTranslation()
         {
             var obj = JsonSerializer.Deserialize(@"{""translation"":[4,5,6]}", GltfJsonContext.Default.Node);
-            Assert.AreEqual(new double[] { 4, 5, 6 }, obj.Translation);
+            Assert.IsTrue(obj.Translation.HasValue);
+            Assert.AreEqual(new double3(4, 5, 6), obj.Translation.Value);
         }
 
         [Test]
@@ -2335,9 +2346,9 @@ namespace GLTFast.Tests.JsonParsing
         {
             var obj = JsonSerializer.Deserialize("{}", GltfJsonContext.Default.TextureTransform);
             Assert.IsNotNull(obj);
-            Assert.AreEqual(new[] { 0f, 0f }, obj.Offset);
+            Assert.IsFalse(obj.Offset.HasValue);
             Assert.AreEqual(0f, obj.Rotation);
-            Assert.AreEqual(new[] { 1f, 1f }, obj.Scale);
+            Assert.IsFalse(obj.Scale.HasValue);
             Assert.IsNull(obj.TexCoord);
         }
 
@@ -2345,7 +2356,7 @@ namespace GLTFast.Tests.JsonParsing
         public void TextureTransformOffset()
         {
             var obj = JsonSerializer.Deserialize(@"{""offset"":[0.5,0.25]}", GltfJsonContext.Default.TextureTransform);
-            Assert.AreEqual(new[] { 0.5f, 0.25f }, obj.Offset);
+            Assert.AreEqual(new float2(0.5f, 0.25f), obj.Offset);
         }
 
         [Test]
@@ -2359,7 +2370,7 @@ namespace GLTFast.Tests.JsonParsing
         public void TextureTransformScale()
         {
             var obj = JsonSerializer.Deserialize(@"{""scale"":[0.5,0.5]}", GltfJsonContext.Default.TextureTransform);
-            Assert.AreEqual(new[] { 0.5f, 0.5f }, obj.Scale);
+            Assert.AreEqual(new float2(0.5f, 0.5f), obj.Scale);
         }
 
         [Test]
