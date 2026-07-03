@@ -59,6 +59,7 @@ namespace GLTFast.Tests
                 await CreateGltfBigCylinderMesh(BigCylinderPath, 1_000_000, GltfFormat.Json);
             if (!File.Exists(BigCylinderBinaryPath))
                 await CreateGltfBigCylinderMesh(BigCylinderBinaryPath, 1_000_000, GltfFormat.Binary);
+            TestGltfJsonGenerator.CreateMissing();
             AssetDatabase.Refresh();
         }
 #endif
@@ -68,7 +69,8 @@ namespace GLTFast.Tests
             var testFilesPresent = File.Exists(FlatHierarchyPath)
                 && File.Exists(FlatHierarchyBinaryPath)
                 && File.Exists(BigCylinderPath)
-                && File.Exists(BigCylinderBinaryPath);
+                && File.Exists(BigCylinderBinaryPath)
+                && TestGltfJsonGenerator.AllFilesPresent();
 
             if (!testFilesPresent)
             {
