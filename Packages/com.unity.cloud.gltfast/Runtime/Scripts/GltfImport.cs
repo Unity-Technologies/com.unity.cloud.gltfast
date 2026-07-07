@@ -2778,6 +2778,10 @@ namespace GLTFast
                         );
                         m_Textures[textureIndex] = originalTexture;
                     }
+                    if (m_NonFlippedYTextureIndices != null && m_NonFlippedYTextureIndices.Contains(originalTextureIndex))
+                    {
+                        m_NonFlippedYTextureIndices.Add(textureIndex);
+                    }
                 }
             }
 
@@ -2787,6 +2791,10 @@ namespace GLTFast
                 {
                     var originalTexture = m_Textures[existingTextureIndex];
                     m_Textures[textureIndex] = originalTexture;
+                    if (m_NonFlippedYTextureIndices != null && m_NonFlippedYTextureIndices.Contains(existingTextureIndex))
+                    {
+                        m_NonFlippedYTextureIndices.Add(textureIndex);
+                    }
                 }
             }
         }

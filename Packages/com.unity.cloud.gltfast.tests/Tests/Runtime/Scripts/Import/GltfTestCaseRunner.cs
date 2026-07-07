@@ -34,7 +34,8 @@ namespace GLTFast.Tests.Import
             GltfTestCase testCase,
             bool logLoadingMessage = true,
             CancellationToken cancellationToken = default,
-            Action<GltfImport> preLoadCallback = null
+            Action<GltfImport> preLoadCallback = null,
+            Action<GltfImport> preInstantiationCallback = null
             )
         {
             AssertRequiredExtensions(testCase.requiredExtensions);
@@ -69,6 +70,9 @@ namespace GLTFast.Tests.Import
                 AssertLoggers(new[] { loadLogger }, testCase);
                 return;
             }
+
+            preInstantiationCallback?.Invoke(gltf);
+
             var instantiateLogger = new CollectingLogger();
 
 #if !UNITY_ENTITIES_GRAPHICS

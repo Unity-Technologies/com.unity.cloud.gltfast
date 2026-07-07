@@ -138,6 +138,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - `LogCode.AnimationComponentFail`
+- [SaveToFileAndDispose](xref:GLTFast.Export.GameObjectExport.SaveToFileAndDispose*) and [SaveToStreamAndDispose](xref:GLTFast.Export.GameObjectExport.SaveToStreamAndDispose*) overloads with `forceSync` parameter to enforce synchronous I/O. Recommended when exporting from Editor scripts (menu items, inspectors, post-processors), where the main-thread `SynchronizationContext` is not pumped in Edit Mode and awaited I/O continuations may never resume.
 
 ### Changed
 - Clarified [IDeferAgent.ShouldDefer](xref:GLTFast.IDeferAgent.ShouldDefer) documentation to note that it must eventually return `false`, otherwise imports may stall indefinitely without raising an error.
@@ -149,6 +150,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Removed useless `SerializeFieldAttribute` from `MaterialsVariantsComponent.Control` to avoid compiler warning in Unity 6.6 and newer.
 - Removed usage of obsolete `FindObjectsByType` overloads.
 - (Test) Avoid `Animation` component conflict by accidentally loading glTF twice in `DocExamplesTest`.
+- [IsTextureYFlipped](xref:GLTFast.GltfImportBase.IsTextureYFlipped(System.Int32)) returns correct value when multiple textures reference one image.
+- (Export) Exceptions thrown during synchronous mesh export (`BakeMesh` / `BakeMeshDraco`) are now surfaced instead of being silently swallowed by unobserved tasks.
 
 ### Removed
 
