@@ -1033,7 +1033,7 @@ namespace GLTFast
 
         /// <summary>
         /// Gets a specific Unity mesh of a glTF mesh.
-        /// A single glTF mesh is converted into one or more Unity Meshes, so <see cref="meshNumeration" /> is
+        /// A single glTF mesh is converted into one or more Unity Meshes, so <paramref name="meshNumeration" /> is
         /// required to depict which exact one.
         /// </summary>
         /// <param name="meshIndex">glTF mesh index.</param>

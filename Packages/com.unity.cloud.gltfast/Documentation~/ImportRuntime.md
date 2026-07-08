@@ -21,7 +21,7 @@ To load from sources other than a URI or for advanced [customization](#customize
 
 1. Create a [GltfImport] instance.
 2. Call one of the instance's loading methods, depending on your source.
-   - From URI, [Load(Uri,…)](xref:GLTFast.GltfImportBase.Load(System.Uri,GLTFast.ImportSettings,System.Threading.CancellationToken)) or [Load(string,…)](xref:GLTFast.GltfImportBase.Load(System.String,GLTFast.ImportSettings,System.Threading.CancellationToken)) 
+   - From URI, [Load(Uri,…)](xref:GLTFast.GltfImportBase.Load(System.Uri,GLTFast.ImportSettings,System.Threading.CancellationToken)) or [Load(string,…)](xref:GLTFast.GltfImportBase.Load(System.String,GLTFast.ImportSettings,System.Threading.CancellationToken))
    - From a buffer [Load(NativeArray&lt;byte&gt;.ReadOnly,…)](xref:GLTFast.GltfImportBase.Load(Unity.Collections.NativeArray{System.Byte}.ReadOnly,System.Uri,GLTFast.ImportSettings,System.Threading.CancellationToken))
    - From a managed buffer [Load(byte[],…)](xref:GLTFast.GltfImportBase.Load(System.Byte[],System.Uri,GLTFast.ImportSettings,System.Threading.CancellationToken))
    - From a file path [LoadFile(string,…)](xref:GLTFast.GltfImportBase.LoadFile*)
@@ -60,7 +60,7 @@ Loading via script allows you to:
 
 ### Import Settings
 
-`GltfImport.Load` accepts an optional instance of [`ImportSettings`][ImportSettings] as parameter. Have a look at this class to see all options available. Here's an example usage:
+All [`GltfImport.Load`][GltfImportLoad] overloads accept an optional instance of [`ImportSettings`][ImportSettings] as parameter. Have a look at this class to see all options available. Here's an example usage:
 
 [!code-cs [import-settings](../DocExamples/LoadGltfFromMemory.cs#ImportSettings)]
 
@@ -215,7 +215,6 @@ When you no longer need a loaded instance of a glTF scene you might want to remo
 [InstantiationSettings]: xref:GLTFast.InstantiationSettings
 [Khronos]: https://www.khronos.org
 [LogMessages]: xref:GLTFast.Logging.LogMessages
-[NativeArrayByteReadOnly]: xref:Unity.Collections.NativeArray`1.ReadOnly
 [GameObjectSceneInstance]: xref:GLTFast.GameObjectSceneInstance
 [SceneObjectCreation]: xref:GLTFast.SceneObjectCreation
 [Stream]: xref:System.IO.Stream

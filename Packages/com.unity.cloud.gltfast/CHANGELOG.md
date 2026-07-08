@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Removed legacy .NET Framework fallback code paths (`#if NET_STANDARD` / `#if NET_STANDARD_2_1`). They were only needed for Unity versions prior to 2021.2, which are no longer supported (minimum is now Unity 6.0 LTS).
 
 ### Fixed
+- Corrected invalid `cref` references in XML documentation comments (parameters, type parameters and a stale method reference) that produced warnings during documentation generation.
 - Fixed false positives in export to stream tests because it actually validated results from non-stream tests.
 - Prevent exception when Animation component was not created successfully.
 - Removed useless `SerializeFieldAttribute` from `MaterialsVariantsComponent.Control` to avoid compiler warning in Unity 6.6 and newer.
@@ -51,9 +52,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - com.unity.burst to 1.8.29
   - com.unity.collections to 2.6.6
   - com.unity.mathematics to 1.3.3
-- GameObjectSceneInstance's [AddCamera](xref:GLTFast.GameObjectSceneInstance.AddCamera), [AddLight](xref:GLTFast.GameObjectSceneInstance.AddLight) and [SetLegacyAnimation](xref:GLTFast.GameObjectSceneInstance.SetLegacyAnimation) are now public, so custom [IInstantiators](xref:GLTFast.IInstantiator) can utilize it.
-- Refactored [ImportAddonInstanceCollection](xref:GLTFast.Addons.ImportAddonInstanceCollection) to derive directly from `List`/[QueryableList](xref:GLTFast.Addons.QueryableList).
-- (Performance) Importing animation curves got much faster and requires less managed memory. Keyframes are prepared in native arrays and set en bloc via [SetKeys(ReadOnlySpan&lt;Keyframe&gt;)](xref:UnityEngine.AnimationCurve.SetKeys(System.ReadOnlySpan`1<UnityEngine.Keyframe>)) instead of being slowly added individually (thanks [jverral](https://github.com/jverral) for initiating this via [#44](https://github.com/Unity-Technologies/com.unity.cloud.gltfast/pull/44)).
+- GameObjectSceneInstance's [AddCamera](xref:GLTFast.GameObjectSceneInstance.AddCamera*), [AddLight](xref:GLTFast.GameObjectSceneInstance.AddLight*) and [SetLegacyAnimation](xref:GLTFast.GameObjectSceneInstance.SetLegacyAnimation*) are now public, so custom [IInstantiators](xref:GLTFast.IInstantiator) can utilize it.
+- Refactored `ImportAddonInstanceCollection` to derive directly from `List`/`QueryableList`.
+- (Performance) Importing animation curves got much faster and requires less managed memory. Keyframes are prepared in native arrays and set en bloc via `AnimationCurve.SetKeys(ReadOnlySpan<Keyframe>)` instead of being slowly added individually (thanks [jverral](https://github.com/jverral) for initiating this via [#44](https://github.com/Unity-Technologies/com.unity.cloud.gltfast/pull/44)).
 - (Performance) Reduced memory waste by using cached, static identifiers instead of inner-loop format strings for [AnimationClip.SetCurve](xref:UnityEngine.AnimationClip.SetCurve(System.String,System.Type,System.String,UnityEngine.AnimationCurve))'s `propertyName` parameter (thanks [jverral](https://github.com/jverral) for [#44](https://github.com/Unity-Technologies/com.unity.cloud.gltfast/pull/44)).
 - Enabled Render Graph in graphics settings by default on all projects (not using compatibility mode anymore).
   - (Test) Compatibility mode is still enabled for Unity 6.0 tests.
@@ -108,7 +109,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - [GltfImport.Load](xref:GLTFast.GltfImportBase.Load*), [GltfImport.InstantiateSceneAsync](xref:GLTFast.GltfImportBase.InstantiateSceneAsync*) and their variants now throw an `OperationCanceledException` when cancelled before completion.
-- Replaced the generic [StandardMaterialExport](xref:GLTFast.Export.StandardMaterialExport) with specializations.
+- Replaced the generic `StandardMaterialExport` with specializations.
   - [LitMaterialExport](xref:GLTFast.Export.LitMaterialExport) for Universal Render Pipeline Lit shader material export.
   - [BuiltInStandardMaterialExport](xref:GLTFast.Export.BuiltInStandardMaterialExport) for Built-in Render Pipeline Standard shader material export.
 - (Performance) Improved performance of mesh indices conversion for draw modes line loop, triangle strips and triangle fan.
@@ -133,7 +134,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - (Export) Texture scaling not preserved on URP/Lit export (fixes [#805](https://github.com/atteneder/glTFast/issues/805)).
 
 ### Deprecated
-- Generic built-in/Universal render pipeline [StandardMaterialExport](xref:GLTFast.Export.StandardMaterialExport).
+- Generic built-in/Universal render pipeline `StandardMaterialExport`.
 
 ## [6.16.0] - 2026-01-20
 
@@ -160,7 +161,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [6.15.1] - 2025-12-09
 
 ### Added
-- Assigned glTF logo to [GltfEntityAsset](xref:GLTFast.GltfEntityAsset) component.
+- Assigned glTF logo to `GltfEntityAsset` component.
 - (Test) Test glTF asset *CylinderWithMaterial* that's procedurally generated at runtime.
 - (Test) Tests for documentation examples.
 - (Test) `OpenGltfScene` improvements.
@@ -170,7 +171,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Informative console logs with file path/URI and load time.
   - Now works at runtime as well (without file dialog).
   - Re-positions camera so that the loaded glTF scene is framed.
-  - Can load via [EntityInstantiator](xref:GLTFast.EntityInstantiator).
+  - Can load via `EntityInstantiator`.
 
 ### Changed
 - (Entities) Entities of a scene are grouped via `LinkedEntityGroup`.
@@ -203,7 +204,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - (Test) *No Normal* test asset.
 
 ### Changed
-- *glTFast* will return a success value of `true` even if an image fails to load (which has not been consistent across the API before). This makes it easier to display assets despite of non-critical loading errors. Users who need stricter behavior can resort to monitoring for error logs (see the runtime import manual about logging or the `logger` parameter of [GltfImport constructor](xref:GLTFast.GltfImportBase.#ctor(GLTFast.Loading.IDownloadProvider,GLTFast.IDeferAgent,GLTFast.Materials.IMaterialGenerator,GLTFast.Logging.ICodeLogger))).
+- *glTFast* will return a success value of `true` even if an image fails to load (which has not been consistent across the API before). This makes it easier to display assets despite of non-critical loading errors. Users who need stricter behavior can resort to monitoring for error logs (see the runtime import manual about logging or the `logger` parameter of [GltfImport constructor](xref:GLTFast.GltfImportBase.%23ctor*)).
 - Primitives of a Draco compressed mesh will be decoded into in a single Unity mesh with multiple sub-meshes instead of multiple Unity meshes (thanks [Kibsgaard](https://github.com/Kibsgaard) for initiating this in [#33](https://github.com/Unity-Technologies/com.unity.cloud.gltfast/pull/33)).
 - [Draco for Unity] minimum required version was raised to 5.4.0.
 - (Performance) Texture data is not copied into managed memory before loading via [Texture2D.LoadImage](xref:UnityEngine.ImageConversion.LoadImage(UnityEngine.Texture2D,System.Byte[],System.Boolean)) (applies for Unity 6.0 or newer).
