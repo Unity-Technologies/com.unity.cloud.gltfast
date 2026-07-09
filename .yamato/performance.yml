@@ -41,24 +41,6 @@ performance_6000_3_win:
     logs:
       paths:
       - test-results~/**/*
-performance_6000_4_win:
-  name: Performance_6000.4_Win
-  agent:
-    image: package-ci/win11:v4
-    type: Unity::VM
-    flavor: b1.large
-  commands:
-  - command: unity-downloader-cli --unity-version 6000.4 --path Editor --wait -c editor -c il2cpp
-    timeout: 10
-    retries: 3
-  - command: Editor\Unity.exe -projectPath Projects/glTFast-Test -batchmode -nographics -executeMethod GLTFast.Editor.Tests.SetupProject.ApplySetup glTFastSetup:performance -upmNoDefaultPackages -logfile test-results~/enable-performance-tests.log -quit
-  - command: UnifiedTestRunner.exe --suite=playmode --scripting-backend=il2cpp --platform=StandaloneWindows64 --editor-location=Editor --testproject=Projects/glTFast-Test --artifacts-path=test-results~ --category=Performance --report-performance-data --performance-project-id=com.unity.cloud.gltfast --extra-editor-arg=-upmNoDefaultPackages
-    timeout: 20
-    retries: 2
-  artifacts:
-    logs:
-      paths:
-      - test-results~/**/*
 performance_6000_5_win:
   name: Performance_6000.5_Win
   agent:
@@ -95,6 +77,24 @@ performance_6000_6_win:
     logs:
       paths:
       - test-results~/**/*
+performance_6000_7_win:
+  name: Performance_6000.7_Win
+  agent:
+    image: package-ci/win11:v4
+    type: Unity::VM
+    flavor: b1.large
+  commands:
+  - command: unity-downloader-cli --unity-version 6000.7 --path Editor --wait -c editor -c il2cpp
+    timeout: 10
+    retries: 3
+  - command: Editor\Unity.exe -projectPath Projects/glTFast-Test -batchmode -nographics -executeMethod GLTFast.Editor.Tests.SetupProject.ApplySetup glTFastSetup:performance -upmNoDefaultPackages -logfile test-results~/enable-performance-tests.log -quit
+  - command: UnifiedTestRunner.exe --suite=playmode --scripting-backend=il2cpp --platform=StandaloneWindows64 --editor-location=Editor --testproject=Projects/glTFast-Test --artifacts-path=test-results~ --category=Performance --report-performance-data --performance-project-id=com.unity.cloud.gltfast --extra-editor-arg=-upmNoDefaultPackages
+    timeout: 20
+    retries: 2
+  artifacts:
+    logs:
+      paths:
+      - test-results~/**/*
 
 # Runs all performance jobs.
 performance_all:
@@ -102,7 +102,7 @@ performance_all:
   dependencies:
   - path: .yamato/performance.yml#performance_6000_0_win
   - path: .yamato/performance.yml#performance_6000_3_win
-  - path: .yamato/performance.yml#performance_6000_4_win
   - path: .yamato/performance.yml#performance_6000_5_win
   - path: .yamato/performance.yml#performance_6000_6_win
+  - path: .yamato/performance.yml#performance_6000_7_win
 

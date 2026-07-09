@@ -13,16 +13,16 @@ test_setups:
     utr_timeout: 1200
     pr_test_subset:
       - platform: mac
-        editor: 6000.3
-      - platform: win
         editor: 6000.0
+      - platform: win
+        editor: 6000.3
     pr_build_subset:
       - platform: mac
         editor: 6000.0
     coverage_subset:
       # default for coverage: windows + current LTS
       - platform: win
-        editor: 6000.0
+        editor: 6000.3
   - project_setup: minimalistic
     project: glTFast-Test-minimalistic
     editor_versions: [6000.0,6000.3,trunk]
@@ -33,11 +33,11 @@ test_setups:
         editor: 6000.3
     pr_build_subset:
       - platform: win
-        editor: 6000.3
+        editor: trunk
     coverage_subset:
       # default for coverage: windows + current LTS
       - platform: win
-        editor: 6000.0
+        editor: 6000.3
   - project_setup: all_defines
     project: glTFast-Test
     setup: all_defines
@@ -51,15 +51,13 @@ test_setups:
       # For URP/shader graph test all versions
       - platform: win
         editor: 6000.0
-      - platform: win
-        editor: 6000.0
     pr_build_subset:
       - platform: win
         editor: 6000.3
     coverage_subset:
       # default for coverage: windows + current LTS
       - platform: win
-        editor: 6000.0
+        editor: 6000.3
   - project_setup: entities
     project: glTFast-Test-entities
     test_categories: "!Performance;!Export;!Graphics"
@@ -77,7 +75,7 @@ test_setups:
     coverage_subset:
       # default for coverage: windows + current LTS
       - platform: win
-        editor: 6000.0
+        editor: 6000.3
   - project_setup: hdrp
     project: glTFast-Test-HDRP
     utr_timeout: 3600
@@ -91,24 +89,25 @@ test_setups:
     coverage_subset:
       # default for coverage: windows + current LTS
       - platform: win
-        editor: 6000.0
+        editor: 6000.3
   - project_setup: builtin
     project: glTFast-Test-BuiltIn
     utr_timeout: 1200
     pr_test_subset:
       - platform: win
-        editor: 6000.0
+        editor: 6000.3
     pr_build_subset:
       - platform: win
         editor: 6000.0
     coverage_subset:
       # default for coverage: windows + current LTS
       - platform: win
-        editor: 6000.0
+        editor: 6000.3
 
 editor_versions:
   - 6000.0
   - 6000.3
+  - 6000.5
   - trunk
 
 platforms:
