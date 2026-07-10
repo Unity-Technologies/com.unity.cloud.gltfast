@@ -129,6 +129,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Newtonsoft JSON dependency.
 - (Export) `GLTFast.Export.ImageFormat` enum (use [GLTFast.ImageFormat](xref:GLTFast.ImageFormat) instead).
 - Legacy `image/ktx` MIME type lenience. The glTF specification and `KHR_texture_basisu` require `image/ktx2`.
+- The 43 obsolete `MaterialGenerator.*Property` shader-property-ID aliases (e.g. `MaterialGenerator.BaseColorProperty`). Use the equivalent [MaterialProperty](xref:GLTFast.Materials.MaterialProperty) constant instead, dropping the `Property` suffix — for example `MaterialGenerator.BaseColorProperty` becomes `MaterialProperty.BaseColor`. One alias does not follow this pattern: `MaterialGenerator.MetallicRoughnessMapUVChannelProperty` maps to `MaterialProperty.MetallicRoughnessMapTexCoord` (there is no `MaterialProperty.MetallicRoughnessMapUVChannel`).
 
 ### Deprecated
 
