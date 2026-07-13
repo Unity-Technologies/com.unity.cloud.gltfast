@@ -66,12 +66,5 @@ namespace GLTFast.Schema
         /// </summary>
         [JsonPropertyName("specularGlossinessTexture")]
         public TextureInfo SpecularGlossinessTexture { get; set; }
-
-        internal void GltfSerialize(JsonWriter writer)
-        {
-            writer.AddObject();
-            writer.Close();
-            throw new System.NotImplementedException($"GltfSerialize missing on {GetType()}");
-        }
     }
 }

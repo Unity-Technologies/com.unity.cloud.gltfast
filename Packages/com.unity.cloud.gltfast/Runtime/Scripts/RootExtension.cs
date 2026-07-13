@@ -1,14 +1,27 @@
 // SPDX-FileCopyrightText: 2023 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
+using System.IO;
 using GLTFast.Schema;
+using Unity.Gltfast.Text.Json;
 using UnityEngine;
 
 namespace GLTFast
 {
-
-    static class RootExtension
+    /// <summary>
+    /// Extension methods for <see cref="Root"/>
+    /// </summary>
+    public static class RootExtension
     {
+        /// <summary>
+        /// Serialization to JSON
+        /// </summary>
+        /// <param name="root">Root glTF object to be serialized.</param>
+        /// <param name="stream"><see cref="Stream"/> the JSON string is being written to.</param>
+        public static void Serialize(this Root root, Stream stream)
+        {
+            JsonSerializer.Serialize(stream, root, GltfJsonContext.Default.Root);
+        }
 
         /// <summary>
         /// Figures if any skins' skeleton property is not set.

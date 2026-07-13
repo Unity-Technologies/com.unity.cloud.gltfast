@@ -124,7 +124,7 @@ Writing: assign an `int` directly (implicit conversion to `int?` works), or `nul
 | `node.Mesh = 3;` | `node.Mesh = 3;` (unchanged) |
 | `node.Mesh = -1;` | `node.Mesh = null;` |
 
-The corresponding `GltfSerialize` writers omit the property when `null`. Existing code that left a property at its default (`-1`) for "not set" should now leave it at `null` (the new default).
+JSON serialization omits the property when `null`. Existing code that left a property at its default (`-1`) for "not set" should now leave it at `null` (the new default).
 
 #### Related API signature changes
 
@@ -364,6 +364,22 @@ The redundant `GLTFast.Export.ImageFormat` enum was removed and merged into the 
 | `public override string MimeType => "image/png";` | `public override ImageMimeType MimeType => ImageMimeType.Png;` |
 
 The internal helpers `GLTFast.Export.Constants.mimeTypePNG` and `mimeTypeJPG` were removed; use `ImageMimeType.Png` / `ImageMimeType.Jpeg` instead.
+
+### Exported JSON is no longer byte-identical
+
+The hand-written `GLTFast.Schema.JsonWriter` and the per-type `GltfSerialize` methods are gone; export now runs through `System.Text.Json` via the source-generated `GltfJsonContext`. The resulting glTF JSON is functionally equivalent and continues to round-trip through the importer, but the bytes are not identical to previous releases:
+
+- **Property order** follows the C# field declaration order on each `GLTFast.Schema` class instead of the order baked into the old `GltfSerialize` methods.
+- **Floating-point formatting** uses System.Text.Json's shortest-round-trip representation (e.g. `0.1` instead of `0.10000000149011612`).
+- **Default-value omission** is governed by `JsonIgnoreCondition.WhenWritingDefault` plus the `*Serialized` helper properties on schema types, rather than ad-hoc `if (value != default)` checks. A handful of fields that previously fell back to a project-default (e.g. `Sampler.MagFilter`/`MinFilter` was silently dropped when `Linear`) are now serialized whenever they're explicitly set.
+
+Diff-based comparison or hash-based caching of exported `.gltf` files needs to be re-baselined.
+
+`Root.GltfSerialize(StreamWriter)` is still available as an obsolete shim that forwards to the new writer; migrate to [Root.Serialize(Stream)](xref:GLTFast.RootExtension.Serialize*), which writes directly to a `Stream`:
+
+| Before | After |
+| ------ | ----- |
+| `root.GltfSerialize(streamWriter);` | `root.Serialize(streamWriter.BaseStream);` |
 
 ## Upgrade to 6.0
 

@@ -16,10 +16,5 @@ namespace GLTFast.Schema
         /// <inheritdoc cref="InstancesAttributes"/>
         [JsonPropertyName("attributes")]
         public InstancesAttributes Attributes { get; set; }
-
-        internal void GltfSerialize(JsonWriter writer)
-        {
-            throw new System.NotImplementedException();
-        }
     }
 }

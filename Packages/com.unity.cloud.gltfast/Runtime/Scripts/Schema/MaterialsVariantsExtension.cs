@@ -17,31 +17,13 @@ namespace GLTFast.Schema
         /// </summary>
         [JsonPropertyName("variants")]
         public List<MaterialsVariant> Variants { get; set; }
-
-        internal void GltfSerialize(JsonWriter writer)
-        {
-            writer.AddObject();
-            writer.AddArray("variants");
-            foreach (var variant in Variants)
-            {
-                variant.GltfSerialize(writer);
-            }
-            writer.CloseArray();
-            writer.Close();
-        }
     }
 
     /// <summary>
     /// Named materials variant.
     /// </summary>
     /// <seealso href="https://github.com/KhronosGroup/glTF/tree/main/extensions/2.0/Khronos/KHR_materials_variants">KHR_materials_variants extension</seealso>
-    public class MaterialsVariant : NamedObject
-    {
-        internal void GltfSerialize(JsonWriter writer)
-        {
-            GltfSerializeName(writer);
-        }
-    }
+    public class MaterialsVariant : NamedObject { }
 
     /// <summary>
     /// Mesh primitive level KHR_materials_variants extension.
@@ -80,18 +62,6 @@ namespace GLTFast.Schema
             materialIndex = -1;
             return false;
         }
-
-        internal void GltfSerialize(JsonWriter writer)
-        {
-            writer.AddObject();
-            writer.AddArray("mappings");
-            foreach (var mapping in Mappings)
-            {
-                mapping.GltfSerialize(writer);
-            }
-            writer.CloseArray();
-            writer.Close();
-        }
     }
 
     /// <summary>
@@ -113,16 +83,5 @@ namespace GLTFast.Schema
         /// <summary>Materials variants indices.</summary>
         [JsonPropertyName("variants")]
         public List<int> Variants { get; set; }
-
-        internal void GltfSerialize(JsonWriter writer)
-        {
-            writer.AddObject();
-            if (Material >= 0)
-            {
-                writer.AddProperty("material", Material);
-            }
-            writer.AddArrayProperty("variants", Variants);
-            writer.Close();
-        }
     }
 }

@@ -26,16 +26,5 @@ namespace GLTFast.Schema
             get => Mathematics.ApproximatelyOne(Strength) ? null : Strength;
             set => Strength = value ?? 1f;
         }
-
-        internal override void GltfSerialize(JsonWriter writer)
-        {
-            writer.AddObject();
-            GltfSerializeTextureInfo(writer);
-            if (!Mathematics.ApproximatelyOne(Strength))
-            {
-                writer.AddProperty("strength", Strength);
-            }
-            writer.Close();
-        }
     }
 }

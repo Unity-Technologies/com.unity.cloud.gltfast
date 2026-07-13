@@ -54,27 +54,5 @@ namespace GLTFast.Schema
         {
             return ExtensionsData.TryGetValue(key, out value);
         }
-
-        internal void GltfSerialize(JsonWriter writer)
-        {
-            writer.OpenBrackets();
-            if (!string.IsNullOrEmpty(Version))
-            {
-                writer.AddProperty("version", Version);
-            }
-            if (!string.IsNullOrEmpty(Generator))
-            {
-                writer.AddPropertySafe("generator", Generator);
-            }
-            if (!string.IsNullOrEmpty(Copyright))
-            {
-                writer.AddPropertySafe("copyright", Copyright);
-            }
-            if (!string.IsNullOrEmpty(MinVersion))
-            {
-                writer.AddProperty("minVersion", MinVersion);
-            }
-            writer.Close();
-        }
     }
 }

@@ -20,12 +20,5 @@ namespace GLTFast.Schema
         /// <summary>Vertex tangent deviation accessor index.</summary>
         [JsonPropertyName("TANGENT")]
         public int? Tangent { get; set; }
-
-        internal void GltfSerialize(JsonWriter writer)
-        {
-            if (Position.HasValue) writer.AddProperty("POSITION", Position.Value);
-            if (Normal.HasValue) writer.AddProperty("NORMAL", Normal.Value);
-            if (Tangent.HasValue) writer.AddProperty("TANGENT", Tangent.Value);
-        }
     }
 }

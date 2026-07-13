@@ -1,8 +1,10 @@
 // SPDX-FileCopyrightText: 2023 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using Unity.Gltfast.Text.Json;
 using Unity.Gltfast.Text.Json.Serialization;
 
@@ -168,185 +170,6 @@ namespace GLTFast.Schema
             return bufferView.ByteStride.Value > accessor.ElementByteSize;
         }
 
-        static void WriteExtensionList(JsonWriter writer, string propertyName, List<EnumOrRawValue<Extension>> extensions)
-        {
-            writer.AddArray(propertyName);
-            foreach (var ext in extensions)
-            {
-                if (ext.RawValue != null)
-                {
-                    writer.AddElement(System.Text.Encoding.UTF8.GetString(ext.RawValue));
-                }
-                else
-                {
-                    writer.AddElement(ext.Value.GetName());
-                }
-            }
-            writer.CloseArray();
-        }
-
-        /// <summary>
-        /// Serialization to JSON
-        /// </summary>
-        /// <param name="stream">Stream the JSON string is being written to.</param>
-        public void GltfSerialize(StreamWriter stream)
-        {
-            var writer = new JsonWriter(stream);
-
-            if (Asset != null)
-            {
-                writer.AddProperty("asset");
-                Asset.GltfSerialize(writer);
-            }
-            if (Nodes != null)
-            {
-                writer.AddArray("nodes");
-                foreach (var node in Nodes)
-                {
-                    node.GltfSerialize(writer);
-                }
-                writer.CloseArray();
-            }
-
-            if (ExtensionsRequired != null)
-            {
-                WriteExtensionList(writer, "extensionsRequired", ExtensionsRequired);
-            }
-
-            if (ExtensionsUsed != null)
-            {
-                WriteExtensionList(writer, "extensionsUsed", ExtensionsUsed);
-            }
-
-#if UNITY_ANIMATION || GLTFAST_ANIMATION
-            if (Animations != null)
-            {
-                writer.AddArray("animations");
-                foreach (var animation in Animations)
-                {
-                    animation.GltfSerialize(writer);
-                }
-                writer.CloseArray();
-            }
-#endif
-
-            if (Buffers != null)
-            {
-                writer.AddArray("buffers");
-                foreach (var buffer in Buffers)
-                {
-                    buffer.GltfSerialize(writer);
-                }
-                writer.CloseArray();
-            }
-
-            if (BufferViews != null)
-            {
-                writer.AddArray("bufferViews");
-                foreach (var bufferView in BufferViews)
-                {
-                    bufferView.GltfSerialize(writer);
-                }
-                writer.CloseArray();
-            }
-
-            if (Accessors != null)
-            {
-                writer.AddArray("accessors");
-                foreach (var accessor in Accessors)
-                {
-                    accessor.GltfSerialize(writer);
-                }
-                writer.CloseArray();
-            }
-
-            if (Cameras != null)
-            {
-                writer.AddArray("cameras");
-                foreach (var camera in Cameras)
-                {
-                    camera.GltfSerialize(writer);
-                }
-                writer.CloseArray();
-            }
-
-            if (Images != null)
-            {
-                writer.AddArray("images");
-                foreach (var image in Images)
-                {
-                    image?.GltfSerialize(writer);
-                }
-                writer.CloseArray();
-            }
-            if (Materials != null)
-            {
-                writer.AddArray("materials");
-                foreach (var material in Materials)
-                {
-                    material.GltfSerialize(writer);
-                }
-                writer.CloseArray();
-            }
-            if (Meshes != null)
-            {
-                writer.AddArray("meshes");
-                foreach (var mesh in Meshes)
-                {
-                    mesh.GltfSerialize(writer);
-                }
-                writer.CloseArray();
-            }
-            if (Samplers != null)
-            {
-                writer.AddArray("samplers");
-                foreach (var sampler in Samplers)
-                {
-                    sampler.GltfSerialize(writer);
-                }
-                writer.CloseArray();
-            }
-            if (Scene.HasValue)
-            {
-                writer.AddProperty("scene", Scene.Value);
-            }
-            if (Scenes != null)
-            {
-                writer.AddArray("scenes");
-                foreach (var sceneToSerialize in Scenes)
-                {
-                    sceneToSerialize.GltfSerialize(writer);
-                }
-                writer.CloseArray();
-            }
-            if (Skins != null)
-            {
-                writer.AddArray("skins");
-                foreach (var skin in Skins)
-                {
-                    skin.GltfSerialize(writer);
-                }
-                writer.CloseArray();
-            }
-            if (Textures != null)
-            {
-                writer.AddArray("textures");
-                foreach (var texture in Textures)
-                {
-                    texture.GltfSerialize(writer);
-                }
-                writer.CloseArray();
-            }
-
-            if (Extensions != null)
-            {
-                writer.AddProperty("extensions");
-                Extensions.GltfSerialize(writer);
-            }
-
-            writer.Close();
-        }
-
         /// <summary>
         /// Number of materials variants.
         /// </summary>
@@ -369,6 +192,17 @@ namespace GLTFast.Schema
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// Serialization to JSON
+        /// </summary>
+        /// <param name="stream"><see cref="StreamWriter"/> the JSON string is being written to.</param>
+        /// <seealso cref="RootExtension.Serialize"/>
+        [Obsolete("Use RootExtension.Serialize instead")]
+        public void GltfSerialize(StreamWriter stream)
+        {
+            this.Serialize(stream.BaseStream);
         }
     }
 }

@@ -62,33 +62,5 @@ namespace GLTFast.Schema
         {
             return ExtensionsData.TryGetValue(key, out value);
         }
-
-        internal void GltfSerialize(JsonWriter writer)
-        {
-            writer.AddObject();
-            GltfSerializeName(writer);
-            if (Primitives != null)
-            {
-                writer.AddArray("primitives");
-                foreach (var primitive in Primitives)
-                {
-                    primitive.GltfSerialize(writer);
-                }
-                writer.CloseArray();
-            }
-
-            if (Weights != null)
-            {
-                writer.AddArrayProperty("weights", Weights);
-            }
-
-            if (Extras != null)
-            {
-                writer.AddProperty("extras");
-                Extras.GltfSerialize(writer);
-                writer.Close();
-            }
-            writer.Close();
-        }
     }
 }

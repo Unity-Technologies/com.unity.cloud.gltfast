@@ -300,53 +300,5 @@ namespace GLTFast.Schema
         /// </summary>
         [JsonIgnore]
         public int ByteSize => ElementByteSize * Count;
-
-        internal void GltfSerialize(JsonWriter writer)
-        {
-            writer.AddObject();
-            if (BufferView.HasValue)
-            {
-                writer.AddProperty("bufferView", BufferView.Value);
-            }
-            writer.AddProperty("componentType", (int)ComponentType);
-            if (Count >= 0)
-            {
-                writer.AddProperty("count", Count);
-            }
-            if (Type.RawValue != null)
-            {
-                writer.AddProperty("type", System.Text.Encoding.UTF8.GetString(Type.RawValue));
-            }
-            else
-            {
-                Assert.AreNotEqual(AccessorType.Undefined, Type.Value);
-                var type = JsonSerializer.Serialize(Type.Value, GltfJsonContext.Default.AccessorType);
-                writer.AddProperty("type", type.AsSpan(1, type.Length - 2));
-            }
-            if (ByteOffset > 0)
-            {
-                writer.AddProperty("byteOffset", ByteOffset);
-            }
-            if (Normalized)
-            {
-                writer.AddProperty("normalized", Normalized);
-            }
-            if (Max != null)
-            {
-                writer.AddArrayProperty("max", Max);
-            }
-            if (Min != null)
-            {
-                writer.AddArrayProperty("min", Min);
-            }
-
-            if (Sparse != null)
-            {
-                writer.AddProperty("sparse");
-                Sparse.GltfSerialize(writer);
-                writer.Close();
-            }
-            writer.Close();
-        }
     }
 }

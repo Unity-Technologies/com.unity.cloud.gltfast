@@ -41,29 +41,5 @@ namespace GLTFast.Schema
         /// </summary>
         [JsonPropertyName("sheenRoughnessTexture")]
         public TextureInfo SheenRoughnessTexture { get; set; }
-
-        internal void GltfSerialize(JsonWriter writer)
-        {
-            writer.AddObject();
-            if (SheenColorFactor != Color.Black)
-            {
-                writer.AddColorProperty("sheenColorFactor", SheenColorFactor);
-            }
-            if (SheenColorTexture != null)
-            {
-                writer.AddProperty("sheenColorTexture");
-                SheenColorTexture.GltfSerialize(writer);
-            }
-            if (SheenRoughnessFactor > 0)
-            {
-                writer.AddProperty("sheenRoughnessFactor", SheenRoughnessFactor);
-            }
-            if (SheenRoughnessTexture != null)
-            {
-                writer.AddProperty("sheenRoughnessTexture");
-                SheenRoughnessTexture.GltfSerialize(writer);
-            }
-            writer.Close();
-        }
     }
 }

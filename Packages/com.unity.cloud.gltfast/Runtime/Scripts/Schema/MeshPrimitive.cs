@@ -103,42 +103,5 @@ namespace GLTFast.Schema
         {
             return MemberwiseClone();
         }
-
-        internal void GltfSerialize(JsonWriter writer)
-        {
-            writer.AddObject();
-            if (Attributes != null)
-            {
-                writer.AddProperty("attributes");
-                Attributes.GltfSerialize(writer);
-            }
-            if (Indices.HasValue)
-            {
-                writer.AddProperty("indices", Indices.Value);
-            }
-            if (Material.HasValue)
-            {
-                writer.AddProperty("material", Material.Value);
-            }
-            if (Mode != PrimitiveMode.Triangles)
-            {
-                writer.AddProperty("mode", (int)Mode);
-            }
-            if (Targets != null)
-            {
-                writer.AddArray("targets");
-                foreach (var target in Targets)
-                {
-                    target.GltfSerialize(writer);
-                }
-                writer.CloseArray();
-            }
-            if (Extensions != null)
-            {
-                writer.AddProperty("extensions");
-                Extensions.GltfSerialize(writer);
-            }
-            writer.Close();
-        }
     }
 }

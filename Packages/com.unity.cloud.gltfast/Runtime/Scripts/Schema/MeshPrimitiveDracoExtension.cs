@@ -22,15 +22,6 @@ namespace GLTFast.Schema
 
         [JsonPropertyName("attributes")]
         public Attributes Attributes { get; set; }
-
-        internal void GltfSerialize(JsonWriter writer)
-        {
-            writer.AddObject();
-            writer.AddProperty("bufferView", BufferView);
-            writer.AddProperty("attributes");
-            Attributes.GltfSerialize(writer);
-            writer.Close();
-        }
     }
 }
 #endif // DRACO_IS_INSTALLED

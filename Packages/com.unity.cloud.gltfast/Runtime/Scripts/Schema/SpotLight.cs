@@ -34,13 +34,5 @@ namespace GLTFast.Schema
             get => Mathematics.Approximately(OuterConeAngle, k_OuterConeAngleDefault) ? null : OuterConeAngle;
             set => OuterConeAngle = value ?? k_OuterConeAngleDefault;
         }
-
-        internal void GltfSerialize(JsonWriter writer)
-        {
-            writer.AddObject();
-            writer.AddProperty("innerConeAngle", InnerConeAngle);
-            writer.AddProperty("outerConeAngle", OuterConeAngle);
-            writer.Close();
-        }
     }
 }

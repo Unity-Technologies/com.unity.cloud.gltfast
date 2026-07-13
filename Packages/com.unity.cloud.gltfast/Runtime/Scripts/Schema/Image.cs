@@ -1,9 +1,7 @@
 // SPDX-FileCopyrightText: 2023 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
-using System;
 using System.Collections.Generic;
-using System.Text;
 using Unity.Gltfast.Text.Json;
 using Unity.Gltfast.Text.Json.Serialization;
 
@@ -52,37 +50,6 @@ namespace GLTFast.Schema
         public bool TryGetValue<T>(string key, out T value)
         {
             return ExtensionsData.TryGetValue(key, out value);
-        }
-
-        internal void GltfSerialize(JsonWriter writer)
-        {
-            writer.AddObject();
-            GltfSerializeName(writer);
-            if (Uri != null)
-            {
-                writer.AddPropertySafe("uri", Uri.AsString());
-            }
-            if (MimeType.RawValue != null)
-            {
-                writer.AddProperty("mimeType", Encoding.UTF8.GetString(MimeType.RawValue));
-            }
-            else if (MimeType.Value != ImageMimeType.Undefined)
-            {
-                var mimeType = MimeType.Value switch
-                {
-                    ImageMimeType.Jpeg => "image/jpeg",
-                    ImageMimeType.Png => "image/png",
-                    ImageMimeType.Ktx2 => "image/ktx2",
-                    ImageMimeType.WebP => "image/webp",
-                    _ => throw new ArgumentOutOfRangeException(nameof(MimeType), MimeType, null)
-                };
-                writer.AddProperty("mimeType", mimeType);
-            }
-            if (BufferView.HasValue)
-            {
-                writer.AddProperty("bufferView", BufferView.Value);
-            }
-            writer.Close();
         }
     }
 }

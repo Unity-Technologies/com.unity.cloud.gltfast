@@ -29,16 +29,5 @@ namespace GLTFast.Schema
         {
             return ExtensionsData.TryGetValue(key, out value);
         }
-
-        internal void GltfSerialize(JsonWriter writer)
-        {
-            if (TextureTransform != null)
-            {
-                writer.AddObject();
-                writer.AddProperty("KHR_texture_transform");
-                TextureTransform.GltfSerialize(writer);
-                writer.Close();
-            }
-        }
     }
 }

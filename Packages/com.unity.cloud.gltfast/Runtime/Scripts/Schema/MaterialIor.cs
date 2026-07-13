@@ -31,15 +31,5 @@ namespace GLTFast.Schema
             get => Mathematics.Approximately(Ior, DefaultIndexOfRefraction) ? null : Ior;
             set => Ior = value ?? DefaultIndexOfRefraction;
         }
-
-        internal void GltfSerialize(JsonWriter writer)
-        {
-            writer.AddObject();
-            if (!Mathematics.Approximately(Ior, DefaultIndexOfRefraction))
-            {
-                writer.AddProperty("ior", Ior);
-            }
-            writer.Close();
-        }
     }
 }

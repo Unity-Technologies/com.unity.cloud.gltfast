@@ -73,31 +73,5 @@ namespace GLTFast.Schema
         {
             return ExtensionsData.TryGetValue(key, out value);
         }
-
-        internal void GltfSerialize(JsonWriter writer)
-        {
-            writer.AddObject();
-            if (Buffer >= 0)
-            {
-                writer.AddProperty("buffer", Buffer);
-            }
-            if (ByteLength >= 0)
-            {
-                writer.AddProperty("byteLength", ByteLength);
-            }
-            if (ByteOffset > 0)
-            {
-                writer.AddProperty("byteOffset", ByteOffset);
-            }
-            if (ByteStride.HasValue)
-            {
-                writer.AddProperty("byteStride", ByteStride.Value);
-            }
-            if (Target != BufferViewTarget.Undefined)
-            {
-                writer.AddProperty("target", (int)Target);
-            }
-            writer.Close();
-        }
     }
 }

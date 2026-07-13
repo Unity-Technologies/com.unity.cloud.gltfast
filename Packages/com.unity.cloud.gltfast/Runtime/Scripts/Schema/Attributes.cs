@@ -96,30 +96,5 @@ namespace GLTFast.Schema
 
             return true;
         }
-
-        internal void GltfSerialize(JsonWriter writer)
-        {
-            writer.AddObject();
-            if (Position.HasValue) writer.AddProperty("POSITION", Position.Value);
-            if (Normal.HasValue) writer.AddProperty("NORMAL", Normal.Value);
-            if (Tangent.HasValue) writer.AddProperty("TANGENT", Tangent.Value);
-            WriteChannel(writer, "TEXCOORD_", TexCoords);
-            WriteChannel(writer, "COLOR_", Colors);
-            WriteChannel(writer, "JOINTS_", Joints);
-            WriteChannel(writer, "WEIGHTS_", Weights);
-            writer.Close();
-        }
-
-        static void WriteChannel(JsonWriter writer, string prefix, List<int?> list)
-        {
-            if (list == null) return;
-            for (var i = 0; i < list.Count; i++)
-            {
-                if (list[i].HasValue)
-                {
-                    writer.AddProperty($"{prefix}{i}", list[i].Value);
-                }
-            }
-        }
     }
 }

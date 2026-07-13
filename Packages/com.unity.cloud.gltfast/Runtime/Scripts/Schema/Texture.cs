@@ -62,25 +62,5 @@ namespace GLTFast.Schema
         /// </summary>
         [JsonIgnore]
         public bool IsKtx => Extensions?.BasisU != null;
-
-        internal void GltfSerialize(JsonWriter writer)
-        {
-            writer.AddObject();
-            GltfSerializeName(writer);
-            if (Source.HasValue)
-            {
-                writer.AddProperty("source", Source.Value);
-            }
-            if (Sampler.HasValue)
-            {
-                writer.AddProperty("sampler", Sampler.Value);
-            }
-            if (Extensions != null)
-            {
-                writer.AddProperty("extensions");
-                Extensions.GltfSerialize(writer);
-            }
-            writer.Close();
-        }
     }
 }

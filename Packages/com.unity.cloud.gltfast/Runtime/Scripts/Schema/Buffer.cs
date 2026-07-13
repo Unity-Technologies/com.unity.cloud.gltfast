@@ -48,19 +48,5 @@ namespace GLTFast.Schema
         {
             return ExtensionsData.TryGetValue(key, out value);
         }
-
-        internal void GltfSerialize(JsonWriter writer)
-        {
-            writer.AddObject();
-            if (Uri != null)
-            {
-                writer.AddPropertySafe("uri", Uri.AsString());
-            }
-            if (ByteLength >= 0)
-            {
-                writer.AddProperty("byteLength", ByteLength);
-            }
-            writer.Close();
-        }
     }
 }

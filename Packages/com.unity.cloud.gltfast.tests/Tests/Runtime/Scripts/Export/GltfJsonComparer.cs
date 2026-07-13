@@ -11,9 +11,6 @@ namespace GLTFast.Tests.Export
 {
     public static class GltfJsonComparer
     {
-        const string k_ColorPropertyPattern = @"\.(?<property>\w*[cC]olor\w*)(\[\d+\])?$";
-        static readonly Regex k_ColorPropertyRegex = new Regex(k_ColorPropertyPattern, RegexOptions.CultureInvariant | RegexOptions.Compiled, TimeSpan.FromSeconds(1));
-
         // Compare two JSON files
         public static void Compare(string json1, string json2, string currentPath = "")
         {
@@ -48,9 +45,9 @@ namespace GLTFast.Tests.Export
                     Assert.AreEqual(element1.GetString(), element2.GetString());
                     break;
                 case JsonValueKind.Number:
-                    var isColor = k_ColorPropertyRegex.Match(currentPath).Success;
-                    // Colors usually undergo a gamma to linear conversion, hence a bit more tolerance.
-                    var tolerance = isColor ? 6E-06f : 6E-08f;
+                    // Assuming floats were serialized with `float.ToString("R")` (System.Text.Json default) using
+                    // the "shortest roundtrip" algorithm we expect ≈ 6–7 significant digits of precision.
+                    const float tolerance = 6e-06f;
                     Assert.That(
                         element1.GetDouble(),
                         Is.EqualTo(element2.GetDouble()).Within(tolerance),

@@ -36,27 +36,5 @@ namespace GLTFast.Schema
         /// </summary>
         [JsonPropertyName("texCoord")]
         public int? TexCoord { get; set; }
-
-        internal void GltfSerialize(JsonWriter writer)
-        {
-            writer.AddObject();
-            if (Offset.HasValue)
-            {
-                writer.AddArrayProperty("offset", Offset.Value);
-            }
-            if (Scale.HasValue)
-            {
-                writer.AddArrayProperty("scale", Scale.Value);
-            }
-            if (math.abs(Rotation) >= float.Epsilon)
-            {
-                writer.AddProperty("rotation", Rotation);
-            }
-            if (TexCoord.HasValue)
-            {
-                writer.AddProperty("texCoord", TexCoord.Value);
-            }
-            writer.Close();
-        }
     }
 }

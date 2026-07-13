@@ -57,25 +57,5 @@ namespace GLTFast.Schema
         {
             return ExtensionsData.TryGetValue(key, out value);
         }
-
-        internal void GltfSerialize(JsonWriter writer)
-        {
-            writer.AddObject();
-            if (Count >= 0)
-            {
-                writer.AddProperty("count", Count);
-            }
-            if (Indices != null)
-            {
-                writer.AddProperty("indices");
-                Indices.GltfSerialize(writer);
-            }
-            if (Values != null)
-            {
-                writer.AddProperty("values");
-                Values.GltfSerialize(writer);
-            }
-            writer.Close();
-        }
     }
 }

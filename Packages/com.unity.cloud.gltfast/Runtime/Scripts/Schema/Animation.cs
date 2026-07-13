@@ -3,7 +3,6 @@
 
 #if UNITY_ANIMATION || GLTFAST_ANIMATION
 
-using System;
 using System.Collections.Generic;
 using Unity.Gltfast.Text.Json;
 using Unity.Gltfast.Text.Json.Serialization;
@@ -49,14 +48,6 @@ namespace GLTFast.Schema
         public bool TryGetValue<T>(string key, out T value)
         {
             return ExtensionsData.TryGetValue(key, out value);
-        }
-
-        internal void GltfSerialize(JsonWriter writer)
-        {
-            writer.AddObject();
-            GltfSerializeName(writer);
-            writer.Close();
-            throw new NotImplementedException($"GltfSerialize missing on {GetType()}");
         }
     }
 #else

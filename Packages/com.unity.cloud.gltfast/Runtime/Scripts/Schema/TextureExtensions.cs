@@ -28,10 +28,5 @@ namespace GLTFast.Schema
         {
             return ExtensionsData.TryGetValue(key, out value);
         }
-
-        internal void GltfSerialize(JsonWriter writer)
-        {
-            throw new System.NotImplementedException($"GltfSerialize missing on {GetType()}");
-        }
     }
 }

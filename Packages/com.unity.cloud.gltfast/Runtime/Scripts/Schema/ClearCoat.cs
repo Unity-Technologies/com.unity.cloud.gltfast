@@ -43,37 +43,5 @@ namespace GLTFast.Schema
         /// </summary>
         [JsonPropertyName("clearcoatNormalTexture")]
         public NormalTextureInfo ClearcoatNormalTexture { get; set; }
-
-        internal void GltfSerialize(JsonWriter writer)
-        {
-            writer.AddObject();
-
-            if (ClearcoatFactor > 0)
-            {
-                writer.AddProperty("clearcoatFactor", ClearcoatFactor);
-            }
-            if (ClearcoatTexture != null)
-            {
-                writer.AddProperty("clearcoatTexture");
-                ClearcoatTexture.GltfSerialize(writer);
-            }
-            if (ClearcoatRoughnessFactor > 0)
-            {
-                writer.AddProperty("clearcoatRoughnessFactor", ClearcoatRoughnessFactor);
-            }
-            if (ClearcoatRoughnessTexture != null)
-            {
-                writer.AddProperty("clearcoatRoughnessTexture");
-                ClearcoatRoughnessTexture.GltfSerialize(writer);
-            }
-            if (ClearcoatNormalTexture != null)
-            {
-                writer.AddProperty("clearcoatNormalTexture");
-                ClearcoatNormalTexture.GltfSerialize(writer);
-            }
-
-            writer.Close();
-        }
-
     }
 }

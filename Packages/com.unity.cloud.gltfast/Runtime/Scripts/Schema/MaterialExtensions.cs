@@ -52,46 +52,5 @@ namespace GLTFast.Schema
         {
             return ExtensionsData.TryGetValue(key, out value);
         }
-
-        internal void GltfSerialize(JsonWriter writer)
-        {
-            writer.AddObject();
-            if (PbrSpecularGlossiness != null)
-            {
-                writer.AddProperty("KHR_materials_pbrSpecularGlossiness");
-                PbrSpecularGlossiness.GltfSerialize(writer);
-            }
-            if (Unlit != null)
-            {
-                writer.AddProperty("KHR_materials_unlit");
-                Unlit.GltfSerialize(writer);
-            }
-            if (Transmission != null)
-            {
-                writer.AddProperty("KHR_materials_transmission");
-                Transmission.GltfSerialize(writer);
-            }
-            if (Clearcoat != null)
-            {
-                writer.AddProperty("KHR_materials_clearcoat");
-                Clearcoat.GltfSerialize(writer);
-            }
-            if (Sheen != null)
-            {
-                writer.AddProperty("KHR_materials_sheen");
-                Sheen.GltfSerialize(writer);
-            }
-            if (Specular != null)
-            {
-                writer.AddProperty("KHR_materials_specular");
-                Specular.GltfSerialize(writer);
-            }
-            if (IndexOfRefraction != null)
-            {
-                writer.AddProperty("KHR_materials_ior");
-                IndexOfRefraction.GltfSerialize(writer);
-            }
-            writer.Close();
-        }
     }
 }

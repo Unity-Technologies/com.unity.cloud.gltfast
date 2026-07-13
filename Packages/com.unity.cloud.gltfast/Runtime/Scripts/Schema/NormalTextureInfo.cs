@@ -25,16 +25,5 @@ namespace GLTFast.Schema
             get => Mathematics.ApproximatelyOne(Scale) ? null : Scale;
             set => Scale = value ?? 1f;
         }
-
-        internal override void GltfSerialize(JsonWriter writer)
-        {
-            writer.AddObject();
-            GltfSerializeTextureInfo(writer);
-            if (!Mathematics.ApproximatelyOne(Scale))
-            {
-                writer.AddProperty("scale", Scale);
-            }
-            writer.Close();
-        }
     }
 }

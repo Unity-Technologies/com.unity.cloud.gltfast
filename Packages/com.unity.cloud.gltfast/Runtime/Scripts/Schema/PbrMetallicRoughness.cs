@@ -101,34 +101,5 @@ namespace GLTFast.Schema
         {
             return ExtensionsData.TryGetValue(key, out value);
         }
-
-        internal void GltfSerialize(JsonWriter writer)
-        {
-            writer.AddObject();
-            if (BaseColorFactor != ColorAlpha.White)
-            {
-                writer.AddColorProperty("baseColorFactor", BaseColorFactor);
-            }
-            if (MetallicFactor < 1f)
-            {
-                writer.AddProperty("metallicFactor", MetallicFactor);
-            }
-            if (RoughnessFactor < 1f)
-            {
-                writer.AddProperty("roughnessFactor", RoughnessFactor);
-            }
-            if (BaseColorTexture != null)
-            {
-                writer.AddProperty("baseColorTexture");
-                BaseColorTexture.GltfSerialize(writer);
-            }
-            if (MetallicRoughnessTexture != null)
-            {
-                writer.AddProperty("metallicRoughnessTexture");
-                MetallicRoughnessTexture.GltfSerialize(writer);
-            }
-
-            writer.Close();
-        }
     }
 }

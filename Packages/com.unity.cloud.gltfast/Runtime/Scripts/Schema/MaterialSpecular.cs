@@ -53,29 +53,5 @@ namespace GLTFast.Schema
         /// </summary>
         [JsonPropertyName("specularColorTexture")]
         public TextureInfo SpecularColorTexture { get; set; }
-
-        internal void GltfSerialize(JsonWriter writer)
-        {
-            writer.AddObject();
-            if (!Mathematics.ApproximatelyOne(SpecularFactor))
-            {
-                writer.AddProperty("specularFactor", SpecularFactor);
-            }
-            if (SpecularTexture != null)
-            {
-                writer.AddProperty("specularTexture");
-                SpecularTexture.GltfSerialize(writer);
-            }
-            if (SpecularColorFactor != Color.White)
-            {
-                writer.AddColorProperty("specularColorFactor", SpecularColorFactor);
-            }
-            if (SpecularColorTexture != null)
-            {
-                writer.AddProperty("specularColorTexture");
-                SpecularColorTexture.GltfSerialize(writer);
-            }
-            writer.Close();
-        }
     }
 }

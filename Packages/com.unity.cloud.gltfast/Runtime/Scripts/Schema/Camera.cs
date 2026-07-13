@@ -1,7 +1,6 @@
 // SPDX-FileCopyrightText: 2023 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
-using System;
 using System.Collections.Generic;
 using Unity.Gltfast.Text.Json;
 using Unity.Gltfast.Text.Json.Serialization;
@@ -42,34 +41,6 @@ namespace GLTFast.Schema
         public bool TryGetValue<T>(string key, out T value)
         {
             return ExtensionsData.TryGetValue(key, out value);
-        }
-
-        internal void GltfSerialize(JsonWriter writer)
-        {
-            writer.AddObject();
-            GltfSerializeName(writer);
-
-            var type = Type.RawValue != null
-                ? System.Text.Encoding.UTF8.GetString(Type.RawValue)
-                : Type.Value switch
-                {
-                    CameraType.Orthographic => "orthographic",
-                    CameraType.Perspective => "perspective",
-                    _ => throw new ArgumentOutOfRangeException(nameof(Type), Type.Value, $"Unsupported camera type: {Type.Value}")
-                };
-            writer.AddProperty("type", type);
-
-            if (Perspective != null)
-            {
-                writer.AddProperty("perspective");
-                Perspective.GltfSerialize(writer);
-            }
-            if (Orthographic != null)
-            {
-                writer.AddProperty("orthographic");
-                Orthographic.GltfSerialize(writer);
-            }
-            writer.Close();
         }
     }
 }

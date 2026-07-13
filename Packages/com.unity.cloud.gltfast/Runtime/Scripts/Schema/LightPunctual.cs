@@ -1,7 +1,6 @@
 // SPDX-FileCopyrightText: 2023 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
-using System;
 using Unity.Gltfast.Text.Json.Serialization;
 
 namespace GLTFast.Schema
@@ -67,40 +66,5 @@ namespace GLTFast.Schema
         [JsonPropertyName("type")]
         [JsonConverter(typeof(LightTypeValueConverter))]
         public EnumOrRawValue<LightType> Type { get; set; }
-
-        internal void GltfSerialize(JsonWriter writer)
-        {
-            writer.AddObject();
-            var type = Type.RawValue != null
-                ? System.Text.Encoding.UTF8.GetString(Type.RawValue)
-                : Type.Value switch
-                {
-                    LightType.Spot => "spot",
-                    LightType.Directional => "directional",
-                    LightType.Point => "point",
-                    _ => throw new ArgumentOutOfRangeException(nameof(Type), Type.Value, $"Unsupported light type: {Type.Value}")
-                };
-            writer.AddProperty("type", type);
-            GltfSerializeName(writer);
-            if (Color != Color.White)
-            {
-                writer.AddColorProperty("color", Color);
-            }
-            if (!Mathematics.ApproximatelyOne(Intensity))
-            {
-                writer.AddProperty("intensity", Intensity);
-            }
-            if (Range > 0 && Type != LightType.Directional)
-            {
-                writer.AddProperty("range", Range);
-            }
-            if (Spot != null)
-            {
-                writer.AddProperty("spot");
-                Spot.GltfSerialize(writer);
-            }
-            writer.Close();
-        }
-
     }
 }

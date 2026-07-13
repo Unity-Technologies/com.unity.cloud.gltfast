@@ -4,8 +4,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 using GLTFast.Schema;
 using NUnit.Framework;
+using Unity.Gltfast.Text.Json;
 using UnityEngine;
 using Mesh = GLTFast.Schema.Mesh;
 
@@ -14,10 +16,12 @@ namespace GLTFast.Tests.Export
     [Category("Export")]
     class JsonSerialization
     {
-        [Test]
-        public void MaterialsVariantsExtension()
+        const string k_MaterialsVariantsJson =
+            @"{""meshes"":[{""primitives"":[{""extensions"":{""KHR_materials_variants"":{""mappings"":[{""material"":0,""variants"":[0]},{""material"":1,""variants"":[1]},{""material"":2,""variants"":[2]}]}}}]}],""extensions"":{""KHR_materials_variants"":{""variants"":[{""name"":""red""},{""name"":""green""},{""name"":""blue""}]}}}";
+
+        static Root CreateMaterialsVariantsRoot()
         {
-            var gltf = new Root
+            return new Root
             {
                 Extensions = new RootExtensions
                 {
@@ -56,16 +60,55 @@ namespace GLTFast.Tests.Export
                     }
                 }
             };
+        }
+
+        [Test]
+        public void MaterialsVariantsExtension()
+        {
+            var gltf = CreateMaterialsVariantsRoot();
 
             var stream = new MemoryStream();
-            var writer = new StreamWriter(stream);
-            gltf.GltfSerialize(writer);
-            writer.Close();
+            JsonSerializer.Serialize(stream, gltf, GltfJsonContext.Default.Root);
             var jsonString = Encoding.Default.GetString((stream.ToArray()));
-            Assert.AreEqual(
-                @"{""meshes"":[{""primitives"":[{""extensions"":{""KHR_materials_variants"":{""mappings"":[{""material"":0,""variants"":[0]},{""material"":1,""variants"":[1]},{""material"":2,""variants"":[2]}]}}}]}],""extensions"":{""KHR_materials_variants"":{""variants"":[""name"":""red"",""name"":""green"",""name"":""blue""]}}}",
-                jsonString
-                );
+            Assert.AreEqual(k_MaterialsVariantsJson, jsonString);
         }
+
+        [Test]
+        public void RootSerializeWritesJsonToStream()
+        {
+            var gltf = CreateMaterialsVariantsRoot();
+
+            using var stream = new MemoryStream();
+            gltf.Serialize(stream);
+
+            var jsonString = Encoding.UTF8.GetString(stream.ToArray());
+            Assert.AreEqual(k_MaterialsVariantsJson, jsonString);
+        }
+
+        [Test]
+        public void RootSerializeEmptyRoot()
+        {
+            using var stream = new MemoryStream();
+            new Root().Serialize(stream);
+
+            Assert.AreEqual("{}", Encoding.UTF8.GetString(stream.ToArray()));
+        }
+
+#pragma warning disable CS0618 // GltfSerialize is obsolete; verifying backwards-compat shim
+        [Test]
+        public void RootGltfSerializeObsoleteShimWritesJsonToStream()
+        {
+            var gltf = CreateMaterialsVariantsRoot();
+
+            using var stream = new MemoryStream();
+            using (var writer = new StreamWriter(stream, new UTF8Encoding(false), 1024, leaveOpen: true))
+            {
+                gltf.GltfSerialize(writer);
+            }
+
+            var jsonString = Encoding.UTF8.GetString(stream.ToArray());
+            Assert.AreEqual(k_MaterialsVariantsJson, jsonString);
+        }
+#pragma warning restore CS0618
     }
 }

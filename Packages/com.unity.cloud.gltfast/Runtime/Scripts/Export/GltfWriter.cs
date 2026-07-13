@@ -15,6 +15,7 @@ using Draco.Encode;
 using GLTFast.Schema;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
+using Unity.Gltfast.Text.Json;
 using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
@@ -726,18 +727,16 @@ namespace GLTFast.Export
 
         async Task WriteJsonToStream(Stream outStream, bool sync)
         {
-            var writer = new StreamWriter(outStream);
-            m_Gltf.GltfSerialize(writer);
-            // FlushAsync never finishes on the Web, so doing it in sync
+            // Async never finishes on the Web, so doing it in sync
 #if !UNITY_WEBGL || UNITY_EDITOR
             if (!sync)
             {
-                await writer.FlushAsync();
+                await JsonSerializer.SerializeAsync(outStream, m_Gltf, GltfJsonContext.Default.Root);
             }
             else
 #endif
             {
-                writer.Flush();
+                JsonSerializer.Serialize(outStream, m_Gltf, GltfJsonContext.Default.Root);
             }
         }
 

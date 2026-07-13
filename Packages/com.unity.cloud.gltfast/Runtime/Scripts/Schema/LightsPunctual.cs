@@ -19,17 +19,5 @@ namespace GLTFast.Schema
         /// </summary>
         [JsonPropertyName("lights")]
         public List<LightPunctual> Lights { get; set; }
-
-        internal void GltfSerialize(JsonWriter writer)
-        {
-            writer.AddObject();
-            writer.AddArray("lights");
-            foreach (var light in Lights)
-            {
-                light.GltfSerialize(writer);
-            }
-            writer.CloseArray();
-            writer.Close();
-        }
     }
 }

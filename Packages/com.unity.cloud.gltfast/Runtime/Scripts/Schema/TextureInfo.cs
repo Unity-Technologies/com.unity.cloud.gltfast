@@ -54,30 +54,5 @@ namespace GLTFast.Schema
             Extensions ??= new TextureInfoExtensions();
             Extensions.TextureTransform = textureTransform;
         }
-
-        internal void GltfSerializeTextureInfo(JsonWriter writer)
-        {
-            if (Index.HasValue)
-            {
-                writer.AddProperty("index", Index.Value);
-            }
-            if (TexCoord > 0)
-            {
-                writer.AddProperty("texCoord", TexCoord);
-            }
-
-            if (Extensions != null)
-            {
-                writer.AddProperty("extensions");
-                Extensions.GltfSerialize(writer);
-            }
-        }
-
-        internal virtual void GltfSerialize(JsonWriter writer)
-        {
-            writer.AddObject();
-            GltfSerializeTextureInfo(writer);
-            writer.Close();
-        }
     }
 }

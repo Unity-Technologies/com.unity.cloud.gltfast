@@ -8,7 +8,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Support for high precision node transforms.
-- `JsonWriter.AddProperty` overload that accepts `ReadOnlySpan<char>`.
 - `EnumOrRawValue<TEnum>` for serialization of JSON strings to enum values that can have values unknown at build time.
 - [MeshoptFilter](xref:GLTFast.Schema.MeshoptFilter) and [MeshoptMode](xref:GLTFast.Schema.MeshoptMode) for custom JSON serialization of `Meshoptimizer.Filter` and `Meshoptimizer.Mode`.
 - `UriValue`, a wrapper for serialization of URIs.
@@ -20,9 +19,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `JOINTS_n`/`WEIGHTS_n` for `n ≥ 1` (required for multi-influence skinning)
   - Application-specific attribute semantics (starting with underscore `_`)
 - `Constants.UnsetIndex` (`-1`) and `Constants.UnsetByteLength` (`-1L`) — sentinel values that signal absence for spec-required scalar schema fields whose `0` is valid (e.g. accessor at index `0`).
+- [Root.Serialize(Stream)](xref:GLTFast.Schema.Root.Serialize*) for JSON serialization via `System.Text.Json` without requiring callers to reach for `JsonSerializer`/`GltfJsonContext` directly.
 
 ### Changed
-- JSON de-serialization is performed by [System.Text.Json](https://www.nuget.org/packages/system.text.json/) (or `Unity.Gltfast.Text.Json`, a copy of it for Unity 6.4 and older to avoid conflicts).
+- JSON serialization and de-serialization are performed by [System.Text.Json](https://www.nuget.org/packages/system.text.json/) (or `Unity.Gltfast.Text.Json`, a copy of it to avoid assembly conflicts).
+  - (Export) Replaced the hand-written `JsonWriter`/`Root.GltfSerialize` writers with `JsonSerializer.Serialize` driven by the source-generated `GltfJsonContext`. Exported JSON is functionally equivalent but not byte-identical to previous releases.
   - Refactored [GltfImport](xref:GLTFast.GltfImport). It does not inherit from a generic base class anymore and does not allow specifying members' types.
   - Refactored and simplified the JSON serialization classes (namespace `GLTFast.Schema`).
 - `EnumOrRawValue<TEnum>` (de-)serialization matches enum values directly on UTF-8 data, avoiding managed allocations and exception-based control flow on the fast path.
@@ -128,10 +129,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - JsonUtility dependency and related code.
 - Newtonsoft JSON dependency.
 - (Export) `GLTFast.Export.ImageFormat` enum (use [GLTFast.ImageFormat](xref:GLTFast.ImageFormat) instead).
+- (Export) Hand-written `GLTFast.Schema.JsonWriter` and the `GltfSerialize` methods on every `GLTFast.Schema` type. `Root.GltfSerialize` war preserved for backwards compatibility, but its serialization runs through `System.Text.Json` instead.
 - Legacy `image/ktx` MIME type lenience. The glTF specification and `KHR_texture_basisu` require `image/ktx2`.
 - The 43 obsolete `MaterialGenerator.*Property` shader-property-ID aliases (e.g. `MaterialGenerator.BaseColorProperty`). Use the equivalent [MaterialProperty](xref:GLTFast.Materials.MaterialProperty) constant instead, dropping the `Property` suffix — for example `MaterialGenerator.BaseColorProperty` becomes `MaterialProperty.BaseColor`. One alias does not follow this pattern: `MaterialGenerator.MetallicRoughnessMapUVChannelProperty` maps to `MaterialProperty.MetallicRoughnessMapTexCoord` (there is no `MaterialProperty.MetallicRoughnessMapUVChannel`).
 
 ### Deprecated
+- (Export) `Root.GltfSerialize(StreamWriter)` is obsolete. Use [Root.Serialize(Stream)](xref:GLTFast.Schema.Root.Serialize*) instead.
 
 ### Security
 

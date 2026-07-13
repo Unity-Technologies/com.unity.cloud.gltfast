@@ -1,7 +1,6 @@
 // SPDX-FileCopyrightText: 2026 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
-using System;
 using System.Collections.Generic;
 using Unity.Gltfast.Text.Json;
 using Unity.Gltfast.Text.Json.Serialization;
@@ -56,24 +55,6 @@ namespace GLTFast.Schema
         public bool TryGetValue<T>(string key, out T value)
         {
             return ExtensionsData.TryGetValue(key, out value);
-        }
-
-        internal void GltfSerialize(JsonWriter writer)
-        {
-            writer.AddObject();
-            if (AspectRatio > 0)
-            {
-                writer.AddProperty("aspectRatio", AspectRatio);
-            }
-            // ReSharper disable StringLiteralTypo
-            writer.AddProperty("yfov", Yfov);
-            if (Zfar < float.MaxValue)
-            {
-                writer.AddProperty("zfar", Zfar);
-            }
-            writer.AddProperty("znear", Znear);
-            // ReSharper restore StringLiteralTypo
-            writer.Close();
         }
     }
 }

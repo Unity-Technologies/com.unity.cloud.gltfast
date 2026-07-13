@@ -194,32 +194,5 @@ namespace GLTFast.Schema
                 MagFilter == MagFilterMode.Undefined ? defaultMagFilter : MagFilter
             );
         }
-
-        internal void GltfSerialize(JsonWriter writer)
-        {
-            writer.AddObject();
-            GltfSerializeName(writer);
-            // Assuming MagFilterMode.Linear is the project's default, only
-            // serialize valid, non-default values
-            if (MagFilter == MagFilterMode.Nearest)
-            {
-                writer.AddProperty("magFilter", (int)MagFilter);
-            }
-            // Assuming MinFilterMode.Linear is the project's default, only
-            // serialize valid, non-default values
-            if (MinFilter != MinFilterMode.Undefined && MinFilter != MinFilterMode.Linear)
-            {
-                writer.AddProperty("minFilter", (int)MinFilter);
-            }
-            if (WrapS != WrapMode.Undefined && WrapS != WrapMode.Repeat)
-            {
-                writer.AddProperty("wrapS", (int)WrapS);
-            }
-            if (WrapT != WrapMode.Undefined && WrapT != WrapMode.Repeat)
-            {
-                writer.AddProperty("wrapT", (int)WrapT);
-            }
-            writer.Close();
-        }
     }
 }

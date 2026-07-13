@@ -32,21 +32,5 @@ namespace GLTFast.Schema
         {
             return ExtensionsData.TryGetValue(key, out value);
         }
-
-        internal void GltfSerialize(JsonWriter writer)
-        {
-            writer.AddObject();
-            if (LightsPunctual != null)
-            {
-                writer.AddProperty("KHR_lights_punctual");
-                LightsPunctual.GltfSerialize(writer);
-            }
-            if (MaterialsVariants != null)
-            {
-                writer.AddProperty("KHR_materials_variants");
-                MaterialsVariants.GltfSerialize(writer);
-            }
-            writer.Close();
-        }
     }
 }

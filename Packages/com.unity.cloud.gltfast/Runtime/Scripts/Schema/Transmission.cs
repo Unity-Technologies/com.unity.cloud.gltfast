@@ -26,12 +26,5 @@ namespace GLTFast.Schema
         /// </summary>
         [JsonPropertyName("transmissionTexture")]
         public TextureInfo TransmissionTexture { get; set; }
-
-        internal void GltfSerialize(JsonWriter writer)
-        {
-            writer.AddObject();
-            writer.Close();
-            throw new System.NotImplementedException($"GltfSerialize missing on {GetType()}");
-        }
     }
 }

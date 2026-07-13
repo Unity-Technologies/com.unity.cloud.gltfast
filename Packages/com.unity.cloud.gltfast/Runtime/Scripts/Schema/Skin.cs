@@ -48,28 +48,5 @@ namespace GLTFast.Schema
         {
             return ExtensionsData.TryGetValue(key, out value);
         }
-
-        internal void GltfSerialize(JsonWriter writer)
-        {
-            writer.AddObject();
-            GltfSerializeName(writer);
-
-            if (InverseBindMatrices.HasValue)
-            {
-                writer.AddProperty("inverseBindMatrices", InverseBindMatrices.Value);
-            }
-
-            if (Skeleton.HasValue)
-            {
-                writer.AddProperty("skeleton", Skeleton.Value);
-            }
-
-            if (Joints != null)
-            {
-                writer.AddArrayProperty("joints", Joints);
-            }
-
-            writer.Close();
-        }
     }
 }
