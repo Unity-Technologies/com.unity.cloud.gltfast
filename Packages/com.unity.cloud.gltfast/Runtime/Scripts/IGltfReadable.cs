@@ -161,19 +161,19 @@ namespace GLTFast
         /// Only available during loading phase as underlying buffers are disposed right afterward.
         /// </summary>
         /// <param name="accessorIndex">glTF accessor index</param>
-        /// <returns>Valid byte-slice view into accessor's data if parameter was correct and buffers are available.
-        /// Zero-length slice otherwise.</returns>
+        /// <returns>Valid byte-array view into accessor's data if parameter was correct and buffers are available.
+        /// Default (uncreated) view otherwise.</returns>
         [Obsolete("This is going to be removed and replaced with an improved way to access accessors' data in a future release.")]
-        NativeSlice<byte> GetAccessor(int accessorIndex);
+        NativeArray<byte>.ReadOnly GetAccessor(int accessorIndex);
 
         /// <summary>
         /// Creates a generic byte-array view into an accessor.
         /// Only available during loading phase as underlying buffers are disposed right afterward.
         /// </summary>
         /// <param name="accessorIndex">glTF accessor index</param>
-        /// <returns>Valid byte-slice view into accessor's data if parameter was correct and buffers are available.
-        /// Zero-length slice otherwise.</returns>
+        /// <returns>Valid byte-array view into accessor's data if parameter was correct and buffers are available.
+        /// Default (uncreated) view otherwise.</returns>
         [Obsolete("This is going to be removed and replaced with an improved way to access accessors' data in a future release.")]
-        NativeSlice<byte> GetAccessorData(int accessorIndex);
+        NativeArray<byte>.ReadOnly GetAccessorData(int accessorIndex);
     }
 }

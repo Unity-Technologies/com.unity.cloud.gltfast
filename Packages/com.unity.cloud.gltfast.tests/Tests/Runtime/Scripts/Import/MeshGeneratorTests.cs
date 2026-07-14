@@ -157,11 +157,11 @@ namespace GLTFast.Tests.Import
         {
             throw new NotImplementedException();
         }
-        public NativeSlice<byte> GetAccessor(int accessorIndex)
+        public NativeArray<byte>.ReadOnly GetAccessor(int accessorIndex)
         {
             throw new NotImplementedException();
         }
-        public NativeSlice<byte> GetAccessorData(int accessorIndex)
+        public NativeArray<byte>.ReadOnly GetAccessorData(int accessorIndex)
         {
             throw new NotImplementedException();
         }

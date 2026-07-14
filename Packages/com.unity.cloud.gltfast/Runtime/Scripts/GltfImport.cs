@@ -1123,18 +1123,18 @@ namespace GLTFast
 
         /// <inheritdoc />
         [Obsolete("This is going to be removed and replaced with an improved way to access accessors' data in a future release.")]
-        public NativeSlice<byte> GetAccessor(int accessorIndex)
+        public NativeArray<byte>.ReadOnly GetAccessor(int accessorIndex)
         {
             return GetAccessorData(accessorIndex);
         }
 
         /// <inheritdoc />
         [Obsolete("This is going to be removed and replaced with an improved way to access accessors' data in a future release.")]
-        public NativeSlice<byte> GetAccessorData(int accessorIndex)
+        public NativeArray<byte>.ReadOnly GetAccessorData(int accessorIndex)
         {
             if (Root?.Accessors == null || accessorIndex < 0 || accessorIndex >= Root?.Accessors.Count)
             {
-                return new NativeSlice<byte>();
+                return default;
             }
             var accessor = Root.Accessors[accessorIndex];
             return ((IGltfBuffers)this).GetBufferView(
@@ -1142,7 +1142,7 @@ namespace GLTFast
                 out _,
                 accessor.ByteOffset,
                 accessor.ByteSize
-                ).ToSlice();
+                ).AsNativeArrayReadOnly();
         }
 
         /// <summary>

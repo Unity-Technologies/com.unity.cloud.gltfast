@@ -147,6 +147,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Clarified [IDeferAgent.ShouldDefer](xref:GLTFast.IDeferAgent.ShouldDefer) documentation to note that it must eventually return `false`, otherwise imports may stall indefinitely without raising an error.
 - Removed legacy .NET Framework fallback code paths (`#if NET_STANDARD` / `#if NET_STANDARD_2_1`). They were only needed for Unity versions prior to 2021.2, which are no longer supported (minimum is now Unity 6.0 LTS).
+- [IGltfReadable.GetAccessor](xref:GLTFast.IGltfReadable.GetAccessor(System.Int32)) and [IGltfReadable.GetAccessorData](xref:GLTFast.IGltfReadable.GetAccessorData(System.Int32)) (and their [GltfImport](xref:GLTFast.GltfImport) implementations) now return `NativeArray<byte>.ReadOnly` instead of `NativeSlice<byte>`.
 
 ### Fixed
 - Fixed false positives in export to stream tests because it actually validated results from non-stream tests.
