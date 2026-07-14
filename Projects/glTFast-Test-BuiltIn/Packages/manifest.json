@@ -11,7 +11,8 @@
     "com.unity.testtools.codecoverage": "1.3.0",
     "com.unity.modules.animation": "1.0.0",
     "com.unity.modules.imageconversion": "1.0.0",
-    "com.unity.modules.physics": "1.0.0"
+    "com.unity.modules.physics": "1.0.0",
+    "com.unity.pipeline": "0.2.0-exp.2"
   },
   "testables": [
     "com.unity.cloud.gltfast"
