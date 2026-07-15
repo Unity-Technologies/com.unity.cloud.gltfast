@@ -1565,11 +1565,7 @@ namespace GLTFast.Export
         async Task<int> WriteBindPosesToBuffer(Matrix4x4[] bindposes, bool sync)
         {
             var bufferViewId = -1;
-#pragma warning disable CS0618 // Type or member is obsolete
-            // See original ObsoleteAttribute:
-            // > ManagedNativeArray is going to get sealed or removed from the public API in a future release.
             var nativeBindPoses = new ManagedNativeArray<Matrix4x4, float4x4>(bindposes);
-#pragma warning restore CS0618 // Type or member is obsolete
             var matrices = nativeBindPoses.nativeArray;
             var job = new ExportJobs.ConvertMatrixJob
             {

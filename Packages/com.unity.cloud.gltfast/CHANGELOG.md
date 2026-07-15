@@ -126,11 +126,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - (Export) Renamed `ImageFormat.Jpg` to [ImageFormat.Jpeg](xref:GLTFast.ImageFormat.Jpeg).
 - [IGltfReadable.GetAccessor](xref:GLTFast.IGltfReadable.GetAccessor(System.Int32)) and [IGltfReadable.GetAccessorData](xref:GLTFast.IGltfReadable.GetAccessorData(System.Int32)) (and their [GltfImport](xref:GLTFast.GltfImport) implementations) now return `NativeArray<byte>.ReadOnly` instead of `NativeSlice<byte>`.
 
+### Fixed
+- Export's `GLTFast.Export.ManagedNativeArray` no longer leaks its pinned `GCHandle` when not explicitly disposed (added a finalizer); double-dispose is now a safe no-op.
+
 ### Removed
 - JsonUtility dependency and related code.
 - Newtonsoft JSON dependency.
 - (Export) `GLTFast.Export.ImageFormat` enum (use [GLTFast.ImageFormat](xref:GLTFast.ImageFormat) instead).
 - (Export) Hand-written `GLTFast.Schema.JsonWriter` and the `GltfSerialize` methods on every `GLTFast.Schema` type. `Root.GltfSerialize` war preserved for backwards compatibility, but its serialization runs through `System.Text.Json` instead.
+- (Export) `GLTFast.Export.ManagedNativeArray` is no longer part of the public API (it is now internal).
 - Legacy `image/ktx` MIME type lenience. The glTF specification and `KHR_texture_basisu` require `image/ktx2`.
 - The 43 obsolete `MaterialGenerator.*Property` shader-property-ID aliases (e.g. `MaterialGenerator.BaseColorProperty`). Use the equivalent [MaterialProperty](xref:GLTFast.Materials.MaterialProperty) constant instead, dropping the `Property` suffix — for example `MaterialGenerator.BaseColorProperty` becomes `MaterialProperty.BaseColor`. One alias does not follow this pattern: `MaterialGenerator.MetallicRoughnessMapUVChannelProperty` maps to `MaterialProperty.MetallicRoughnessMapTexCoord` (there is no `MaterialProperty.MetallicRoughnessMapUVChannel`).
 
