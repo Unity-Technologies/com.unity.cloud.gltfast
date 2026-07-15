@@ -2,6 +2,7 @@
   "dependencies": {
     "com.unity.cloud.draco": "5.4.3",
     "com.unity.cloud.gltfast": "file:./../../../Packages/com.unity.cloud.gltfast",
+    "com.unity.cloud.gltfast.devtools": "file:./../../../Packages/com.unity.cloud.gltfast.devtools",
     "com.unity.cloud.gltfast.tests": "file:./../../../Packages/com.unity.cloud.gltfast.tests",
     "com.unity.cloud.ktx": "3.7.0",
     "com.unity.entities.graphics": "1.4.20",

@@ -1,0 +1,7 @@
+{
+  "name": "com.unity.cloud.gltfast.devtools",
+  "version": "0.0.0",
+  "displayName": "Unity glTFast Development Tools",
+  "description": "Editor-only tooling used while developing the glTFast package. Not published.",
+  "unity": "6000.0"
+}
