@@ -2,5 +2,14 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "local>unity/renovate-config"
+  ],
+  "packageRules": [
+    {
+      "matchPaths": ["Tools/CI/**"],
+      "postUpgradeTasks": {
+        "commands": ["./Tools/CI/renovate-post-upgrade.sh"],
+        "executionMode": "branch"
+      }
+    }
   ]
 }

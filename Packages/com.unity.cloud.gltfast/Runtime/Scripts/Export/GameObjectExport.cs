@@ -64,7 +64,7 @@ namespace GLTFast.Export
         /// <summary>
         /// Creates a glTF scene from a collection of GameObjects. The GameObjects will be converted into glTF nodes.
         /// The nodes' positions within the glTF scene will be their GameObjects' world position transformed by the
-        /// <see cref="origin"/> matrix, essentially allowing you to set an arbitrary scene center.
+        /// <paramref name="origin"/> matrix, essentially allowing you to set an arbitrary scene center.
         /// </summary>
         /// <param name="gameObjects">Root level GameObjects (will get added recursively)</param>
         /// <param name="origin">Inverse scene origin matrix. This transform will be applied to all nodes.</param>

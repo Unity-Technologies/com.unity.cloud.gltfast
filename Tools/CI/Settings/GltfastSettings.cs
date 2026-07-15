@@ -24,6 +24,14 @@ public class GltfastSettings : AnnotatedSettingsBase
                     ProjectPath = "test-cloud.gltfast",
                 },
             }
+        },
+        {
+            "com.unity.cloud.gltfast.devtools",
+            new PackageOptions
+            {
+                PackJobOptions = new PackJobOptions { AlwaysGenerate = false },
+                ReleaseOptions = new ReleaseOptions { IsReleasing = false, InternalOnly = true, NeverPublish = true },
+            }
         }
     };
 

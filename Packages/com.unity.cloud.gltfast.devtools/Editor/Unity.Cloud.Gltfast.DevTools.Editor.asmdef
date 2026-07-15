@@ -1,0 +1,16 @@
+{
+    "name": "Unity.Cloud.Gltfast.DevTools.Editor",
+    "rootNamespace": "GLTFast.DevTools.Editor",
+    "references": [],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

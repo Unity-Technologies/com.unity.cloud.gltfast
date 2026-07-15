@@ -39,7 +39,32 @@ package_pack_-_cloud_gltfast:
     UPMCI_ACK_LARGE_PACKAGE: 1
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 3.2.0.0
+    Wrench: 3.3.1.0
+
+# Pack Unity glTFast Development Tools
+package_pack_-_cloud_gltfast_devtools:
+  name: Package Pack - cloud.gltfast.devtools
+  agent:
+    image: package-ci/ubuntu-22.04:v4
+    type: Unity::VM
+    flavor: b1.large
+  commands:
+  - command: npm install upm-ci-utils@stable -g --registry https://artifactory.prd.cds.internal.unity3d.com/artifactory/api/npm/upm-npm
+    timeout: 20
+    retries: 10
+  - command: upm-ci package pack --package-path Packages/com.unity.cloud.gltfast.devtools
+  - command: cp upm-ci~/packages/packages.json upm-ci~/packages/com.unity.cloud.gltfast.devtools_packages.json
+  after:
+  - command: bash .yamato/generated-scripts/infrastructure-instability-detection-linux.sh
+  artifacts:
+    packages:
+      paths:
+      - upm-ci~/packages/**/*
+  variables:
+    UPMCI_ACK_LARGE_PACKAGE: 1
+  metadata:
+    Job Maintainers: '#rm-packageworks'
+    Wrench: 3.3.1.0
 
 # Pack Unity glTFast Tests
 package_pack_-_cloud_gltfast_tests:
@@ -64,5 +89,5 @@ package_pack_-_cloud_gltfast_tests:
     UPMCI_ACK_LARGE_PACKAGE: 1
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 3.2.0.0
+    Wrench: 3.3.1.0
 

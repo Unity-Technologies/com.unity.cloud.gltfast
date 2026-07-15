@@ -28,6 +28,31 @@
       "dependantsToIgnoreInPreviewApv": {},
       "postPackCommands": []
     },
+    "com.unity.cloud.gltfast.devtools": {
+      "directory": "Packages/com.unity.cloud.gltfast.devtools/",
+      "prePackCommands": [],
+      "preTestCommands": {
+        "MacOs13": [],
+        "MacOs13Arm": [],
+        "Ubuntu1804": [],
+        "Ubuntu2004": [],
+        "Ubuntu2204": [],
+        "Win10": [],
+        "Win10GPU": [],
+        "Win11": [],
+        "Win11Arm": [],
+        "Win11GPU": []
+      },
+      "InternalOnly": true,
+      "NeverPublish": true,
+      "MaxEditorVersion": "",
+      "coverageEnabled": false,
+      "coverageCommands": [
+        "generateAdditionalMetrics;generateHtmlReport;assemblyFilters:ASSEMBLY_NAME;"
+      ],
+      "dependantsToIgnoreInPreviewApv": {},
+      "postPackCommands": []
+    },
     "com.unity.cloud.gltfast.tests": {
       "directory": "Packages/com.unity.cloud.gltfast.tests/",
       "prePackCommands": [],
@@ -66,7 +91,7 @@
   },
   "publishing_job": ".yamato/wrench/promotion-jobs.yml#publish_cloud_gltfast",
   "branch_pattern": "ReleaseSlash",
-  "wrench_version": "3.2.0.0",
+  "wrench_version": "3.3.1.0",
   "pvp_exemption_path": ".yamato/wrench/pvp-exemptions.json",
   "cs_project_path": "Tools/CI/Gltfast.Cookbook.csproj"
 }
