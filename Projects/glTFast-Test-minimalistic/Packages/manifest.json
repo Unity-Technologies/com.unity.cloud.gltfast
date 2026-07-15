@@ -4,7 +4,7 @@
     "com.unity.cloud.gltfast.devtools": "file:./../../../Packages/com.unity.cloud.gltfast.devtools",
     "com.unity.cloud.gltfast.tests": "file:./../../../Packages/com.unity.cloud.gltfast.tests",
     "com.unity.ide.rider": "3.0.40",
-    "com.unity.pipeline": "0.2.0-exp.2"
+    "com.unity.pipeline": "0.3.0-exp.1"
   },
   "testables": [
     "com.unity.cloud.gltfast"
