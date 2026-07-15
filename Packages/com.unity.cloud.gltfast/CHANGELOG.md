@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- Frame budget overruns during scene instantiation of nodes with many mesh assignments: the hierarchy population now yields to the defer agent per mesh assignment, not only per node.
+
+## [6.19.0] - 2026-05-19
+
 ### Added
 - (Add-Ons) Import glTF animations to custom animation systems.
   - [IAnimationProcessor](xref:GLTFast.Animations.IAnimationProcessor) &mdash; animation clips conversion
