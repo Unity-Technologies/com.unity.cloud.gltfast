@@ -3,6 +3,7 @@
 
 using System.Collections;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using GLTFast.Logging;
 using NUnit.Framework;
@@ -18,16 +19,30 @@ namespace GLTFast.Tests
         [Test]
         public static void GetImportAddonInstance()
         {
-            var gltf = new GltfImport(logger: new ConsoleLogger());
-            var addonA = gltf.GetImportAddonInstance<AddonInstanceA>();
-            Assert.IsNull(addonA);
+            try
+            {
+                var gltf = new GltfImport(logger: new ConsoleLogger());
+                var addonA = gltf.GetImportAddonInstance<AddonInstanceA>();
+                Assert.IsNull(addonA);
 
-            ImportAddonRegistry.RegisterImportAddon(new AddonB());
-            gltf = new GltfImport(logger: new ConsoleLogger());
-            addonA = gltf.GetImportAddonInstance<AddonInstanceA>();
-            Assert.IsNull(addonA);
-            var addonB = gltf.GetImportAddonInstance<InstanceBase>();
-            Assert.IsNotNull(addonB);
+                ImportAddonRegistry.RegisterImportAddon(new AddonB());
+                gltf = new GltfImport(logger: new ConsoleLogger());
+                addonA = gltf.GetImportAddonInstance<AddonInstanceA>();
+                Assert.IsNull(addonA);
+                var addonB = gltf.GetImportAddonInstance<InstanceBase>();
+                Assert.IsNotNull(addonB);
+            }
+            finally
+            {
+                ResetImportAddonRegistry();
+            }
+        }
+
+        static void ResetImportAddonRegistry()
+        {
+            typeof(ImportAddonRegistry)
+                .GetField("s_Addons", BindingFlags.Static | BindingFlags.NonPublic)
+                ?.SetValue(null, null);
         }
 
         [UnityTest]

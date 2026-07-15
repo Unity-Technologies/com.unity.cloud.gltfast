@@ -47,6 +47,9 @@ namespace GLTFast.Tests.Export
         [UnityTest]
         public IEnumerator ToStreamNotSelfContainedNoLogger()
         {
+            LogAssert.Expect(
+                LogType.Error,
+                "Save to Stream currently only works for self-contained glTF-Binary");
             yield return AsyncWrapper.WaitForTask(
                 ToStreamNotSelfContained(null)
             );
@@ -94,6 +97,9 @@ namespace GLTFast.Tests.Export
         public IEnumerator DracoUncompressedFallbackNoLogger()
         {
 #if DRACO_IS_RECENT
+            LogAssert.Expect(
+                LogType.Warning,
+                "Fallback to uncompressed meshes/bufferViews is not supported");
             yield return AsyncWrapper.WaitForTask(
                 DracoUncompressedFallback(null)
             );

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using GLTFast.Export;
+using GLTFast.Logging;
 using Unity.Mathematics;
 #if UNITY_EDITOR
 using UnityEditor;
@@ -125,7 +126,7 @@ namespace GLTFast.Tests
             {
                 Format = format
             };
-            var writer = new GltfWriter(exportSettings);
+            var writer = new GltfWriter(exportSettings, logger: ConsoleLogger.Instance);
 
             var material = new Material(Shader.Find("glTF/PbrMetallicRoughness")) { name = "MyGltfMaterial" };
             var materialExport = MaterialExport.GetDefaultMaterialExport();
@@ -148,7 +149,7 @@ namespace GLTFast.Tests
             {
                 Format = format
             };
-            var writer = new GltfWriter(exportSettings);
+            var writer = new GltfWriter(exportSettings, logger: ConsoleLogger.Instance);
             var row = (int)math.ceil(math.pow(nodeCount, 1 / 3f));
             var count = 0;
             var nodes = new List<uint>();
@@ -175,7 +176,7 @@ namespace GLTFast.Tests
             {
                 Format = format
             };
-            var writer = new GltfWriter(exportSettings);
+            var writer = new GltfWriter(exportSettings, logger: ConsoleLogger.Instance);
             var nodeId = writer.AddNode(name: "Cylinder");
             var mesh = TestMeshGenerator.GenerateCylinderMesh(triangleCount);
             writer.AddMeshToNode(

@@ -3,6 +3,7 @@
 
 using System.Collections;
 using System.IO;
+using System.Text.RegularExpressions;
 using GLTFast.Documentation.Examples;
 using GLTFast.Export;
 using GLTFast.Tests;
@@ -59,6 +60,7 @@ namespace GLTFast.DocExamples.Tests
         [UnityTest]
         public IEnumerator ImportSettingsFail()
         {
+            LogAssert.Expect(LogType.Error, new Regex(@"Download URL .*NonExistingFile\.gltf failed: .*404"));
             LogAssert.Expect(LogType.Error, "Loading glTF failed!");
             var task = LoadGltfFromMemory.ImportSettings(
                 Path.Combine(Application.temporaryCachePath, "NonExistingFile.gltf"));
@@ -79,6 +81,7 @@ namespace GLTFast.DocExamples.Tests
         [UnityTest]
         public IEnumerator InstantiationFail()
         {
+            LogAssert.Expect(LogType.Error, new Regex(@"Download URL .*NonExistingFile\.gltf failed: .*404"));
             LogAssert.Expect(LogType.Error, "Loading glTF failed!");
             var component = new GameObject()
                 .AddComponent<LoadGltfFromMemory>();

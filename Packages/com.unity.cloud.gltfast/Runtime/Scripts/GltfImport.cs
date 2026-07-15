@@ -232,7 +232,7 @@ namespace GLTFast
         /// <param name="downloadProvider">Provides file access or download customization</param>
         /// <param name="deferAgent">Provides custom update loop behavior for better frame rate control</param>
         /// <param name="materialGenerator">Provides custom glTF to Unity material conversion</param>
-        /// <param name="logger">Provides custom message logging</param>
+        /// <param name="logger">Custom logger for reporting messages. Defaults to the shared <see cref="GLTFast.Logging.ConsoleLogger.Instance"/> (writes to Unity's Console) when <c>null</c> is passed. Pass <see cref="GLTFast.Logging.NullLogger.Instance"/> (or <c>new NullLogger()</c>) to suppress all output.</param>
         public GltfImport(
             IDownloadProvider downloadProvider = null,
             IDeferAgent deferAgent = null,
@@ -259,7 +259,7 @@ namespace GLTFast
 
             m_Context = new ImportContext(
                 downloadProvider ?? new DefaultDownloadProvider(),
-                logger,
+                logger is NullLogger ? null : (logger ?? ConsoleLogger.Instance),
                 deferAgent
                 );
 

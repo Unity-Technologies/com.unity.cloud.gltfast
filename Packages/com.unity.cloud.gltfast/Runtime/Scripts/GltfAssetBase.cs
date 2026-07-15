@@ -51,7 +51,7 @@ namespace GLTFast
         /// <param name="deferAgent">Defer Agent takes care of interrupting the
         /// loading procedure in order to keep the frame rate responsive.</param>
         /// <param name="materialGenerator">Used to convert glTF materials to <see cref="Material"/> instances</param>
-        /// <param name="logger">Used for message reporting</param>
+        /// <param name="logger">Custom logger for reporting messages. Default behavior is inherited from the <see cref="GLTFast.GltfImport(GLTFast.Loading.IDownloadProvider, GLTFast.IDeferAgent, GLTFast.Materials.IMaterialGenerator, GLTFast.Logging.ICodeLogger)"/> constructor that this method forwards to.</param>
         /// <returns>Async Task that loads the glTF's contents</returns>
         public virtual async Task<bool> Load(
             string gltfUrl,
@@ -68,12 +68,13 @@ namespace GLTFast
         /// <summary>
         /// Creates an instance of the main scene
         /// </summary>
-        /// <param name="logger">Used for message reporting</param>
+        /// <param name="logger">Custom logger for reporting messages. Defaults to the shared <see cref="GLTFast.Logging.ConsoleLogger.Instance"/> (writes to Unity's Console) when <c>null</c> is passed. Pass <see cref="GLTFast.Logging.NullLogger.Instance"/> (or <c>new NullLogger()</c>) to suppress all output.</param>
         /// <returns>True if instantiation was successful.</returns>
         // ReSharper disable once MemberCanBeProtected.Global
         public async Task<bool> Instantiate(ICodeLogger logger = null)
         {
             if (Importer == null) return false;
+            logger ??= ConsoleLogger.Instance;
             var instantiator = GetDefaultInstantiator(logger);
             var success = await Importer.InstantiateMainSceneAsync(instantiator);
             PostInstantiation(instantiator, success);
@@ -84,11 +85,12 @@ namespace GLTFast
         /// Creates an instance of the scene specified by the scene index.
         /// </summary>
         /// <param name="sceneIndex">Index of the scene to be instantiated</param>
-        /// <param name="logger">Used for message reporting</param>
+        /// <param name="logger">Custom logger for reporting messages. Defaults to the shared <see cref="GLTFast.Logging.ConsoleLogger.Instance"/> (writes to Unity's Console) when <c>null</c> is passed. Pass <see cref="GLTFast.Logging.NullLogger.Instance"/> (or <c>new NullLogger()</c>) to suppress all output.</param>
         /// <returns>True if instantiation was successful.</returns>
         public virtual async Task<bool> InstantiateScene(int sceneIndex, ICodeLogger logger = null)
         {
             if (Importer == null) return false;
+            logger ??= ConsoleLogger.Instance;
             var instantiator = GetDefaultInstantiator(logger);
             var success = await Importer.InstantiateSceneAsync(instantiator, sceneIndex);
             PostInstantiation(instantiator, success);

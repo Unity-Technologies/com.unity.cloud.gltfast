@@ -26,6 +26,11 @@ namespace GLTFast
 
         const float k_Epsilon = .00001f;
 
+        /// <summary>
+        /// Logger used by this instantiator. May be <c>null</c> when the caller passed
+        /// <see cref="GLTFast.Logging.NullLogger.Instance"/>; subclasses MUST use
+        /// null-conditional access (<c>m_Logger?.Error(...)</c>).
+        /// </summary>
         protected ICodeLogger m_Logger;
 
         protected IGltfReadable m_Gltf;
@@ -42,6 +47,13 @@ namespace GLTFast
 
         List<Entity> m_Entities;
 
+        /// <summary>
+        /// Constructs an <see cref="EntityInstantiator"/>.
+        /// </summary>
+        /// <param name="gltf">glTF to instantiate from.</param>
+        /// <param name="parent">Generated entities will be children of this entity.</param>
+        /// <param name="logger">Custom logger for reporting messages. Defaults to the shared <see cref="GLTFast.Logging.ConsoleLogger.Instance"/> (writes to Unity's Console) when <c>null</c> is passed. Pass <see cref="GLTFast.Logging.NullLogger.Instance"/> (or <c>new NullLogger()</c>) to suppress all output.</param>
+        /// <param name="settings">Instantiation settings.</param>
         public EntityInstantiator(
             IGltfReadable gltf,
             Entity parent,
@@ -51,7 +63,7 @@ namespace GLTFast
         {
             m_Gltf = gltf;
             m_Parent = parent;
-            m_Logger = logger;
+            m_Logger = logger is NullLogger ? null : (logger ?? ConsoleLogger.Instance);
             m_Settings = settings ?? new InstantiationSettings();
         }
 

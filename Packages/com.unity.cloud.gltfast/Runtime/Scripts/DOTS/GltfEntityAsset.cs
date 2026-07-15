@@ -91,6 +91,7 @@ namespace GLTFast
             }
         }
 
+        /// <inheritdoc />
         public override async Task<bool> Load(
             string gltfUrl,
             IDownloadProvider downloadProvider = null,
@@ -99,7 +100,7 @@ namespace GLTFast
             ICodeLogger logger = null
         )
         {
-            logger = logger ?? new ConsoleLogger();
+            logger ??= ConsoleLogger.Instance;
             var success = await base.Load(gltfUrl, downloadProvider, deferAgent, materialGenerator, logger);
             if (success)
             {

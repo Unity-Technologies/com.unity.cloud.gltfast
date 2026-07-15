@@ -87,6 +87,9 @@ namespace GLTFast.Logging
         /// <summary>
         /// Inconsistent embed image type between data URI mediatype and image.mimeType.
         /// </summary>
+        // Retained despite being obsolete: LogCode ordinals are serialized as raw ints
+        // (e.g. GltfTestCase.expectedLogCodes), so removing this member renumbers every
+        // later code and silently invalidates that serialized data. Do not delete.
         [Obsolete("The glTF 2.0 specification requires data URIs to have a valid mediatype. Therefore it's not checked against image.mimeType anymore.")]
         EmbedImageInconsistentType,
         /// <summary>
@@ -373,10 +376,29 @@ is approximated. Enable Opaque Texture access in Universal Render Pipeline!" },
                 return sb.ToString();
             }
 #if GLTFAST_REPORT
-            return messages != null
+            if (k_FullMessages.TryGetValue(code, out var template))
+            {
+                if (messages == null)
+                {
+                    return template;
+                }
                 // ReSharper disable once CoVariantArrayConversion
-                ? string.Format(k_FullMessages[code], messages)
-                : k_FullMessages[code];
+                return string.Format(template, messages);
+            }
+            if (messages == null)
+            {
+                return code.ToString();
+            }
+            else
+            {
+                var sb = new StringBuilder(code.ToString());
+                foreach (var message in messages)
+                {
+                    sb.Append(";");
+                    sb.Append(message);
+                }
+                return sb.ToString();
+            }
 #else
             if (messages == null)
             {

@@ -76,6 +76,7 @@ namespace GLTFast
         /// <inheritdoc />
         public override async Task<bool> InstantiateScene(int sceneIndex, ICodeLogger logger = null)
         {
+            logger ??= ConsoleLogger.Instance;
             var instantiator = (GameObjectBoundsInstantiator)GetDefaultInstantiator(logger);
             var success = await base.InstantiateScene(sceneIndex, instantiator);
             CurrentSceneId = success ? sceneIndex : (int?)null;

@@ -41,7 +41,9 @@ namespace GLTFast
         protected InstantiationSettings m_Settings;
 
         /// <summary>
-        /// Instantiation logger
+        /// Logger used by this instantiator. May be <c>null</c> when the caller passed
+        /// <see cref="GLTFast.Logging.NullLogger.Instance"/>; subclasses MUST use
+        /// null-conditional access (<c>m_Logger?.Error(...)</c>).
         /// </summary>
         protected ICodeLogger m_Logger;
 
@@ -80,7 +82,7 @@ namespace GLTFast
         /// </summary>
         /// <param name="gltf">glTF to instantiate from</param>
         /// <param name="parent">Generated GameObjects will get parented to this Transform</param>
-        /// <param name="logger">Custom logger</param>
+        /// <param name="logger">Custom logger for reporting messages. Defaults to the shared <see cref="GLTFast.Logging.ConsoleLogger.Instance"/> (writes to Unity's Console) when <c>null</c> is passed. Pass <see cref="GLTFast.Logging.NullLogger.Instance"/> (or <c>new NullLogger()</c>) to suppress all output.</param>
         /// <param name="settings">Instantiation settings</param>
         public GameObjectInstantiator(
             IGltfReadable gltf,
@@ -91,7 +93,7 @@ namespace GLTFast
         {
             this.m_Gltf = gltf;
             this.m_Parent = parent;
-            m_Logger = logger;
+            m_Logger = logger is NullLogger ? null : (logger ?? ConsoleLogger.Instance);
             m_Settings = settings ?? new InstantiationSettings();
         }
 

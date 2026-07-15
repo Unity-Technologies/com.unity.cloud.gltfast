@@ -36,7 +36,7 @@ namespace GLTFast.Export
         /// <param name="materialExport">Provides material conversion</param>
         /// <param name="deferAgent">Defer agent (&lt;see cref="IDeferAgent"/&gt;); decides when/if to preempt
         /// export to preserve a stable frame rate.</param>
-        /// <param name="logger">Interface for logging (error) messages.</param>
+        /// <param name="logger">Custom logger for reporting messages. Default behavior is inherited from the <see cref="GLTFast.Export.GltfWriter(GLTFast.Export.ExportSettings, GLTFast.IDeferAgent, GLTFast.Logging.ICodeLogger)"/> constructor that this method forwards to.</param>
         public GameObjectExport(
             ExportSettings exportSettings = null,
             GameObjectExportSettings gameObjectExportSettings = null,

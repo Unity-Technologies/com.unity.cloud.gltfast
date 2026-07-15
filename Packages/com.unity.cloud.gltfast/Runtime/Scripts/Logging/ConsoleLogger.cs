@@ -12,6 +12,12 @@ namespace GLTFast.Logging
     /// </summary>
     public class ConsoleLogger : ICodeLogger
     {
+        /// <summary>
+        /// Shared no-allocation instance. Used as the default for the public entry
+        /// points when no logger is passed. Prefer this over
+        /// <c>new ConsoleLogger()</c>.
+        /// </summary>
+        public static readonly ConsoleLogger Instance = new ConsoleLogger();
 
         /// <inheritdoc />
         public void Error(LogCode code, params string[] messages)

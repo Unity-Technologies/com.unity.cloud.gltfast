@@ -120,7 +120,7 @@ namespace GLTFast.Export
         /// <param name="exportSettings">Export settings</param>
         /// <param name="deferAgent">Defer agent (<see cref="IDeferAgent"/>); decides when/if to preempt
         /// export to preserve a stable frame rate.</param>
-        /// <param name="logger">Interface for logging (error) messages.</param>
+        /// <param name="logger">Custom logger for reporting messages. Defaults to the shared <see cref="GLTFast.Logging.ConsoleLogger.Instance"/> (writes to Unity's Console) when <c>null</c> is passed. Pass <see cref="GLTFast.Logging.NullLogger.Instance"/> (or <c>new NullLogger()</c>) to suppress all output.</param>
         public GltfWriter(
             ExportSettings exportSettings = null,
             IDeferAgent deferAgent = null,
@@ -129,7 +129,7 @@ namespace GLTFast.Export
         {
             m_Gltf = new Root();
             m_Settings = exportSettings ?? new ExportSettings();
-            m_Logger = logger;
+            m_Logger = logger is NullLogger ? null : (logger ?? ConsoleLogger.Instance);
             m_State = State.Initialized;
             m_DeferAgent = deferAgent ?? new UninterruptedDeferAgent();
         }
@@ -427,8 +427,8 @@ namespace GLTFast.Export
         /// <inheritdoc />
         public int AddImage(ImageExportBase imageExport)
         {
-#if UNITY_IMAGECONVERSION
             CertifyNotDisposed();
+#if UNITY_IMAGECONVERSION
             int imageId;
             if (m_ImageExports != null)
             {
@@ -770,20 +770,17 @@ namespace GLTFast.Export
         void LogSummary(long jsonLength, long bufferLength)
         {
 #if DEBUG
-            if (m_Logger != null)
+            var sb = new StringBuilder("glTF summary: ");
+            sb.AppendFormat("{0} bytes JSON + {1} bytes buffer", jsonLength, bufferLength);
+            if (m_Gltf != null)
             {
-                var sb = new StringBuilder("glTF summary: ");
-                sb.AppendFormat("{0} bytes JSON + {1} bytes buffer", jsonLength, bufferLength);
-                if (m_Gltf != null)
-                {
-                    sb
-                        .AppendFormat(", {0} nodes", m_Gltf.Nodes?.Count ?? 0)
-                        .AppendFormat(", {0} meshes", m_Gltf.Meshes?.Count ?? 0)
-                        .AppendFormat(", {0} materials", m_Gltf.Materials?.Count ?? 0)
-                        .AppendFormat(", {0} images", m_Gltf.Images?.Count ?? 0);
-                }
-                m_Logger.Info(sb.ToString());
+                sb
+                    .AppendFormat(", {0} nodes", m_Gltf.Nodes?.Count ?? 0)
+                    .AppendFormat(", {0} meshes", m_Gltf.Meshes?.Count ?? 0)
+                    .AppendFormat(", {0} materials", m_Gltf.Materials?.Count ?? 0)
+                    .AppendFormat(", {0} images", m_Gltf.Images?.Count ?? 0);
             }
+            m_Logger?.Info(sb.ToString());
 #endif
         }
 
@@ -2342,7 +2339,7 @@ namespace GLTFast.Export
             var existingUsage = m_MeshVertexAttributeUsage[meshId];
             if (((existingUsage ^ attributeUsage) & VertexAttributeUsage.Color) == VertexAttributeUsage.Color)
             {
-                m_Logger.Warning(LogCode.InconsistentVertexColorUsage, meshId.ToString());
+                m_Logger?.Warning(LogCode.InconsistentVertexColorUsage, meshId.ToString());
             }
             m_MeshVertexAttributeUsage[meshId] = attributeUsage | existingUsage;
         }

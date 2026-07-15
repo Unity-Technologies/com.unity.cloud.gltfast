@@ -381,6 +381,23 @@ Diff-based comparison or hash-based caching of exported `.gltf` files needs to b
 | ------ | ----- |
 | `root.GltfSerialize(streamWriter);` | `root.Serialize(streamWriter.BaseStream);` |
 
+### Default Logger Behavior Change (Breaking)
+
+Public entry points that accept an [ICodeLogger](xref:GLTFast.Logging.ICodeLogger) now route messages to Unity's Console via a default [ConsoleLogger](xref:GLTFast.Logging.ConsoleLogger) when `null` is passed (or the argument is omitted). Previously `null` was stored verbatim and no messages were logged. Affected entry points:
+
+- [GltfImport](xref:GLTFast.GltfImport.#ctor(GLTFast.Loading.IDownloadProvider,GLTFast.IDeferAgent,GLTFast.Materials.IMaterialGenerator,GLTFast.Logging.ICodeLogger))
+- [GltfWriter](xref:GLTFast.Export.GltfWriter.#ctor(GLTFast.Export.ExportSettings,GLTFast.IDeferAgent,GLTFast.Logging.ICodeLogger))
+- [GameObjectInstantiator](xref:GLTFast.GameObjectInstantiator.#ctor(GLTFast.IGltfReadable,UnityEngine.Transform,GLTFast.Logging.ICodeLogger,GLTFast.InstantiationSettings))
+- [GameObjectBoundsInstantiator](xref:GLTFast.GameObjectBoundsInstantiator.#ctor(GLTFast.IGltfReadable,UnityEngine.Transform,GLTFast.Logging.ICodeLogger,GLTFast.InstantiationSettings))
+- [EntityInstantiator](xref:GLTFast.EntityInstantiator.#ctor(GLTFast.IGltfReadable,Unity.Entities.Entity,GLTFast.Logging.ICodeLogger,GLTFast.InstantiationSettings))
+- [GltfAssetBase.Instantiate](xref:GLTFast.GltfAssetBase.Instantiate(GLTFast.Logging.ICodeLogger))
+- [GltfAssetBase.InstantiateScene](xref:GLTFast.GltfAssetBase.InstantiateScene(System.Int32,GLTFast.Logging.ICodeLogger))
+- [GltfBoundsAsset.InstantiateScene](xref:GLTFast.GltfBoundsAsset.InstantiateScene(System.Int32,GLTFast.Logging.ICodeLogger))
+
+To keep the previous silent behavior, pass [NullLogger.Instance](xref:GLTFast.Logging.NullLogger).
+
+Some default messages include the download URL or content derived from the loaded file. Callers who must avoid emitting such content have to pass `NullLogger.Instance` or implement an [ICodeLogger](xref:GLTFast.Logging.ICodeLogger) that filters it.
+
 ## Upgrade to 6.0
 
 Use Unity 2021.3.46f1 or newer only.

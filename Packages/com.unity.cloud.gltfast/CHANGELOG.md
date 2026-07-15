@@ -20,8 +20,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Application-specific attribute semantics (starting with underscore `_`)
 - `Constants.UnsetIndex` (`-1`) and `Constants.UnsetByteLength` (`-1L`) — sentinel values that signal absence for spec-required scalar schema fields whose `0` is valid (e.g. accessor at index `0`).
 - [Root.Serialize(Stream)](xref:GLTFast.Schema.Root.Serialize*) for JSON serialization via `System.Text.Json` without requiring callers to reach for `JsonSerializer`/`GltfJsonContext` directly.
+- [NullLogger](xref:GLTFast.Logging.NullLogger) &mdash; explicit no-op `ICodeLogger` for callers that prefer silent failure.
+- Shared `ConsoleLogger.Instance` and `NullLogger.Instance` singletons; prefer them over `new ConsoleLogger()` / `new NullLogger()`.
 
 ### Changed
+- (Breaking) Public entry points accepting an [ICodeLogger](xref:GLTFast.Logging.ICodeLogger) now default to logging to Unity's Console when `null` is passed. See [Upgrade to 7.0](xref:doc-upgrade-guides#upgrade-to-70).
 - JSON serialization and de-serialization are performed by [System.Text.Json](https://www.nuget.org/packages/system.text.json/) (or `Unity.Gltfast.Text.Json`, a copy of it to avoid assembly conflicts).
   - (Export) Replaced the hand-written `JsonWriter`/`Root.GltfSerialize` writers with `JsonSerializer.Serialize` driven by the source-generated `GltfJsonContext`. Exported JSON is functionally equivalent but not byte-identical to previous releases.
   - Refactored [GltfImport](xref:GLTFast.GltfImport). It does not inherit from a generic base class anymore and does not allow specifying members' types.
@@ -156,6 +159,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Corrected invalid `cref` references in XML documentation comments (parameters, type parameters and a stale method reference) that produced warnings during documentation generation.
+- `GltfWriter.AddImage` no longer throws `NullReferenceException` when called after `Dispose()` in builds without `UNITY_IMAGECONVERSION` defined; now correctly throws `InvalidOperationException` from `CertifyNotDisposed()` instead.
 - Fixed false positives in export to stream tests because it actually validated results from non-stream tests.
 - Prevent exception when Animation component was not created successfully.
 - Removed useless `SerializeFieldAttribute` from `MaterialsVariantsComponent.Control` to avoid compiler warning in Unity 6.6 and newer.
