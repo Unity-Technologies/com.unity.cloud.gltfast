@@ -132,7 +132,7 @@ namespace GLTFast.Tests
         {
             var writer = new GltfWriter(new ExportSettings { Format = GltfFormat.Binary }, logger: new NullLogger());
             var nodeId = writer.AddNode(name: "n");
-            writer.AddScene(new[] { nodeId });
+            writer.AddScene(new List<uint> { nodeId });
             var tmpPath = Path.Combine(Application.temporaryCachePath, $"gltfwriter-dispose-{Guid.NewGuid():N}.glb");
             var saveTask = writer.SaveToFileAndDisposeInternal(tmpPath, true);
             yield return AsyncWrapper.WaitForTask(saveTask);
@@ -348,7 +348,7 @@ namespace GLTFast.Tests
         {
             var writer = new GltfWriter(new ExportSettings { Format = GltfFormat.Binary }, logger: new NullLogger());
             var nodeId = writer.AddNode(name: "n");
-            writer.AddScene(new[] { nodeId });
+            writer.AddScene(new List<uint> { nodeId });
             var tmpPath = Path.Combine(Application.temporaryCachePath, $"addimage-dispose-{Guid.NewGuid():N}.glb");
             var saveTask = writer.SaveToFileAndDisposeInternal(tmpPath, true);
             yield return AsyncWrapper.WaitForTask(saveTask);
