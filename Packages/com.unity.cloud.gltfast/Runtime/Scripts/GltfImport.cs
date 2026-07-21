@@ -538,36 +538,6 @@ namespace GLTFast
         }
 
         /// <summary>
-        /// Load a glTF-binary asset from a byte array.
-        /// </summary>
-        /// <remarks>Obsolete! Use the generic
-        /// <see cref="Load(byte[],Uri,GLTFast.ImportSettings,System.Threading.CancellationToken)"/> instead.</remarks>
-        /// <param name="bytes">byte array containing glTF-binary</param>
-        /// <param name="uri">Base URI for relative paths of external buffers or images</param>
-        /// <param name="importSettings">Import Settings (<see cref="ImportSettings"/> for details)</param>
-        /// <param name="cancellationToken">Token to submit cancellation requests. The default value is None.</param>
-        /// <returns>True if loading was mainly successful and no critical error occurred, false otherwise</returns>
-        /// <exception cref="OperationCanceledException">Thrown when cancelled before completion.</exception>
-        [Obsolete("Use the generic Load instead.")]
-        public async Task<bool> LoadGltfBinary(
-            byte[] bytes,
-            Uri uri = null,
-            ImportSettings importSettings = null,
-            CancellationToken cancellationToken = default
-        )
-        {
-            var managedNativeArray = new ReadOnlyNativeArrayFromManagedArray<byte>(bytes);
-            m_VolatileDisposables ??= new List<IDisposable>();
-            m_VolatileDisposables.Add(managedNativeArray);
-            return await LoadGltfBinaryInternal(
-                managedNativeArray.Array.AsNativeArrayReadOnly(),
-                uri,
-                importSettings,
-                cancellationToken
-                );
-        }
-
-        /// <summary>
         /// Load a glTF JSON from a string
         /// </summary>
         /// <param name="json">glTF JSON</param>
@@ -613,34 +583,6 @@ namespace GLTFast
             LoadingError = !success;
             LoadingDone = true;
             return success;
-        }
-
-        /// <inheritdoc cref="InstantiateMainSceneAsync(Transform,CancellationToken)"/>
-        [Obsolete("Use InstantiateMainSceneAsync for increased performance and safety. Consult the Upgrade Guide for instructions.")]
-        public bool InstantiateMainScene(Transform parent)
-        {
-            return InstantiateMainSceneAsync(parent).Result;
-        }
-
-        /// <inheritdoc cref="InstantiateMainSceneAsync(IInstantiator,CancellationToken)"/>
-        [Obsolete("Use InstantiateMainSceneAsync for increased performance and safety. Consult the Upgrade Guide for instructions.")]
-        public bool InstantiateMainScene(IInstantiator instantiator)
-        {
-            return InstantiateMainSceneAsync(instantiator).Result;
-        }
-
-        /// <inheritdoc cref="InstantiateSceneAsync(Transform,int,CancellationToken)"/>
-        [Obsolete("Use InstantiateSceneAsync for increased performance and safety. Consult the Upgrade Guide for instructions.")]
-        public bool InstantiateScene(Transform parent, int sceneIndex = 0)
-        {
-            return InstantiateSceneAsync(parent, sceneIndex).Result;
-        }
-
-        /// <inheritdoc cref="InstantiateSceneAsync(IInstantiator,int,CancellationToken)"/>
-        [Obsolete("Use InstantiateSceneAsync for increased performance and safety. Consult the Upgrade Guide for instructions.")]
-        public bool InstantiateScene(IInstantiator instantiator, int sceneIndex = 0)
-        {
-            return InstantiateSceneAsync(instantiator, sceneIndex).Result;
         }
 
         /// <summary>
@@ -934,17 +876,6 @@ namespace GLTFast
             return null;
         }
 #endif
-
-        /// <summary>
-        /// Returns all imported meshes
-        /// </summary>
-        /// <returns>All imported meshes</returns>
-        [Obsolete("Use Meshes instead.")]
-        public UnityEngine.Mesh[] GetMeshes()
-        {
-            if (m_Meshes == null || m_Meshes.Count < 1) return Array.Empty<UnityEngine.Mesh>();
-            return m_Meshes.ToArray();
-        }
 
         /// <summary>
         /// Allows accessing all imported meshes.

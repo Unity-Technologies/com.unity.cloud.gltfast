@@ -172,20 +172,6 @@ namespace GLTFast.Export
         }
 
         /// <inheritdoc />
-        [Obsolete("Use overload with joints parameter.")]
-        public void AddMeshToNode(int nodeId, UnityEngine.Mesh uMesh, int[] materialIds)
-        {
-            AddMeshToNode(nodeId, uMesh, materialIds, true);
-        }
-
-        /// <inheritdoc />
-        [Obsolete("Use overload with joints parameter.")]
-        public void AddMeshToNode(int nodeId, UnityEngine.Mesh uMesh, int[] materialIds, bool skinning)
-        {
-            AddMeshToNode(nodeId, uMesh, materialIds, (List<uint>)null);
-        }
-
-        /// <inheritdoc />
         public void AddMeshToNode(
             int nodeId,
             UnityEngine.Mesh uMesh,
@@ -250,13 +236,6 @@ namespace GLTFast.Export
             {
                 node.Skin = AddSkin(meshId, joints);
             }
-        }
-
-        /// <inheritdoc />
-        [Obsolete("Use overload with List<uint> joints parameter.")]
-        public void AddMeshToNode(int nodeId, UnityEngine.Mesh uMesh, int[] materialIds, uint[] joints)
-        {
-            AddMeshToNode(nodeId, uMesh, materialIds, joints == null ? null : new List<uint>(joints));
         }
 
         /// <inheritdoc />

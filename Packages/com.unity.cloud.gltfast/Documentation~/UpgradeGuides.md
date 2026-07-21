@@ -268,7 +268,7 @@ Public method parameters that used to take `uint[]` / `string[]` were updated ba
 | `GameObjectInstantiator.MeshAddedDelegate` `joints` | `uint[]` | `IReadOnlyList<uint>` |
 | `IAnimationProcessor.AddMorphTargetWeightCurves` `morphTargetNames` | `string[]` | `IReadOnlyList<string>` |
 
-**Adopted inputs** (stored in the schema and serialized later) take `List<uint>`. Ownership of the list transfers to the writer — the caller must not mutate it after the call. An obsolete `uint[]` overload preserves back-compat by copying the array into a new list; callers should migrate to passing a `List<uint>` they will not modify further.
+**Adopted inputs** (stored in the schema and serialized later) take `List<uint>`. Ownership of the list transfers to the writer — the caller must not mutate it after the call. The `uint[]` `AddMeshToNode` overload was removed in 7.0; the `AddNode`/`AddScene` `uint[]` overloads remain but are `[Obsolete]`. Pass a `List<uint>` you will not modify further.
 
 | Member | Before | After |
 | ------ | ------ | ----- |
@@ -488,7 +488,7 @@ Some assemblies, classes, structs and enum types have been renamed or moved. Mak
 
 The addition of `GltfImport.InstantiateSceneAsync` and `GltfImport.InstantiateMainSceneAsync` now provides an asynchronous way of instantiating glTF&trade; scenes. For large scenes this means that the instantiation can be spread over multiple frames, resulting in a smoother frame rate.
 
-The existing, synchronous instantiation methods `GltfImport.InstantiateScene` and `GltfImport.InstantiateMainScene` (including overloads) have been marked obsolete and will be removed eventually. Though they still work, it's recommended to update your code to use the async variants.
+The synchronous instantiation methods `GltfImport.InstantiateScene` and `GltfImport.InstantiateMainScene` (including overloads) were marked obsolete and have been removed in 7.0. Update your code to use the async variants.
 
 Since loading a glTF (the step before instantiation) has been async before, chances are high your enclosing method is already async, as it should be.
 
@@ -549,7 +549,7 @@ async void Start() {
     var gltfImport = new GltfImport();
     await gltfImport.Load("test.gltf");
     var instantiator = new GameObjectInstantiator(gltfImport,transform);
-    var success = gltfImport.InstantiateMainScene(instantiator);
+    var success = await gltfImport.InstantiateMainSceneAsync(instantiator);
     if (success) {
 
         // Get the SceneInstance to access the instance's properties
@@ -624,10 +624,10 @@ public int sceneCount;
 // Returns the default scene's index
 public int? defaultSceneIndex;
 // Methods for instantiation
-public bool InstantiateMainScene( Transform parent );
-public bool InstantiateMainScene(IInstantiator instantiator);
-public bool InstantiateScene( Transform parent, int sceneIndex = 0);
-public bool InstantiateScene( IInstantiator instantiator, int sceneIndex = 0 );
+public Task<bool> InstantiateMainSceneAsync( Transform parent );
+public Task<bool> InstantiateMainSceneAsync( IInstantiator instantiator );
+public Task<bool> InstantiateSceneAsync( Transform parent, int sceneIndex = 0 );
+public Task<bool> InstantiateSceneAsync( IInstantiator instantiator, int sceneIndex = 0 );
 ```
 
 Please look at [`GltfAsset`][GltfAsset] for a reference implementation and look at the properties'/methods' XML documentation comments in the source code for details.

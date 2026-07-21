@@ -53,35 +53,10 @@ namespace GLTFast.Export
         /// <param name="uMesh">Unity mesh to be assigned and exported</param>
         /// <param name="materialIds">glTF materials IDs to be assigned
         /// (multiple in case of sub-meshes)</param>
-        [Obsolete("Use overload with skinning parameter.")]
-        void AddMeshToNode(int nodeId, Mesh uMesh, int[] materialIds);
-
-        /// <summary>
-        /// Assigns a mesh to a previously added node
-        /// </summary>
-        /// <param name="nodeId">Index of the node to add the mesh to</param>
-        /// <param name="uMesh">Unity mesh to be assigned and exported</param>
-        /// <param name="materialIds">glTF materials IDs to be assigned
-        /// (multiple in case of sub-meshes)</param>
-        /// <param name="skinning">Skinning has been applied (e.g. <see cref="SkinnedMeshRenderer"/>).</param>
-        [Obsolete("Use overload with joints parameter.")]
-        void AddMeshToNode(int nodeId, Mesh uMesh, int[] materialIds, bool skinning);
-
-        /// <summary>
-        /// Assigns a mesh to a previously added node
-        /// </summary>
-        /// <param name="nodeId">Index of the node to add the mesh to</param>
-        /// <param name="uMesh">Unity mesh to be assigned and exported</param>
-        /// <param name="materialIds">glTF materials IDs to be assigned
-        /// (multiple in case of sub-meshes)</param>
         /// <param name="joints">Node indices representing the joints of a skin.
         /// Ownership of the list is transferred to the writer; the caller must
         /// not modify it after the call.</param>
         void AddMeshToNode(int nodeId, Mesh uMesh, int[] materialIds, List<uint> joints);
-
-        /// <inheritdoc cref="AddMeshToNode(int,Mesh,int[],List{uint})"/>
-        [Obsolete("Use overload with List<uint> joints parameter.")]
-        void AddMeshToNode(int nodeId, Mesh uMesh, int[] materialIds, uint[] joints);
 
         /// <summary>
         /// Assigns a camera to a previously added node

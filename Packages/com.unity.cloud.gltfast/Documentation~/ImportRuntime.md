@@ -43,7 +43,7 @@ Both the loading and instantiation methods return a boolean value indicating if 
 [!code-cs [load-gltf-from-memory](../Runtime/DocExamples/LoadGltfFromMemory.cs#LoadGltfFromMemory)]
 
 > [!TIP]
-> Provide the original URI of glTF-binary file as `uri` parameter to [LoadGltfBinary][GltfImportLoadGltfBinary], so that it is able to resolve relative URIs in non-self-contained glTFs.
+> Provide the original URI of glTF-binary file as `uri` parameter to [Load][GltfImportLoad], so that it is able to resolve relative URIs in non-self-contained glTFs.
 
 ## Customize loading behavior
 
@@ -202,7 +202,6 @@ When you no longer need a loaded instance of a glTF scene you might want to remo
 [GltfImport]: xref:GLTFast.GltfImport
 [GltfImportDispose]: xref:GLTFast.GltfImportBase.Dispose
 [GltfImportLoad]: xref:GLTFast.GltfImportBase.Load*
-[GltfImportLoadGltfBinary]: xref:GLTFast.GltfImportBase.LoadGltfBinary*
 [GltfImportLoadGltfJson]: xref:GLTFast.GltfImportBase.LoadGltfJson*
 [GltfImportLoadStream]: xref:GLTFast.GltfImportBase.LoadStream*
 [GameObjectInstantiator]: xref:GLTFast.GameObjectInstantiator

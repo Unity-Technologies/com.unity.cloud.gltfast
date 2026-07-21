@@ -57,25 +57,9 @@ namespace GLTFast.Tests.Export
                 translation, rotation?.value, scale, children == null ? null : new List<uint>(children), name);
         }
 
-        public void AddMeshToNode(int nodeId, Mesh uMesh, int[] materialIds)
-        {
-            AddMeshToNode(nodeId, uMesh, materialIds, true);
-        }
-
-        public void AddMeshToNode(int nodeId, Mesh uMesh, int[] materialIds, bool skinning)
-        {
-            throw new NotImplementedException();
-        }
-
         public void AddMeshToNode(int nodeId, Mesh uMesh, int[] materialIds, List<uint> joints)
         {
             throw new NotImplementedException();
-        }
-
-        [Obsolete("Use overload with List<uint> joints parameter.")]
-        public void AddMeshToNode(int nodeId, Mesh uMesh, int[] materialIds, uint[] joints)
-        {
-            AddMeshToNode(nodeId, uMesh, materialIds, joints == null ? null : new List<uint>(joints));
         }
 
         public void AddCameraToNode(int nodeId, int cameraId)

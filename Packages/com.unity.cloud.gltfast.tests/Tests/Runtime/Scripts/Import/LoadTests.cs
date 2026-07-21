@@ -50,7 +50,6 @@ namespace GLTFast.Tests.Import
 
         enum InstantiationType
         {
-            MainSync,
             Main,
             MainAndFirst
         }
@@ -99,13 +98,6 @@ namespace GLTFast.Tests.Import
         public IEnumerator LoadByteArray(GltfTestCaseSet testCaseSet, GltfTestCase testCase)
         {
             var task = LoadInternal(testCaseSet, testCase, LoadType.ManagedByteArray, InstantiationType.Main);
-            yield return Utils.WaitForTask(task);
-        }
-
-        [GltfTestCase("glTF-test-models", 2, k_RelativeUriFilter)]
-        public IEnumerator LoadSyncInstantiation(GltfTestCaseSet testCaseSet, GltfTestCase testCase)
-        {
-            var task = LoadInternal(testCaseSet, testCase, LoadType.Path, InstantiationType.MainSync);
             yield return Utils.WaitForTask(task);
         }
 
@@ -219,9 +211,7 @@ namespace GLTFast.Tests.Import
                 case LoadType.Binary:
                 {
                     var data = await ReadAllBytesAsync(path);
-#pragma warning disable CS0618 // Type or member is obsolete
-                    success = await gltf.LoadGltfBinary(data, new Uri(path));
-#pragma warning restore CS0618 // Type or member is obsolete
+                    success = await gltf.Load(data, new Uri(path));
                     break;
                 }
                 case LoadType.Stream:
@@ -247,12 +237,6 @@ namespace GLTFast.Tests.Import
             {
                 case InstantiationType.Main:
                     success = await gltf.InstantiateMainSceneAsync(instantiator);
-                    break;
-                case InstantiationType.MainSync:
-#pragma warning disable CS0618
-                    // ReSharper disable once MethodHasAsyncOverload
-                    success = gltf.InstantiateMainScene(instantiator);
-#pragma warning restore CS0618
                     break;
                 case InstantiationType.MainAndFirst:
 #if !UNITY_ENTITIES_GRAPHICS
