@@ -1,6 +1,6 @@
 {% metadata_file .yamato/package.metafile -%}
 
-codecov_assemblies: +glTFast.Documentation.Examples,+glTFast,+glTFast.Documentation.Examples.Editor,+glTFast.Editor,+glTFast.Newtonsoft,+glTFast.dots,+glTFast.Export
+codecov_assemblies: +glTFast*,-glTFast*Tests*
 ---
 {% for test_setup in test_setups -%}
 {% if test_setup.editor_versions -%}
