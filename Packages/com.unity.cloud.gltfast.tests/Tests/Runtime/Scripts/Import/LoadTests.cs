@@ -181,8 +181,7 @@ namespace GLTFast.Tests.Import
             var go = new GameObject();
 #endif
             var deferAgent = new UninterruptedDeferAgent();
-            var logger = new ConsoleLogger();
-            using var gltf = new GltfImport(deferAgent: deferAgent, logger: logger);
+            using var gltf = new GltfImport(deferAgent: deferAgent);
             bool success;
             switch (loadType)
             {
@@ -229,9 +228,9 @@ namespace GLTFast.Tests.Import
             Assert.IsTrue(success);
             var instantiator =
 #if UNITY_ENTITIES_GRAPHICS
-                new EntityInstantiator(gltf, s_SceneRoot, logger);
+                new EntityInstantiator(gltf, s_SceneRoot);
 #else
-                new GameObjectInstantiator(gltf, go.transform, logger);
+                new GameObjectInstantiator(gltf, go.transform);
 #endif
             switch (instantiationType)
             {
@@ -249,7 +248,7 @@ namespace GLTFast.Tests.Import
                     success = await gltf.InstantiateMainSceneAsync(instantiator);
                     Assert.IsTrue(success);
                     var firstScene = EntityUtils.CreateSceneRootEntity(s_World, "firstScene");
-                    var firstSceneInstantiator = new EntityInstantiator(gltf, firstScene, logger);
+                    var firstSceneInstantiator = new EntityInstantiator(gltf, firstScene);
                     success = await gltf.InstantiateSceneAsync(firstSceneInstantiator);
                     await Task.Yield();
                     var tmpEntityManager = s_World.EntityManager;

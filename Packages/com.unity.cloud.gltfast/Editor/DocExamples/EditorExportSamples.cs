@@ -24,7 +24,6 @@ namespace GLTFast.Editor.Documentation.Examples
                 Format = GltfFormat.Binary
             };
 
-            var logger = new ConsoleLogger();
             try
             {
                 for (var index = 0; index < rootObjects.Length; index++)
@@ -34,7 +33,7 @@ namespace GLTFast.Editor.Documentation.Examples
                     EditorUtility.DisplayProgressBar(
                         "glTF Batch Export", rootObject.name, index / (float)rootObjects.Length);
 
-                    var export = new GameObjectExport(exportSettings, logger: logger);
+                    var export = new GameObjectExport(exportSettings);
                     export.AddScene(new[] { rootObject }, rootObject.name);
 
                     var success = await export.SaveToFileAndDispose(

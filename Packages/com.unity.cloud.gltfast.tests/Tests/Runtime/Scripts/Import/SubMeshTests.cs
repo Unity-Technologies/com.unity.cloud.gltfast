@@ -34,8 +34,7 @@ namespace GLTFast.Tests.Import
             Debug.Log($"Testing {path}");
             var go = new GameObject();
             var deferAgent = new UninterruptedDeferAgent();
-            var logger = new ConsoleLogger();
-            using var gltf = new GltfImport(deferAgent: deferAgent, logger: logger);
+            using var gltf = new GltfImport(deferAgent: deferAgent);
             var success = await gltf.Load(path);
             Assert.IsTrue(success);
 

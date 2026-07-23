@@ -121,8 +121,7 @@ namespace GLTFast.Tests
             await Clear();
             var startTime = Time.realtimeSinceStartup;
             var startFrame = Time.frameCount;
-            var logger = new ConsoleLogger();
-            m_Gltf = new GltfImport(logger: logger);
+            m_Gltf = new GltfImport();
             var success = loadMethod switch
             {
                 LoadMethod.File => await m_Gltf.LoadFile(path, new Uri(path, UriKind.RelativeOrAbsolute), importSettings),
@@ -135,9 +134,9 @@ namespace GLTFast.Tests
 #if UNITY_ENTITIES_GRAPHICS
                 var world = World.DefaultGameObjectInjectionWorld;
                 m_SceneRoot = EntityUtils.CreateSceneRootEntity(world, filename);
-                var instantiator = new EntityInstantiator(m_Gltf, m_SceneRoot, logger, instantiationSettings);
+                var instantiator = new EntityInstantiator(m_Gltf, m_SceneRoot, settings: instantiationSettings);
 #else
-                var instantiator = new GameObjectBoundsInstantiator(m_Gltf, transform, logger, instantiationSettings);
+                var instantiator = new GameObjectBoundsInstantiator(m_Gltf, transform, settings: instantiationSettings);
 #endif
                 success = sceneIndex >= 0
                     ? await m_Gltf.InstantiateSceneAsync(instantiator, sceneIndex)

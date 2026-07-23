@@ -17,7 +17,7 @@ namespace GLTFast.Logging
         /// points when no logger is passed. Prefer this over
         /// <c>new ConsoleLogger()</c>.
         /// </summary>
-        public static readonly ConsoleLogger Instance = new ConsoleLogger();
+        public static readonly ConsoleLogger Instance = new();
 
         /// <inheritdoc />
         public void Error(LogCode code, params string[] messages)

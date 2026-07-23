@@ -21,12 +21,12 @@ namespace GLTFast.Tests
         {
             try
             {
-                var gltf = new GltfImport(logger: new ConsoleLogger());
+                var gltf = new GltfImport();
                 var addonA = gltf.GetImportAddonInstance<AddonInstanceA>();
                 Assert.IsNull(addonA);
 
                 ImportAddonRegistry.RegisterImportAddon(new AddonB());
-                gltf = new GltfImport(logger: new ConsoleLogger());
+                gltf = new GltfImport();
                 addonA = gltf.GetImportAddonInstance<AddonInstanceA>();
                 Assert.IsNull(addonA);
                 var addonB = gltf.GetImportAddonInstance<InstanceBase>();
@@ -53,7 +53,7 @@ namespace GLTFast.Tests
 
             async Task Test()
             {
-                var gltf = new GltfImport(logger: new ConsoleLogger());
+                var gltf = new GltfImport();
                 new PostJsonDeserializationAddon().Inject(gltf);
                 Assert.IsTrue(await gltf.LoadGltfJson(@"{""asset"":{""copyright"":""© 2026 Unity Technologies and the glTFast authors.""}}"));
                 var root = gltf.Root;

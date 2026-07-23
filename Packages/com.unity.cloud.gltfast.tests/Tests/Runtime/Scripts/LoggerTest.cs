@@ -60,8 +60,8 @@ namespace GLTFast.Tests
         public static void ConsoleLoggerTest()
         {
             LogAssert.Expect(LogType.Error, "Download URL https://something.com/nowherfound.glb failed: 404");
-            var r = new ConsoleLogger();
-            r.Error(LogCode.Download, "404", "https://something.com/nowherfound.glb");
+            ConsoleLogger.Instance.Error(
+                LogCode.Download, "404", "https://something.com/nowherfound.glb");
         }
 
         [Test]
@@ -73,8 +73,7 @@ namespace GLTFast.Tests
             LogAssert.Expect(LogType.Log, "Download URL https://something.com/nowherfound.glb failed: 404");
             LogAssert.Expect(LogType.Exception, "Download URL https://something.com/nowherfound.glb failed: 405");
 
-            var r = new ConsoleLogger();
-            ICodeLogger l = r;
+            ICodeLogger l = ConsoleLogger.Instance;
             l.Log(LogType.Error, LogCode.Download, "401", "https://something.com/nowherfound.glb");
             l.Log(LogType.Assert, LogCode.Download, "402", "https://something.com/nowherfound.glb");
             l.Log(LogType.Warning, LogCode.Download, "403", "https://something.com/nowherfound.glb");

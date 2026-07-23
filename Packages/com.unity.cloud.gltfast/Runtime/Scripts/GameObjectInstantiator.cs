@@ -91,8 +91,8 @@ namespace GLTFast
             InstantiationSettings settings = null
             )
         {
-            this.m_Gltf = gltf;
-            this.m_Parent = parent;
+            m_Gltf = gltf;
+            m_Parent = parent;
             m_Logger = logger is NullLogger ? null : (logger ?? ConsoleLogger.Instance);
             m_Settings = settings ?? new InstantiationSettings();
         }

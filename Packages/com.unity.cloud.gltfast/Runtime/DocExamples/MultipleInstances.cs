@@ -31,8 +31,7 @@ namespace GLTFast.Documentation.Examples
 
         public async Task LoadGltf()
         {
-            var logger = new ConsoleLogger();
-            var gltfImport = new GltfImport(logger: logger);
+            var gltfImport = new GltfImport();
             await gltfImport.Load(uri);
 
             for (var i = 0; i < quantity; i++)
@@ -44,7 +43,7 @@ namespace GLTFast.Documentation.Examples
                         localPosition = new Vector3(0, 0, i * .13f)
                     }
                 };
-                var instantiator = new GameObjectInstantiator(gltfImport, go.transform, logger: logger);
+                var instantiator = new GameObjectInstantiator(gltfImport, go.transform);
                 await gltfImport.InstantiateMainSceneAsync(instantiator);
                 var scene = instantiator.SceneInstance;
                 var materialsVariantsControl = scene.MaterialsVariantsControl;

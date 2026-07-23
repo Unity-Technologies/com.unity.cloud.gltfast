@@ -26,7 +26,7 @@ namespace GLTFast.Documentation.Examples
             try
             {
                 ImportAddonRegistry.RegisterImportAddon(new MyAddon());
-                var gltfImport = new GltfImport(logger: new ConsoleLogger());
+                var gltfImport = new GltfImport();
                 await gltfImport.Load(uri);
                 await gltfImport.InstantiateMainSceneAsync(transform);
             }

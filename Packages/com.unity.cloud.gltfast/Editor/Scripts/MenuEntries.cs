@@ -158,7 +158,7 @@ namespace GLTFast.Editor
             SaveFolderPath = Directory.GetParent(destinationPath)?.FullName;
             var settings = GetDefaultSettings(binary);
             var goSettings = new GameObjectExportSettings { OnlyActiveInHierarchy = false };
-            var export = new GameObjectExport(settings, gameObjectExportSettings: goSettings, logger: new ConsoleLogger());
+            var export = new GameObjectExport(settings, gameObjectExportSettings: goSettings);
             export.AddScene(gameObjects, name);
 #if GLTF_VALIDATOR
             var success =
@@ -225,7 +225,7 @@ namespace GLTFast.Editor
             {
                 SaveFolderPath = Directory.GetParent(path)?.FullName;
                 var settings = GetDefaultSettings(binary);
-                var export = new GameObjectExport(settings, logger: new ConsoleLogger());
+                var export = new GameObjectExport(settings);
                 export.AddScene(gameObjects, scene.name);
                 await export.SaveToFileAndDispose(path);
 #if GLTF_VALIDATOR

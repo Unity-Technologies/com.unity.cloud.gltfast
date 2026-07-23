@@ -19,7 +19,7 @@ namespace GLTFast.Documentation.Examples
         public async Task LoadGltfFile(string filePath)
         {
             var gltfDataAsByteArray = await File.ReadAllBytesAsync(filePath);
-            var gltf = new GltfImport(logger: new ConsoleLogger());
+            var gltf = new GltfImport();
             var success = await gltf.Load(
                 gltfDataAsByteArray,
                 // The URI of the original data is important for resolving relative URIs within the glTF
@@ -105,10 +105,9 @@ namespace GLTFast.Documentation.Examples
         public async Task SceneInstanceAccess(string filePath)
         {
             #region SceneInstanceAccess
-            var logger = new ConsoleLogger();
-            var gltfImport = new GltfImport(logger: logger);
+            var gltfImport = new GltfImport();
             await gltfImport.Load(filePath);
-            var instantiator = new GameObjectInstantiator(gltfImport, transform, logger: logger);
+            var instantiator = new GameObjectInstantiator(gltfImport, transform);
             var success = await gltfImport.InstantiateMainSceneAsync(instantiator);
             if (success)
             {

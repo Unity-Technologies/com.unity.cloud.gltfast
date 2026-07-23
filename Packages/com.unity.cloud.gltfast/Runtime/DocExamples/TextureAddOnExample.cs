@@ -34,7 +34,7 @@ namespace GLTFast.Documentation.Examples
                 // // Global registration of the addons, they will be used for all imports
                 // ImportAddonRegistry.RegisterImportAddon(new WebpTextureAddon());
                 // ImportAddonRegistry.RegisterImportAddon(new PngTextureAddon());
-                var gltfImport = new GltfImport(logger: new ConsoleLogger());
+                var gltfImport = new GltfImport();
 
                 // Local registration of the addons, they will be used only for this import
                 if (webP)
