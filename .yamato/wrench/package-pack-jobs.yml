@@ -39,7 +39,7 @@ package_pack_-_cloud_gltfast:
     UPMCI_ACK_LARGE_PACKAGE: 1
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 3.3.1.0
+    Wrench: 3.4.0.0
 
 # Pack Unity glTFast Development Tools
 package_pack_-_cloud_gltfast_devtools:
@@ -64,7 +64,7 @@ package_pack_-_cloud_gltfast_devtools:
     UPMCI_ACK_LARGE_PACKAGE: 1
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 3.3.1.0
+    Wrench: 3.4.0.0
 
 # Pack Unity glTFast Tests
 package_pack_-_cloud_gltfast_tests:
@@ -89,5 +89,5 @@ package_pack_-_cloud_gltfast_tests:
     UPMCI_ACK_LARGE_PACKAGE: 1
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 3.3.1.0
+    Wrench: 3.4.0.0
 

@@ -131,6 +131,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Export's `GLTFast.Export.ManagedNativeArray` no longer leaks its pinned `GCHandle` when not explicitly disposed (added a finalizer); double-dispose is now a safe no-op.
+- `GltfWriter.AddImage` no longer throws `NullReferenceException` when called after `Dispose()` in builds without `UNITY_IMAGECONVERSION` defined; now correctly throws `InvalidOperationException` from `CertifyNotDisposed()` instead.
 
 ### Removed
 - JsonUtility dependency and related code.
@@ -166,7 +167,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Corrected invalid `cref` references in XML documentation comments (parameters, type parameters and a stale method reference) that produced warnings during documentation generation.
-- `GltfWriter.AddImage` no longer throws `NullReferenceException` when called after `Dispose()` in builds without `UNITY_IMAGECONVERSION` defined; now correctly throws `InvalidOperationException` from `CertifyNotDisposed()` instead.
 - Fixed false positives in export to stream tests because it actually validated results from non-stream tests.
 - Prevent exception when Animation component was not created successfully.
 - Removed useless `SerializeFieldAttribute` from `MaterialsVariantsComponent.Control` to avoid compiler warning in Unity 6.6 and newer.
@@ -174,6 +174,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - (Test) Avoid `Animation` component conflict by accidentally loading glTF twice in `DocExamplesTest`.
 - [IsTextureYFlipped](xref:GLTFast.GltfImportBase.IsTextureYFlipped(System.Int32)) returns correct value when multiple textures reference one image.
 - (Export) Exceptions thrown during synchronous mesh export (`BakeMesh` / `BakeMeshDraco`) are now surfaced instead of being silently swallowed by unobserved tasks.
+- (Documentation) Updated the features' animation section to reflect that Playables support was removed and to list animation import into custom animation systems via add-ons.
 
 ### Removed
 

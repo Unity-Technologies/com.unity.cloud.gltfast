@@ -36,7 +36,10 @@ validate_-_cloud_gltfast_-_6000_0_-_macos13:
   - command: upm-pvp require "rme PVP-160-1 supported" --results upm-ci~/pvp --exemptions upm-ci~/pvp/failures.json
     timeout: 10
     retries: 0
-  - command: 'UnifiedTestRunner --testproject=test-cloud.gltfast --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts --suite=Editor --suite=Playmode "--ff={ops.upmpvpevidence.enable=true}" '
+  - command: 'UnifiedTestRunner --testproject=test-cloud.gltfast --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts/editor --suite=editor "--ff={ops.upmpvpevidence.enable=true}" '
+    timeout: 60
+    retries: 1
+  - command: 'UnifiedTestRunner --testproject=test-cloud.gltfast --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts/playmode --suite=playmode "--ff={ops.upmpvpevidence.enable=true}" '
     timeout: 60
     retries: 1
   after:
@@ -71,10 +74,10 @@ validate_-_cloud_gltfast_-_6000_0_-_macos13:
     UNITY_LICENSING_SERVER_DELETE_ULF: 0
     UNITY_LICENSING_SERVER_TOOLSET: pro
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 3.3.1.0
+    UPMPVP_CONTEXT_WRENCH: 3.4.0.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 3.3.1.0
+    Wrench: 3.4.0.0
   labels:
   - Packages:cloud.gltfast
 
@@ -108,7 +111,10 @@ validate_-_cloud_gltfast_-_6000_0_-_ubuntu2204:
   - command: upm-pvp require "rme PVP-160-1 supported" --results upm-ci~/pvp --exemptions upm-ci~/pvp/failures.json
     timeout: 10
     retries: 0
-  - command: 'UnifiedTestRunner --testproject=test-cloud.gltfast --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts --suite=Editor --suite=Playmode "--ff={ops.upmpvpevidence.enable=true}" '
+  - command: 'UnifiedTestRunner --testproject=test-cloud.gltfast --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts/editor --suite=editor "--ff={ops.upmpvpevidence.enable=true}" '
+    timeout: 60
+    retries: 1
+  - command: 'UnifiedTestRunner --testproject=test-cloud.gltfast --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts/playmode --suite=playmode "--ff={ops.upmpvpevidence.enable=true}" '
     timeout: 60
     retries: 1
   after:
@@ -143,10 +149,10 @@ validate_-_cloud_gltfast_-_6000_0_-_ubuntu2204:
     UNITY_LICENSING_SERVER_DELETE_ULF: 0
     UNITY_LICENSING_SERVER_TOOLSET: pro
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 3.3.1.0
+    UPMPVP_CONTEXT_WRENCH: 3.4.0.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 3.3.1.0
+    Wrench: 3.4.0.0
   labels:
   - Packages:cloud.gltfast
 
@@ -180,7 +186,10 @@ validate_-_cloud_gltfast_-_6000_0_-_win10:
   - command: upm-pvp require "rme PVP-160-1 supported" --results upm-ci~/pvp --exemptions upm-ci~/pvp/failures.json
     timeout: 10
     retries: 0
-  - command: 'UnifiedTestRunner.exe --testproject=test-cloud.gltfast --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts --suite=Editor --suite=Playmode "--ff={ops.upmpvpevidence.enable=true}" '
+  - command: 'UnifiedTestRunner.exe --testproject=test-cloud.gltfast --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts/editor --suite=editor "--ff={ops.upmpvpevidence.enable=true}" '
+    timeout: 60
+    retries: 1
+  - command: 'UnifiedTestRunner.exe --testproject=test-cloud.gltfast --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts/playmode --suite=playmode "--ff={ops.upmpvpevidence.enable=true}" '
     timeout: 60
     retries: 1
   after:
@@ -215,10 +224,10 @@ validate_-_cloud_gltfast_-_6000_0_-_win10:
     UNITY_LICENSING_SERVER_DELETE_ULF: 0
     UNITY_LICENSING_SERVER_TOOLSET: pro
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 3.3.1.0
+    UPMPVP_CONTEXT_WRENCH: 3.4.0.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 3.3.1.0
+    Wrench: 3.4.0.0
   labels:
   - Packages:cloud.gltfast
 
@@ -252,7 +261,10 @@ validate_-_cloud_gltfast_-_6000_3_-_macos13:
   - command: upm-pvp require "rme PVP-160-1 supported" --results upm-ci~/pvp --exemptions upm-ci~/pvp/failures.json
     timeout: 10
     retries: 0
-  - command: 'UnifiedTestRunner --testproject=test-cloud.gltfast --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts --suite=Editor --suite=Playmode "--ff={ops.upmpvpevidence.enable=true}" '
+  - command: 'UnifiedTestRunner --testproject=test-cloud.gltfast --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts/editor --suite=editor "--ff={ops.upmpvpevidence.enable=true}" '
+    timeout: 60
+    retries: 1
+  - command: 'UnifiedTestRunner --testproject=test-cloud.gltfast --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts/playmode --suite=playmode "--ff={ops.upmpvpevidence.enable=true}" '
     timeout: 60
     retries: 1
   after:
@@ -287,10 +299,10 @@ validate_-_cloud_gltfast_-_6000_3_-_macos13:
     UNITY_LICENSING_SERVER_DELETE_ULF: 0
     UNITY_LICENSING_SERVER_TOOLSET: pro
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 3.3.1.0
+    UPMPVP_CONTEXT_WRENCH: 3.4.0.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 3.3.1.0
+    Wrench: 3.4.0.0
   labels:
   - Packages:cloud.gltfast
 
@@ -324,7 +336,10 @@ validate_-_cloud_gltfast_-_6000_3_-_ubuntu2204:
   - command: upm-pvp require "rme PVP-160-1 supported" --results upm-ci~/pvp --exemptions upm-ci~/pvp/failures.json
     timeout: 10
     retries: 0
-  - command: 'UnifiedTestRunner --testproject=test-cloud.gltfast --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts --suite=Editor --suite=Playmode "--ff={ops.upmpvpevidence.enable=true}" '
+  - command: 'UnifiedTestRunner --testproject=test-cloud.gltfast --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts/editor --suite=editor "--ff={ops.upmpvpevidence.enable=true}" '
+    timeout: 60
+    retries: 1
+  - command: 'UnifiedTestRunner --testproject=test-cloud.gltfast --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts/playmode --suite=playmode "--ff={ops.upmpvpevidence.enable=true}" '
     timeout: 60
     retries: 1
   after:
@@ -359,10 +374,10 @@ validate_-_cloud_gltfast_-_6000_3_-_ubuntu2204:
     UNITY_LICENSING_SERVER_DELETE_ULF: 0
     UNITY_LICENSING_SERVER_TOOLSET: pro
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 3.3.1.0
+    UPMPVP_CONTEXT_WRENCH: 3.4.0.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 3.3.1.0
+    Wrench: 3.4.0.0
   labels:
   - Packages:cloud.gltfast
 
@@ -396,7 +411,10 @@ validate_-_cloud_gltfast_-_6000_3_-_win10:
   - command: upm-pvp require "rme PVP-160-1 supported" --results upm-ci~/pvp --exemptions upm-ci~/pvp/failures.json
     timeout: 10
     retries: 0
-  - command: 'UnifiedTestRunner.exe --testproject=test-cloud.gltfast --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts --suite=Editor --suite=Playmode "--ff={ops.upmpvpevidence.enable=true}" '
+  - command: 'UnifiedTestRunner.exe --testproject=test-cloud.gltfast --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts/editor --suite=editor "--ff={ops.upmpvpevidence.enable=true}" '
+    timeout: 60
+    retries: 1
+  - command: 'UnifiedTestRunner.exe --testproject=test-cloud.gltfast --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts/playmode --suite=playmode "--ff={ops.upmpvpevidence.enable=true}" '
     timeout: 60
     retries: 1
   after:
@@ -431,10 +449,10 @@ validate_-_cloud_gltfast_-_6000_3_-_win10:
     UNITY_LICENSING_SERVER_DELETE_ULF: 0
     UNITY_LICENSING_SERVER_TOOLSET: pro
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 3.3.1.0
+    UPMPVP_CONTEXT_WRENCH: 3.4.0.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 3.3.1.0
+    Wrench: 3.4.0.0
   labels:
   - Packages:cloud.gltfast
 
@@ -468,7 +486,10 @@ validate_-_cloud_gltfast_-_6000_5_-_macos13:
   - command: upm-pvp require "rme PVP-160-1 supported" --results upm-ci~/pvp --exemptions upm-ci~/pvp/failures.json
     timeout: 10
     retries: 0
-  - command: 'UnifiedTestRunner --testproject=test-cloud.gltfast --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts --suite=Editor --suite=Playmode "--ff={ops.upmpvpevidence.enable=true}" '
+  - command: 'UnifiedTestRunner --testproject=test-cloud.gltfast --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts/editor --suite=editor "--ff={ops.upmpvpevidence.enable=true}" '
+    timeout: 60
+    retries: 1
+  - command: 'UnifiedTestRunner --testproject=test-cloud.gltfast --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts/playmode --suite=playmode "--ff={ops.upmpvpevidence.enable=true}" '
     timeout: 60
     retries: 1
   after:
@@ -503,10 +524,10 @@ validate_-_cloud_gltfast_-_6000_5_-_macos13:
     UNITY_LICENSING_SERVER_DELETE_ULF: 0
     UNITY_LICENSING_SERVER_TOOLSET: pro
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 3.3.1.0
+    UPMPVP_CONTEXT_WRENCH: 3.4.0.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 3.3.1.0
+    Wrench: 3.4.0.0
   labels:
   - Packages:cloud.gltfast
 
@@ -540,7 +561,10 @@ validate_-_cloud_gltfast_-_6000_5_-_ubuntu2204:
   - command: upm-pvp require "rme PVP-160-1 supported" --results upm-ci~/pvp --exemptions upm-ci~/pvp/failures.json
     timeout: 10
     retries: 0
-  - command: 'UnifiedTestRunner --testproject=test-cloud.gltfast --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts --suite=Editor --suite=Playmode "--ff={ops.upmpvpevidence.enable=true}" '
+  - command: 'UnifiedTestRunner --testproject=test-cloud.gltfast --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts/editor --suite=editor "--ff={ops.upmpvpevidence.enable=true}" '
+    timeout: 60
+    retries: 1
+  - command: 'UnifiedTestRunner --testproject=test-cloud.gltfast --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts/playmode --suite=playmode "--ff={ops.upmpvpevidence.enable=true}" '
     timeout: 60
     retries: 1
   after:
@@ -575,10 +599,10 @@ validate_-_cloud_gltfast_-_6000_5_-_ubuntu2204:
     UNITY_LICENSING_SERVER_DELETE_ULF: 0
     UNITY_LICENSING_SERVER_TOOLSET: pro
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 3.3.1.0
+    UPMPVP_CONTEXT_WRENCH: 3.4.0.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 3.3.1.0
+    Wrench: 3.4.0.0
   labels:
   - Packages:cloud.gltfast
 
@@ -612,7 +636,10 @@ validate_-_cloud_gltfast_-_6000_5_-_win10:
   - command: upm-pvp require "rme PVP-160-1 supported" --results upm-ci~/pvp --exemptions upm-ci~/pvp/failures.json
     timeout: 10
     retries: 0
-  - command: 'UnifiedTestRunner.exe --testproject=test-cloud.gltfast --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts --suite=Editor --suite=Playmode "--ff={ops.upmpvpevidence.enable=true}" '
+  - command: 'UnifiedTestRunner.exe --testproject=test-cloud.gltfast --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts/editor --suite=editor "--ff={ops.upmpvpevidence.enable=true}" '
+    timeout: 60
+    retries: 1
+  - command: 'UnifiedTestRunner.exe --testproject=test-cloud.gltfast --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts/playmode --suite=playmode "--ff={ops.upmpvpevidence.enable=true}" '
     timeout: 60
     retries: 1
   after:
@@ -647,10 +674,10 @@ validate_-_cloud_gltfast_-_6000_5_-_win10:
     UNITY_LICENSING_SERVER_DELETE_ULF: 0
     UNITY_LICENSING_SERVER_TOOLSET: pro
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 3.3.1.0
+    UPMPVP_CONTEXT_WRENCH: 3.4.0.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 3.3.1.0
+    Wrench: 3.4.0.0
   labels:
   - Packages:cloud.gltfast
 
@@ -685,7 +712,10 @@ validate_-_cloud_gltfast_-_6000_6_-_macos13arm:
   - command: upm-pvp require "rme PVP-160-1 supported" --results upm-ci~/pvp --exemptions upm-ci~/pvp/failures.json
     timeout: 10
     retries: 0
-  - command: 'UnifiedTestRunner --testproject=test-cloud.gltfast --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts --suite=Editor --suite=Playmode "--ff={ops.upmpvpevidence.enable=true}" '
+  - command: 'UnifiedTestRunner --testproject=test-cloud.gltfast --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts/editor --suite=editor "--ff={ops.upmpvpevidence.enable=true}" '
+    timeout: 60
+    retries: 1
+  - command: 'UnifiedTestRunner --testproject=test-cloud.gltfast --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts/playmode --suite=playmode "--ff={ops.upmpvpevidence.enable=true}" '
     timeout: 60
     retries: 1
   after:
@@ -720,10 +750,10 @@ validate_-_cloud_gltfast_-_6000_6_-_macos13arm:
     UNITY_LICENSING_SERVER_DELETE_ULF: 0
     UNITY_LICENSING_SERVER_TOOLSET: pro
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 3.3.1.0
+    UPMPVP_CONTEXT_WRENCH: 3.4.0.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 3.3.1.0
+    Wrench: 3.4.0.0
   labels:
   - Packages:cloud.gltfast
 
@@ -757,7 +787,10 @@ validate_-_cloud_gltfast_-_6000_6_-_ubuntu2204:
   - command: upm-pvp require "rme PVP-160-1 supported" --results upm-ci~/pvp --exemptions upm-ci~/pvp/failures.json
     timeout: 10
     retries: 0
-  - command: 'UnifiedTestRunner --testproject=test-cloud.gltfast --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts --suite=Editor --suite=Playmode "--ff={ops.upmpvpevidence.enable=true}" '
+  - command: 'UnifiedTestRunner --testproject=test-cloud.gltfast --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts/editor --suite=editor "--ff={ops.upmpvpevidence.enable=true}" '
+    timeout: 60
+    retries: 1
+  - command: 'UnifiedTestRunner --testproject=test-cloud.gltfast --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts/playmode --suite=playmode "--ff={ops.upmpvpevidence.enable=true}" '
     timeout: 60
     retries: 1
   after:
@@ -792,10 +825,10 @@ validate_-_cloud_gltfast_-_6000_6_-_ubuntu2204:
     UNITY_LICENSING_SERVER_DELETE_ULF: 0
     UNITY_LICENSING_SERVER_TOOLSET: pro
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 3.3.1.0
+    UPMPVP_CONTEXT_WRENCH: 3.4.0.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 3.3.1.0
+    Wrench: 3.4.0.0
   labels:
   - Packages:cloud.gltfast
 
@@ -829,7 +862,10 @@ validate_-_cloud_gltfast_-_6000_6_-_win10:
   - command: upm-pvp require "rme PVP-160-1 supported" --results upm-ci~/pvp --exemptions upm-ci~/pvp/failures.json
     timeout: 10
     retries: 0
-  - command: 'UnifiedTestRunner.exe --testproject=test-cloud.gltfast --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts --suite=Editor --suite=Playmode "--ff={ops.upmpvpevidence.enable=true}" '
+  - command: 'UnifiedTestRunner.exe --testproject=test-cloud.gltfast --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts/editor --suite=editor "--ff={ops.upmpvpevidence.enable=true}" '
+    timeout: 60
+    retries: 1
+  - command: 'UnifiedTestRunner.exe --testproject=test-cloud.gltfast --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts/playmode --suite=playmode "--ff={ops.upmpvpevidence.enable=true}" '
     timeout: 60
     retries: 1
   after:
@@ -864,10 +900,10 @@ validate_-_cloud_gltfast_-_6000_6_-_win10:
     UNITY_LICENSING_SERVER_DELETE_ULF: 0
     UNITY_LICENSING_SERVER_TOOLSET: pro
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 3.3.1.0
+    UPMPVP_CONTEXT_WRENCH: 3.4.0.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 3.3.1.0
+    Wrench: 3.4.0.0
   labels:
   - Packages:cloud.gltfast
 
@@ -902,7 +938,10 @@ validate_-_cloud_gltfast_-_6000_7_-_macos13arm:
   - command: upm-pvp require "rme PVP-160-1 supported" --results upm-ci~/pvp --exemptions upm-ci~/pvp/failures.json
     timeout: 10
     retries: 0
-  - command: 'UnifiedTestRunner --testproject=test-cloud.gltfast --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts --suite=Editor --suite=Playmode "--ff={ops.upmpvpevidence.enable=true}" '
+  - command: 'UnifiedTestRunner --testproject=test-cloud.gltfast --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts/editor --suite=editor "--ff={ops.upmpvpevidence.enable=true}" '
+    timeout: 60
+    retries: 1
+  - command: 'UnifiedTestRunner --testproject=test-cloud.gltfast --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts/playmode --suite=playmode "--ff={ops.upmpvpevidence.enable=true}" '
     timeout: 60
     retries: 1
   after:
@@ -937,10 +976,10 @@ validate_-_cloud_gltfast_-_6000_7_-_macos13arm:
     UNITY_LICENSING_SERVER_DELETE_ULF: 0
     UNITY_LICENSING_SERVER_TOOLSET: pro
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 3.3.1.0
+    UPMPVP_CONTEXT_WRENCH: 3.4.0.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 3.3.1.0
+    Wrench: 3.4.0.0
   labels:
   - Packages:cloud.gltfast
 
@@ -974,7 +1013,10 @@ validate_-_cloud_gltfast_-_6000_7_-_ubuntu2204:
   - command: upm-pvp require "rme PVP-160-1 supported" --results upm-ci~/pvp --exemptions upm-ci~/pvp/failures.json
     timeout: 10
     retries: 0
-  - command: 'UnifiedTestRunner --testproject=test-cloud.gltfast --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts --suite=Editor --suite=Playmode "--ff={ops.upmpvpevidence.enable=true}" '
+  - command: 'UnifiedTestRunner --testproject=test-cloud.gltfast --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts/editor --suite=editor "--ff={ops.upmpvpevidence.enable=true}" '
+    timeout: 60
+    retries: 1
+  - command: 'UnifiedTestRunner --testproject=test-cloud.gltfast --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts/playmode --suite=playmode "--ff={ops.upmpvpevidence.enable=true}" '
     timeout: 60
     retries: 1
   after:
@@ -1009,10 +1051,10 @@ validate_-_cloud_gltfast_-_6000_7_-_ubuntu2204:
     UNITY_LICENSING_SERVER_DELETE_ULF: 0
     UNITY_LICENSING_SERVER_TOOLSET: pro
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 3.3.1.0
+    UPMPVP_CONTEXT_WRENCH: 3.4.0.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 3.3.1.0
+    Wrench: 3.4.0.0
   labels:
   - Packages:cloud.gltfast
 
@@ -1046,7 +1088,10 @@ validate_-_cloud_gltfast_-_6000_7_-_win10:
   - command: upm-pvp require "rme PVP-160-1 supported" --results upm-ci~/pvp --exemptions upm-ci~/pvp/failures.json
     timeout: 10
     retries: 0
-  - command: 'UnifiedTestRunner.exe --testproject=test-cloud.gltfast --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts --suite=Editor --suite=Playmode "--ff={ops.upmpvpevidence.enable=true}" '
+  - command: 'UnifiedTestRunner.exe --testproject=test-cloud.gltfast --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts/editor --suite=editor "--ff={ops.upmpvpevidence.enable=true}" '
+    timeout: 60
+    retries: 1
+  - command: 'UnifiedTestRunner.exe --testproject=test-cloud.gltfast --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts/playmode --suite=playmode "--ff={ops.upmpvpevidence.enable=true}" '
     timeout: 60
     retries: 1
   after:
@@ -1081,10 +1126,10 @@ validate_-_cloud_gltfast_-_6000_7_-_win10:
     UNITY_LICENSING_SERVER_DELETE_ULF: 0
     UNITY_LICENSING_SERVER_TOOLSET: pro
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 3.3.1.0
+    UPMPVP_CONTEXT_WRENCH: 3.4.0.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 3.3.1.0
+    Wrench: 3.4.0.0
   labels:
   - Packages:cloud.gltfast
 
