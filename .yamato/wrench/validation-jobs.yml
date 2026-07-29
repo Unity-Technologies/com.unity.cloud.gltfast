@@ -73,11 +73,12 @@ validate_-_cloud_gltfast_-_6000_0_-_macos13:
     UNITY_LICENSING_SERVER_DELETE_NUL: 0
     UNITY_LICENSING_SERVER_DELETE_ULF: 0
     UNITY_LICENSING_SERVER_TOOLSET: pro
+    UPM_REGISTRY: https://artifactory-slo.bf.unity3d.com/artifactory/api/npm/upm-candidates/
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 3.4.0.0
+    UPMPVP_CONTEXT_WRENCH: 3.5.2.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 3.4.0.0
+    Wrench: 3.5.2.0
   labels:
   - Packages:cloud.gltfast
 
@@ -148,11 +149,12 @@ validate_-_cloud_gltfast_-_6000_0_-_ubuntu2204:
     UNITY_LICENSING_SERVER_DELETE_NUL: 0
     UNITY_LICENSING_SERVER_DELETE_ULF: 0
     UNITY_LICENSING_SERVER_TOOLSET: pro
+    UPM_REGISTRY: https://artifactory-slo.bf.unity3d.com/artifactory/api/npm/upm-candidates/
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 3.4.0.0
+    UPMPVP_CONTEXT_WRENCH: 3.5.2.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 3.4.0.0
+    Wrench: 3.5.2.0
   labels:
   - Packages:cloud.gltfast
 
@@ -223,11 +225,12 @@ validate_-_cloud_gltfast_-_6000_0_-_win10:
     UNITY_LICENSING_SERVER_DELETE_NUL: 0
     UNITY_LICENSING_SERVER_DELETE_ULF: 0
     UNITY_LICENSING_SERVER_TOOLSET: pro
+    UPM_REGISTRY: https://artifactory-slo.bf.unity3d.com/artifactory/api/npm/upm-candidates/
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 3.4.0.0
+    UPMPVP_CONTEXT_WRENCH: 3.5.2.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 3.4.0.0
+    Wrench: 3.5.2.0
   labels:
   - Packages:cloud.gltfast
 
@@ -298,11 +301,12 @@ validate_-_cloud_gltfast_-_6000_3_-_macos13:
     UNITY_LICENSING_SERVER_DELETE_NUL: 0
     UNITY_LICENSING_SERVER_DELETE_ULF: 0
     UNITY_LICENSING_SERVER_TOOLSET: pro
+    UPM_REGISTRY: https://artifactory-slo.bf.unity3d.com/artifactory/api/npm/upm-candidates/
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 3.4.0.0
+    UPMPVP_CONTEXT_WRENCH: 3.5.2.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 3.4.0.0
+    Wrench: 3.5.2.0
   labels:
   - Packages:cloud.gltfast
 
@@ -373,11 +377,12 @@ validate_-_cloud_gltfast_-_6000_3_-_ubuntu2204:
     UNITY_LICENSING_SERVER_DELETE_NUL: 0
     UNITY_LICENSING_SERVER_DELETE_ULF: 0
     UNITY_LICENSING_SERVER_TOOLSET: pro
+    UPM_REGISTRY: https://artifactory-slo.bf.unity3d.com/artifactory/api/npm/upm-candidates/
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 3.4.0.0
+    UPMPVP_CONTEXT_WRENCH: 3.5.2.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 3.4.0.0
+    Wrench: 3.5.2.0
   labels:
   - Packages:cloud.gltfast
 
@@ -448,11 +453,12 @@ validate_-_cloud_gltfast_-_6000_3_-_win10:
     UNITY_LICENSING_SERVER_DELETE_NUL: 0
     UNITY_LICENSING_SERVER_DELETE_ULF: 0
     UNITY_LICENSING_SERVER_TOOLSET: pro
+    UPM_REGISTRY: https://artifactory-slo.bf.unity3d.com/artifactory/api/npm/upm-candidates/
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 3.4.0.0
+    UPMPVP_CONTEXT_WRENCH: 3.5.2.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 3.4.0.0
+    Wrench: 3.5.2.0
   labels:
   - Packages:cloud.gltfast
 
@@ -523,11 +529,12 @@ validate_-_cloud_gltfast_-_6000_5_-_macos13:
     UNITY_LICENSING_SERVER_DELETE_NUL: 0
     UNITY_LICENSING_SERVER_DELETE_ULF: 0
     UNITY_LICENSING_SERVER_TOOLSET: pro
+    UPM_REGISTRY: https://artifactory-slo.bf.unity3d.com/artifactory/api/npm/upm-candidates/
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 3.4.0.0
+    UPMPVP_CONTEXT_WRENCH: 3.5.2.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 3.4.0.0
+    Wrench: 3.5.2.0
   labels:
   - Packages:cloud.gltfast
 
@@ -598,11 +605,12 @@ validate_-_cloud_gltfast_-_6000_5_-_ubuntu2204:
     UNITY_LICENSING_SERVER_DELETE_NUL: 0
     UNITY_LICENSING_SERVER_DELETE_ULF: 0
     UNITY_LICENSING_SERVER_TOOLSET: pro
+    UPM_REGISTRY: https://artifactory-slo.bf.unity3d.com/artifactory/api/npm/upm-candidates/
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 3.4.0.0
+    UPMPVP_CONTEXT_WRENCH: 3.5.2.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 3.4.0.0
+    Wrench: 3.5.2.0
   labels:
   - Packages:cloud.gltfast
 
@@ -673,11 +681,12 @@ validate_-_cloud_gltfast_-_6000_5_-_win10:
     UNITY_LICENSING_SERVER_DELETE_NUL: 0
     UNITY_LICENSING_SERVER_DELETE_ULF: 0
     UNITY_LICENSING_SERVER_TOOLSET: pro
+    UPM_REGISTRY: https://artifactory-slo.bf.unity3d.com/artifactory/api/npm/upm-candidates/
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 3.4.0.0
+    UPMPVP_CONTEXT_WRENCH: 3.5.2.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 3.4.0.0
+    Wrench: 3.5.2.0
   labels:
   - Packages:cloud.gltfast
 
@@ -749,11 +758,12 @@ validate_-_cloud_gltfast_-_6000_6_-_macos13arm:
     UNITY_LICENSING_SERVER_DELETE_NUL: 0
     UNITY_LICENSING_SERVER_DELETE_ULF: 0
     UNITY_LICENSING_SERVER_TOOLSET: pro
+    UPM_REGISTRY: https://artifactory-slo.bf.unity3d.com/artifactory/api/npm/upm-candidates/
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 3.4.0.0
+    UPMPVP_CONTEXT_WRENCH: 3.5.2.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 3.4.0.0
+    Wrench: 3.5.2.0
   labels:
   - Packages:cloud.gltfast
 
@@ -824,11 +834,12 @@ validate_-_cloud_gltfast_-_6000_6_-_ubuntu2204:
     UNITY_LICENSING_SERVER_DELETE_NUL: 0
     UNITY_LICENSING_SERVER_DELETE_ULF: 0
     UNITY_LICENSING_SERVER_TOOLSET: pro
+    UPM_REGISTRY: https://artifactory-slo.bf.unity3d.com/artifactory/api/npm/upm-candidates/
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 3.4.0.0
+    UPMPVP_CONTEXT_WRENCH: 3.5.2.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 3.4.0.0
+    Wrench: 3.5.2.0
   labels:
   - Packages:cloud.gltfast
 
@@ -899,11 +910,12 @@ validate_-_cloud_gltfast_-_6000_6_-_win10:
     UNITY_LICENSING_SERVER_DELETE_NUL: 0
     UNITY_LICENSING_SERVER_DELETE_ULF: 0
     UNITY_LICENSING_SERVER_TOOLSET: pro
+    UPM_REGISTRY: https://artifactory-slo.bf.unity3d.com/artifactory/api/npm/upm-candidates/
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 3.4.0.0
+    UPMPVP_CONTEXT_WRENCH: 3.5.2.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 3.4.0.0
+    Wrench: 3.5.2.0
   labels:
   - Packages:cloud.gltfast
 
@@ -975,11 +987,12 @@ validate_-_cloud_gltfast_-_6000_7_-_macos13arm:
     UNITY_LICENSING_SERVER_DELETE_NUL: 0
     UNITY_LICENSING_SERVER_DELETE_ULF: 0
     UNITY_LICENSING_SERVER_TOOLSET: pro
+    UPM_REGISTRY: https://artifactory-slo.bf.unity3d.com/artifactory/api/npm/upm-candidates/
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 3.4.0.0
+    UPMPVP_CONTEXT_WRENCH: 3.5.2.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 3.4.0.0
+    Wrench: 3.5.2.0
   labels:
   - Packages:cloud.gltfast
 
@@ -1050,11 +1063,12 @@ validate_-_cloud_gltfast_-_6000_7_-_ubuntu2204:
     UNITY_LICENSING_SERVER_DELETE_NUL: 0
     UNITY_LICENSING_SERVER_DELETE_ULF: 0
     UNITY_LICENSING_SERVER_TOOLSET: pro
+    UPM_REGISTRY: https://artifactory-slo.bf.unity3d.com/artifactory/api/npm/upm-candidates/
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 3.4.0.0
+    UPMPVP_CONTEXT_WRENCH: 3.5.2.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 3.4.0.0
+    Wrench: 3.5.2.0
   labels:
   - Packages:cloud.gltfast
 
@@ -1125,11 +1139,12 @@ validate_-_cloud_gltfast_-_6000_7_-_win10:
     UNITY_LICENSING_SERVER_DELETE_NUL: 0
     UNITY_LICENSING_SERVER_DELETE_ULF: 0
     UNITY_LICENSING_SERVER_TOOLSET: pro
+    UPM_REGISTRY: https://artifactory-slo.bf.unity3d.com/artifactory/api/npm/upm-candidates/
     UPMPVP_ACK_UPMPVP_DOES_NO_API_VALIDATION: 1
-    UPMPVP_CONTEXT_WRENCH: 3.4.0.0
+    UPMPVP_CONTEXT_WRENCH: 3.5.2.0
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 3.4.0.0
+    Wrench: 3.5.2.0
   labels:
   - Packages:cloud.gltfast
 
