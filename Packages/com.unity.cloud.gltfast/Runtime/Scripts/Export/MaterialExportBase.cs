@@ -1,7 +1,6 @@
 // SPDX-FileCopyrightText: 2023 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
-using System;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -203,7 +202,7 @@ namespace GLTFast.Export
                 return null;
             }
             var imageExport = new ImageExport(texture2d, format);
-            if (MaterialExport.AddImageExport(gltf, imageExport, out var textureId))
+            if (MaterialExport.TryAddImageExport(gltf, imageExport, out var textureId))
             {
                 return new TextureInfo
                 {
@@ -235,7 +234,7 @@ namespace GLTFast.Export
                 return null;
             }
             var imageExport = new NormalImageExport(texture2d);
-            if (MaterialExport.AddImageExport(gltf, imageExport, out var textureId))
+            if (MaterialExport.TryAddImageExport(gltf, imageExport, out var textureId))
             {
                 var info = new NormalTextureInfo
                 {
@@ -250,13 +249,6 @@ namespace GLTFast.Export
                 return info;
             }
             return null;
-        }
-
-        /// <inheritdoc cref="MaterialExport.AddImageExport"/>
-        [Obsolete("Use MaterialExport.AddImageExport instead.")]
-        protected static bool AddImageExport(IGltfWritable gltf, ImageExportBase imageExport, out int textureId)
-        {
-            return MaterialExport.AddImageExport(gltf, imageExport, out textureId);
         }
 
         /// <summary>

@@ -475,4 +475,51 @@ namespace GLTFast.Tests.Export
             }
         }
     }
+
+    [Category("Export")]
+    class TryAddImageExportTests
+    {
+        [Test]
+        public void NullGltf()
+        {
+            Assert.IsFalse(MaterialExport.TryAddImageExport(null, new ImageExport(null), out var textureId));
+            Assert.AreEqual(-1, textureId);
+        }
+
+        [Test]
+        public void NullImageExport()
+        {
+            Assert.IsFalse(MaterialExport.TryAddImageExport(new GltfWritableMock(), null, out var textureId));
+            Assert.AreEqual(-1, textureId);
+        }
+
+        [Test]
+        public void ImageRejected()
+        {
+            var gltf = new GltfWritableMock(false);
+            Assert.IsFalse(MaterialExport.TryAddImageExport(gltf, new ImageExport(null), out var textureId));
+            Assert.AreEqual(-1, textureId);
+        }
+
+        [Test]
+        public void TextureRejected()
+        {
+            var gltf = new TextureRejectingGltfWritableMock();
+            Assert.IsFalse(MaterialExport.TryAddImageExport(gltf, new ImageExport(null), out var textureId));
+            Assert.AreEqual(-1, textureId);
+        }
+
+        [Test]
+        public void Success()
+        {
+            var gltf = new GltfWritableMock();
+            Assert.IsTrue(MaterialExport.TryAddImageExport(gltf, new ImageExport(null), out var textureId));
+            Assert.AreEqual(0, textureId);
+        }
+
+        class TextureRejectingGltfWritableMock : GltfWritableMock
+        {
+            public override int AddTexture(int? imageId, int? samplerId) => -1;
+        }
+    }
 }

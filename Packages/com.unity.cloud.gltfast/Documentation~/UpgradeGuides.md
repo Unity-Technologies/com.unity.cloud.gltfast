@@ -398,6 +398,20 @@ To keep the previous silent behavior, pass [NullLogger.Instance](xref:GLTFast.Lo
 
 Some default messages include the download URL or content derived from the loaded file. Callers who must avoid emitting such content have to pass `NullLogger.Instance` or implement an [ICodeLogger](xref:GLTFast.Logging.ICodeLogger) that filters it.
 
+### Removed obsolete API
+
+| Before | After |
+| ------ | ----- |
+| `Export.StandardMaterialExport` | [BuiltInStandardMaterialExport](xref:GLTFast.Export.BuiltInStandardMaterialExport) (Built-In) or [LitMaterialExport](xref:GLTFast.Export.LitMaterialExport) (URP/HDRP), or [MaterialExport.GetDefaultMaterialExport](xref:GLTFast.Export.MaterialExport.GetDefaultMaterialExport) to pick the pipeline-appropriate exporter — HDRP output can differ, because the removed type routed HDRP to `LitMaterialExport`; both replacements are sealed, so derive from [StandardMaterialExportBase](xref:GLTFast.Export.StandardMaterialExportBase) instead of subclassing them |
+| `Export.MetaMaterialExport<TLitExport, TGltfShaderGraphExport>` | [MaterialExport.GetDefaultMaterialExport](xref:GLTFast.Export.MaterialExport.GetDefaultMaterialExport) |
+| `Export.MaterialExportBase.AddImageExport(gltf, imageExport, out textureId)` | [MaterialExportBase.ExportTextureInfo](xref:GLTFast.Export.MaterialExportBase.ExportTextureInfo*) or [MaterialExportBase.ExportNormalTextureInfo](xref:GLTFast.Export.MaterialExportBase.ExportNormalTextureInfo*). [MaterialExport.TryAddImageExport](xref:GLTFast.Export.MaterialExport.TryAddImageExport*) is public now, but every built-in image export is internal, so it needs a caller-supplied [ImageExportBase](xref:GLTFast.Export.ImageExportBase) subclass |
+
+`GetDefaultMaterialExport` covers the default lit plus shader graph pairing only; a custom pairing has no public replacement and has to be implemented as an [IMaterialExport](xref:GLTFast.Export.IMaterialExport) and passed to the exporter.
+
+#### `GLTFast.ManagedNativeArray<TIn, TOut>`
+
+Removed with no public replacement. Code relying on its element-type punning (a `Matrix4x4[]` viewed as `NativeArray<float4x4>`) has to supply its own `unsafe` wrapper (requires *Allow unsafe code*) around `GCHandle.Alloc(array, GCHandleType.Pinned)` and `NativeArrayUnsafeUtility.ConvertExistingDataToNativeArray<TOut>`, and has to assign an `AtomicSafetyHandle` via `NativeArrayUnsafeUtility.SetAtomicSafetyHandle` under `ENABLE_UNITY_COLLECTIONS_CHECKS` — without it the array throws when used in a job in the Editor.
+
 ## Upgrade to 6.0
 
 Use Unity 2021.3.46f1 or newer only.

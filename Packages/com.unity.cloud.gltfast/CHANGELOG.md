@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Root.Serialize(Stream)](xref:GLTFast.Schema.Root.Serialize*) for JSON serialization via `System.Text.Json` without requiring callers to reach for `JsonSerializer`/`GltfJsonContext` directly.
 - [NullLogger](xref:GLTFast.Logging.NullLogger), a no-op `ICodeLogger`.
 - Shared `ConsoleLogger.Instance` and `NullLogger.Instance` singletons.
+- (Export) [MaterialExport.TryAddImageExport](xref:GLTFast.Export.MaterialExport.TryAddImageExport*) is public (was internal `MaterialExport.AddImageExport`).
 
 ### Changed
 - Public entry points accepting an [ICodeLogger](xref:GLTFast.Logging.ICodeLogger) now default to Unity's Console when `null` is passed (was silent).
@@ -138,7 +139,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Newtonsoft JSON dependency.
 - (Export) `GLTFast.Export.ImageFormat` enum (use [GLTFast.ImageFormat](xref:GLTFast.ImageFormat) instead).
 - (Export) Hand-written `GLTFast.Schema.JsonWriter` and the `GltfSerialize` methods on every `GLTFast.Schema` type. `Root.GltfSerialize` war preserved for backwards compatibility, but its serialization runs through `System.Text.Json` instead.
-- (Export) `GLTFast.Export.ManagedNativeArray` is no longer part of the public API (it is now internal).
+- (Export) `GLTFast.Export.ManagedNativeArray<TIn, TOut>` is no longer part of the public API (it is now internal).
 - Legacy `image/ktx` MIME type lenience. The glTF specification and `KHR_texture_basisu` require `image/ktx2`.
 - The 43 obsolete `MaterialGenerator.*Property` shader-property-ID aliases (e.g. `MaterialGenerator.BaseColorProperty`).
 - (Import) `GltfImport.LoadGltfBinary(byte[], …)`.
@@ -148,6 +149,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - (Export) `IGltfWritable.AddMeshToNode` / `GltfWriter.AddMeshToNode` short overloads (`(int, Mesh, int[])`, `(int, Mesh, int[], bool)`, `(int, Mesh, int[], uint[])`).
 - `GameObjectSceneInstance.Playable`.
 - The default (interface) method body of `ICodeLogger.Log(LogType, LogCode, params string[])`.
+- `GLTFast.ManagedNativeArray<TIn, TOut>`, the second copy of the type outside the `Export` namespace. No public replacement; see the upgrade guide.
+- (Export) `StandardMaterialExport`. Use [BuiltInStandardMaterialExport](xref:GLTFast.Export.BuiltInStandardMaterialExport) or [LitMaterialExport](xref:GLTFast.Export.LitMaterialExport) instead.
+- (Export) `MetaMaterialExport<TLitExport, TGltfShaderGraphExport>`. Use [MaterialExport.GetDefaultMaterialExport](xref:GLTFast.Export.MaterialExport.GetDefaultMaterialExport) instead, which picks the pipeline-appropriate exporter; HDRP output can differ from the removed type.
+- (Export) `MaterialExportBase.AddImageExport`. Use [MaterialExport.TryAddImageExport](xref:GLTFast.Export.MaterialExport.TryAddImageExport*) instead.
 
 ### Deprecated
 - (Export) `Root.GltfSerialize(StreamWriter)` is obsolete. Use [Root.Serialize(Stream)](xref:GLTFast.Schema.Root.Serialize*) instead.

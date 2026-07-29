@@ -233,7 +233,7 @@ namespace GLTFast.Export
             {
                 var ormImageExport = new OrmImageExport(
                     metalGlossTexture, occlusionTexture, smoothnessTexture, smoothnessFactor);
-                if (MaterialExport.AddImageExport(gltf, ormImageExport, out var ormTextureId))
+                if (MaterialExport.TryAddImageExport(gltf, ormImageExport, out var ormTextureId))
                 {
                     if (material.PbrMetallicRoughness.MetallicRoughnessTexture != null)
                     {
@@ -458,7 +458,7 @@ namespace GLTFast.Export
                 return null;
             }
             var imageExport = new ImageExport(texture2d);
-            if (MaterialExport.AddImageExport(gltf, imageExport, out var textureId))
+            if (MaterialExport.TryAddImageExport(gltf, imageExport, out var textureId))
             {
                 return new OcclusionTextureInfo
                 {

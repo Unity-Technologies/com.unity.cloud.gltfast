@@ -53,7 +53,7 @@ namespace GLTFast.Export
         {
             if (GltfMaterialExporter.TryGetValue(unityMaterial, MaterialProperty.BaseColorTexture, out Texture2D texture2D))
             {
-                if (MaterialExport.AddImageExport(gltf, new ImageExport(texture2D), out var textureId))
+                if (MaterialExport.TryAddImageExport(gltf, new ImageExport(texture2D), out var textureId))
                 {
                     var textureInfo = new TextureInfo
                     {

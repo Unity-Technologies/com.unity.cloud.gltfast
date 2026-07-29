@@ -77,7 +77,7 @@ namespace GLTFast.Export
         {
             if (TryGetValue(unityMaterial, MaterialProperty.BaseColorTexture, out Texture2D texture2D))
             {
-                if (MaterialExport.AddImageExport(gltf, new ImageExport(texture2D), out var textureId))
+                if (MaterialExport.TryAddImageExport(gltf, new ImageExport(texture2D), out var textureId))
                 {
                     var textureInfo = new TextureInfo
                     {
@@ -119,7 +119,7 @@ namespace GLTFast.Export
             Material unityMaterial)
         {
             if (TryGetValue(unityMaterial, MaterialProperty.MetallicRoughnessMap, out Texture2D texture2D)
-                && MaterialExport.AddImageExport(gltf, new ImageExport(texture2D), out var textureId))
+                && MaterialExport.TryAddImageExport(gltf, new ImageExport(texture2D), out var textureId))
             {
                 var textureInfo = new TextureInfo
                 {
@@ -167,7 +167,7 @@ namespace GLTFast.Export
                 return material;
             }
 
-            if (!MaterialExport.AddImageExport(gltf, new NormalImageExport(texture2D), out var textureId))
+            if (!MaterialExport.TryAddImageExport(gltf, new NormalImageExport(texture2D), out var textureId))
             {
                 return material;
             }
@@ -209,7 +209,7 @@ namespace GLTFast.Export
                 return material;
             }
 
-            if (!MaterialExport.AddImageExport(gltf, new ImageExport(texture2D), out var textureId))
+            if (!MaterialExport.TryAddImageExport(gltf, new ImageExport(texture2D), out var textureId))
             {
                 return material;
             }
@@ -248,7 +248,7 @@ namespace GLTFast.Export
         {
             if (TryGetValue(unityMaterial, MaterialProperty.EmissiveTexture, out Texture2D texture2D))
             {
-                if (MaterialExport.AddImageExport(gltf, new ImageExport(texture2D), out var textureId))
+                if (MaterialExport.TryAddImageExport(gltf, new ImageExport(texture2D), out var textureId))
                 {
                     var info = new TextureInfo
                     {

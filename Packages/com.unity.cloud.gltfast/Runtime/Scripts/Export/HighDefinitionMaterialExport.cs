@@ -261,7 +261,7 @@ namespace GLTFast.Export
                     if (metallicUsed || occUsed || smoothnessUsed)
                     {
                         ormImageExport = new MaskMapImageExport(maskMap);
-                        if (MaterialExport.AddImageExport(gltf, ormImageExport, out var ormTextureId))
+                        if (MaterialExport.TryAddImageExport(gltf, ormImageExport, out var ormTextureId))
                         {
 
                             if (metallicUsed || smoothnessUsed)

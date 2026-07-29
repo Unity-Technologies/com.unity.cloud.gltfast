@@ -92,7 +92,7 @@ namespace GLTFast.Tests.Export
             return imageId;
         }
 
-        public int AddTexture(int? imageId, int? samplerId)
+        public virtual int AddTexture(int? imageId, int? samplerId)
         {
             if (!m_ImageConversion) return -1;
 
