@@ -2,9 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast.Newtonsoft.Schema
+namespace Unity.Cloud.Gltfast.Newtonsoft.Schema
 {
-    [Obsolete("Use GLTFast.Schema.TextureExtensions instead.")]
-    public class TextureExtensions : GLTFast.Schema.TextureExtensions, IJsonObject { }
+    [Obsolete("Use Unity.Cloud.Gltfast.Schema.TextureExtensions instead.")]
+    [MovedFrom(true, sourceNamespace: "GLTFast.Newtonsoft.Schema", sourceAssembly: "glTFast.Newtonsoft")]
+    public class TextureExtensions : Unity.Cloud.Gltfast.Schema.TextureExtensions, IJsonObject { }
 }

@@ -3,13 +3,15 @@
 
 using System;
 using UnityEngine;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast.Logging
+namespace Unity.Cloud.Gltfast.Logging
 {
 
     /// <summary>
     /// Logs messages directly to the console
     /// </summary>
+    [MovedFrom(true, sourceNamespace: "GLTFast.Logging", sourceAssembly: "glTFast")]
     public class ConsoleLogger : ICodeLogger
     {
         /// <summary>

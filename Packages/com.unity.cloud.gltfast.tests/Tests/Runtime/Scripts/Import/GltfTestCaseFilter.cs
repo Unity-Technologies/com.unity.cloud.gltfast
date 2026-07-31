@@ -4,7 +4,7 @@
 using System;
 using System.Text.RegularExpressions;
 
-namespace GLTFast.Tests.Import
+namespace Unity.Cloud.Gltfast.Tests.Import
 {
     class GltfTestCaseFilter
     {

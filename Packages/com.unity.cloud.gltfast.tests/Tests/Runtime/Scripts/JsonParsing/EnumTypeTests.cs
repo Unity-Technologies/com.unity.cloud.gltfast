@@ -2,20 +2,20 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
-using GLTFast.Schema;
+using Unity.Cloud.Gltfast.Schema;
 #if MESHOPT_IS_RECENT
 using Meshoptimizer;
 #endif
 using NUnit.Framework;
 using Unity.Gltfast.Text.Json;
 using UnityEngine;
-using Camera = GLTFast.Schema.Camera;
-using CameraType = GLTFast.Schema.CameraType;
-using LightType = GLTFast.Schema.LightType;
-using Material = GLTFast.Schema.Material;
-using WrapMode = GLTFast.Schema.WrapMode;
+using Camera = Unity.Cloud.Gltfast.Schema.Camera;
+using CameraType = Unity.Cloud.Gltfast.Schema.CameraType;
+using LightType = Unity.Cloud.Gltfast.Schema.LightType;
+using Material = Unity.Cloud.Gltfast.Schema.Material;
+using WrapMode = Unity.Cloud.Gltfast.Schema.WrapMode;
 
-namespace GLTFast.Tests.JsonParsing
+namespace Unity.Cloud.Gltfast.Tests.JsonParsing
 {
     [TestFixture]
     [Category("JsonParsing")]

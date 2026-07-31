@@ -1,6 +1,6 @@
 {% metadata_file .yamato/package.metafile -%}
 
-codecov_assemblies: +glTFast*,-glTFast*Tests*
+codecov_assemblies: +Unity.Cloud.Gltfast*,-Unity.Cloud.Gltfast*Tests*
 ---
 {% for test_setup in test_setups -%}
 {% if test_setup.editor_versions -%}
@@ -75,7 +75,7 @@ test_{{ test_setup.project_setup }}_{{ platform_id }}_{{ editor }}:
     - >
       {{ editor_exe }}
       -projectPath Projects/{{ test_setup.project }}
-      -executeMethod GLTFast.Editor.Tests.SetupProject.ApplySetup glTFastSetup:{{ test_setup.setup }}
+      -executeMethod Unity.Cloud.Gltfast.Editor.Tests.SetupProject.ApplySetup glTFastSetup:{{ test_setup.setup }}
       -upmNoDefaultPackages
       -enablePackageManagerTraces
       -batchmode
@@ -142,7 +142,7 @@ build_{{ test_setup.project_setup }}_{{ platform_id }}_{{ editor }}:
     - >
       {{ editor_exe }}
       -projectPath Projects/{{ test_setup.project }}
-      -executeMethod GLTFast.Editor.Tests.SetupProject.ApplySetup glTFastSetup:{{ test_setup.setup }}
+      -executeMethod Unity.Cloud.Gltfast.Editor.Tests.SetupProject.ApplySetup glTFastSetup:{{ test_setup.setup }}
       -upmNoDefaultPackages
       -enablePackageManagerTraces
       -batchmode
@@ -209,7 +209,7 @@ run_{{ test_setup.project_setup }}_{{ platform_id }}_{{ editor }}:
     - >
       {{ editor_exe }}
       -projectPath Projects/{{ test_setup.project }}
-      -executeMethod GLTFast.Editor.Tests.SetupProject.ApplySetup glTFastSetup:{{ test_setup.setup }}
+      -executeMethod Unity.Cloud.Gltfast.Editor.Tests.SetupProject.ApplySetup glTFastSetup:{{ test_setup.setup }}
       -upmNoDefaultPackages
       -enablePackageManagerTraces
       -batchmode

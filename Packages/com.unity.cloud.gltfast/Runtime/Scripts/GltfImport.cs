@@ -34,13 +34,13 @@ using System;
 using System.Text;
 
 using Unity.Gltfast.Text.Json;
-using GLTFast.Addons;
-using GLTFast.Animations;
-using GLTFast.Jobs;
-using GLTFast.Loading;
-using GLTFast.Logging;
-using GLTFast.Materials;
-using GLTFast.Schema;
+using Unity.Cloud.Gltfast.Addons;
+using Unity.Cloud.Gltfast.Animations;
+using Unity.Cloud.Gltfast.Jobs;
+using Unity.Cloud.Gltfast.Loading;
+using Unity.Cloud.Gltfast.Logging;
+using Unity.Cloud.Gltfast.Materials;
+using Unity.Cloud.Gltfast.Schema;
 #if MESHOPT_IS_ENABLED
 using Meshoptimizer;
 #endif
@@ -48,23 +48,25 @@ using Unity.Collections.LowLevel.Unsafe;
 using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
+using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Profiling;
-using UnityEngine;
-using Buffer = GLTFast.Schema.Buffer;
-using Camera = GLTFast.Schema.Camera;
+using UnityEngine.Scripting.APIUpdating;
+using Buffer = Unity.Cloud.Gltfast.Schema.Buffer;
+using Camera = Unity.Cloud.Gltfast.Schema.Camera;
 using Debug = UnityEngine.Debug;
-using Material = GLTFast.Schema.Material;
-using Mesh = GLTFast.Schema.Mesh;
-using Sampler = GLTFast.Schema.Sampler;
-using Texture = GLTFast.Schema.Texture;
+using Material = Unity.Cloud.Gltfast.Schema.Material;
+using Mesh = Unity.Cloud.Gltfast.Schema.Mesh;
+using Sampler = Unity.Cloud.Gltfast.Schema.Sampler;
+using Texture = Unity.Cloud.Gltfast.Schema.Texture;
 
-namespace GLTFast
+namespace Unity.Cloud.Gltfast
 {
     /// <summary>
     /// Loads a glTF's content, converts it to Unity resources and is able to
     /// feed it to an <see cref="IInstantiator"/> for instantiation.
     /// </summary>
+    [MovedFrom(true, sourceNamespace: "GLTFast", sourceAssembly: "glTFast")]
     public class GltfImport : IGltfReadable, IGltfBuffers, IGltfAccessors, IDisposable
     {
         /// <summary>
@@ -232,7 +234,7 @@ namespace GLTFast
         /// <param name="downloadProvider">Provides file access or download customization</param>
         /// <param name="deferAgent">Provides custom update loop behavior for better frame rate control</param>
         /// <param name="materialGenerator">Provides custom glTF to Unity material conversion</param>
-        /// <param name="logger">Custom logger for reporting messages. Defaults to the shared <see cref="GLTFast.Logging.ConsoleLogger.Instance"/> (writes to Unity's Console) when <c>null</c> is passed. Pass <see cref="GLTFast.Logging.NullLogger.Instance"/> (or <c>new NullLogger()</c>) to suppress all output.</param>
+        /// <param name="logger">Custom logger for reporting messages. Defaults to the shared <see cref="Unity.Cloud.Gltfast.Logging.ConsoleLogger.Instance"/> (writes to Unity's Console) when <c>null</c> is passed. Pass <see cref="Unity.Cloud.Gltfast.Logging.NullLogger.Instance"/> (or <c>new NullLogger()</c>) to suppress all output.</param>
         public GltfImport(
             IDownloadProvider downloadProvider = null,
             IDeferAgent deferAgent = null,

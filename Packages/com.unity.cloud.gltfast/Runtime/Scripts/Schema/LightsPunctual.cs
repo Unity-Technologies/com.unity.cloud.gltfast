@@ -3,14 +3,16 @@
 
 using System.Collections.Generic;
 using Unity.Gltfast.Text.Json.Serialization;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast.Schema
+namespace Unity.Cloud.Gltfast.Schema
 {
 
     /// <summary>
     /// Extension for adding punctual lights.
     /// </summary>
     /// <seealso href="https://github.com/KhronosGroup/glTF/tree/main/extensions/2.0/Khronos/KHR_lights_punctual"/>
+    [MovedFrom(true, sourceNamespace: "GLTFast.Schema", sourceAssembly: "glTFast")]
     public class LightsPunctual
     {
 

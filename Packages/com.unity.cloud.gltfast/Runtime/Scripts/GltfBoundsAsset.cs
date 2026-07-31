@@ -3,10 +3,11 @@
 
 using System;
 using System.Threading.Tasks;
-using GLTFast.Loading;
+using Unity.Cloud.Gltfast.Loading;
 using UnityEngine;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast
+namespace Unity.Cloud.Gltfast
 {
     using Logging;
     using Materials;
@@ -15,6 +16,7 @@ namespace GLTFast
     /// Base component for code-less loading of glTF files
     /// Extends <see cref="GltfAsset"/> with bounding box calculation
     /// </summary>
+    [MovedFrom(true, sourceNamespace: "GLTFast", sourceAssembly: "glTFast")]
     public class GltfBoundsAsset : GltfAsset
     {
         /// <summary>

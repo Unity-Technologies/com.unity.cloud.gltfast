@@ -3,12 +3,14 @@
 
 using System;
 using System.Threading.Tasks;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast.Loading
+namespace Unity.Cloud.Gltfast.Loading
 {
     /// <summary>
     /// Provides a mechanism for loading external resources from a URI
     /// </summary>
+    [MovedFrom(true, sourceNamespace: "GLTFast.Loading", sourceAssembly: "glTFast")]
     public interface IDownloadProvider
     {
         /// <summary>

@@ -1,14 +1,14 @@
 // SPDX-FileCopyrightText: 2023 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
+using UnityEngine.Scripting.APIUpdating;
 #if UNITY_ANIMATION || GLTFAST_ANIMATION
-
 using System.Collections.Generic;
 using Unity.Gltfast.Text.Json;
 using Unity.Gltfast.Text.Json.Serialization;
 #endif
 
-namespace GLTFast.Schema
+namespace Unity.Cloud.Gltfast.Schema
 {
 
 #if UNITY_ANIMATION || GLTFAST_ANIMATION
@@ -16,6 +16,7 @@ namespace GLTFast.Schema
     /// A keyframe animation.
     /// </summary>
     /// <seealso href="https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html#reference-animation"/>
+    [MovedFrom(true, sourceNamespace: "GLTFast.Schema", sourceAssembly: "glTFast")]
     public class Animation : NamedObject, IGltfObject
     {
         /// <summary>
@@ -56,6 +57,7 @@ namespace GLTFast.Schema
     /// A keyframe animation.
     /// </summary>
     /// <seealso href="https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html#reference-animation"/>
+    [MovedFrom(true, sourceNamespace: "GLTFast.Schema", sourceAssembly: "glTFast")]
     public class Animation { }
 #endif // UNITY_ANIMATION || GLTFAST_ANIMATION
 }

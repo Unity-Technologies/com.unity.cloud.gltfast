@@ -5,9 +5,11 @@
 
 using System;
 using Unity.Gltfast.Text.Json.Serialization;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast.Schema
+namespace Unity.Cloud.Gltfast.Schema
 {
+    [MovedFrom(true, sourceNamespace: "GLTFast.Schema", sourceAssembly: "glTFast")]
     public class MeshPrimitiveDracoExtension
     {
         [JsonIgnore]

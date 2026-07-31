@@ -4,11 +4,11 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using GLTFast.Utils;
 using NUnit.Framework;
+using Unity.Cloud.Gltfast.Utils;
 using UnityEngine;
 
-namespace GLTFast.Editor.Tests
+namespace Unity.Cloud.Gltfast.Editor.Tests
 {
     static class AsyncHelpersTests
     {

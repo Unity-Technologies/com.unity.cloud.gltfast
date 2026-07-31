@@ -6,12 +6,12 @@ using System.Collections;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
-using GLTFast.Schema;
 using NUnit.Framework;
+using Unity.Cloud.Gltfast.Schema;
 using Unity.Gltfast.Text.Json;
 using Unity.Gltfast.Text.Json.Serialization;
 
-namespace GLTFast.Editor.Tests
+namespace Unity.Cloud.Gltfast.Editor.Tests
 {
     class EnumOrRawValueConverterTests
     {

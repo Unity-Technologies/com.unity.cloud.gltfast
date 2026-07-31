@@ -3,12 +3,12 @@
 
 using System.Collections;
 using System.Threading.Tasks;
-using GLTFast.Logging;
 using NUnit.Framework;
+using Unity.Cloud.Gltfast.Logging;
 using UnityEngine;
 using UnityEngine.TestTools;
 
-namespace GLTFast.Tests.Import
+namespace Unity.Cloud.Gltfast.Tests.Import
 {
     [Category("Import")]
     class DataUriTests

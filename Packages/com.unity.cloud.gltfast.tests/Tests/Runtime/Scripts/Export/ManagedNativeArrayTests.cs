@@ -2,11 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
-using GLTFast.Export;
 using NUnit.Framework;
-using ManagedNativeArray = GLTFast.Export.ManagedNativeArray<byte, byte>;
+using Unity.Cloud.Gltfast.Export;
+using ManagedNativeArray = Unity.Cloud.Gltfast.Export.ManagedNativeArray<byte, byte>;
 
-namespace GLTFast.Tests.Export
+namespace Unity.Cloud.Gltfast.Tests.Export
 {
     [Category("Export")]
     class ManagedNativeArrayTests

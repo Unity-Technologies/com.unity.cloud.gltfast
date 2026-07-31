@@ -3,12 +3,14 @@
 
 using System;
 using Unity.Gltfast.Text.Json.Serialization;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast.Schema
+namespace Unity.Cloud.Gltfast.Schema
 {
     /// <summary>
     /// Morph target (blend shape)
     /// </summary>
+    [MovedFrom(true, sourceNamespace: "GLTFast.Schema", sourceAssembly: "glTFast")]
     public class MorphTarget
     {
         /// <summary>Vertex position deviation accessor index.</summary>

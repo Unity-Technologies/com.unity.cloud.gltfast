@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
-using GLTFast.Logging;
+using Unity.Cloud.Gltfast.Logging;
 using UnityEngine;
 
-namespace GLTFast.Tests.Import
+namespace Unity.Cloud.Gltfast.Tests.Import
 {
     [Serializable]
     class GltfTestCase

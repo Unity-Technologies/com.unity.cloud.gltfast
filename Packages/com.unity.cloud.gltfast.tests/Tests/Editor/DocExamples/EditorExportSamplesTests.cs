@@ -9,7 +9,7 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.TestTools;
 
-namespace GLTFast.Editor.Tests.DocExamples
+namespace Unity.Cloud.Gltfast.Documentation.Examples.Editor.Tests
 {
     [Category("DocExamples")]
     class EditorExportSamplesTests

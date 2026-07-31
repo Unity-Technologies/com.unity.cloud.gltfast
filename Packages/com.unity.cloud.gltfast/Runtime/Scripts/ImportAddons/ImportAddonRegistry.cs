@@ -3,8 +3,9 @@
 
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast.Addons
+namespace Unity.Cloud.Gltfast.Addons
 {
 
     /// <summary>
@@ -12,6 +13,7 @@ namespace GLTFast.Addons
     /// All registered import add-ons will be injected into all <see cref="GltfImport"/>
     /// and their <see cref="IInstantiator"/>
     /// </summary>
+    [MovedFrom(true, sourceNamespace: "GLTFast.Addons", sourceAssembly: "glTFast")]
     public static class ImportAddonRegistry
     {
         static List<ImportAddon> s_Addons;

@@ -4,12 +4,14 @@
 using System.Collections.Generic;
 using Unity.Gltfast.Text.Json;
 using Unity.Gltfast.Text.Json.Serialization;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast.Schema
+namespace Unity.Cloud.Gltfast.Schema
 {
     /// <summary>
     /// Texture extensions
     /// </summary>
+    [MovedFrom(true, sourceNamespace: "GLTFast.Schema", sourceAssembly: "glTFast")]
     public class TextureExtensions : IGltfObject
     {
         /// <inheritdoc cref="Extension.TextureBasisUniversal"/>

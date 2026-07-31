@@ -6,14 +6,14 @@
 #endif
 
 using System.Linq;
-using GLTFast.Logging;
-using GLTFast.Materials;
 using NUnit.Framework;
+using Unity.Cloud.Gltfast.Logging;
+using Unity.Cloud.Gltfast.Materials;
 using UnityEngine;
-using GltfMaterial = GLTFast.Schema.Material;
+using GltfMaterial = Unity.Cloud.Gltfast.Schema.Material;
 using Material = UnityEngine.Material;
 
-namespace GLTFast.Tests
+namespace Unity.Cloud.Gltfast.Tests
 {
     [Category("Import")]
     class MaterialGeneratorTests

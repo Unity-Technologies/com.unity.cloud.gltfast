@@ -1,14 +1,14 @@
 // SPDX-FileCopyrightText: 2026 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
-using GLTFast.Schema;
 using NUnit.Framework;
+using Unity.Cloud.Gltfast.Schema;
 using Unity.Gltfast.Text.Json;
 using UnityEngine;
-using Color = GLTFast.Schema.Color;
-using Material = GLTFast.Schema.Material;
+using Color = Unity.Cloud.Gltfast.Schema.Color;
+using Material = Unity.Cloud.Gltfast.Schema.Material;
 
-namespace GLTFast.Tests.JsonParsing
+namespace Unity.Cloud.Gltfast.Tests.JsonParsing
 {
     [TestFixture]
     [Category("JsonParsing")]

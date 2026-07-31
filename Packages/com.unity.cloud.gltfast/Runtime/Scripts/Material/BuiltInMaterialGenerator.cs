@@ -7,7 +7,8 @@
 
 #if GLTFAST_BUILTIN_RP || UNITY_EDITOR
 
-using GLTFast.Schema;
+using Unity.Cloud.Gltfast.Schema;
+using UnityEngine.Scripting.APIUpdating;
 using UnityEngine;
 #if UNITY_EDITOR
 using UnityEditor;
@@ -15,7 +16,7 @@ using UnityEditor;
 
 using Material = UnityEngine.Material;
 
-namespace GLTFast.Materials
+namespace Unity.Cloud.Gltfast.Materials
 {
 
     using Logging;
@@ -24,6 +25,7 @@ namespace GLTFast.Materials
     /// <summary>
     /// Converts glTF materials to Unity materials for the Built-in Render Pipeline
     /// </summary>
+    [MovedFrom(true, sourceNamespace: "GLTFast.Materials", sourceAssembly: "glTFast")]
     public class BuiltInMaterialGenerator : MaterialGenerator
     {
 

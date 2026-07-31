@@ -4,14 +4,16 @@
 using System.Collections.Generic;
 using Unity.Gltfast.Text.Json;
 using Unity.Gltfast.Text.Json.Serialization;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast.Schema
+namespace Unity.Cloud.Gltfast.Schema
 {
 
     /// <summary>
     /// Sparse values property of a glTF
     /// </summary>
     /// <seealso cref="AccessorSparse"/>
+    [MovedFrom(true, sourceNamespace: "GLTFast.Schema", sourceAssembly: "glTFast")]
     public class AccessorSparseValues : IGltfObject
     {
         /// <summary>

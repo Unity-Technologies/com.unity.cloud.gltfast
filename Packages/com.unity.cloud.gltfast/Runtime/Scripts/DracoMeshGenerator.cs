@@ -7,8 +7,8 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Draco;
-using GLTFast.Logging;
-using GLTFast.Schema;
+using Unity.Cloud.Gltfast.Logging;
+using Unity.Cloud.Gltfast.Schema;
 using Unity.Collections;
 using Unity.Jobs;
 using UnityEngine;
@@ -16,7 +16,7 @@ using UnityEngine.Assertions;
 using UnityEngine.Rendering;
 using Mesh = UnityEngine.Mesh;
 
-namespace GLTFast
+namespace Unity.Cloud.Gltfast
 {
 
     class DracoMeshGenerator : MeshGeneratorBase

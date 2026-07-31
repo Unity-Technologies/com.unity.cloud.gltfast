@@ -5,7 +5,7 @@ using System;
 using System.IO;
 using System.Runtime.CompilerServices;
 
-namespace GLTFast.Schema
+namespace Unity.Cloud.Gltfast.Schema
 {
     static class FloatParser
     {

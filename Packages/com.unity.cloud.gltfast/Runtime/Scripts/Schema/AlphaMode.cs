@@ -3,14 +3,16 @@
 
 using System;
 using Unity.Gltfast.Text.Json.Serialization;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast.Schema
+namespace Unity.Cloud.Gltfast.Schema
 {
     /// <summary>
     /// The material’s alpha rendering mode enumeration specifying the
     /// interpretation of the alpha value of the base color.
     /// </summary>
     [JsonConverter(typeof(JsonStringEnumConverter<AlphaMode>))]
+    [MovedFrom(true, sourceNamespace: "GLTFast.Schema", sourceAssembly: "glTFast")]
     public enum AlphaMode
     {
         /// <summary>

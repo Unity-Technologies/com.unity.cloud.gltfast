@@ -2,9 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast.Newtonsoft.Schema
+namespace Unity.Cloud.Gltfast.Newtonsoft.Schema
 {
-    [Obsolete("Use GLTFast.Schema.AccessorSparse instead.")]
-    public class AccessorSparse : GLTFast.Schema.AccessorSparse, IJsonObject { }
+    [Obsolete("Use Unity.Cloud.Gltfast.Schema.AccessorSparse instead.")]
+    [MovedFrom(true, sourceNamespace: "GLTFast.Newtonsoft.Schema", sourceAssembly: "glTFast.Newtonsoft")]
+    public class AccessorSparse : Unity.Cloud.Gltfast.Schema.AccessorSparse, IJsonObject { }
 }

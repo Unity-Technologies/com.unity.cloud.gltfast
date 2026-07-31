@@ -14,7 +14,7 @@ using UnityEditor;
 #endif
 using UnityEngine;
 
-namespace GLTFast.Tests.Import
+namespace Unity.Cloud.Gltfast.Tests.Import
 {
     class GltfTestCaseAttribute : UnityEngine.TestTools.UnityTestAttribute, ITestBuilder
     {

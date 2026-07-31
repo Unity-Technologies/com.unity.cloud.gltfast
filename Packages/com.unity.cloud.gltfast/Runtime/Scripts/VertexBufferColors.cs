@@ -13,7 +13,7 @@ using UnityEngine;
 using UnityEngine.Profiling;
 using UnityEngine.Rendering;
 
-namespace GLTFast
+namespace Unity.Cloud.Gltfast
 {
     using Logging;
     using Schema;

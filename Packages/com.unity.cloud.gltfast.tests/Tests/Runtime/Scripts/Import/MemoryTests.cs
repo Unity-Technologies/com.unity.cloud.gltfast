@@ -5,13 +5,13 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
-using GLTFast.Materials;
 using NUnit.Framework;
+using Unity.Cloud.Gltfast.Materials;
 using UnityEngine;
 using UnityEngine.TestTools;
 using Object = UnityEngine.Object;
 
-namespace GLTFast.Tests.Import
+namespace Unity.Cloud.Gltfast.Tests.Import
 {
     /// <summary>
     /// Tests for memory leaks during loading, unloading.

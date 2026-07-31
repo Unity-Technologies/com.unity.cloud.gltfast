@@ -3,13 +3,14 @@
 
 using System;
 using UnityEngine;
+using UnityEngine.Scripting.APIUpdating;
 
 #if USING_HDRP
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.HighDefinition;
 #endif
 
-namespace GLTFast
+namespace Unity.Cloud.Gltfast
 {
 
     using Schema;
@@ -17,6 +18,7 @@ namespace GLTFast
     /// <summary>
     /// Extension methods for <see cref="LightPunctual"/>
     /// </summary>
+    [MovedFrom(true, sourceNamespace: "GLTFast", sourceAssembly: "glTFast")]
     public static class LightPunctualExtension
     {
 

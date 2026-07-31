@@ -4,14 +4,14 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using GLTFast.Schema;
 using NUnit.Framework;
+using Unity.Cloud.Gltfast.Schema;
 using Unity.Gltfast.Text.Json;
 using Unity.Gltfast.Text.Json.Serialization;
 using Unity.Mathematics;
 using UnityEngine;
 
-namespace GLTFast.Tests.JsonParsing
+namespace Unity.Cloud.Gltfast.Tests.JsonParsing
 {
     [Category("JsonParsing")]
     class JsonConverterTests

@@ -5,8 +5,9 @@
 
 using System;
 using Unity.Gltfast.Text.Json.Serialization;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast.Schema
+namespace Unity.Cloud.Gltfast.Schema
 {
     /// <summary>
     /// The name of the node’s TRS property to animate, or the "weights" of the Morph Targets it instantiates.
@@ -17,6 +18,7 @@ namespace GLTFast.Schema
     /// where w is the scalar. For the "scale" property, the values are the scaling factors along the X, Y, and Z axes.
     /// </remarks>
     [JsonConverter(typeof(JsonStringEnumConverter<AnimationPath>))]
+    [MovedFrom(true, sourceNamespace: "GLTFast.Schema", sourceAssembly: "glTFast")]
     public enum AnimationPath
     {
         /// <summary>Undefined</summary>

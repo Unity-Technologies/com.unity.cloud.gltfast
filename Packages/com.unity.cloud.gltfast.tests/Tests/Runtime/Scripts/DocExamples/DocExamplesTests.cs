@@ -4,16 +4,16 @@
 using System.Collections;
 using System.IO;
 using System.Text.RegularExpressions;
-using GLTFast.Documentation.Examples;
-using GLTFast.Export;
-using GLTFast.Tests;
-using GLTFast.Tests.Import;
 using NUnit.Framework;
+using Unity.Cloud.Gltfast.Documentation.Examples;
+using Unity.Cloud.Gltfast.Export;
+using Unity.Cloud.Gltfast.Tests;
+using Unity.Cloud.Gltfast.Tests.Import;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.TestTools;
 
-namespace GLTFast.DocExamples.Tests
+namespace Unity.Cloud.Gltfast.Documentation.Examples.Tests
 {
     [Category("DocExamples")]
     class DocExamplesTests : IPrebuildSetup, IPostBuildCleanup

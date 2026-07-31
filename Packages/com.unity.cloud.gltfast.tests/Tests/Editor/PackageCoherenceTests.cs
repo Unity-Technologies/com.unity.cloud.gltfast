@@ -9,7 +9,7 @@ using Unity.Gltfast.Text.Json;
 using UnityEngine;
 using UnityEngine.TestTools;
 
-namespace GLTFast.Editor.Tests
+namespace Unity.Cloud.Gltfast.Editor.Tests
 {
     class PackageCoherenceTests
     {
@@ -38,10 +38,10 @@ namespace GLTFast.Editor.Tests
         public void ExportVersionTest()
         {
             Assert.AreEqual(
-                GLTFast.Export.Constants.version,
+                Unity.Cloud.Gltfast.Export.Constants.version,
                 s_Package.version,
-                "GLTFast.Export.Constants.version does not match package version " +
-                $"(is \"{GLTFast.Export.Constants.version}\", should be \"{s_Package.version}\") ");
+                "Unity.Cloud.Gltfast.Export.Constants.version does not match package version " +
+                $"(is \"{Unity.Cloud.Gltfast.Export.Constants.version}\", should be \"{s_Package.version}\") ");
         }
 
         [Test]

@@ -1,8 +1,8 @@
 {
-    "name": "glTFast.dots",
-    "rootNamespace": "GLTFast",
+    "name": "Unity.Cloud.Gltfast.Dots",
+    "rootNamespace": "Unity.Cloud.Gltfast",
     "references": [
-        "glTFast",
+        "Unity.Cloud.Gltfast",
         "Unity.Entities",
         "Unity.Collections",
         "Unity.Transforms",

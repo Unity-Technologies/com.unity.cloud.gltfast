@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
 
-namespace GLTFast.Tests
+namespace Unity.Cloud.Gltfast.Tests
 {
     abstract class DoubleComparer
     {

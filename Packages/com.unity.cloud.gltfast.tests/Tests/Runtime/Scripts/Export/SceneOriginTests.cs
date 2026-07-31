@@ -4,17 +4,17 @@
 using System.Collections;
 using System.IO;
 using System.Threading.Tasks;
-using GLTFast.Export;
-using GLTFast.Logging;
-using GLTFast.Schema;
 using NUnit.Framework;
+using Unity.Cloud.Gltfast.Export;
+using Unity.Cloud.Gltfast.Logging;
+using Unity.Cloud.Gltfast.Schema;
 using Unity.Gltfast.Text.Json;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.TestTools;
 using UnityEngine.TestTools.Utils;
 
-namespace GLTFast.Tests.Export
+namespace Unity.Cloud.Gltfast.Tests.Export
 {
     [Category("Export")]
     class SceneOriginTests

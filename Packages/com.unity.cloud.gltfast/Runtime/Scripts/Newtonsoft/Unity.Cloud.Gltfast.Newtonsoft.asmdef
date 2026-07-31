@@ -1,6 +1,6 @@
 {
-    "name": "glTFast.Newtonsoft",
-    "rootNamespace": "GLTFast.Newtonsoft",
+    "name": "Unity.Cloud.Gltfast.Newtonsoft",
+    "rootNamespace": "Unity.Cloud.Gltfast.Newtonsoft",
     "references": [
         "GUID:a42927d1d4a3b4cda9b076a7adecb9cc"
     ],

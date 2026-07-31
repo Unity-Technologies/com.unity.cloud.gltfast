@@ -3,14 +3,14 @@
 
 using System;
 using System.Collections.Generic;
-using GLTFast.Schema;
 using NUnit.Framework;
+using Unity.Cloud.Gltfast.Schema;
 using Unity.Gltfast.Text.Json;
 using Unity.Mathematics;
 using UnityEngine;
 using Color = UnityEngine.Color;
 
-namespace GLTFast.Tests.JsonParsing
+namespace Unity.Cloud.Gltfast.Tests.JsonParsing
 {
     [TestFixture]
     [Category("JsonParsing")]

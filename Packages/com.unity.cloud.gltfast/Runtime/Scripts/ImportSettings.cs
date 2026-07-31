@@ -3,8 +3,9 @@
 
 using System;
 using UnityEngine;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast
+namespace Unity.Cloud.Gltfast
 {
 
     using Schema;
@@ -13,6 +14,7 @@ namespace GLTFast
     /// glTF import settings
     /// </summary>
     [Serializable]
+    [MovedFrom(true, sourceNamespace: "GLTFast", sourceAssembly: "glTFast")]
     public class ImportSettings
     {
         /// <inheritdoc cref="NameImportMethod"/>
@@ -22,7 +24,7 @@ namespace GLTFast
             set => nodeNameMethod = value;
         }
 
-        /// <inheritdoc cref="GLTFast.AnimationMethod"/>
+        /// <inheritdoc cref="Unity.Cloud.Gltfast.AnimationMethod"/>
         public AnimationMethod AnimationMethod
         {
             get => animationMethod;

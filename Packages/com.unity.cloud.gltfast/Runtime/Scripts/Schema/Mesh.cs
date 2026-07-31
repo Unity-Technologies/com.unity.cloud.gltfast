@@ -5,13 +5,15 @@ using System;
 using System.Collections.Generic;
 using Unity.Gltfast.Text.Json;
 using Unity.Gltfast.Text.Json.Serialization;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast.Schema
+namespace Unity.Cloud.Gltfast.Schema
 {
     /// <summary>
     /// A set of primitives to be rendered. Its global transform is defined by
     /// a node that references it.
     /// </summary>
+    [MovedFrom(true, sourceNamespace: "GLTFast.Schema", sourceAssembly: "glTFast")]
     public class Mesh : NamedObject, IGltfObject, ICloneable
     {
         /// <summary>

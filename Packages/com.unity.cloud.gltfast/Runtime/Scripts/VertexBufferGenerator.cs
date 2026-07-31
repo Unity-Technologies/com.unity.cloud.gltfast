@@ -4,9 +4,9 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
-using GLTFast.Logging;
-using GLTFast.Schema;
-using GLTFast.Vertex;
+using Unity.Cloud.Gltfast.Logging;
+using Unity.Cloud.Gltfast.Schema;
+using Unity.Cloud.Gltfast.Vertex;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Jobs;
@@ -17,7 +17,7 @@ using UnityEngine.Profiling;
 using UnityEngine.Rendering;
 using Mesh = UnityEngine.Mesh;
 
-namespace GLTFast
+namespace Unity.Cloud.Gltfast
 {
     class VertexBufferGenerator<TMainBuffer> :
         VertexBufferGeneratorBase

@@ -3,8 +3,9 @@
 
 using System;
 using Unity.Collections;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast
+namespace Unity.Cloud.Gltfast
 {
     enum ChunkFormat : uint
     {
@@ -15,6 +16,7 @@ namespace GLTFast
     /// <summary>
     /// Generic glTF constants and utility methods.
     /// </summary>
+    [MovedFrom(true, sourceNamespace: "GLTFast", sourceAssembly: "glTFast")]
     public static class GltfGlobals
     {
 

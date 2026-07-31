@@ -3,8 +3,9 @@
 
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast
+namespace Unity.Cloud.Gltfast
 {
 
     using Logging;
@@ -12,6 +13,7 @@ namespace GLTFast
     /// <summary>
     /// Generates a GameObject hierarchy from a glTF scene and provides its bounding box
     /// </summary>
+    [MovedFrom(true, sourceNamespace: "GLTFast", sourceAssembly: "glTFast")]
     public class GameObjectBoundsInstantiator : GameObjectInstantiator
     {
 

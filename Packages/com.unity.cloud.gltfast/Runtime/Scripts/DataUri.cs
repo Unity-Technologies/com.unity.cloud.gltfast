@@ -5,7 +5,7 @@ using System;
 using System.Text;
 using Unity.Mathematics;
 
-namespace GLTFast
+namespace Unity.Cloud.Gltfast
 {
     static class DataUri
     {

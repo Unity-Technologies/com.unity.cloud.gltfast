@@ -2,11 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
-using GLTFast.Export;
 using NUnit.Framework;
+using Unity.Cloud.Gltfast.Export;
 using UnityEngine;
 
-namespace GLTFast.Tests.Export
+namespace Unity.Cloud.Gltfast.Tests.Export
 {
     [TestFixture, Category("Export")]
     class GltfShaderGraphMaterialExporterTests : MaterialExportTests

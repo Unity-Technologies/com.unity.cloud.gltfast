@@ -11,7 +11,7 @@ using UnityEngine.Assertions;
 using UnityEngine.Profiling;
 using UnityEngine.Rendering;
 
-namespace GLTFast
+namespace Unity.Cloud.Gltfast
 {
     using Jobs;
     using Logging;

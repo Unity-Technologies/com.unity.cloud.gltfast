@@ -4,10 +4,10 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using GLTFast.Schema;
+using Unity.Cloud.Gltfast.Schema;
 using Unity.Gltfast.Text.Json;
 
-namespace GLTFast
+namespace Unity.Cloud.Gltfast
 {
     static class PrimitiveComparer
     {

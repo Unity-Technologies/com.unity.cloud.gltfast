@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.Profiling;
 using UnityEngine.TestTools.Utils;
 
-namespace GLTFast.Tests
+namespace Unity.Cloud.Gltfast.Tests
 {
     class MatrixExtensionTest
     {

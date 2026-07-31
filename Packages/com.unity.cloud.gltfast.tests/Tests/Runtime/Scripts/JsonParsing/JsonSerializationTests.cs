@@ -3,19 +3,19 @@
 
 using System.Collections.Generic;
 using System.Text;
-using GLTFast.Schema;
 using NUnit.Framework;
+using Unity.Cloud.Gltfast.Schema;
 using Unity.Gltfast.Text.Json;
 using Unity.Mathematics;
-using Camera = GLTFast.Schema.Camera;
-using CameraType = GLTFast.Schema.CameraType;
-using Color = GLTFast.Schema.Color;
-using LightType = GLTFast.Schema.LightType;
-using Material = GLTFast.Schema.Material;
-using Mesh = GLTFast.Schema.Mesh;
-using Texture = GLTFast.Schema.Texture;
+using Camera = Unity.Cloud.Gltfast.Schema.Camera;
+using CameraType = Unity.Cloud.Gltfast.Schema.CameraType;
+using Color = Unity.Cloud.Gltfast.Schema.Color;
+using LightType = Unity.Cloud.Gltfast.Schema.LightType;
+using Material = Unity.Cloud.Gltfast.Schema.Material;
+using Mesh = Unity.Cloud.Gltfast.Schema.Mesh;
+using Texture = Unity.Cloud.Gltfast.Schema.Texture;
 
-namespace GLTFast.Tests.JsonParsing
+namespace Unity.Cloud.Gltfast.Tests.JsonParsing
 {
     class JsonSerializationTests
     {

@@ -9,7 +9,7 @@ using System.Text;
 using Unity.Mathematics;
 using Application = UnityEngine.Application;
 
-namespace GLTFast.Tests
+namespace Unity.Cloud.Gltfast.Tests
 {
     [Flags]
     enum GltfFeatures
@@ -177,7 +177,7 @@ namespace GLTFast.Tests
     sealed class GltfJsonBuilder : IDisposable
     {
         const int k_Seed = 0xCAFE;
-        const string k_Generator = "GLTFast.Tests TestGltfJsonGenerator";
+        const string k_Generator = "Unity.Cloud.Gltfast.Tests TestGltfJsonGenerator";
 
         // Accessor layout: 0..3 are the shared mesh attribute accessors.
         const int k_AccessorPosition = 0;

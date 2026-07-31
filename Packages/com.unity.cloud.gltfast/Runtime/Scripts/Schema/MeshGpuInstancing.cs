@@ -2,8 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using Unity.Gltfast.Text.Json.Serialization;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast.Schema
+namespace Unity.Cloud.Gltfast.Schema
 {
 
     /// <summary>
@@ -11,6 +12,7 @@ namespace GLTFast.Schema
     /// single mesh at once using a small number of draw calls.
     /// </summary>
     /// <seealso href="https://github.com/KhronosGroup/glTF/tree/main/extensions/2.0/Vendor/EXT_mesh_gpu_instancing"/>
+    [MovedFrom(true, sourceNamespace: "GLTFast.Schema", sourceAssembly: "glTFast")]
     public class MeshGpuInstancing
     {
         /// <inheritdoc cref="InstancesAttributes"/>

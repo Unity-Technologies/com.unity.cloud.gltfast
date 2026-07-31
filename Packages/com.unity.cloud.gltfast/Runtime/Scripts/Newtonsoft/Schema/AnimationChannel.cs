@@ -4,11 +4,13 @@
 #if UNITY_ANIMATION || GLTFAST_ANIMATION
 
 using System;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast.Newtonsoft.Schema
+namespace Unity.Cloud.Gltfast.Newtonsoft.Schema
 {
-    [Obsolete("Use GLTFast.Schema.AnimationChannel instead.")]
-    public class AnimationChannel : GLTFast.Schema.AnimationChannel, IJsonObject { }
+    [Obsolete("Use Unity.Cloud.Gltfast.Schema.AnimationChannel instead.")]
+    [MovedFrom(true, sourceNamespace: "GLTFast.Newtonsoft.Schema", sourceAssembly: "glTFast.Newtonsoft")]
+    public class AnimationChannel : Unity.Cloud.Gltfast.Schema.AnimationChannel, IJsonObject { }
 }
 
 #endif

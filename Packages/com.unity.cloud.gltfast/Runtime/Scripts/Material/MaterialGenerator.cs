@@ -8,18 +8,19 @@
 #endif
 
 using System;
-using GLTFast.Schema;
+using Unity.Cloud.Gltfast.Schema;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UnityEngine.Scripting.APIUpdating;
 using Color = UnityEngine.Color;
-using Material = GLTFast.Schema.Material;
+using Material = Unity.Cloud.Gltfast.Schema.Material;
 #if USING_URP
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 #endif
 
-namespace GLTFast.Materials
+namespace Unity.Cloud.Gltfast.Materials
 {
 
     using Logging;
@@ -27,6 +28,7 @@ namespace GLTFast.Materials
     /// <summary>
     /// Common base class for implementations of IMaterialGenerator
     /// </summary>
+    [MovedFrom(true, sourceNamespace: "GLTFast.Materials", sourceAssembly: "glTFast")]
     public abstract class MaterialGenerator : IMaterialGenerator
     {
 

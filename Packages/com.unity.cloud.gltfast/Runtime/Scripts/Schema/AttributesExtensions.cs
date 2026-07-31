@@ -3,14 +3,16 @@
 
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast.Schema
+namespace Unity.Cloud.Gltfast.Schema
 {
     /// <summary>
     /// Bounds-checked, allocation-aware index accessors for the indexed
     /// attribute families on <see cref="Attributes"/> (<c>TEXCOORD_n</c>,
     /// <c>COLOR_n</c>, <c>JOINTS_n</c>, <c>WEIGHTS_n</c>).
     /// </summary>
+    [MovedFrom(true, sourceNamespace: "GLTFast.Schema", sourceAssembly: "glTFast")]
     public static class AttributesExtensions
     {
         /// <summary>Returns the number of texture coordinate sets.</summary>

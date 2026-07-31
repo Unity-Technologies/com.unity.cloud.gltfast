@@ -8,7 +8,7 @@ using System.Text;
 using NUnit.Framework;
 using UnityEngine;
 
-namespace GLTFast.Tests
+namespace Unity.Cloud.Gltfast.Tests
 {
     [TestFixture]
     class TestGltfJsonGeneratorTests
@@ -23,20 +23,20 @@ namespace GLTFast.Tests
         /// </summary>
         static readonly Dictionary<string, string> k_PinnedHashes = new()
         {
-            { "hierarchy-complex", "176c262b2cdaa141a9f8b86dfe8d629fe674b6c4e918fecae62e9d7e6dcdc194" },
-            { "hierarchy-complex-matrix", "47d32e21475f438b11f1b6189afb8a68937cb616e3f4b9d87d3aa2c4ac02eb40" },
-            { "hierarchy-complex-no-names", "6a51a65fc8990692e49c1c04b87d8daf2fe926c1ddc9238e623c66d0f617175d" },
-            { "hierarchy-complex-min-transforms", "abbaaf9194b32735db91c123d634b8ba7aed0760f3292cb07312d145b4fc2f3a" },
-            { "hierarchy-complex-shallow", "73881181c5547efbb03dcb309bdb91e58ee5434f37cfd871d595aa15fcce7ecc" },
-            { "materials", "da9d0d53d1015a82f3b85dc1a73cb69d1884bd9d07cad997e186d7b525477aa4" },
-            { "extras", "78e16a52970f6af1da3d7e0bf69cc1f0d49961e0e87c30458fbdc3dc95495485" },
-            { "xmp", "88e147c0bcc453c14ef1d952c4215ce4541f47c9db93a4618044c9662433ea8b" },
-            { "animation", "80348d98c36354b5f2a907aab803ea7452cf83922e7e37bdee41774540383bf2" },
-            { "cameras", "05a8ee7d12c931ba5f80d1ad7cda8c1c5e9da567ce7a14f9f6f6267b21f0d0eb" },
-            { "lights", "447fd4517e078f24a967f146c693e1019f23bb2382f8acd25e3bec1fc9f3d3c4" },
-            { "sub-meshes", "fadeca88a203c6c1345169812a47267d0cfe4a29df02484f9f378243bcff0d11" },
-            { "data-uri", "39c41d0939dca50a4ad709f9109ff237b22d36a265e6f632aede8fee942e929d" },
-            { "omni", "85fb73d02d188a69648b422ff73ab67604878e1975d60af8139b0b84e4d6e482" }
+            { "hierarchy-complex", "71876c681bbfbfe4d693bc337a14c93e629677c4850cfda8beb128ea15c5991d" },
+            { "hierarchy-complex-matrix", "bdfcc0b8a7e8714824b60b5f7f1a49ab12cd948f5c401631e4fe7197ad36352f" },
+            { "hierarchy-complex-no-names", "50063c6cc2dd5fdd723472c1aff32c9b22c47f94265080746053a5928ece0bce" },
+            { "hierarchy-complex-min-transforms", "10178d184b50a008a08ad9bd3d1f8d7aa7bf8a3edf889125ce24f35aa2f9b912" },
+            { "hierarchy-complex-shallow", "78099a4bff85e399b54535b393b53877d91df3c27048d82d619c3f403423c4b8" },
+            { "materials", "3dcfdf16c0d4126f977b1046e82d1feb852af83d0f56f3945e06d75e4ae96b22" },
+            { "extras", "9148dc924428ed6637975c9b50b407f52112a7682234b57bbfb05957cba1a247" },
+            { "xmp", "8189effe5a75fec03cfedaa2ccf32da1f810afb1d8d5af911a71320b9f3dac2f" },
+            { "animation", "10f8d97d76e3921acf14aaaf04f95199e41d5b729179348d19898766e1211856" },
+            { "cameras", "b3f8b19f8336fc93d55c565d0006e499ec786a2ed878277abde509a582f7e38a" },
+            { "lights", "0d5af46df45ba8bf53726e5a260a821f50001f80fcdf1204590cde4ead6eb742" },
+            { "sub-meshes", "93433367680b7d28bd3960de5eba9aa38aa21bc286da91ce8fbb3549687ab103" },
+            { "data-uri", "da8c9ddc9b3e0ddc52c19ca8d47c8207172e4c43b140a8d04d53863e2ce1d828" },
+            { "omni", "1d3a7ead41b3d39a5b86ff8f0949260a9e4b82ad2b517143d73dbc7b40006a35" }
         };
 
         [Test]

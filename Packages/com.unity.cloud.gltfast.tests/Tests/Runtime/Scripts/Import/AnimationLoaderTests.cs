@@ -3,15 +3,15 @@
 
 using System.Collections;
 using System.Collections.Generic;
-using GLTFast.Addons;
-using GLTFast.Animations;
-using GLTFast.Schema;
 using NUnit.Framework;
+using Unity.Cloud.Gltfast.Addons;
+using Unity.Cloud.Gltfast.Animations;
+using Unity.Cloud.Gltfast.Schema;
 using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
 
-namespace GLTFast.Tests.Import
+namespace Unity.Cloud.Gltfast.Tests.Import
 {
     [Category("Import")]
     class AnimationLoaderTests

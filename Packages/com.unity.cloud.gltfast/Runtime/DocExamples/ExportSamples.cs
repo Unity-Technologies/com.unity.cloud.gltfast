@@ -3,11 +3,11 @@
 
 using System.Threading.Tasks;
 
-namespace GLTFast.Documentation.Examples
+namespace Unity.Cloud.Gltfast.Documentation.Examples
 {
     using Export;
-    using GLTFast;
     using Logging;
+    using Unity.Cloud.Gltfast;
     using UnityEngine;
 
     class ExportSamples : MonoBehaviour

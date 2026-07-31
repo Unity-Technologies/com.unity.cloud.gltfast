@@ -17,7 +17,7 @@ using System.Text;
 using System.Threading.Tasks;
 #if UNITY_EDITOR
 using System.Threading;
-using GLTFast.Schema;
+using Unity.Cloud.Gltfast.Schema;
 using Unity.Gltfast.Text.Json;
 using UnityEditor;
 #endif
@@ -26,7 +26,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 #endif
 
-namespace GLTFast.Tests.Import
+namespace Unity.Cloud.Gltfast.Tests.Import
 {
     [CreateAssetMenu(fileName = "glTF-TestCaseCollection", menuName = "ScriptableObjects/glTFast Test Case Collection")]
     class GltfTestCaseSet : ScriptableObject

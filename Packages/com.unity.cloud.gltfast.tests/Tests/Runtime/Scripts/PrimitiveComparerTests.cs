@@ -1,11 +1,11 @@
 // SPDX-FileCopyrightText: 2026 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
-using GLTFast.Schema;
 using NUnit.Framework;
+using Unity.Cloud.Gltfast.Schema;
 using Unity.Gltfast.Text.Json;
 
-namespace GLTFast.Tests
+namespace Unity.Cloud.Gltfast.Tests
 {
     class PrimitiveComparerTests
     {

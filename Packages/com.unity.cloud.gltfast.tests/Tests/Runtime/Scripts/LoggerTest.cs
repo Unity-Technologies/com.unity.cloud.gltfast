@@ -9,12 +9,12 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using GLTFast.Export;
 using NUnit.Framework;
+using Unity.Cloud.Gltfast.Export;
 using UnityEngine;
 using UnityEngine.TestTools;
 
-namespace GLTFast.Tests
+namespace Unity.Cloud.Gltfast.Tests
 {
     using Logging;
 

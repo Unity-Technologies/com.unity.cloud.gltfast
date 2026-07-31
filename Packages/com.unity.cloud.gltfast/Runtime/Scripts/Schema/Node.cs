@@ -5,13 +5,15 @@ using System.Collections.Generic;
 using Unity.Gltfast.Text.Json;
 using Unity.Gltfast.Text.Json.Serialization;
 using Unity.Mathematics;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast.Schema
+namespace Unity.Cloud.Gltfast.Schema
 {
     /// <summary>
     /// An object defining the hierarchy relations and the local transform of
     /// its content.
     /// </summary>
+    [MovedFrom(true, sourceNamespace: "GLTFast.Schema", sourceAssembly: "glTFast")]
     public class Node : NamedObject, IGltfObject
     {
         /// <inheritdoc cref="NodeExtensions"/>

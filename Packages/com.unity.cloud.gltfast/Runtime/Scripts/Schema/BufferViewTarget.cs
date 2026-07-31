@@ -2,14 +2,16 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast.Schema
+namespace Unity.Cloud.Gltfast.Schema
 {
     /// <summary>
     /// GPU buffer type.
     /// Relates to WebGL's bindBuffer.
     /// </summary>
     /// <seealso href="https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html#_bufferview_target"/>
+    [MovedFrom(true, sourceNamespace: "GLTFast.Schema", sourceAssembly: "glTFast")]
     public enum BufferViewTarget
     {
         /// <summary>Undefined</summary>

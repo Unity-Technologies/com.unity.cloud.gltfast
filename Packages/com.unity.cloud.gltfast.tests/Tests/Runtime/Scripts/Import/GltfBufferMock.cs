@@ -3,10 +3,10 @@
 
 using System;
 using System.Collections.Generic;
-using GLTFast.Schema;
+using Unity.Cloud.Gltfast.Schema;
 using Unity.Collections;
 
-namespace GLTFast.Tests
+namespace Unity.Cloud.Gltfast.Tests
 {
     unsafe class GltfBufferMock : IGltfBuffers
     {

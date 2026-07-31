@@ -2,8 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using Unity.Gltfast.Text.Json.Serialization;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast.Schema
+namespace Unity.Cloud.Gltfast.Schema
 {
 
     /// <summary>
@@ -11,6 +12,7 @@ namespace GLTFast.Schema
     /// existing glTF material definition.
     /// </summary>
     /// <seealso href="https://github.com/KhronosGroup/glTF/blob/main/extensions/2.0/Khronos/KHR_materials_clearcoat/README.md"/>
+    [MovedFrom(true, sourceNamespace: "GLTFast.Schema", sourceAssembly: "glTFast")]
     public class ClearCoat
     {
 

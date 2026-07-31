@@ -2,8 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using Unity.Gltfast.Text.Json.Serialization;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast.Schema
+namespace Unity.Cloud.Gltfast.Schema
 {
     /// <summary>
     /// The image's MIME type enumeration specifying the encoding of the image
@@ -16,6 +17,7 @@ namespace GLTFast.Schema
     /// "absent <c>mimeType</c>" and "explicitly <c>Unknown</c>" is safe.
     /// </remarks>
     [JsonConverter(typeof(JsonStringEnumConverter<ImageMimeType>))]
+    [MovedFrom(true, sourceNamespace: "GLTFast.Schema", sourceAssembly: "glTFast")]
     public enum ImageMimeType
     {
         /// <summary>MIME type not specified or unrecognized.</summary>

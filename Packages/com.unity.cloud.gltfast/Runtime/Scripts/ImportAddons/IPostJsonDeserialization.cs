@@ -2,8 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using UnityEngine;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast.Addons
+namespace Unity.Cloud.Gltfast.Addons
 {
     /// <summary>
     /// Useful for analysis, verification and manipulation of the deserialized glTF JSON data
@@ -12,6 +13,7 @@ namespace GLTFast.Addons
     /// </summary>
     /// <seealso cref="ImportAddonRegistry"/>
     /// <seealso cref="GltfImport.AddImportAddonInstance"/>
+    [MovedFrom(true, sourceNamespace: "GLTFast.Addons", sourceAssembly: "glTFast")]
     public interface IPostJsonDeserialization
     {
         /// <summary>

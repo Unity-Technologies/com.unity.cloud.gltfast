@@ -4,13 +4,13 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using GLTFast.Logging;
+using Unity.Cloud.Gltfast.Logging;
 
-namespace GLTFast.Documentation.Examples
+namespace Unity.Cloud.Gltfast.Documentation.Examples
 {
 
     using System;
-    using GLTFast;
+    using Unity.Cloud.Gltfast;
     using UnityEngine;
 
     class LoadGltfFromMemory : MonoBehaviour
@@ -72,7 +72,7 @@ namespace GLTFast.Documentation.Examples
         {
             #region Instantiation
             // First step: load glTF
-            var gltf = new GLTFast.GltfImport();
+            var gltf = new Unity.Cloud.Gltfast.GltfImport();
             var success = await gltf.Load(filePath);
 
             if (success)

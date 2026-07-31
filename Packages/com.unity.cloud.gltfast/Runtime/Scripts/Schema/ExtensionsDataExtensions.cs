@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Unity.Gltfast.Text.Json;
 
-namespace GLTFast
+namespace Unity.Cloud.Gltfast
 {
     /// <summary>
     /// Extension methods for <see cref="IGltfObject"/>.

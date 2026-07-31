@@ -1,6 +1,6 @@
 {
     "name": "Unity.Cloud.Gltfast.DevTools.Editor",
-    "rootNamespace": "GLTFast.DevTools.Editor",
+    "rootNamespace": "Unity.Cloud.Gltfast.DevTools.Editor",
     "references": [],
     "includePlatforms": [
         "Editor"

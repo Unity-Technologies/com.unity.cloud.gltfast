@@ -15,8 +15,8 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-using GLTFast.Export;
-using GLTFast.Logging;
+using Unity.Cloud.Gltfast.Export;
+using Unity.Cloud.Gltfast.Logging;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -37,7 +37,7 @@ using UnityEditor.Formats.Gltf.Validation;
 #endif // GLTF_VALIDATOR
 #endif // UNITY_EDITOR
 
-namespace GLTFast.Tests.Export
+namespace Unity.Cloud.Gltfast.Tests.Export
 {
 
     [TestFixture, Category("Export")]
@@ -60,7 +60,7 @@ namespace GLTFast.Tests.Export
             CreateExportSceneObjectList(k_SceneNameHighDefinition);
             CreateExportSceneObjectList(k_SceneNameUniversal);
             AssetDatabase.Refresh();
-            const string relativePath = "/Tests/Runtime/Scripts/glTFast.Tests.asmdef";
+            const string relativePath = "/Tests/Runtime/Scripts/Unity.Cloud.Gltfast.Tests.asmdef";
             var asmDefPath = $"Packages/{GltfGlobals.GltfPackageName}{relativePath}";
             TryFixPackageAssetPath(ref asmDefPath);
             AssetDatabase.ImportAsset(asmDefPath, ImportAssetOptions.ForceUpdate);

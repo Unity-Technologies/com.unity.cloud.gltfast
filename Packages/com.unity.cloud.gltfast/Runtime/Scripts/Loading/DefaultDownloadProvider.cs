@@ -7,13 +7,15 @@ using Unity.Collections;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.Profiling;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast.Loading
+namespace Unity.Cloud.Gltfast.Loading
 {
 
     /// <summary>
     /// Default <see cref="IDownloadProvider"/> implementation
     /// </summary>
+    [MovedFrom(true, sourceNamespace: "GLTFast.Loading", sourceAssembly: "glTFast")]
     public class DefaultDownloadProvider : IDownloadProvider
     {
 
@@ -52,6 +54,7 @@ namespace GLTFast.Loading
     /// <summary>
     /// Default <see cref="IDownload"/> implementation that loads URIs via <see cref="UnityWebRequest"/>
     /// </summary>
+    [MovedFrom(true, sourceNamespace: "GLTFast.Loading", sourceAssembly: "glTFast")]
     public class AwaitableDownload : IDownload, INativeDownload
     {
         const string k_MimeTypeGltfBinary = "model/gltf-binary";
@@ -182,6 +185,7 @@ namespace GLTFast.Loading
     /// Default <see cref="ITextureDownload"/> implementation that loads
     /// texture URIs via <seealso cref="UnityWebRequest"/>.
     /// </summary>
+    [MovedFrom(true, sourceNamespace: "GLTFast.Loading", sourceAssembly: "glTFast")]
     public class AwaitableTextureDownload : AwaitableDownload, ITextureDownload
     {
 

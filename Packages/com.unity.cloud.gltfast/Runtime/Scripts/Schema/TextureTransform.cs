@@ -3,11 +3,13 @@
 
 using Unity.Gltfast.Text.Json.Serialization;
 using Unity.Mathematics;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast.Schema
+namespace Unity.Cloud.Gltfast.Schema
 {
 
     /// <inheritdoc cref="Extension.TextureTransform"/>
+    [MovedFrom(true, sourceNamespace: "GLTFast.Schema", sourceAssembly: "glTFast")]
     public class TextureTransform
     {
 

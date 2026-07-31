@@ -3,12 +3,14 @@
 
 #if GLTFAST_BUILTIN_SHADER_GRAPH
 
-using GLTFast.Schema;
+using Unity.Cloud.Gltfast.Schema;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.Scripting.APIUpdating;
 using Material = UnityEngine.Material;
 
-namespace GLTFast.Materials {
+namespace Unity.Cloud.Gltfast.Materials {
+    [MovedFrom(true, sourceNamespace: "GLTFast.Materials", sourceAssembly: "glTFast")]
     public class BuiltInShaderGraphMaterialGenerator : ShaderGraphMaterialGenerator {
 
         const string k_SurfaceTypeTransparent = "_BUILTIN_SURFACE_TYPE_TRANSPARENT";

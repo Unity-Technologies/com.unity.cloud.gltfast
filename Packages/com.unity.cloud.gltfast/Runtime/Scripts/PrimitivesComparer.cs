@@ -5,9 +5,9 @@
 
 using System;
 using System.Collections.Generic;
-using GLTFast.Schema;
+using Unity.Cloud.Gltfast.Schema;
 
-namespace GLTFast
+namespace Unity.Cloud.Gltfast
 {
     /// <summary>
     /// This is similar to <see cref="MeshComparer"/>, except it does not take the indices into account.

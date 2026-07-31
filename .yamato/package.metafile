@@ -3,7 +3,7 @@ package:
 
 test_setups:
   # Project profile name
-  # see GLTFast.Editor.Tests.SetupProject.ApplySetup (Tests/Editor/SetupProject.cs) for details
+  # see Unity.Cloud.Gltfast.Editor.Tests.SetupProject.ApplySetup (Tests/Editor/SetupProject.cs) for details
   - project_setup: default
     project: glTFast-Test
     # # Use to limit versions

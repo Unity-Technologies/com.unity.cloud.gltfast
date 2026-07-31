@@ -4,14 +4,14 @@
 using System.Collections;
 using System.IO;
 using System.Threading.Tasks;
-using GLTFast.Tests;
-using GLTFast.Tests.Export;
 using NUnit.Framework;
+using Unity.Cloud.Gltfast.Tests;
+using Unity.Cloud.Gltfast.Tests.Export;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.TestTools;
 
-namespace GLTFast.Editor.Tests.Export
+namespace Unity.Cloud.Gltfast.Editor.Tests.Export
 {
     [Category("Export")]
     class GameObjectExportTests
@@ -72,7 +72,7 @@ namespace GLTFast.Editor.Tests.Export
 
             try
             {
-                var export = new global::GLTFast.Export.GameObjectExport();
+                var export = new global::Unity.Cloud.Gltfast.Export.GameObjectExport();
                 Assert.IsTrue(export.AddScene(new[] { cube }, name));
 
                 var task = export.SaveToFileAndDispose(path, forceSync: true);
@@ -95,11 +95,11 @@ namespace GLTFast.Editor.Tests.Export
 
             try
             {
-                var settings = new global::GLTFast.Export.ExportSettings
+                var settings = new global::Unity.Cloud.Gltfast.Export.ExportSettings
                 {
-                    Format = global::GLTFast.Export.GltfFormat.Binary
+                    Format = global::Unity.Cloud.Gltfast.Export.GltfFormat.Binary
                 };
-                var export = new global::GLTFast.Export.GameObjectExport(settings);
+                var export = new global::Unity.Cloud.Gltfast.Export.GameObjectExport(settings);
                 Assert.IsTrue(export.AddScene(new[] { cube }, name));
 
                 using var stream = new MemoryStream();

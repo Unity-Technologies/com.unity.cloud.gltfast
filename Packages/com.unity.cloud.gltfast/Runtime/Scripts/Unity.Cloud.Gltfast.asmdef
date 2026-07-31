@@ -1,6 +1,6 @@
 {
-    "name": "glTFast",
-    "rootNamespace": "GLTFast",
+    "name": "Unity.Cloud.Gltfast",
+    "rootNamespace": "Unity.Cloud.Gltfast",
     "references": [
         "Unity.Mathematics",
         "Unity.Burst",

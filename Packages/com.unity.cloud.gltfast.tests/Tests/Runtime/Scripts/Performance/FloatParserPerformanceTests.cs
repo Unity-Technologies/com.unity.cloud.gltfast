@@ -2,12 +2,12 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System.Text;
-using GLTFast.Schema;
 using NUnit.Framework;
+using Unity.Cloud.Gltfast.Schema;
 using Unity.Mathematics;
 using Unity.PerformanceTesting;
 
-namespace GLTFast.Tests.Performance
+namespace Unity.Cloud.Gltfast.Tests.Performance
 {
     [TestFixture]
     [Category("Performance")]

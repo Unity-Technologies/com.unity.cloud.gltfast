@@ -6,14 +6,16 @@ using System.Threading.Tasks;
 
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast.Loading
+namespace Unity.Cloud.Gltfast.Loading
 {
 
     /// <summary>
     /// Represents an HTTP request header key-value pair
     /// </summary>
     [Serializable]
+    [MovedFrom(true, sourceNamespace: "GLTFast.Loading", sourceAssembly: "glTFast")]
     public struct HttpHeader
     {
         /// <summary>
@@ -44,6 +46,7 @@ namespace GLTFast.Loading
     /// <summary>
     /// DownloadProvider that sends HTTP request with custom header entries
     /// </summary>
+    [MovedFrom(true, sourceNamespace: "GLTFast.Loading", sourceAssembly: "glTFast")]
     public class CustomHeaderDownloadProvider : IDownloadProvider
     {
 
@@ -95,6 +98,7 @@ namespace GLTFast.Loading
     /// <summary>
     /// Download that allows modifying the HTTP request before it's sent
     /// </summary>
+    [MovedFrom(true, sourceNamespace: "GLTFast.Loading", sourceAssembly: "glTFast")]
     public class CustomHeaderDownload : AwaitableDownload
     {
 
@@ -115,6 +119,7 @@ namespace GLTFast.Loading
     /// <summary>
     /// Texture download that allows modifying the HTTP request before it's sent
     /// </summary>
+    [MovedFrom(true, sourceNamespace: "GLTFast.Loading", sourceAssembly: "glTFast")]
     public class CustomHeaderTextureDownload : AwaitableTextureDownload
     {
 

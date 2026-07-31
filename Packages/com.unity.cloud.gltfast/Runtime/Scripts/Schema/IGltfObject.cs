@@ -2,12 +2,14 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using UnityEngine;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast
+namespace Unity.Cloud.Gltfast
 {
     /// <summary>
     /// Represents a glTF JSON object, containing key-value properties of arbitrary types.
     /// </summary>
+    [MovedFrom(true, sourceNamespace: "GLTFast", sourceAssembly: "glTFast")]
     public interface IGltfObject
     {
         /// <summary>

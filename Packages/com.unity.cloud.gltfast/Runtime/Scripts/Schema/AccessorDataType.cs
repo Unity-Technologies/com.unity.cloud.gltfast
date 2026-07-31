@@ -2,13 +2,15 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast.Schema
+namespace Unity.Cloud.Gltfast.Schema
 {
     /// <summary>
     /// The datatype of the <see cref="Accessor"/>'s components.
     /// </summary>
     /// <seealso href="https://www.khronos.org/registry/glTF/specs/2.0/glTF-2.0.html#accessor-data-types"/>
+    [MovedFrom(true, sourceNamespace: "GLTFast.Schema", sourceAssembly: "glTFast")]
     public enum AccessorDataType
     {
         /// <summary>

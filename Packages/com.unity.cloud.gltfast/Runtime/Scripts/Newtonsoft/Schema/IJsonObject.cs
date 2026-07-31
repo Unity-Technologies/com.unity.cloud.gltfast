@@ -2,12 +2,14 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast.Newtonsoft.Schema
+namespace Unity.Cloud.Gltfast.Newtonsoft.Schema
 {
     /// <summary>
     /// Represents a JSON object, containing key-value properties of arbitrary type.
     /// </summary>
-    [Obsolete("Use GLTFast.Schema.IGltfObject instead.")]
+    [Obsolete("Use Unity.Cloud.Gltfast.Schema.IGltfObject instead.")]
+    [MovedFrom(true, sourceNamespace: "GLTFast.Newtonsoft.Schema", sourceAssembly: "glTFast.Newtonsoft")]
     public interface IJsonObject : IGltfObject { }
 }

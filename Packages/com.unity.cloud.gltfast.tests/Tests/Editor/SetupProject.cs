@@ -9,7 +9,7 @@ using UnityEditor;
 using UnityEditor.PackageManager;
 using UnityEngine;
 
-namespace GLTFast.Editor.Tests
+namespace Unity.Cloud.Gltfast.Editor.Tests
 {
     static class SetupProject
     {

@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using Unity.Gltfast.Text.Json;
 using Unity.Gltfast.Text.Json.Serialization;
 
-namespace GLTFast.Schema
+namespace Unity.Cloud.Gltfast.Schema
 {
     class FloatListConverter : JsonConverter<List<float>>
     {

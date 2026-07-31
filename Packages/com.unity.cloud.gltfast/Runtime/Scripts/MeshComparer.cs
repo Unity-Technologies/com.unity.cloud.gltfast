@@ -4,9 +4,9 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using GLTFast.Schema;
+using Unity.Cloud.Gltfast.Schema;
 
-namespace GLTFast
+namespace Unity.Cloud.Gltfast
 {
     class MeshComparer
         : IEqualityComparer<MeshPrimitive>

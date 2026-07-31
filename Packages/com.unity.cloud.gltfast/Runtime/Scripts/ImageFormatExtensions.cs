@@ -1,9 +1,9 @@
 // SPDX-FileCopyrightText: 2025 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
-using GLTFast.Schema;
+using Unity.Cloud.Gltfast.Schema;
 
-namespace GLTFast
+namespace Unity.Cloud.Gltfast
 {
     static class ImageFormatExtensions
     {

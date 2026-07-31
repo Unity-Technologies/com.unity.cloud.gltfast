@@ -2,14 +2,13 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
-
-using GLTFast.Schema;
 using NUnit.Framework;
+using Unity.Cloud.Gltfast.Schema;
 using Unity.Gltfast.Text.Json;
 using UnityEngine;
-using LightType = GLTFast.Schema.LightType;
+using LightType = Unity.Cloud.Gltfast.Schema.LightType;
 
-namespace GLTFast.Tests.JsonParsing
+namespace Unity.Cloud.Gltfast.Tests.JsonParsing
 {
     [Category("JsonParsing")]
     class ExtensionTests

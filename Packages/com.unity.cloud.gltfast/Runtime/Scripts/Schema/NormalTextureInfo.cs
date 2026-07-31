@@ -2,12 +2,14 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using Unity.Gltfast.Text.Json.Serialization;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast.Schema
+namespace Unity.Cloud.Gltfast.Schema
 {
     /// <summary>
     /// Normal map specific texture info
     /// </summary>
+    [MovedFrom(true, sourceNamespace: "GLTFast.Schema", sourceAssembly: "glTFast")]
     public class NormalTextureInfo : TextureInfo
     {
 

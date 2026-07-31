@@ -5,7 +5,7 @@ using System;
 using System.Runtime.InteropServices;
 using Unity.Collections.LowLevel.Unsafe;
 
-namespace GLTFast
+namespace Unity.Cloud.Gltfast
 {
     /// <summary>
     /// Wraps a managed array and provides a <see cref="ReadOnlyNativeArray{T}"/> for accessing it.

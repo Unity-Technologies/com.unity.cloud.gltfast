@@ -2,32 +2,33 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
-using GLTFast.Logging;
-using GLTFast.Materials;
-using GLTFast.Schema;
-using Unity.Mathematics;
+using Unity.Cloud.Gltfast.Logging;
+using Unity.Cloud.Gltfast.Materials;
+using Unity.Cloud.Gltfast.Schema;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.Scripting.APIUpdating;
 using Color = UnityEngine.Color;
 using Material = UnityEngine.Material;
 
-namespace GLTFast.Export
+namespace Unity.Cloud.Gltfast.Export
 {
     /// <summary>
     /// Converts Unity Materials that use the glTFast shader `glTF/Unlit` to glTF materials
     /// </summary>
+    [MovedFrom(true, sourceNamespace: "GLTFast.Export", sourceAssembly: "glTFast.Export")]
     public class GltfUnlitMaterialExporter : IMaterialExport
     {
         /// <inheritdoc />
         public bool ConvertMaterial(
             Material unityMaterial,
-            out GLTFast.Schema.Material material,
+            out Unity.Cloud.Gltfast.Schema.Material material,
             IGltfWritable gltf,
             ICodeLogger logger)
         {
             gltf.RegisterExtensionUsage(Extension.MaterialsUnlit);
 
-            material = new GLTFast.Schema.Material
+            material = new Unity.Cloud.Gltfast.Schema.Material
             {
                 Name = unityMaterial.name,
                 Extensions = new MaterialExtensions
@@ -46,9 +47,9 @@ namespace GLTFast.Export
             return true;
         }
 
-        static GLTFast.Schema.Material HandlePbrMetallicRoughness(
+        static Unity.Cloud.Gltfast.Schema.Material HandlePbrMetallicRoughness(
             IGltfWritable gltf,
-            GLTFast.Schema.Material material,
+            Unity.Cloud.Gltfast.Schema.Material material,
             Material unityMaterial)
         {
             if (GltfMaterialExporter.TryGetValue(unityMaterial, MaterialProperty.BaseColorTexture, out Texture2D texture2D))

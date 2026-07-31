@@ -2,8 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System.Threading.Tasks;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast
+namespace Unity.Cloud.Gltfast
 {
 
     /// <summary>
@@ -12,6 +13,7 @@ namespace GLTFast
     /// This decision manages the trade-off between minimum procedure duration
     /// and a responsive frame rate.
     /// </summary>
+    [MovedFrom(true, sourceNamespace: "GLTFast", sourceAssembly: "glTFast")]
     public interface IDeferAgent
     {
         /// <summary>

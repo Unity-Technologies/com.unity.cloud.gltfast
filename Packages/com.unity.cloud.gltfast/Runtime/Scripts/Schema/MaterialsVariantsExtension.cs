@@ -3,13 +3,15 @@
 
 using System.Collections.Generic;
 using Unity.Gltfast.Text.Json.Serialization;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast.Schema
+namespace Unity.Cloud.Gltfast.Schema
 {
     /// <summary>
     /// KHR_materials_variants extension.
     /// </summary>
     /// <seealso href="https://github.com/KhronosGroup/glTF/tree/main/extensions/2.0/Khronos/KHR_materials_variants">KHR_materials_variants extension</seealso>
+    [MovedFrom(true, sourceNamespace: "GLTFast.Schema", sourceAssembly: "glTFast")]
     public class MaterialsVariantsRootExtension
     {
         /// <summary>
@@ -23,12 +25,14 @@ namespace GLTFast.Schema
     /// Named materials variant.
     /// </summary>
     /// <seealso href="https://github.com/KhronosGroup/glTF/tree/main/extensions/2.0/Khronos/KHR_materials_variants">KHR_materials_variants extension</seealso>
+    [MovedFrom(true, sourceNamespace: "GLTFast.Schema", sourceAssembly: "glTFast")]
     public class MaterialsVariant : NamedObject { }
 
     /// <summary>
     /// Mesh primitive level KHR_materials_variants extension.
     /// </summary>
     /// <seealso href="https://github.com/KhronosGroup/glTF/tree/main/extensions/2.0/Khronos/KHR_materials_variants">KHR_materials_variants extension</seealso>
+    [MovedFrom(true, sourceNamespace: "GLTFast.Schema", sourceAssembly: "glTFast")]
     public class MaterialsVariantsMeshPrimitiveExtension
     {
         /// <summary>
@@ -67,6 +71,7 @@ namespace GLTFast.Schema
     /// <summary>
     /// Maps a material index to one or more materials variants indices.
     /// </summary>
+    [MovedFrom(true, sourceNamespace: "GLTFast.Schema", sourceAssembly: "glTFast")]
     public class MaterialVariantsMapping
     {
         /// <summary>Material index.</summary>

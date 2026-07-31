@@ -3,13 +3,14 @@
 
 using System;
 using System.Collections.Generic;
-using GLTFast.Addons;
-using GLTFast.Schema;
+using Unity.Cloud.Gltfast.Addons;
+using Unity.Cloud.Gltfast.Schema;
 using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast.Animations
+namespace Unity.Cloud.Gltfast.Animations
 {
     /// <summary>
     /// Interface for processing animation clips.
@@ -21,6 +22,7 @@ namespace GLTFast.Animations
     /// <see cref="IDisposable.Dispose"/> is invoked. <see cref="IDisposable.Dispose"/> is the
     /// place to release scratch buffers and other temporary resources.
     /// </remarks>
+    [MovedFrom(true, sourceNamespace: "GLTFast.Animations", sourceAssembly: "glTFast")]
     public interface IAnimationProcessor : IDisposable
     {
         /// <summary>

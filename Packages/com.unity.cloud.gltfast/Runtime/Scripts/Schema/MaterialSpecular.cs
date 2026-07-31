@@ -4,13 +4,15 @@
 using System;
 using Unity.Gltfast.Text.Json.Serialization;
 using UnityEngine;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast.Schema
+namespace Unity.Cloud.Gltfast.Schema
 {
     /// <summary>
     /// This extension allows configuring the specular reflection.
     /// </summary>
     /// <seealso href="https://github.com/KhronosGroup/glTF/tree/main/extensions/2.0/Khronos/KHR_materials_specular"/>
+    [MovedFrom(true, sourceNamespace: "GLTFast.Schema", sourceAssembly: "glTFast")]
     public class MaterialSpecular
     {
         /// <summary>

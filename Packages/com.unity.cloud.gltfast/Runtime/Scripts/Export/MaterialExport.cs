@@ -3,13 +3,15 @@
 
 using System;
 using UnityEngine;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast.Export
+namespace Unity.Cloud.Gltfast.Export
 {
 
     /// <summary>
     /// Provides the default material export
     /// </summary>
+    [MovedFrom(true, sourceNamespace: "GLTFast.Export", sourceAssembly: "glTFast.Export")]
     public static class MaterialExport
     {
 

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Unity.Collections;
 using UnityEngine;
 
-namespace GLTFast.Export
+namespace Unity.Cloud.Gltfast.Export
 {
     class MeshDataProxy<TIndex> : IMeshData<TIndex> where TIndex : unmanaged
     {

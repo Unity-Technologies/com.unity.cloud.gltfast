@@ -1,10 +1,10 @@
 {
-    "name": "glTFast.Editor",
-    "rootNamespace": "GLTFast.Editor",
+    "name": "Unity.Cloud.Gltfast.Editor",
+    "rootNamespace": "Unity.Cloud.Gltfast.Editor",
     "references": [
         "Unity.Mathematics",
-        "glTFast",
-        "glTFast.Export",
+        "Unity.Cloud.Gltfast",
+        "Unity.Cloud.Gltfast.Export",
         "UnityEngine.TestTools.Graphics",
         "Unity.RenderPipelines.HighDefinition.Runtime",
         "UnityEditor.Formats.Gltf.Validation"

@@ -3,11 +3,11 @@
 
 using System;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using UnityEngine;
+using UnityEngine.Scripting.APIUpdating;
 using static Unity.Mathematics.math;
 
-namespace GLTFast
+namespace Unity.Cloud.Gltfast
 {
 
     using Unity.Mathematics;
@@ -15,6 +15,7 @@ namespace GLTFast
     /// <summary>
     /// Mathematics helper methods
     /// </summary>
+    [MovedFrom(true, sourceNamespace: "GLTFast", sourceAssembly: "glTFast")]
     public static class Mathematics
     {
         internal static readonly double3 k_Double3One = new double3(1, 1, 1);

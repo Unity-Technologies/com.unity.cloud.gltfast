@@ -4,7 +4,7 @@
 using System.Collections;
 using NUnit.Framework;
 
-namespace GLTFast.Tests.Import
+namespace Unity.Cloud.Gltfast.Tests.Import
 {
     [TestFixture, System.ComponentModel.Category("Import")]
     class TextureTests

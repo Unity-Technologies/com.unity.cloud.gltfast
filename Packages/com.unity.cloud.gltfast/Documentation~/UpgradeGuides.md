@@ -20,21 +20,39 @@ You can do this by manually editing the URL in the [project manifest][ProjectMan
 
 ## Upgrade to 7.0
 
-The `glTFast.Newtonsoft` assembly will be removed when 7.0 leaves the experimental phase. Migrate to the main `glTFast` assembly now to avoid breakage at that cutover.
+### Assembly and namespace rename
+
+All assemblies and the root namespace were renamed to follow the [.NET Framework Design Guidelines][NamingGuidelines] and Unity's [assembly definition naming conventions][AsmdefNaming]. The runtime assembly is now `Unity.Cloud.Gltfast` (was `glTFast`) and the root namespace is `Unity.Cloud.Gltfast` (was `GLTFast`). Sub-assemblies and namespaces follow suit (for example `glTFast.Export`/`GLTFast.Export` ⇒ `Unity.Cloud.Gltfast.Export`).
+
+Most of the migration is automatic:
+
+- **C# source** — public types are annotated with `[MovedFrom]`, so Unity's [API Updater][APIUpdater] rewrites your `using` directives and type references on import. Accept the API Update prompt when it appears.
+
+One step is **not** automatic and must be done by hand:
+
+- **Assembly definition references** — if one of your own `.asmdef` files references a glTFast assembly by name, update the reference to the new name (for example `glTFast` ⇒ `Unity.Cloud.Gltfast`, `glTFast.Export` ⇒ `Unity.Cloud.Gltfast.Export`).
+
+[NamingGuidelines]: https://learn.microsoft.com/en-us/dotnet/standard/design-guidelines/naming-guidelines
+[AsmdefNaming]: https://docs.unity3d.com/Manual/cus-asmdef.html
+[APIUpdater]: https://docs.unity3d.com/Manual/APIUpdater.html
+
+### Newtonsoft assembly removal
+
+The `Unity.Cloud.Gltfast.Newtonsoft` assembly will be removed when 7.0 leaves the experimental phase. Migrate to the main `Unity.Cloud.Gltfast` assembly now to avoid breakage at that cutover.
 
 | Before | After |
 |--------|-------|
-| `using GLTFast.Newtonsoft;` | `using GLTFast;` |
-| `GLTFast.Newtonsoft.GltfImport` | `GLTFast.GltfImport` |
-| `using GLTFast.Newtonsoft.Schema;` | `using GLTFast.Schema;` |
-| `GLTFast.Newtonsoft.Schema.Accessor`, `…Asset`, `…Material`, `…Node`, `…Root`, `…Mesh`, etc. | `GLTFast.Schema.Accessor`, `…Asset`, `…Material`, `…Node`, `…Root`, `…Mesh`, etc. |
-| `GLTFast.Newtonsoft.Schema.IJsonObject` interface | `GLTFast.Schema.IGltfObject` interface (note: the interface itself was renamed) |
+| `using Unity.Cloud.Gltfast.Newtonsoft;` | `using Unity.Cloud.Gltfast;` |
+| `Unity.Cloud.Gltfast.Newtonsoft.GltfImport` | `Unity.Cloud.Gltfast.GltfImport` |
+| `using Unity.Cloud.Gltfast.Newtonsoft.Schema;` | `using Unity.Cloud.Gltfast.Schema;` |
+| `Unity.Cloud.Gltfast.Newtonsoft.Schema.Accessor`, `…Asset`, `…Material`, `…Node`, `…Root`, `…Mesh`, etc. | `Unity.Cloud.Gltfast.Schema.Accessor`, `…Asset`, `…Material`, `…Node`, `…Root`, `…Mesh`, etc. |
+| `Unity.Cloud.Gltfast.Newtonsoft.Schema.IJsonObject` interface | `Unity.Cloud.Gltfast.Schema.IGltfObject` interface (note: the interface itself was renamed) |
 
-If your assembly definition referenced `glTFast.Newtonsoft`, replace the reference with `glTFast`.
+If your assembly definition referenced `Unity.Cloud.Gltfast.Newtonsoft`, replace the reference with `Unity.Cloud.Gltfast`.
 
 ### Schema enum properties wrapped in `EnumOrRawValue<TEnum>`
 
-Several `GLTFast.Schema` properties that used to be enums or strings are now wrapped in [EnumOrRawValue&lt;TEnum&gt;](xref:GLTFast.Schema.EnumOrRawValue`1) so that values introduced by glTF extensions (and therefore unknown at build time) are preserved through deserialization and serialization.
+Several `Unity.Cloud.Gltfast.Schema` properties that used to be enums or strings are now wrapped in [EnumOrRawValue&lt;TEnum&gt;](xref:Unity.Cloud.Gltfast.Schema.EnumOrRawValue`1) so that values introduced by glTF extensions (and therefore unknown at build time) are preserved through deserialization and serialization.
 
 | Property | Before | After |
 | -------- | ------ | ----- |
@@ -42,7 +60,7 @@ Several `GLTFast.Schema` properties that used to be enums or strings are now wra
 | `AnimationChannelTarget.Path` | `AnimationPath` | `EnumOrRawValue<AnimationPath>` |
 | `AnimationSampler.Interpolation` | `Interpolation` | `EnumOrRawValue<Interpolation>` |
 | `Camera.Type` | `CameraType` | `EnumOrRawValue<CameraType>` |
-| [Image.MimeType](xref:GLTFast.Schema.Image.MimeType) | `string` | [EnumOrRawValue&lt;ImageMimeType&gt;](xref:GLTFast.Schema.EnumOrRawValue`1) |
+| [Image.MimeType](xref:Unity.Cloud.Gltfast.Schema.Image.MimeType) | `string` | [EnumOrRawValue&lt;ImageMimeType&gt;](xref:Unity.Cloud.Gltfast.Schema.EnumOrRawValue`1) |
 | `Material.AlphaMode` | `AlphaMode` | `EnumOrRawValue<AlphaMode>` |
 | `LightPunctual.Type` | `LightType` | `EnumOrRawValue<LightType>` |
 | `Material.AlphaMode` | `AlphaMode` | `EnumOrRawValue<AlphaMode>` |
@@ -64,7 +82,7 @@ The legacy `image/ktx` MIME string is no longer mapped to `ImageFormat.Ktx`. Per
 
 #### glTF extension lists
 
-[Root.ExtensionsUsed](xref:GLTFast.Schema.Root.ExtensionsUsed) and [Root.ExtensionsRequired](xref:GLTFast.Schema.Root.ExtensionsRequired) changed from `string[]` to `List<`[EnumOrRawValue&lt;Extension&gt;](xref:GLTFast.Schema.EnumOrRawValue`1)`>`. Recognized extension names deserialize directly into the [Extension](xref:GLTFast.Extension) enum and never allocate a managed `string`; names not known at build time are preserved as UTF-8 bytes in `.RawValue`.
+[Root.ExtensionsUsed](xref:Unity.Cloud.Gltfast.Schema.Root.ExtensionsUsed) and [Root.ExtensionsRequired](xref:Unity.Cloud.Gltfast.Schema.Root.ExtensionsRequired) changed from `string[]` to `List<`[EnumOrRawValue&lt;Extension&gt;](xref:Unity.Cloud.Gltfast.Schema.EnumOrRawValue`1)`>`. Recognized extension names deserialize directly into the [Extension](xref:Unity.Cloud.Gltfast.Extension) enum and never allocate a managed `string`; names not known at build time are preserved as UTF-8 bytes in `.RawValue`.
 
 Membership checks via the implicit enum conversion:
 
@@ -97,7 +115,7 @@ This applies to (non-exhaustive — see the changelog for the full list):
 
 - `Accessor.BufferView`
 - `AnimationChannelTarget.Node` (absent target is permitted by an extension)
-- `BufferView.ByteStride` (and the [IBufferView](xref:GLTFast.Schema.IBufferView) interface)
+- `BufferView.ByteStride` (and the [IBufferView](xref:Unity.Cloud.Gltfast.Schema.IBufferView) interface)
 - `Image.BufferView`
 - `MeshPrimitive.Indices`, `MeshPrimitive.Material`
 - `Attributes` (`Position`, `Normal`, `Tangent`, `TexCoords`, `Colors`, `Joints`, `Weights`) and `MorphTarget` (`Position`, `Normal`, `Tangent`)
@@ -130,13 +148,13 @@ JSON serialization omits the property when `null`. Existing code that left a pro
 
 | Member | Before | After |
 | ------ | ------ | ----- |
-| [Texture.GetImageIndex](xref:GLTFast.Schema.Texture.GetImageIndex) | `int` | `int?` |
+| [Texture.GetImageIndex](xref:Unity.Cloud.Gltfast.Schema.Texture.GetImageIndex) | `int` | `int?` |
 | `MeshPrimitive.GetMaterialIndex` | `int` | `int?` |
 | `IMaterialsVariantsSlot.GetMaterialIndex` | `int` | `int?` |
 | `MeshResult.materialIndices` | `int[]` | `int?[]` |
 | `IGltfBuffers.GetBufferView` / `GetAccessorAndData` `byteStride` out param | `int` | `int?` |
 
-Custom implementations of [IMaterialsVariantsSlot](xref:GLTFast.IMaterialsVariantsSlot), [IBufferView](xref:GLTFast.Schema.IBufferView) or [IGltfBuffers](xref:GLTFast.IGltfBuffers) need to update their member signatures accordingly.
+Custom implementations of [IMaterialsVariantsSlot](xref:Unity.Cloud.Gltfast.IMaterialsVariantsSlot), [IBufferView](xref:Unity.Cloud.Gltfast.Schema.IBufferView) or [IGltfBuffers](xref:Unity.Cloud.Gltfast.IGltfBuffers) need to update their member signatures accordingly.
 
 ### Spec-required scalar fields use a negative "unset" sentinel
 
@@ -192,7 +210,7 @@ Extension add-ons that relax a previously-required field can detect absence with
 
 ### `BufferView.Target` typed as `BufferViewTarget`
 
-[BufferView.Target](xref:GLTFast.Schema.BufferView.Target) is now [BufferViewTarget](xref:GLTFast.Schema.BufferViewTarget) instead of `int`. The enum members carry the WebGL constants, and `BufferViewTarget.Undefined` (value `0`) represents the absent target. Comparisons against the raw integer no longer compile; use the enum members directly.
+[BufferView.Target](xref:Unity.Cloud.Gltfast.Schema.BufferView.Target) is now [BufferViewTarget](xref:Unity.Cloud.Gltfast.Schema.BufferViewTarget) instead of `int`. The enum members carry the WebGL constants, and `BufferViewTarget.Undefined` (value `0`) represents the absent target. Comparisons against the raw integer no longer compile; use the enum members directly.
 
 | Before | After |
 | ------ | ----- |
@@ -203,7 +221,7 @@ Extension add-ons that relax a previously-required field can detect absence with
 
 ### `Attributes` indexed channels
 
-[Attributes](xref:GLTFast.Schema.Attributes) replaces the per-index properties with per-family `List<int?>` collections. Bounds-checked index access is provided by extension methods on [AttributesExtensions](xref:GLTFast.Schema.AttributesExtensions); unrecognized JSON properties (extensions, application-specific semantics) are captured via `[JsonExtensionData]` and exposed through [IGltfObject](xref:GLTFast.IGltfObject).
+[Attributes](xref:Unity.Cloud.Gltfast.Schema.Attributes) replaces the per-index properties with per-family `List<int?>` collections. Bounds-checked index access is provided by extension methods on [AttributesExtensions](xref:Unity.Cloud.Gltfast.Schema.AttributesExtensions); unrecognized JSON properties (extensions, application-specific semantics) are captured via `[JsonExtensionData]` and exposed through [IGltfObject](xref:Unity.Cloud.Gltfast.IGltfObject).
 
 | Property | Before | After |
 | -------- | ------ | ----- |
@@ -226,18 +244,18 @@ Helper method `Attributes.GetTexCoordsCount()` was moved to `AttributesExtension
 
 ### Schema collection properties moved from `T[]` to `List<T>`
 
-Variable-length collection properties on `GLTFast.Schema` types are now `List<T>` instead of `T[]`, completing the migration started with `Root.Accessors`, `Root.Materials`, `Mesh.Primitives`, etc.
+Variable-length collection properties on `Unity.Cloud.Gltfast.Schema` types are now `List<T>` instead of `T[]`, completing the migration started with `Root.Accessors`, `Root.Materials`, `Mesh.Primitives`, etc.
 
 | Property | Before | After |
 | -------- | ------ | ----- |
-| [LightsPunctual.Lights](xref:GLTFast.Schema.LightsPunctual.Lights) | `LightPunctual[]` | `List<LightPunctual>` |
+| [LightsPunctual.Lights](xref:Unity.Cloud.Gltfast.Schema.LightsPunctual.Lights) | `LightPunctual[]` | `List<LightPunctual>` |
 | `MaterialVariantsMapping.Variants` | `int[]` | `List<int>` |
 | `MeshExtras.TargetNames` | `string[]` | `List<string>` |
-| [MeshPrimitive.Targets](xref:GLTFast.Schema.MeshPrimitive.Targets) | `MorphTarget[]` | `List<MorphTarget>` |
-| [Node.Children](xref:GLTFast.Schema.Node.Children) | `uint[]` | `List<uint>` |
-| [Root.Buffers](xref:GLTFast.Schema.Root.Buffers) | `Buffer[]` | `List<Buffer>` |
-| [Scene.Nodes](xref:GLTFast.Schema.Scene.Nodes) | `uint[]` | `List<uint>` |
-| [Skin.Joints](xref:GLTFast.Schema.Skin.Joints) | `uint[]` | `List<uint>` |
+| [MeshPrimitive.Targets](xref:Unity.Cloud.Gltfast.Schema.MeshPrimitive.Targets) | `MorphTarget[]` | `List<MorphTarget>` |
+| [Node.Children](xref:Unity.Cloud.Gltfast.Schema.Node.Children) | `uint[]` | `List<uint>` |
+| [Root.Buffers](xref:Unity.Cloud.Gltfast.Schema.Root.Buffers) | `Buffer[]` | `List<Buffer>` |
+| [Scene.Nodes](xref:Unity.Cloud.Gltfast.Schema.Scene.Nodes) | `uint[]` | `List<uint>` |
+| [Skin.Joints](xref:Unity.Cloud.Gltfast.Schema.Skin.Joints) | `uint[]` | `List<uint>` |
 
 Reading is mostly unchanged — indexing (`[i]`) and `foreach` work the same, but `.Length` becomes `.Count`:
 
@@ -262,9 +280,9 @@ Public method parameters that used to take `uint[]` / `string[]` were updated ba
 
 | Member | Before | After |
 | ------ | ------ | ----- |
-| [IInstantiator.BeginScene](xref:GLTFast.IInstantiator.BeginScene*) `rootNodeIndices` | `uint[]` | `IReadOnlyList<uint>` |
-| [IInstantiator.EndScene](xref:GLTFast.IInstantiator.EndScene*) `rootNodeIndices` | `uint[]` | `IReadOnlyList<uint>` |
-| [IInstantiator.AddPrimitive](xref:GLTFast.IInstantiator.AddPrimitive*) `joints` | `uint[]` | `IReadOnlyList<uint>` |
+| [IInstantiator.BeginScene](xref:Unity.Cloud.Gltfast.IInstantiator.BeginScene*) `rootNodeIndices` | `uint[]` | `IReadOnlyList<uint>` |
+| [IInstantiator.EndScene](xref:Unity.Cloud.Gltfast.IInstantiator.EndScene*) `rootNodeIndices` | `uint[]` | `IReadOnlyList<uint>` |
+| [IInstantiator.AddPrimitive](xref:Unity.Cloud.Gltfast.IInstantiator.AddPrimitive*) `joints` | `uint[]` | `IReadOnlyList<uint>` |
 | `GameObjectInstantiator.MeshAddedDelegate` `joints` | `uint[]` | `IReadOnlyList<uint>` |
 | `IAnimationProcessor.AddMorphTargetWeightCurves` `morphTargetNames` | `string[]` | `IReadOnlyList<string>` |
 
@@ -272,9 +290,9 @@ Public method parameters that used to take `uint[]` / `string[]` were updated ba
 
 | Member | Before | After |
 | ------ | ------ | ----- |
-| [IGltfWritable.AddNode](xref:GLTFast.Export.IGltfWritable.AddNode*) `children` | `uint[]` | `List<uint>` (ownership transferred) |
-| [IGltfWritable.AddScene](xref:GLTFast.Export.IGltfWritable.AddScene*) `nodes` | `uint[]` | `List<uint>` (ownership transferred) |
-| [IGltfWritable.AddMeshToNode](xref:GLTFast.Export.IGltfWritable.AddMeshToNode*) `joints` | `uint[]` | `List<uint>` (ownership transferred) |
+| [IGltfWritable.AddNode](xref:Unity.Cloud.Gltfast.Export.IGltfWritable.AddNode*) `children` | `uint[]` | `List<uint>` (ownership transferred) |
+| [IGltfWritable.AddScene](xref:Unity.Cloud.Gltfast.Export.IGltfWritable.AddScene*) `nodes` | `uint[]` | `List<uint>` (ownership transferred) |
+| [IGltfWritable.AddMeshToNode](xref:Unity.Cloud.Gltfast.Export.IGltfWritable.AddMeshToNode*) `joints` | `uint[]` | `List<uint>` (ownership transferred) |
 
 ```csharp
 // Before
@@ -291,7 +309,7 @@ Custom subclasses or implementations of these interfaces and delegates need to u
 
 ### `Accessor.Min`/`Accessor.Max` typed as `List<double>`
 
-[Accessor.Min](xref:GLTFast.Schema.Accessor.Min) and [Accessor.Max](xref:GLTFast.Schema.Accessor.Max) changed from `float[]` to `List<double>`. The wider element type preserves the precision of accessors whose component type is `5130` (double, introduced by the forthcoming glTF 2.1 specification) and avoids a lossy round-trip for values that exceed `float` precision.
+[Accessor.Min](xref:Unity.Cloud.Gltfast.Schema.Accessor.Min) and [Accessor.Max](xref:Unity.Cloud.Gltfast.Schema.Accessor.Max) changed from `float[]` to `List<double>`. The wider element type preserves the precision of accessors whose component type is `5130` (double, introduced by the forthcoming glTF 2.1 specification) and avoids a lossy round-trip for values that exceed `float` precision.
 
 | Before | After |
 | ------ | ----- |
@@ -305,10 +323,10 @@ The node transform properties changed from `double[]` to nullable `Unity.Mathema
 
 | Property | Before | After |
 | -------- | ------ | ----- |
-| [Node.Translation](xref:GLTFast.Schema.Node.Translation) | `double[]` (length 3) | `double3?` |
-| [Node.Scale](xref:GLTFast.Schema.Node.Scale) | `double[]` (length 3) | `double3?` |
-| [Node.Rotation](xref:GLTFast.Schema.Node.Rotation) | `double[]` (length 4, `x, y, z, w`) | `double4?` |
-| [Node.Matrix](xref:GLTFast.Schema.Node.Matrix) | `double[]` (length 16, column-major) | `double4x4?` |
+| [Node.Translation](xref:Unity.Cloud.Gltfast.Schema.Node.Translation) | `double[]` (length 3) | `double3?` |
+| [Node.Scale](xref:Unity.Cloud.Gltfast.Schema.Node.Scale) | `double[]` (length 3) | `double3?` |
+| [Node.Rotation](xref:Unity.Cloud.Gltfast.Schema.Node.Rotation) | `double[]` (length 4, `x, y, z, w`) | `double4?` |
+| [Node.Matrix](xref:Unity.Cloud.Gltfast.Schema.Node.Matrix) | `double[]` (length 16, column-major) | `double4x4?` |
 
 | Before | After |
 | ------ | ----- |
@@ -319,7 +337,7 @@ The node transform properties changed from `double[]` to nullable `Unity.Mathema
 
 ### `TextureTransform` offset/scale typed as `float2` nullable
 
-[TextureTransform.Offset](xref:GLTFast.Schema.TextureTransform.Offset) and [TextureTransform.Scale](xref:GLTFast.Schema.TextureTransform.Scale) changed from `float[]` (length 2) to nullable `Unity.Mathematics.float2`.
+[TextureTransform.Offset](xref:Unity.Cloud.Gltfast.Schema.TextureTransform.Offset) and [TextureTransform.Scale](xref:Unity.Cloud.Gltfast.Schema.TextureTransform.Scale) changed from `float[]` (length 2) to nullable `Unity.Mathematics.float2`.
 
 | Before | After |
 | ------ | ----- |
@@ -328,20 +346,20 @@ The node transform properties changed from `double[]` to nullable `Unity.Mathema
 
 ### `Sampler` nested enums promoted to top-level
 
-`Sampler.MagFilterMode`, `Sampler.MinFilterMode` and `Sampler.WrapMode` used to be nested inside the [Sampler](xref:GLTFast.Schema.Sampler) class. They are now top-level enums in the `GLTFast.Schema` namespace, matching every other glTF schema enum (`AlphaMode`, `CameraType`, `PrimitiveMode`, …). Qualified references and `using` aliases must drop the `Sampler.` prefix.
+`Sampler.MagFilterMode`, `Sampler.MinFilterMode` and `Sampler.WrapMode` used to be nested inside the [Sampler](xref:Unity.Cloud.Gltfast.Schema.Sampler) class. They are now top-level enums in the `Unity.Cloud.Gltfast.Schema` namespace, matching every other glTF schema enum (`AlphaMode`, `CameraType`, `PrimitiveMode`, …). Qualified references and `using` aliases must drop the `Sampler.` prefix.
 
 | Before | After |
 | ------ | ----- |
 | `Sampler.MagFilterMode` | `MagFilterMode` |
 | `Sampler.MinFilterMode` | `MinFilterMode` |
 | `Sampler.WrapMode` | `WrapMode` |
-| `using MagFilterMode = GLTFast.Schema.Sampler.MagFilterMode;` | `using MagFilterMode = GLTFast.Schema.MagFilterMode;` (and likewise for `MinFilterMode`/`WrapMode`) |
+| `using MagFilterMode = Unity.Cloud.Gltfast.Schema.Sampler.MagFilterMode;` | `using MagFilterMode = Unity.Cloud.Gltfast.Schema.MagFilterMode;` (and likewise for `MinFilterMode`/`WrapMode`) |
 
 Enum member names and underlying values are unchanged, so assignments such as `sampler.MagFilter = MagFilterMode.Linear;` keep working with the import already in scope.
 
 ### `Asset.Name` removed
 
-[Asset](xref:GLTFast.Schema.Asset) no longer derives from `NamedObject` and therefore no longer carries a `Name` property. The glTF 2.0 specification's `asset` object is not a "child of root" property and does not define a `name` field. Any code reading or writing `asset.Name` must be removed.
+[Asset](xref:Unity.Cloud.Gltfast.Schema.Asset) no longer derives from `NamedObject` and therefore no longer carries a `Name` property. The glTF 2.0 specification's `asset` object is not a "child of root" property and does not define a `name` field. Any code reading or writing `asset.Name` must be removed.
 
 | Before | After |
 | ------ | ----- |
@@ -350,32 +368,32 @@ Enum member names and underlying values are unchanged, so assignments such as `s
 
 ### Export image format and MIME type
 
-The redundant `GLTFast.Export.ImageFormat` enum was removed and merged into the canonical [GLTFast.ImageFormat](xref:GLTFast.ImageFormat). The enum value `Jpg` was renamed to `Jpeg` to match.
+The redundant `Unity.Cloud.Gltfast.Export.ImageFormat` enum was removed and merged into the canonical [Unity.Cloud.Gltfast.ImageFormat](xref:Unity.Cloud.Gltfast.ImageFormat). The enum value `Jpg` was renamed to `Jpeg` to match.
 
 | Before | After |
 | ------ | ----- |
-| `GLTFast.Export.ImageFormat` | [GLTFast.ImageFormat](xref:GLTFast.ImageFormat) |
+| `Unity.Cloud.Gltfast.Export.ImageFormat` | [Unity.Cloud.Gltfast.ImageFormat](xref:Unity.Cloud.Gltfast.ImageFormat) |
 | `ImageFormat.Jpg` | `ImageFormat.Jpeg` |
 
-[Export.ImageExportBase.MimeType](xref:GLTFast.Export.ImageExportBase.MimeType) changed from `string` to [ImageMimeType](xref:GLTFast.Schema.ImageMimeType). Custom subclasses overriding the property must return the enum directly.
+[Export.ImageExportBase.MimeType](xref:Unity.Cloud.Gltfast.Export.ImageExportBase.MimeType) changed from `string` to [ImageMimeType](xref:Unity.Cloud.Gltfast.Schema.ImageMimeType). Custom subclasses overriding the property must return the enum directly.
 
 | Before | After |
 | ------ | ----- |
 | `public override string MimeType => "image/png";` | `public override ImageMimeType MimeType => ImageMimeType.Png;` |
 
-The internal helpers `GLTFast.Export.Constants.mimeTypePNG` and `mimeTypeJPG` were removed; use `ImageMimeType.Png` / `ImageMimeType.Jpeg` instead.
+The internal helpers `Unity.Cloud.Gltfast.Export.Constants.mimeTypePNG` and `mimeTypeJPG` were removed; use `ImageMimeType.Png` / `ImageMimeType.Jpeg` instead.
 
 ### Exported JSON is no longer byte-identical
 
-The hand-written `GLTFast.Schema.JsonWriter` and the per-type `GltfSerialize` methods are gone; export now runs through `System.Text.Json` via the source-generated `GltfJsonContext`. The resulting glTF JSON is functionally equivalent and continues to round-trip through the importer, but the bytes are not identical to previous releases:
+The hand-written `Unity.Cloud.Gltfast.Schema.JsonWriter` and the per-type `GltfSerialize` methods are gone; export now runs through `System.Text.Json` via the source-generated `GltfJsonContext`. The resulting glTF JSON is functionally equivalent and continues to round-trip through the importer, but the bytes are not identical to previous releases:
 
-- **Property order** follows the C# field declaration order on each `GLTFast.Schema` class instead of the order baked into the old `GltfSerialize` methods.
+- **Property order** follows the C# field declaration order on each `Unity.Cloud.Gltfast.Schema` class instead of the order baked into the old `GltfSerialize` methods.
 - **Floating-point formatting** uses System.Text.Json's shortest-round-trip representation (e.g. `0.1` instead of `0.10000000149011612`).
 - **Default-value omission** is governed by `JsonIgnoreCondition.WhenWritingDefault` plus the `*Serialized` helper properties on schema types, rather than ad-hoc `if (value != default)` checks. A handful of fields that previously fell back to a project-default (e.g. `Sampler.MagFilter`/`MinFilter` was silently dropped when `Linear`) are now serialized whenever they're explicitly set.
 
 Diff-based comparison or hash-based caching of exported `.gltf` files needs to be re-baselined.
 
-`Root.GltfSerialize(StreamWriter)` is still available as an obsolete shim that forwards to the new writer; migrate to [Root.Serialize(Stream)](xref:GLTFast.RootExtension.Serialize*), which writes directly to a `Stream`:
+`Root.GltfSerialize(StreamWriter)` is still available as an obsolete shim that forwards to the new writer; migrate to [Root.Serialize(Stream)](xref:Unity.Cloud.Gltfast.RootExtension.Serialize*), which writes directly to a `Stream`:
 
 | Before | After |
 | ------ | ----- |
@@ -383,30 +401,30 @@ Diff-based comparison or hash-based caching of exported `.gltf` files needs to b
 
 ### Default Logger Behavior Change (Breaking)
 
-Public entry points that accept an [ICodeLogger](xref:GLTFast.Logging.ICodeLogger) now route messages to Unity's Console via a default [ConsoleLogger](xref:GLTFast.Logging.ConsoleLogger) when `null` is passed (or the argument is omitted). Previously `null` was stored verbatim and no messages were logged. Affected entry points:
+Public entry points that accept an [ICodeLogger](xref:Unity.Cloud.Gltfast.Logging.ICodeLogger) now route messages to Unity's Console via a default [ConsoleLogger](xref:Unity.Cloud.Gltfast.Logging.ConsoleLogger) when `null` is passed (or the argument is omitted). Previously `null` was stored verbatim and no messages were logged. Affected entry points:
 
-- [GltfImport](xref:GLTFast.GltfImport.#ctor(GLTFast.Loading.IDownloadProvider,GLTFast.IDeferAgent,GLTFast.Materials.IMaterialGenerator,GLTFast.Logging.ICodeLogger))
-- [GltfWriter](xref:GLTFast.Export.GltfWriter.#ctor(GLTFast.Export.ExportSettings,GLTFast.IDeferAgent,GLTFast.Logging.ICodeLogger))
-- [GameObjectInstantiator](xref:GLTFast.GameObjectInstantiator.#ctor(GLTFast.IGltfReadable,UnityEngine.Transform,GLTFast.Logging.ICodeLogger,GLTFast.InstantiationSettings))
-- [GameObjectBoundsInstantiator](xref:GLTFast.GameObjectBoundsInstantiator.#ctor(GLTFast.IGltfReadable,UnityEngine.Transform,GLTFast.Logging.ICodeLogger,GLTFast.InstantiationSettings))
-- [EntityInstantiator](xref:GLTFast.EntityInstantiator.#ctor(GLTFast.IGltfReadable,Unity.Entities.Entity,GLTFast.Logging.ICodeLogger,GLTFast.InstantiationSettings))
-- [GltfAssetBase.Instantiate](xref:GLTFast.GltfAssetBase.Instantiate(GLTFast.Logging.ICodeLogger))
-- [GltfAssetBase.InstantiateScene](xref:GLTFast.GltfAssetBase.InstantiateScene(System.Int32,GLTFast.Logging.ICodeLogger))
-- [GltfBoundsAsset.InstantiateScene](xref:GLTFast.GltfBoundsAsset.InstantiateScene(System.Int32,GLTFast.Logging.ICodeLogger))
+- [GltfImport](xref:Unity.Cloud.Gltfast.GltfImport.#ctor(Unity.Cloud.Gltfast.Loading.IDownloadProvider,Unity.Cloud.Gltfast.IDeferAgent,Unity.Cloud.Gltfast.Materials.IMaterialGenerator,Unity.Cloud.Gltfast.Logging.ICodeLogger))
+- [GltfWriter](xref:Unity.Cloud.Gltfast.Export.GltfWriter.#ctor(Unity.Cloud.Gltfast.Export.ExportSettings,Unity.Cloud.Gltfast.IDeferAgent,Unity.Cloud.Gltfast.Logging.ICodeLogger))
+- [GameObjectInstantiator](xref:Unity.Cloud.Gltfast.GameObjectInstantiator.#ctor(Unity.Cloud.Gltfast.IGltfReadable,UnityEngine.Transform,Unity.Cloud.Gltfast.Logging.ICodeLogger,Unity.Cloud.Gltfast.InstantiationSettings))
+- [GameObjectBoundsInstantiator](xref:Unity.Cloud.Gltfast.GameObjectBoundsInstantiator.#ctor(Unity.Cloud.Gltfast.IGltfReadable,UnityEngine.Transform,Unity.Cloud.Gltfast.Logging.ICodeLogger,Unity.Cloud.Gltfast.InstantiationSettings))
+- [EntityInstantiator](xref:Unity.Cloud.Gltfast.EntityInstantiator.#ctor(Unity.Cloud.Gltfast.IGltfReadable,Unity.Entities.Entity,Unity.Cloud.Gltfast.Logging.ICodeLogger,Unity.Cloud.Gltfast.InstantiationSettings))
+- [GltfAssetBase.Instantiate](xref:Unity.Cloud.Gltfast.GltfAssetBase.Instantiate(Unity.Cloud.Gltfast.Logging.ICodeLogger))
+- [GltfAssetBase.InstantiateScene](xref:Unity.Cloud.Gltfast.GltfAssetBase.InstantiateScene(System.Int32,Unity.Cloud.Gltfast.Logging.ICodeLogger))
+- [GltfBoundsAsset.InstantiateScene](xref:Unity.Cloud.Gltfast.GltfBoundsAsset.InstantiateScene(System.Int32,Unity.Cloud.Gltfast.Logging.ICodeLogger))
 
-To keep the previous silent behavior, pass [NullLogger.Instance](xref:GLTFast.Logging.NullLogger).
+To keep the previous silent behavior, pass [NullLogger.Instance](xref:Unity.Cloud.Gltfast.Logging.NullLogger).
 
-Some default messages include the download URL or content derived from the loaded file. Callers who must avoid emitting such content have to pass `NullLogger.Instance` or implement an [ICodeLogger](xref:GLTFast.Logging.ICodeLogger) that filters it.
+Some default messages include the download URL or content derived from the loaded file. Callers who must avoid emitting such content have to pass `NullLogger.Instance` or implement an [ICodeLogger](xref:Unity.Cloud.Gltfast.Logging.ICodeLogger) that filters it.
 
 ### Removed obsolete API
 
 | Before | After |
 | ------ | ----- |
-| `Export.StandardMaterialExport` | [BuiltInStandardMaterialExport](xref:GLTFast.Export.BuiltInStandardMaterialExport) (Built-In) or [LitMaterialExport](xref:GLTFast.Export.LitMaterialExport) (URP/HDRP), or [MaterialExport.GetDefaultMaterialExport](xref:GLTFast.Export.MaterialExport.GetDefaultMaterialExport) to pick the pipeline-appropriate exporter — HDRP output can differ, because the removed type routed HDRP to `LitMaterialExport`; both replacements are sealed, so derive from [StandardMaterialExportBase](xref:GLTFast.Export.StandardMaterialExportBase) instead of subclassing them |
-| `Export.MetaMaterialExport<TLitExport, TGltfShaderGraphExport>` | [MaterialExport.GetDefaultMaterialExport](xref:GLTFast.Export.MaterialExport.GetDefaultMaterialExport) |
-| `Export.MaterialExportBase.AddImageExport(gltf, imageExport, out textureId)` | [MaterialExportBase.ExportTextureInfo](xref:GLTFast.Export.MaterialExportBase.ExportTextureInfo*) or [MaterialExportBase.ExportNormalTextureInfo](xref:GLTFast.Export.MaterialExportBase.ExportNormalTextureInfo*). [MaterialExport.TryAddImageExport](xref:GLTFast.Export.MaterialExport.TryAddImageExport*) is public now, but every built-in image export is internal, so it needs a caller-supplied [ImageExportBase](xref:GLTFast.Export.ImageExportBase) subclass |
+| `Export.StandardMaterialExport` | [BuiltInStandardMaterialExport](xref:Unity.Cloud.Gltfast.Export.BuiltInStandardMaterialExport) (Built-In) or [LitMaterialExport](xref:Unity.Cloud.Gltfast.Export.LitMaterialExport) (URP/HDRP), or [MaterialExport.GetDefaultMaterialExport](xref:Unity.Cloud.Gltfast.Export.MaterialExport.GetDefaultMaterialExport) to pick the pipeline-appropriate exporter — HDRP output can differ, because the removed type routed HDRP to `LitMaterialExport`; both replacements are sealed, so derive from [StandardMaterialExportBase](xref:Unity.Cloud.Gltfast.Export.StandardMaterialExportBase) instead of subclassing them |
+| `Export.MetaMaterialExport<TLitExport, TGltfShaderGraphExport>` | [MaterialExport.GetDefaultMaterialExport](xref:Unity.Cloud.Gltfast.Export.MaterialExport.GetDefaultMaterialExport) |
+| `Export.MaterialExportBase.AddImageExport(gltf, imageExport, out textureId)` | [MaterialExportBase.ExportTextureInfo](xref:Unity.Cloud.Gltfast.Export.MaterialExportBase.ExportTextureInfo*) or [MaterialExportBase.ExportNormalTextureInfo](xref:Unity.Cloud.Gltfast.Export.MaterialExportBase.ExportNormalTextureInfo*). [MaterialExport.TryAddImageExport](xref:Unity.Cloud.Gltfast.Export.MaterialExport.TryAddImageExport*) is public now, but every built-in image export is internal, so it needs a caller-supplied [ImageExportBase](xref:Unity.Cloud.Gltfast.Export.ImageExportBase) subclass |
 
-`GetDefaultMaterialExport` covers the default lit plus shader graph pairing only; a custom pairing has no public replacement and has to be implemented as an [IMaterialExport](xref:GLTFast.Export.IMaterialExport) and passed to the exporter.
+`GetDefaultMaterialExport` covers the default lit plus shader graph pairing only; a custom pairing has no public replacement and has to be implemented as an [IMaterialExport](xref:Unity.Cloud.Gltfast.Export.IMaterialExport) and passed to the exporter.
 
 #### `GLTFast.ManagedNativeArray<TIn, TOut>`
 
@@ -416,7 +434,7 @@ Removed with no public replacement. Code relying on its element-type punning (a 
 
 Use Unity 2021.3.46f1 or newer only.
 
-*GltfAnimation* was renamed to [Animation](xref:GLTFast.Schema.Animation).
+*GltfAnimation* was renamed to [Animation](xref:Unity.Cloud.Gltfast.Schema.Animation).
 
 ## Unity Fork
 
@@ -502,7 +520,7 @@ Some assemblies, classes, structs and enum types have been renamed or moved. Mak
 
 The addition of `GltfImport.InstantiateSceneAsync` and `GltfImport.InstantiateMainSceneAsync` now provides an asynchronous way of instantiating glTF&trade; scenes. For large scenes this means that the instantiation can be spread over multiple frames, resulting in a smoother frame rate.
 
-The synchronous instantiation methods `GltfImport.InstantiateScene` and `GltfImport.InstantiateMainScene` (including overloads) were marked obsolete and have been removed in 7.0. Update your code to use the async variants.
+The existing, synchronous instantiation methods `GltfImport.InstantiateScene` and `GltfImport.InstantiateMainScene` (including overloads) have been marked obsolete and will be removed eventually. Though they still work, it's recommended to update your code to use the async variants.
 
 Since loading a glTF (the step before instantiation) has been async before, chances are high your enclosing method is already async, as it should be.
 
@@ -563,7 +581,7 @@ async void Start() {
     var gltfImport = new GltfImport();
     await gltfImport.Load("test.gltf");
     var instantiator = new GameObjectInstantiator(gltfImport,transform);
-    var success = await gltfImport.InstantiateMainSceneAsync(instantiator);
+    var success = gltfImport.InstantiateMainScene(instantiator);
     if (success) {
 
         // Get the SceneInstance to access the instance's properties
@@ -638,10 +656,10 @@ public int sceneCount;
 // Returns the default scene's index
 public int? defaultSceneIndex;
 // Methods for instantiation
-public Task<bool> InstantiateMainSceneAsync( Transform parent );
-public Task<bool> InstantiateMainSceneAsync( IInstantiator instantiator );
-public Task<bool> InstantiateSceneAsync( Transform parent, int sceneIndex = 0 );
-public Task<bool> InstantiateSceneAsync( IInstantiator instantiator, int sceneIndex = 0 );
+public bool InstantiateMainScene( Transform parent );
+public bool InstantiateMainScene(IInstantiator instantiator);
+public bool InstantiateScene( Transform parent, int sceneIndex = 0);
+public bool InstantiateScene( IInstantiator instantiator, int sceneIndex = 0 );
 ```
 
 Please look at [`GltfAsset`][GltfAsset] for a reference implementation and look at the properties'/methods' XML documentation comments in the source code for details.
@@ -670,16 +688,16 @@ In the future materials can be created before textures are available/downloaded 
 
 *Khronos&reg;* is a registered trademark and *glTF&trade;* is a trademark of [The Khronos Group Inc][khronos].
 
-[GameObjectInstantiator]: xref:GLTFast.GameObjectInstantiator
-[GameObjectSceneInstance]: xref:GLTFast.GameObjectSceneInstance
+[GameObjectInstantiator]: xref:Unity.Cloud.Gltfast.GameObjectInstantiator
+[GameObjectSceneInstance]: xref:Unity.Cloud.Gltfast.GameObjectSceneInstance
 [GitPackageInstall]: https://docs.unity3d.com/Manual/upm-ui-giturl.html
 [gltf-spec-coords]: https://www.khronos.org/registry/glTF/specs/2.0/glTF-2.0.html#coordinate-system-and-units
-[GltfAsset]: xref:GLTFast.GltfAsset
+[GltfAsset]: xref:Unity.Cloud.Gltfast.GltfAsset
 [gltfast3to4]: Images/gltfast3to4.png  "3D scene view showing BoomBoxWithAxes model twice. One with the legacy axis conversion and one with the new orientation"
-[GltfImport]: xref:GLTFast.GltfImport
+[GltfImport]: xref:Unity.Cloud.Gltfast.GltfImport
 [Monorepo]: https://en.wikipedia.org/wiki/Monorepo
 [ProjectManifest]: https://docs.unity3d.com/Manual/upm-git.html
-[IGltfReadable]: xref:GLTFast.IGltfReadable
+[IGltfReadable]: xref:Unity.Cloud.Gltfast.IGltfReadable
 [ImgConv]: https://docs.unity3d.com/2021.3/Documentation/ScriptReference/UnityEngine.ImageConversionModule.html
 [OpenUPM]: https://openupm.com/
 [khronos]: https://www.khronos.org

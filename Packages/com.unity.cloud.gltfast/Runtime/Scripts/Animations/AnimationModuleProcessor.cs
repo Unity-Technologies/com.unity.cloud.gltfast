@@ -5,8 +5,8 @@
 
 using System;
 using System.Collections.Generic;
-using GLTFast.Addons;
-using GLTFast.Schema;
+using Unity.Cloud.Gltfast.Addons;
+using Unity.Cloud.Gltfast.Schema;
 using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
@@ -14,7 +14,7 @@ using UnityEngine.Assertions;
 using UnityEngine.Profiling;
 using WrapMode = UnityEngine.WrapMode;
 
-namespace GLTFast.Animations
+namespace Unity.Cloud.Gltfast.Animations
 {
     sealed class AnimationModuleProcessor : IAnimationProcessor
     {

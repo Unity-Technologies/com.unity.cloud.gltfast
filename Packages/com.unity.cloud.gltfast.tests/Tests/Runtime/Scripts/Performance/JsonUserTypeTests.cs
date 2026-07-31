@@ -3,14 +3,14 @@
 
 using System;
 using System.Text;
-using GLTFast.Schema;
 using NUnit.Framework;
+using Unity.Cloud.Gltfast.Schema;
 using Unity.Collections;
 using Unity.Gltfast.Text.Json.Serialization;
 using Unity.Mathematics;
 using Unity.PerformanceTesting;
 
-namespace GLTFast.Tests.Performance
+namespace Unity.Cloud.Gltfast.Tests.Performance
 {
     [TestFixture]
     class JsonUserTypeTests

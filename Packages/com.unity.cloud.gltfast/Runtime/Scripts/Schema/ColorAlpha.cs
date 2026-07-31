@@ -3,12 +3,14 @@
 
 using System;
 using Unity.Mathematics;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast.Schema
+namespace Unity.Cloud.Gltfast.Schema
 {
     /// <summary>
     /// Linear RGBA color.
     /// </summary>
+    [MovedFrom(true, sourceNamespace: "GLTFast.Schema", sourceAssembly: "glTFast")]
     public struct ColorAlpha : IEquatable<ColorAlpha>
     {
         /// <summary>Red component.</summary>

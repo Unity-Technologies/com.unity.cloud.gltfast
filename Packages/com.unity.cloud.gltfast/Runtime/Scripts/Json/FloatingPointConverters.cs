@@ -7,7 +7,7 @@ using Unity.Gltfast.Text.Json;
 using Unity.Gltfast.Text.Json.Serialization;
 using Unity.Mathematics;
 
-namespace GLTFast.Schema
+namespace Unity.Cloud.Gltfast.Schema
 {
     class Double3Converter : JsonConverter<double3>
     {

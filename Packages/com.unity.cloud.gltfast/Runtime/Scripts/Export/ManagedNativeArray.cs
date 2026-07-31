@@ -7,7 +7,7 @@ using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 
-namespace GLTFast.Export
+namespace Unity.Cloud.Gltfast.Export
 {
 
     /// <summary>

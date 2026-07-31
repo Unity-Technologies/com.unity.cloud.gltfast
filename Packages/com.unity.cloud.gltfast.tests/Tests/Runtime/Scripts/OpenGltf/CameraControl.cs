@@ -4,7 +4,7 @@
 using Unity.Mathematics;
 using UnityEngine;
 
-namespace GLTFast.Tests
+namespace Unity.Cloud.Gltfast.Tests
 {
     [RequireComponent(typeof(Camera))]
     public class CameraControl : MonoBehaviour

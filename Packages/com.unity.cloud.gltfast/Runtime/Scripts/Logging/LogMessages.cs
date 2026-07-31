@@ -9,13 +9,15 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast.Logging
+namespace Unity.Cloud.Gltfast.Logging
 {
 
     /// <summary>
     /// Predefined message code
     /// </summary>
+    [MovedFrom(true, sourceNamespace: "GLTFast.Logging", sourceAssembly: "glTFast")]
     public enum LogCode : uint
     {
         /// <summary>
@@ -277,6 +279,7 @@ namespace GLTFast.Logging
     /// <summary>
     /// Converts <see cref="LogCode"/> to human readable and understandable message string.
     /// </summary>
+    [MovedFrom(true, sourceNamespace: "GLTFast.Logging", sourceAssembly: "glTFast")]
     public static class LogMessages
     {
 #if GLTFAST_REPORT

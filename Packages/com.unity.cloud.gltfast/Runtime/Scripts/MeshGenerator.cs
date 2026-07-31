@@ -4,9 +4,9 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using GLTFast.Jobs;
-using GLTFast.Logging;
-using GLTFast.Schema;
+using Unity.Cloud.Gltfast.Jobs;
+using Unity.Cloud.Gltfast.Logging;
+using Unity.Cloud.Gltfast.Schema;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Jobs;
@@ -17,7 +17,7 @@ using UnityEngine.Profiling;
 using UnityEngine.Rendering;
 using Mesh = UnityEngine.Mesh;
 
-namespace GLTFast
+namespace Unity.Cloud.Gltfast
 {
     class MeshGenerator : MeshGeneratorBase
     {

@@ -2,13 +2,13 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System.Threading.Tasks;
-using GLTFast.Export;
-using GLTFast.Logging;
+using Unity.Cloud.Gltfast.Export;
+using Unity.Cloud.Gltfast.Logging;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace GLTFast.Editor.Documentation.Examples
+namespace Unity.Cloud.Gltfast.Documentation.Examples.Editor
 {
     static class EditorExportSamples
     {

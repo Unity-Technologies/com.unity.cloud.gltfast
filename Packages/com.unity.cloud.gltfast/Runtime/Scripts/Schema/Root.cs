@@ -4,16 +4,17 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading.Tasks;
 using Unity.Gltfast.Text.Json;
 using Unity.Gltfast.Text.Json.Serialization;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast.Schema
+namespace Unity.Cloud.Gltfast.Schema
 {
     /// <summary>
     /// The root object for a glTF asset.
     /// </summary>
     /// <seealso href="https://www.khronos.org/registry/glTF/specs/2.0/glTF-2.0.html#reference-gltf"/>
+    [MovedFrom(true, sourceNamespace: "GLTFast.Schema", sourceAssembly: "glTFast")]
     public class Root : IGltfObject
     {
         /// <summary>

@@ -4,20 +4,22 @@
 #if USING_HDRP
 
 using System;
-using GLTFast.Schema;
+using Unity.Cloud.Gltfast.Schema;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.HighDefinition;
+using UnityEngine.Scripting.APIUpdating;
 
 using Material = UnityEngine.Material;
-using GltfMaterial = GLTFast.Schema.Material;
+using GltfMaterial = Unity.Cloud.Gltfast.Schema.Material;
 
-namespace GLTFast.Materials
+namespace Unity.Cloud.Gltfast.Materials
 {
 
+    [MovedFrom(true, sourceNamespace: "GLTFast.Materials", sourceAssembly: "glTFast")]
     public class HighDefinitionRPMaterialGenerator : ShaderGraphMaterialGenerator
     {
 

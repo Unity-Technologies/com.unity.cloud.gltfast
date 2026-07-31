@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System.Text;
-using GLTFast.Schema;
 using NUnit.Framework;
+using Unity.Cloud.Gltfast.Schema;
 
-namespace GLTFast.Tests.JsonParsing
+namespace Unity.Cloud.Gltfast.Tests.JsonParsing
 {
     [TestFixture]
     [Category("JsonParsing")]

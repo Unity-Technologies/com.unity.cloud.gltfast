@@ -3,13 +3,15 @@
 
 using System;
 using Unity.Gltfast.Text.Json.Serialization;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast.Schema
+namespace Unity.Cloud.Gltfast.Schema
 {
     /// <summary>
     /// Light type
     /// </summary>
     [JsonConverter(typeof(JsonStringEnumConverter<LightType>))]
+    [MovedFrom(true, sourceNamespace: "GLTFast.Schema", sourceAssembly: "glTFast")]
     public enum LightType
     {
         /// <summary>Undefined</summary>

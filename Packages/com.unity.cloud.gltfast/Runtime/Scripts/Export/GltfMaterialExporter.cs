@@ -2,30 +2,31 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
-using GLTFast.Logging;
-using GLTFast.Materials;
-using GLTFast.Schema;
+using Unity.Cloud.Gltfast.Logging;
+using Unity.Cloud.Gltfast.Materials;
+using Unity.Cloud.Gltfast.Schema;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.Scripting.APIUpdating;
 using Color = UnityEngine.Color;
-using GltfMaterial = GLTFast.Schema.Material;
 using Material = UnityEngine.Material;
 
-namespace GLTFast.Export
+namespace Unity.Cloud.Gltfast.Export
 {
     /// <summary>
     /// Converts Unity Materials that use a glTFast shader to glTF materials
     /// </summary>
+    [MovedFrom(true, sourceNamespace: "GLTFast.Export", sourceAssembly: "glTFast.Export")]
     public abstract class GltfMaterialExporter : MaterialExportBase
     {
         /// <inheritdoc />
         public override bool ConvertMaterial(
             Material unityMaterial,
-            out GLTFast.Schema.Material material,
+            out Unity.Cloud.Gltfast.Schema.Material material,
             IGltfWritable gltf,
             ICodeLogger logger)
         {
-            material = new GLTFast.Schema.Material
+            material = new Unity.Cloud.Gltfast.Schema.Material
             {
                 Name = unityMaterial.name,
                 PbrMetallicRoughness = new PbrMetallicRoughness(),
@@ -70,9 +71,9 @@ namespace GLTFast.Export
         /// <returns>True if material does not do back-face culling. False otherwise.</returns>
         protected abstract bool IsDoubleSided(Material material);
 
-        static GLTFast.Schema.Material HandlePbrMetallicRoughness(
+        static Unity.Cloud.Gltfast.Schema.Material HandlePbrMetallicRoughness(
             IGltfWritable gltf,
-            GLTFast.Schema.Material material,
+            Unity.Cloud.Gltfast.Schema.Material material,
             Material unityMaterial)
         {
             if (TryGetValue(unityMaterial, MaterialProperty.BaseColorTexture, out Texture2D texture2D))
@@ -113,9 +114,9 @@ namespace GLTFast.Export
             return material;
         }
 
-        static GLTFast.Schema.Material HandleMetallicRoughness(
+        static Unity.Cloud.Gltfast.Schema.Material HandleMetallicRoughness(
             IGltfWritable gltf,
-            GLTFast.Schema.Material material,
+            Unity.Cloud.Gltfast.Schema.Material material,
             Material unityMaterial)
         {
             if (TryGetValue(unityMaterial, MaterialProperty.MetallicRoughnessMap, out Texture2D texture2D)
@@ -157,9 +158,9 @@ namespace GLTFast.Export
             return material;
         }
 
-        static GLTFast.Schema.Material HandleNormal(
+        static Unity.Cloud.Gltfast.Schema.Material HandleNormal(
             IGltfWritable gltf,
-            GLTFast.Schema.Material material,
+            Unity.Cloud.Gltfast.Schema.Material material,
             Material unityMaterial)
         {
             if (!TryGetValue(unityMaterial, MaterialProperty.NormalTexture, out Texture2D texture2D))
@@ -199,9 +200,9 @@ namespace GLTFast.Export
             return material;
         }
 
-        static GLTFast.Schema.Material HandleOcclusion(
+        static Unity.Cloud.Gltfast.Schema.Material HandleOcclusion(
             IGltfWritable gltf,
-            GLTFast.Schema.Material material,
+            Unity.Cloud.Gltfast.Schema.Material material,
             Material unityMaterial)
         {
             if (!TryGetValue(unityMaterial, MaterialProperty.OcclusionTexture, out Texture2D texture2D))
@@ -241,9 +242,9 @@ namespace GLTFast.Export
             return material;
         }
 
-        static GLTFast.Schema.Material HandleEmission(
+        static Unity.Cloud.Gltfast.Schema.Material HandleEmission(
             IGltfWritable gltf,
-            GLTFast.Schema.Material material,
+            Unity.Cloud.Gltfast.Schema.Material material,
             Material unityMaterial)
         {
             if (TryGetValue(unityMaterial, MaterialProperty.EmissiveTexture, out Texture2D texture2D))

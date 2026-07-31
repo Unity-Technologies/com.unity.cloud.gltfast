@@ -5,16 +5,16 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using GLTFast.Addons;
-using GLTFast.Schema;
 using NUnit.Framework;
+using Unity.Cloud.Gltfast.Addons;
+using Unity.Cloud.Gltfast.Schema;
 using Unity.Collections;
 using Unity.PerformanceTesting;
 using UnityEngine;
 using UnityEngine.Profiling;
-using Texture = GLTFast.Schema.Texture;
+using Texture = Unity.Cloud.Gltfast.Schema.Texture;
 
-namespace GLTFast.Tests
+namespace Unity.Cloud.Gltfast.Tests
 {
     class ImportAddonInstanceCollectionTests
     {

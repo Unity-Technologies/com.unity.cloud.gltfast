@@ -5,7 +5,7 @@
 
 using UnityEngine;
 
-namespace GLTFast.Export
+namespace Unity.Cloud.Gltfast.Export
 {
     using Logging;
     using Schema;

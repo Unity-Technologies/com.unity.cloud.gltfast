@@ -9,10 +9,10 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading.Tasks;
-using GLTFast.Tests.Import;
+using Unity.Cloud.Gltfast.Tests.Import;
 using UnityEngine;
 
-namespace GLTFast.Tests
+namespace Unity.Cloud.Gltfast.Tests
 {
     /// <summary>
     /// Helper component that loads all glTFs of a GltfTestCaseSet.

@@ -2,12 +2,12 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System.Text;
-using GLTFast.Export;
-using GLTFast.Schema;
 using NUnit.Framework;
+using Unity.Cloud.Gltfast.Export;
+using Unity.Cloud.Gltfast.Schema;
 using UnityEngine;
 
-namespace GLTFast.Tests
+namespace Unity.Cloud.Gltfast.Tests
 {
     class ImageFormatTests
     {

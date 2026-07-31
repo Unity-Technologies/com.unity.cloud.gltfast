@@ -2,8 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using Unity.Gltfast.Text.Json.Serialization;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast.Schema
+namespace Unity.Cloud.Gltfast.Schema
 {
     /// <summary>
     /// The dielectric BRDF of the metallic-roughness material in glTF uses a fixed value of 1.5 for the index of
@@ -11,6 +12,7 @@ namespace GLTFast.Schema
     /// sapphire or diamond. This extension allows users to set the index of refraction to a certain value.
     /// </summary>
     /// <seealso href="https://github.com/KhronosGroup/glTF/tree/main/extensions/2.0/Khronos/KHR_materials_ior"/>
+    [MovedFrom(true, sourceNamespace: "GLTFast.Schema", sourceAssembly: "glTFast")]
     public class MaterialIor
     {
         /// <summary>

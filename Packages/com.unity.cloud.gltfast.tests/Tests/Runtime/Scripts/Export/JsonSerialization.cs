@@ -5,13 +5,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
-using GLTFast.Schema;
 using NUnit.Framework;
+using Unity.Cloud.Gltfast.Schema;
 using Unity.Gltfast.Text.Json;
 using UnityEngine;
-using Mesh = GLTFast.Schema.Mesh;
+using Mesh = Unity.Cloud.Gltfast.Schema.Mesh;
 
-namespace GLTFast.Tests.Export
+namespace Unity.Cloud.Gltfast.Tests.Export
 {
     [Category("Export")]
     class JsonSerialization

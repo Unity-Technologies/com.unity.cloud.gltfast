@@ -5,14 +5,14 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using GLTFast.Export;
-using GLTFast.Logging;
 using NUnit.Framework;
+using Unity.Cloud.Gltfast.Export;
+using Unity.Cloud.Gltfast.Logging;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.TestTools;
 
-namespace GLTFast.Tests.Export
+namespace Unity.Cloud.Gltfast.Tests.Export
 {
     [Category("Export")]
     class GltfWriterTests

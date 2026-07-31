@@ -4,14 +4,16 @@
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast.Export
+namespace Unity.Cloud.Gltfast.Export
 {
 
     using Logging;
     using Schema;
 
     /// <inheritdoc cref="IMaterialExport"/>
+    [MovedFrom(true, sourceNamespace: "GLTFast.Export", sourceAssembly: "glTFast.Export")]
     public abstract class MaterialExportBase : IMaterialExport
     {
         // These property IDs might be useful for developing custom IMaterialExport implementations,

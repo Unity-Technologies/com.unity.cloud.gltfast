@@ -9,7 +9,7 @@ using UnityEngine.Assertions;
 using UnityEngine.Experimental.Rendering;
 using Object = UnityEngine.Object;
 
-namespace GLTFast.Export
+namespace Unity.Cloud.Gltfast.Export
 {
 
     /// <summary>

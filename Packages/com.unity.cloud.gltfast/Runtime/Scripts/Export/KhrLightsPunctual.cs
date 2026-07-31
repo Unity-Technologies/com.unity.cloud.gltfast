@@ -1,19 +1,21 @@
 // SPDX-FileCopyrightText: 2024 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
-using GLTFast.Schema;
+using Unity.Cloud.Gltfast.Schema;
 using UnityEngine;
+using UnityEngine.Scripting.APIUpdating;
 using LightType = UnityEngine.LightType;
 #if USING_HDRP
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.HighDefinition;
 #endif
 
-namespace GLTFast.Export
+namespace Unity.Cloud.Gltfast.Export
 {
     /// <summary>
     /// Provides conversion from Unity light components to glTF lights.
     /// </summary>
+    [MovedFrom(true, sourceNamespace: "GLTFast.Export", sourceAssembly: "glTFast.Export")]
     public static class KhrLightsPunctual
     {
         /// <summary>

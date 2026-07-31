@@ -5,16 +5,16 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using GLTFast.Export;
-using GLTFast.Schema;
+using Unity.Cloud.Gltfast.Export;
+using Unity.Cloud.Gltfast.Schema;
 using Unity.Mathematics;
 using UnityEngine;
 using Camera = UnityEngine.Camera;
 using Material = UnityEngine.Material;
 using Mesh = UnityEngine.Mesh;
-using Texture = GLTFast.Schema.Texture;
+using Texture = Unity.Cloud.Gltfast.Schema.Texture;
 
-namespace GLTFast.Tests.Export
+namespace Unity.Cloud.Gltfast.Tests.Export
 {
     class GltfWritableMock : IGltfWritable
     {

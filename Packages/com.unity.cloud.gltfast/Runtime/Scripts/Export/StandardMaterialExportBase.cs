@@ -2,19 +2,21 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
-using GLTFast.Logging;
-using GLTFast.Materials;
-using GLTFast.Schema;
+using Unity.Cloud.Gltfast.Logging;
+using Unity.Cloud.Gltfast.Materials;
+using Unity.Cloud.Gltfast.Schema;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.Scripting.APIUpdating;
 using Color = UnityEngine.Color;
-using Material = GLTFast.Schema.Material;
+using Material = Unity.Cloud.Gltfast.Schema.Material;
 
-namespace GLTFast.Export
+namespace Unity.Cloud.Gltfast.Export
 {
     /// <summary>
     /// Converts URP/HDRP Lit and Built-In Standard shader based materials to glTF materials
     /// </summary>
+    [MovedFrom(true, sourceNamespace: "GLTFast.Export", sourceAssembly: "glTFast.Export")]
     public abstract class StandardMaterialExportBase : MaterialExportBase
     {
         const string k_KeywordBumpMap = "_BUMPMAP";

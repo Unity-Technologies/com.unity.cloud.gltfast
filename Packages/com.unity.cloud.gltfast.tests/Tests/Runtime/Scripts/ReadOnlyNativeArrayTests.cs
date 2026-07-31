@@ -9,7 +9,7 @@ using Unity.Jobs;
 using UnityEngine;
 using UnityEngine.TestTools;
 
-namespace GLTFast.Tests
+namespace Unity.Cloud.Gltfast.Tests
 {
     static class ReadOnlyNativeArrayTests
     {

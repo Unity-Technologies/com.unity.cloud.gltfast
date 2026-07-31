@@ -7,13 +7,15 @@ using System.IO;
 using System.Threading.Tasks;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast.Export
+namespace Unity.Cloud.Gltfast.Export
 {
 
     /// <summary>
     /// Is able to receive asset resources and export them to glTF
     /// </summary>
+    [MovedFrom(true, sourceNamespace: "GLTFast.Export", sourceAssembly: "glTFast.Export")]
     public interface IGltfWritable
     {
 

@@ -2,8 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System.Threading.Tasks;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast
+namespace Unity.Cloud.Gltfast
 {
 
     /// <summary>
@@ -11,6 +12,7 @@ namespace GLTFast
     /// processing
     /// </summary>
     /// <seealso cref="IDeferAgent"/>
+    [MovedFrom(true, sourceNamespace: "GLTFast", sourceAssembly: "glTFast")]
     public class UninterruptedDeferAgent : IDeferAgent
     {
         /// <inheritdoc />

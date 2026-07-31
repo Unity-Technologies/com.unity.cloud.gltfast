@@ -5,7 +5,7 @@ using System;
 using System.Collections;
 using System.IO;
 using System.Threading.Tasks;
-using GLTFast.Logging;
+using Unity.Cloud.Gltfast.Logging;
 using NUnit.Framework;
 using UnityEngine;
 #if UNITY_ANDROID && !UNITY_EDITOR
@@ -13,7 +13,7 @@ using UnityEngine.Networking;
 #endif
 using UnityEngine.TestTools;
 
-namespace GLTFast.Tests.Import
+namespace Unity.Cloud.Gltfast.Tests.Import
 {
     [Category("Import")]
     class GltfBinaryTests : IPrebuildSetup

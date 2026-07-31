@@ -2,18 +2,18 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
-using GLTFast.Export;
-using GLTFast.Logging;
-using GLTFast.Schema;
 using NUnit.Framework;
+using Unity.Cloud.Gltfast.Export;
+using Unity.Cloud.Gltfast.Logging;
+using Unity.Cloud.Gltfast.Schema;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.TestTools.Utils;
 using Color = UnityEngine.Color;
-using GltfMaterial = GLTFast.Schema.Material;
+using GltfMaterial = Unity.Cloud.Gltfast.Schema.Material;
 using Material = UnityEngine.Material;
 
-namespace GLTFast.Tests.Export
+namespace Unity.Cloud.Gltfast.Tests.Export
 {
     [Category("Export")]
     abstract class MaterialExportTests

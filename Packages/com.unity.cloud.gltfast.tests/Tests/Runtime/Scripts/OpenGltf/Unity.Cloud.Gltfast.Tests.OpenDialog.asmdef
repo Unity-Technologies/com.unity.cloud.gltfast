@@ -1,5 +1,5 @@
 {
-    "name": "glTFast.Tests.OpenDialog",
+    "name": "Unity.Cloud.Gltfast.Tests.OpenDialog",
     "rootNamespace": "",
     "references": [
         "GUID:a42927d1d4a3b4cda9b076a7adecb9cc",

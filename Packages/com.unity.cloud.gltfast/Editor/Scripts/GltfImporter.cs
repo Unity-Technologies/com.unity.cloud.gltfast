@@ -22,15 +22,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using GLTFast.Logging;
-using GLTFast.Utils;
+using Unity.Cloud.Gltfast.Logging;
+using Unity.Cloud.Gltfast.Utils;
 using UnityEditor;
 using UnityEditor.AssetImporters;
 using UnityEngine;
 using UnityEngine.Rendering;
 using Object = UnityEngine.Object;
 
-namespace GLTFast.Editor
+namespace Unity.Cloud.Gltfast.Editor
 {
 
 #if ENABLE_DEFAULT_GLB_IMPORTER

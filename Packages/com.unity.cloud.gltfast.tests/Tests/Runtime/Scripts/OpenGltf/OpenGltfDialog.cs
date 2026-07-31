@@ -4,7 +4,7 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using GLTFast.Logging;
+using Unity.Cloud.Gltfast.Logging;
 #if UNITY_ENTITIES_GRAPHICS
 using Unity.Entities;
 using Unity.Transforms;
@@ -15,7 +15,7 @@ using UnityEditor;
 #endif
 using UnityEngine;
 
-namespace GLTFast.Tests
+namespace Unity.Cloud.Gltfast.Tests
 {
     public class OpenGltfDialog : MonoBehaviour
     {
@@ -60,7 +60,7 @@ namespace GLTFast.Tests
         MaterialsVariantsComponent m_MaterialsVariantsComponent;
 
 #if UNITY_EDITOR
-        const string k_LastFilePathKey = "GLTFast.Tests.OpenGltfDialog.LastFilePath";
+        const string k_LastFilePathKey = "Unity.Cloud.Gltfast.Tests.OpenGltfDialog.LastFilePath";
 
         static string LastFilePath
         {

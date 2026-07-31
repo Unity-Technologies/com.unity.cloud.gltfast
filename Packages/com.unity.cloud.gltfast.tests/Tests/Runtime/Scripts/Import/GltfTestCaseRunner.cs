@@ -7,14 +7,14 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using GLTFast.Logging;
+using Unity.Cloud.Gltfast.Logging;
 using NUnit.Framework;
 #if UNITY_ENTITIES_GRAPHICS
 using Unity.Entities;
 #endif
 using UnityEngine;
 
-namespace GLTFast.Tests.Import
+namespace Unity.Cloud.Gltfast.Tests.Import
 {
     sealed class GltfTestCaseRunner : IDisposable
     {

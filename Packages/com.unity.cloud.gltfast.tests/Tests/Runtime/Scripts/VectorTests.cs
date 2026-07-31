@@ -5,7 +5,7 @@ using NUnit.Framework;
 using Unity.Mathematics;
 using UnityEngine;
 
-namespace GLTFast.Tests
+namespace Unity.Cloud.Gltfast.Tests
 {
     class VectorTests
     {

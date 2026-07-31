@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System.Collections;
-using GLTFast.Tests.Import;
+using Unity.Cloud.Gltfast.Tests.Import;
 using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;
@@ -12,7 +12,7 @@ using System.IO;
 using UnityEngine.TestTools;
 #endif
 
-namespace GLTFast.Editor.Tests
+namespace Unity.Cloud.Gltfast.Editor.Tests
 {
     [TestFixture]
     class GltfImporterTest

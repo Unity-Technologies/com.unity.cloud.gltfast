@@ -2,9 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast.Newtonsoft.Schema
+namespace Unity.Cloud.Gltfast.Newtonsoft.Schema
 {
-    [Obsolete("Use GLTFast.Schema.MeshPrimitive instead.")]
-    public class MeshPrimitive : GLTFast.Schema.MeshPrimitive, IJsonObject { }
+    [Obsolete("Use Unity.Cloud.Gltfast.Schema.MeshPrimitive instead.")]
+    [MovedFrom(true, sourceNamespace: "GLTFast.Newtonsoft.Schema", sourceAssembly: "glTFast.Newtonsoft")]
+    public class MeshPrimitive : Unity.Cloud.Gltfast.Schema.MeshPrimitive, IJsonObject { }
 }

@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Rendering;
 
-namespace GLTFast.Tests
+namespace Unity.Cloud.Gltfast.Tests
 {
     static class TestMeshGenerator
     {

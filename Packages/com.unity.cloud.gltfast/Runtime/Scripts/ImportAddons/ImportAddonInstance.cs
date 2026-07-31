@@ -2,14 +2,16 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast.Addons
+namespace Unity.Cloud.Gltfast.Addons
 {
 
     /// <summary>
     /// Base class for customizing load- and instantiation behavior.
     /// Injects itself into <see cref="GltfImport"/> and <see cref="IInstantiator"/>.
     /// </summary>
+    [MovedFrom(true, sourceNamespace: "GLTFast.Addons", sourceAssembly: "glTFast")]
     public abstract class ImportAddonInstance : IDisposable
     {
         /// <summary>

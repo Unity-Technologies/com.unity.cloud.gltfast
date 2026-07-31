@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "com.unity.cloud.gltfast": "file:./../../../Packages/com.unity.cloud.gltfast",
+    "com.unity.ide.rider": "3.0.40",
+    "com.unity.ide.visualstudio": "2.0.27",
+    "com.unity.modules.animation": "1.0.0",
+    "com.unity.modules.imageconversion": "1.0.0",
+    "com.unity.modules.physics": "1.0.0"
+  }
+}

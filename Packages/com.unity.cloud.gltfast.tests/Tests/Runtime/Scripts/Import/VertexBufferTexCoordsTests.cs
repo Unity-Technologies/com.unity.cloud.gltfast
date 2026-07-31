@@ -1,13 +1,13 @@
 // SPDX-FileCopyrightText: 2024 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
-using GLTFast.Vertex;
 using NUnit.Framework;
+using Unity.Cloud.Gltfast.Vertex;
 using Unity.Collections;
 using Unity.Jobs;
 using UnityEngine;
 
-namespace GLTFast.Tests
+namespace Unity.Cloud.Gltfast.Tests
 {
     class VertexBufferTexCoordsTests
     {

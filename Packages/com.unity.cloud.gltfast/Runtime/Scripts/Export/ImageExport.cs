@@ -3,7 +3,7 @@
 
 using System;
 using System.IO;
-using GLTFast.Schema;
+using Unity.Cloud.Gltfast.Schema;
 using UnityEngine;
 using UnityEngine.Experimental.Rendering;
 using Material = UnityEngine.Material;
@@ -11,7 +11,7 @@ using Material = UnityEngine.Material;
 using UnityEditor;
 #endif
 
-namespace GLTFast.Export
+namespace Unity.Cloud.Gltfast.Export
 {
 
     /// <inheritdoc />

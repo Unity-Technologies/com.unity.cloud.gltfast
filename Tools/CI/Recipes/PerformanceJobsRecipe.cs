@@ -77,7 +77,7 @@ class PerformanceJobsRecipe : RecipeBase
             .WithProjectPath(k_ProjectPath)
             .WithBatchMode()
             .WithNoGraphics()
-            .WithExecuteMethod("GLTFast.Editor.Tests.SetupProject.ApplySetup")
+            .WithExecuteMethod("Unity.Cloud.Gltfast.Editor.Tests.SetupProject.ApplySetup")
             .WithArgs("glTFastSetup:performance")
             .WithArgs("-upmNoDefaultPackages")
             .WithLogs($"{k_ArtifactsPath}/enable-performance-tests.log")
@@ -87,7 +87,7 @@ class PerformanceJobsRecipe : RecipeBase
         builder
             .WithProjectPath(k_ProjectPath)
             .WithBatchMode()
-            .WithExecuteMethod("GLTFast.Tests.TestGltfGenerator.CreatePerformanceTestFiles")
+            .WithExecuteMethod("Unity.Cloud.Gltfast.Tests.TestGltfGenerator.CreatePerformanceTestFiles")
             .WithNoGraphics()
             .WithArgs("-upmNoDefaultPackages")
             .WithLogs($"{k_ArtifactsPath}/create-gltf-files.log")

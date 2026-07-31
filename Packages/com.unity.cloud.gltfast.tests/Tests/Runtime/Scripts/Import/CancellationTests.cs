@@ -10,7 +10,7 @@ using System.Threading;
 using NUnit.Framework;
 using Debug = UnityEngine.Debug;
 
-namespace GLTFast.Tests.Import
+namespace Unity.Cloud.Gltfast.Tests.Import
 {
     /// <summary>
     /// Tests for cancellation during loading.

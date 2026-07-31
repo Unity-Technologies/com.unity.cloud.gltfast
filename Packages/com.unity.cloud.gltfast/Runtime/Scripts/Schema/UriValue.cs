@@ -4,8 +4,9 @@
 using System;
 using Unity.Collections;
 using Unity.Gltfast.Text.Json.Serialization;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast.Schema
+namespace Unity.Cloud.Gltfast.Schema
 {
     /// <summary>
     /// Holds the value of a glTF URI field.
@@ -19,6 +20,7 @@ namespace GLTFast.Schema
     /// and <see cref="Root"/> forward <see cref="IDisposable.Dispose"/> calls automatically.
     /// </remarks>
     [JsonConverter(typeof(UriValueConverter))]
+    [MovedFrom(true, sourceNamespace: "GLTFast.Schema", sourceAssembly: "glTFast")]
     public sealed class UriValue : IDisposable
     {
         enum UriState : byte

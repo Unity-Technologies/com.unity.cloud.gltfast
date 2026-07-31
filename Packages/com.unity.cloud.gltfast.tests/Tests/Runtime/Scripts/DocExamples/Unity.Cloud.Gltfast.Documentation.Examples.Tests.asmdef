@@ -1,0 +1,42 @@
+{
+    "name": "Unity.Cloud.Gltfast.Documentation.Examples.Tests",
+    "rootNamespace": "Unity.Cloud.Gltfast.Documentation.Examples.Tests",
+    "references": [
+        "UnityEngine.TestRunner",
+        "Unity.Burst",
+        "Unity.Collections",
+        "Unity.Entities",
+        "Unity.Mathematics",
+        "Unity.PerformanceTesting",
+        "Unity.Transforms",
+        "UnityEditor.Formats.Gltf.Validation",
+        "Unity.Cloud.Gltfast",
+        "Unity.Cloud.Gltfast.Dots",
+        "Unity.Cloud.Gltfast.Export",
+        "Unity.Cloud.Gltfast.Documentation.Examples",
+        "Unity.Cloud.Gltfast.Tests",
+        "Unity.Meshopt.Decompress",
+        "UnityEngine.TestTools.Graphics",
+        "Unity.RenderPipelines.HighDefinition.Runtime"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll",
+        "Unity.Gltfast.Text.Json.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [
+        {
+            "name": "com.unity.modules.animation",
+            "expression": "",
+            "define": "UNITY_ANIMATION"
+        }
+    ],
+    "noEngineReferences": false
+}

@@ -3,11 +3,11 @@
 
 using System;
 using System.Collections;
-using GLTFast.Logging;
 using NUnit.Framework;
+using Unity.Cloud.Gltfast.Logging;
 using UnityEngine;
 
-namespace GLTFast.Tests.Import
+namespace Unity.Cloud.Gltfast.Tests.Import
 {
     [TestFixture, Category("Import")]
     class AssetsTests

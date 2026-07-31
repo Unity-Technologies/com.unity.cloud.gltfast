@@ -1,14 +1,14 @@
 {
-    "name": "glTFast.Editor.Tests",
-    "rootNamespace": "GLTFast.Editor.Tests",
+    "name": "Unity.Cloud.Gltfast.Editor.Tests",
+    "rootNamespace": "Unity.Cloud.Gltfast.Editor.Tests",
     "references": [
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
         "Unity.Mathematics",
-        "glTFast",
-        "glTFast.Tests",
-        "glTFast.Editor",
-        "glTFast.Export",
+        "Unity.Cloud.Gltfast",
+        "Unity.Cloud.Gltfast.Tests",
+        "Unity.Cloud.Gltfast.Editor",
+        "Unity.Cloud.Gltfast.Export",
         "Unity.RenderPipelines.Universal.Runtime",
         "UnityEngine.TestTools.Graphics",
         "UnityEditor.TestTools.Graphics"

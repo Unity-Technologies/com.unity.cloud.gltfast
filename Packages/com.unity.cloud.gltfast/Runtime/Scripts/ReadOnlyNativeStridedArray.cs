@@ -6,7 +6,7 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using Unity.Collections.LowLevel.Unsafe;
 
-namespace GLTFast
+namespace Unity.Cloud.Gltfast
 {
     [NativeContainer]
     [NativeContainerIsReadOnly]

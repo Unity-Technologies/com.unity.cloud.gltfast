@@ -4,8 +4,9 @@
 using System;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast
+namespace Unity.Cloud.Gltfast
 {
 
     /// <summary>
@@ -13,6 +14,7 @@ namespace GLTFast
     /// whether this time frame was surpassed.
     /// </summary>
     [DefaultExecutionOrder(-10)]
+    [MovedFrom(true, sourceNamespace: "GLTFast", sourceAssembly: "glTFast")]
     public class TimeBudgetPerFrameDeferAgent : MonoBehaviour, IDeferAgent
     {
 

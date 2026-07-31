@@ -9,29 +9,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Support for high precision node transforms.
 - `EnumOrRawValue<TEnum>` for serialization of JSON strings to enum values that can have values unknown at build time.
-- [MeshoptFilter](xref:GLTFast.Schema.MeshoptFilter) and [MeshoptMode](xref:GLTFast.Schema.MeshoptMode) for custom JSON serialization of `Meshoptimizer.Filter` and `Meshoptimizer.Mode`.
+- [MeshoptFilter](xref:Unity.Cloud.Gltfast.Schema.MeshoptFilter) and [MeshoptMode](xref:Unity.Cloud.Gltfast.Schema.MeshoptMode) for custom JSON serialization of `Meshoptimizer.Filter` and `Meshoptimizer.Mode`.
 - `UriValue`, a wrapper for serialization of URIs.
-- [Color](xref:GLTFast.Schema.Color) and [ColorAlpha](xref:GLTFast.Schema.ColorAlpha) structs for serialization of glTF color values.
-- [ImageMimeType](xref:GLTFast.Schema.ImageMimeType) for type-safe access to glTF image MIME types.
-- [Attributes](xref:GLTFast.Schema.Attributes): Additional vertex attribute accessor properties are (de-)serialized from/to JSON.
+- [Color](xref:Unity.Cloud.Gltfast.Schema.Color) and [ColorAlpha](xref:Unity.Cloud.Gltfast.Schema.ColorAlpha) structs for serialization of glTF color values.
+- [ImageMimeType](xref:Unity.Cloud.Gltfast.Schema.ImageMimeType) for type-safe access to glTF image MIME types.
+- [Attributes](xref:Unity.Cloud.Gltfast.Schema.Attributes): Additional vertex attribute accessor properties are (de-)serialized from/to JSON.
   - `TEXCOORD_n` for `n ≥ 8`
   - `COLOR_n` for `n ≥ 1`
   - `JOINTS_n`/`WEIGHTS_n` for `n ≥ 1` (required for multi-influence skinning)
   - Application-specific attribute semantics (starting with underscore `_`)
 - `Constants.UnsetIndex` (`-1`) and `Constants.UnsetByteLength` (`-1L`) — sentinel values that signal absence for spec-required scalar schema fields whose `0` is valid (e.g. accessor at index `0`).
-- [Root.Serialize(Stream)](xref:GLTFast.Schema.Root.Serialize*) for JSON serialization via `System.Text.Json` without requiring callers to reach for `JsonSerializer`/`GltfJsonContext` directly.
-- [NullLogger](xref:GLTFast.Logging.NullLogger), a no-op `ICodeLogger`.
+- [Root.Serialize(Stream)](xref:Unity.Cloud.Gltfast.Schema.Root.Serialize*) for JSON serialization via `System.Text.Json` without requiring callers to reach for `JsonSerializer`/`GltfJsonContext` directly.
+- [NullLogger](xref:Unity.Cloud.Gltfast.Logging.NullLogger), a no-op `ICodeLogger`.
 - Shared `ConsoleLogger.Instance` and `NullLogger.Instance` singletons.
-- (Export) [MaterialExport.TryAddImageExport](xref:GLTFast.Export.MaterialExport.TryAddImageExport*) is public (was internal `MaterialExport.AddImageExport`).
+- (Export) [MaterialExport.TryAddImageExport](xref:Unity.Cloud.Gltfast.Export.MaterialExport.TryAddImageExport*) is public (was internal `MaterialExport.AddImageExport`).
 
 ### Changed
-- Public entry points accepting an [ICodeLogger](xref:GLTFast.Logging.ICodeLogger) now default to Unity's Console when `null` is passed (was silent).
+- Renamed all assemblies and the root namespace from `glTFast`/`GLTFast.*` to `Unity.Cloud.Gltfast`/`Unity.Cloud.Gltfast.*` to follow the .NET Framework Design and Unity assembly naming guidelines. Public types carry `[MovedFrom]` attributes, so the API Updater rewrites `using` directives and type references in consuming C# automatically. Assembly definition (`.asmdef`) references to the old assembly names must be updated manually (see the [Upgrade Guide](xref:doc-upgrade-guides)).
+- Public entry points accepting an [ICodeLogger](xref:Unity.Cloud.Gltfast.Logging.ICodeLogger) now default to Unity's Console when `null` is passed (was silent).
 - JSON serialization and de-serialization are performed by [System.Text.Json](https://www.nuget.org/packages/system.text.json/) (or `Unity.Gltfast.Text.Json`, a copy of it to avoid assembly conflicts).
   - (Export) Replaced the hand-written `JsonWriter`/`Root.GltfSerialize` writers with `JsonSerializer.Serialize` driven by the source-generated `GltfJsonContext`. Exported JSON is functionally equivalent but not byte-identical to previous releases.
-  - Refactored [GltfImport](xref:GLTFast.GltfImport). It does not inherit from a generic base class anymore and does not allow specifying members' types.
-  - Refactored and simplified the JSON serialization classes (namespace `GLTFast.Schema`).
+  - Refactored [GltfImport](xref:Unity.Cloud.Gltfast.GltfImport). It does not inherit from a generic base class anymore and does not allow specifying members' types.
+  - Refactored and simplified the JSON serialization classes (namespace `Unity.Cloud.Gltfast.Schema`).
 - `EnumOrRawValue<TEnum>` (de-)serialization matches enum values directly on UTF-8 data, avoiding managed allocations and exception-based control flow on the fast path.
-- Refactored JSON serialization classes (in namespace `GLTFast.Schema`).
+- Refactored JSON serialization classes (in namespace `Unity.Cloud.Gltfast.Schema`).
   - Major refactor to align them closer with Microsoft's framework design guidelines and `System.Text.Json` best-practices.
   - CamelCase naming for properties.
   - Moved many types into dedicated files.
@@ -43,9 +44,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - `Camera.Type` ⇒ `CameraType`
     - `Material.AlphaMode` ⇒ `AlphaMode`
     - `MeshGpuInstancing.Attributes` ⇒ `InstancesAttributes`
-    - `Sampler.MagFilterMode` ⇒ `MagFilterMode` (promoted to top-level `GLTFast.Schema` enum)
-    - `Sampler.MinFilterMode` ⇒ `MinFilterMode` (promoted to top-level `GLTFast.Schema` enum)
-    - `Sampler.WrapMode` ⇒ `WrapMode` (promoted to top-level `GLTFast.Schema` enum)
+    - `Sampler.MagFilterMode` ⇒ `MagFilterMode` (promoted to top-level `Unity.Cloud.Gltfast.Schema` enum)
+    - `Sampler.MinFilterMode` ⇒ `MinFilterMode` (promoted to top-level `Unity.Cloud.Gltfast.Schema` enum)
+    - `Sampler.WrapMode` ⇒ `WrapMode` (promoted to top-level `Unity.Cloud.Gltfast.Schema` enum)
     - Applied PascalCase on `MaterialIor.DefaultIndexOfRefraction`
   - Type changes
     - `float[]` ⇒ `List<float>`
@@ -55,11 +56,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
       - `Accessor.Max`
       - `Accessor.Min`
     - Fixed-size `double[]`, `float[]` ⇒ nullable `Unity.Mathematics` value-type structs (eliminates per-transform heap allocations; `null` represents an absent property)
-      - [Node.Translation](xref:GLTFast.Schema.Node.Translation) and [Node.Scale](xref:GLTFast.Schema.Node.Scale) ⇒ `double3?`
-      - [Node.Rotation](xref:GLTFast.Schema.Node.Rotation) ⇒ `double4?`
-      - [Node.Matrix](xref:GLTFast.Schema.Node.Matrix) ⇒ `double4x4?`
-      - [TextureTransform.Offset](xref:GLTFast.Schema.TextureTransform.Offset) ⇒ `float2?`
-      - [TextureTransform.Scale](xref:GLTFast.Schema.TextureTransform.Scale) ⇒ `float2?`
+      - [Node.Translation](xref:Unity.Cloud.Gltfast.Schema.Node.Translation) and [Node.Scale](xref:Unity.Cloud.Gltfast.Schema.Node.Scale) ⇒ `double3?`
+      - [Node.Rotation](xref:Unity.Cloud.Gltfast.Schema.Node.Rotation) ⇒ `double4?`
+      - [Node.Matrix](xref:Unity.Cloud.Gltfast.Schema.Node.Matrix) ⇒ `double4x4?`
+      - [TextureTransform.Offset](xref:Unity.Cloud.Gltfast.Schema.TextureTransform.Offset) ⇒ `float2?`
+      - [TextureTransform.Scale](xref:Unity.Cloud.Gltfast.Schema.TextureTransform.Scale) ⇒ `float2?`
     - `TEnum` ⇒ `EnumOrRawValue<TEnum>` (to preserve unknown values introduced by glTF extensions)
       - `Accessor.Type`
       - `AnimationChannelTarget.Path`
@@ -67,48 +68,48 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
       - `Camera.Type`
       - `Material.AlphaMode`
       - `LightPunctual.Type`
-    - `string` ⇒ [EnumOrRawValue&lt;ImageMimeType&gt;](xref:GLTFast.Schema.EnumOrRawValue`1)
-      - [Image.MimeType](xref:GLTFast.Schema.Image.MimeType)
-    - `string[]` ⇒ `List<`[EnumOrRawValue&lt;Extension&gt;](xref:GLTFast.Schema.EnumOrRawValue`1)`>`
-      - [Root.ExtensionsUsed](xref:GLTFast.Schema.Root.ExtensionsUsed)
-      - [Root.ExtensionsRequired](xref:GLTFast.Schema.Root.ExtensionsRequired)
-    - `T[]` ⇒ `List<T>` for the remaining variable-length collection properties in `GLTFast.Schema`.
-      - [LightsPunctual.Lights](xref:GLTFast.Schema.LightsPunctual.Lights)
+    - `string` ⇒ [EnumOrRawValue&lt;ImageMimeType&gt;](xref:Unity.Cloud.Gltfast.Schema.EnumOrRawValue`1)
+      - [Image.MimeType](xref:Unity.Cloud.Gltfast.Schema.Image.MimeType)
+    - `string[]` ⇒ `List<`[EnumOrRawValue&lt;Extension&gt;](xref:Unity.Cloud.Gltfast.Schema.EnumOrRawValue`1)`>`
+      - [Root.ExtensionsUsed](xref:Unity.Cloud.Gltfast.Schema.Root.ExtensionsUsed)
+      - [Root.ExtensionsRequired](xref:Unity.Cloud.Gltfast.Schema.Root.ExtensionsRequired)
+    - `T[]` ⇒ `List<T>` for the remaining variable-length collection properties in `Unity.Cloud.Gltfast.Schema`.
+      - [LightsPunctual.Lights](xref:Unity.Cloud.Gltfast.Schema.LightsPunctual.Lights)
       - `MaterialVariantsMapping.Variants`
       - `MeshExtras.TargetNames`
-      - [MeshPrimitive.Targets](xref:GLTFast.Schema.MeshPrimitive.Targets)
-      - [Node.Children](xref:GLTFast.Schema.Node.Children)
-      - [Root.Buffers](xref:GLTFast.Schema.Root.Buffers)
-      - [Scene.Nodes](xref:GLTFast.Schema.Scene.Nodes)
-      - [Skin.Joints](xref:GLTFast.Schema.Skin.Joints)
+      - [MeshPrimitive.Targets](xref:Unity.Cloud.Gltfast.Schema.MeshPrimitive.Targets)
+      - [Node.Children](xref:Unity.Cloud.Gltfast.Schema.Node.Children)
+      - [Root.Buffers](xref:Unity.Cloud.Gltfast.Schema.Root.Buffers)
+      - [Scene.Nodes](xref:Unity.Cloud.Gltfast.Schema.Scene.Nodes)
+      - [Skin.Joints](xref:Unity.Cloud.Gltfast.Schema.Skin.Joints)
     - `int` ⇒ `int?` for index properties that are optional in the glTF specification. `null` now represents an absent value; the legacy `-1` sentinel is gone.
-      - [Accessor.BufferView](xref:GLTFast.Schema.Accessor.BufferView)
+      - [Accessor.BufferView](xref:Unity.Cloud.Gltfast.Schema.Accessor.BufferView)
       - `AnimationChannelTarget.Node`
-      - [BufferView.ByteStride](xref:GLTFast.Schema.BufferView.ByteStride) (also on [IBufferView](xref:GLTFast.Schema.IBufferView))
-      - [Image.BufferView](xref:GLTFast.Schema.Image.BufferView)
+      - [BufferView.ByteStride](xref:Unity.Cloud.Gltfast.Schema.BufferView.ByteStride) (also on [IBufferView](xref:Unity.Cloud.Gltfast.Schema.IBufferView))
+      - [Image.BufferView](xref:Unity.Cloud.Gltfast.Schema.Image.BufferView)
       - `InstancesAttributes.Translation`, `.Rotation`, `.Scale`
       - `MeshPrimitive.Indices`, `.Material`
       - `Attributes.Position`, `.Normal`, `.Tangent`
       - `MorphTarget.Position`, `.Normal`, `.Tangent`
-      - [Node.Mesh](xref:GLTFast.Schema.Node.Mesh), [Node.Skin](xref:GLTFast.Schema.Node.Skin), [Node.Camera](xref:GLTFast.Schema.Node.Camera)
+      - [Node.Mesh](xref:Unity.Cloud.Gltfast.Schema.Node.Mesh), [Node.Skin](xref:Unity.Cloud.Gltfast.Schema.Node.Skin), [Node.Camera](xref:Unity.Cloud.Gltfast.Schema.Node.Camera)
       - `NodeLightsPunctual.Light`
-      - [Root.Scene](xref:GLTFast.Schema.Root.Scene)
+      - [Root.Scene](xref:Unity.Cloud.Gltfast.Schema.Root.Scene)
       - `Skin.InverseBindMatrices`, `Skin.Skeleton`
-      - [Texture.Sampler](xref:GLTFast.Schema.Texture.Sampler), [Texture.Source](xref:GLTFast.Schema.Texture.Source)
+      - [Texture.Sampler](xref:Unity.Cloud.Gltfast.Schema.Texture.Sampler), [Texture.Source](xref:Unity.Cloud.Gltfast.Schema.Texture.Source)
       - `TextureBasisUniversal.Source`
-      - [TextureInfo.Index](xref:GLTFast.Schema.TextureInfo.Index)
+      - [TextureInfo.Index](xref:Unity.Cloud.Gltfast.Schema.TextureInfo.Index)
       - `TextureTransform.TexCoord`
-    - `int` ⇒ [BufferViewTarget](xref:GLTFast.Schema.BufferViewTarget) for [BufferView.Target](xref:GLTFast.Schema.BufferView.Target).
-    - `uint` ⇒ `long` for [Buffer.ByteLength](xref:GLTFast.Schema.Buffer.ByteLength). First step toward `>4 GB` buffer support.
+    - `int` ⇒ [BufferViewTarget](xref:Unity.Cloud.Gltfast.Schema.BufferViewTarget) for [BufferView.Target](xref:Unity.Cloud.Gltfast.Schema.BufferView.Target).
+    - `uint` ⇒ `long` for [Buffer.ByteLength](xref:Unity.Cloud.Gltfast.Schema.Buffer.ByteLength). First step toward `>4 GB` buffer support.
     - `uint` ⇒ `int` for `AccessorSparseIndices.BufferView` and `AccessorSparseValues.BufferView`. Aligns with the sibling index convention; drops the `(int)` cast at consumer call sites.
   - Spec-required scalar fields use a negative sentinel (`Constants.UnsetIndex`/`UnsetByteLength`) for "unset" so explicit zero values round-trip and absence (e.g. extension-relaxed requirements) survives deserialization. Non-nullable type and hot-path call sites are unchanged; validating consumers report `< 0` as missing/invalid.
-  - [Attributes](xref:GLTFast.Schema.Attributes) reshaped — the per-index properties `TexCoord0..TexCoord8`, `Color0`, `Joints0`, `Weights0` are replaced with per-family `List<int?>` collections (`TexCoords`, `Colors`, `Joints`, `Weights`). Bounds-checked index access is provided by extension methods on [AttributesExtensions](xref:GLTFast.Schema.AttributesExtensions): `attrs.GetTexCoord(n)` / `attrs.SetTexCoord(n, value)` (and the matching `Color`/`Joint`/`Weight` pairs). `Attributes.GetTexCoordsCount()` was moved to `AttributesExtensions`. `Attributes.TryGetAllUVAccessors` declared obsolete.
+  - [Attributes](xref:Unity.Cloud.Gltfast.Schema.Attributes) reshaped — the per-index properties `TexCoord0..TexCoord8`, `Color0`, `Joints0`, `Weights0` are replaced with per-family `List<int?>` collections (`TexCoords`, `Colors`, `Joints`, `Weights`). Bounds-checked index access is provided by extension methods on [AttributesExtensions](xref:Unity.Cloud.Gltfast.Schema.AttributesExtensions): `attrs.GetTexCoord(n)` / `attrs.SetTexCoord(n, value)` (and the matching `Color`/`Joint`/`Weight` pairs). `Attributes.GetTexCoordsCount()` was moved to `AttributesExtensions`. `Attributes.TryGetAllUVAccessors` declared obsolete.
   - (Performance) Data URIs are decoded directly to unmanaged buffers during JSON deserialization eliminating allocation of a UTF-16 string twice the size of the data URI.
-  - (Performance) `Root.ExtensionsUsed`/`Root.ExtensionsRequired` entries that match a recognized [Extension](xref:GLTFast.Extension) deserialize directly into the enum, avoiding the managed string allocation per entry. Extension-support checks (`GltfImport`) now use `HashSet<Extension>` instead of `HashSet<string>`.
+  - (Performance) `Root.ExtensionsUsed`/`Root.ExtensionsRequired` entries that match a recognized [Extension](xref:Unity.Cloud.Gltfast.Extension) deserialize directly into the enum, avoiding the managed string allocation per entry. Extension-support checks (`GltfImport`) now use `HashSet<Extension>` instead of `HashSet<string>`.
   - JSON string to enum deserialization via `EnumOrRawValue<TEnum>` preserves access to unknown values (not in the glTF specification but potentially introduced by a glTF extension).
-  - [Asset](xref:GLTFast.Schema.Asset) no longer derives from `NamedObject`. The `Asset.Name` property is removed.
+  - [Asset](xref:Unity.Cloud.Gltfast.Schema.Asset) no longer derives from `NamedObject`. The `Asset.Name` property is removed.
 - API signature changes following the index nullability cleanup of the serialization classes:
-  - [Texture.GetImageIndex](xref:GLTFast.Schema.Texture.GetImageIndex) returns `int?` (was `int`).
+  - [Texture.GetImageIndex](xref:Unity.Cloud.Gltfast.Schema.Texture.GetImageIndex) returns `int?` (was `int`).
   - `MeshPrimitive.GetMaterialIndex` returns `int?` (was `int`).
   - `IMaterialsVariantsSlot.GetMaterialIndex` returns `int?` (was `int`).
   - `MeshResult.materialIndices` is now `int?[]` (was `int[]`).
@@ -117,29 +118,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `IInstantiator.AddPrimitive` parameter `morphTargetWeights` is now of type `IReadOnlyList<float>` (was float[]).
 - `GameObjectInstantiator.MeshAddedDelegate` parameter `morphTargetWeights` is now of type `IReadOnlyList<float>` (was float[]).
 - API signature changes following the schema array⇒List conversion.
-  - [IInstantiator.BeginScene](xref:GLTFast.IInstantiator.BeginScene*) `rootNodeIndices` is `IReadOnlyList<uint>` (was `uint[]`).
-  - [IInstantiator.EndScene](xref:GLTFast.IInstantiator.EndScene*) `rootNodeIndices` is `IReadOnlyList<uint>` (was `uint[]`).
-  - [IInstantiator.AddPrimitive](xref:GLTFast.IInstantiator.AddPrimitive*) `joints` is `IReadOnlyList<uint>` (was `uint[]`).
+  - [IInstantiator.BeginScene](xref:Unity.Cloud.Gltfast.IInstantiator.BeginScene*) `rootNodeIndices` is `IReadOnlyList<uint>` (was `uint[]`).
+  - [IInstantiator.EndScene](xref:Unity.Cloud.Gltfast.IInstantiator.EndScene*) `rootNodeIndices` is `IReadOnlyList<uint>` (was `uint[]`).
+  - [IInstantiator.AddPrimitive](xref:Unity.Cloud.Gltfast.IInstantiator.AddPrimitive*) `joints` is `IReadOnlyList<uint>` (was `uint[]`).
   - `GameObjectInstantiator.MeshAddedDelegate` parameter `joints` is `IReadOnlyList<uint>` (was `uint[]`).
-  - [IGltfWritable.AddNode](xref:GLTFast.Export.IGltfWritable.AddNode*) `children` is `List<uint>` (was `uint[]`; ownership is transferred).
-  - [IGltfWritable.AddScene](xref:GLTFast.Export.IGltfWritable.AddScene*) `nodes` is `List<uint>` (was `uint[]`; ownership is transferred).
-  - [IGltfWritable.AddMeshToNode](xref:GLTFast.Export.IGltfWritable.AddMeshToNode*) `joints` is `List<uint>` (was `uint[]`; ownership is transferred).
-  - `IAnimationProcessor.AddMorphTargetWeightCurves` and `AnimationModuleProcessor.AddMorphTargetWeightCurves` `morphTargetNames` is `IReadOnlyList<string>` (was `string[]`). Affects [GLTFast.Animations.IAnimationProcessor](xref:GLTFast.Animations.IAnimationProcessor) implementations.
-- (Export) [ImageExportBase.MimeType](xref:GLTFast.Export.ImageExportBase.MimeType) returns [ImageMimeType](xref:GLTFast.Schema.ImageMimeType) (was `string`). Custom subclasses must update their overrides.
-- (Export) Merged `GLTFast.Export.ImageFormat` into [GLTFast.ImageFormat](xref:GLTFast.ImageFormat). Affected method signatures across [ImageExportBase](xref:GLTFast.Export.ImageExportBase), [ImageExport](xref:GLTFast.Export.ImageExport), [OrmImageExport](xref:GLTFast.Export.OrmImageExport), [MaskMapImageExport](xref:GLTFast.Export.MaskMapImageExport), [NormalImageExport](xref:GLTFast.Export.NormalImageExport) and material exporters.
-- (Export) Renamed `ImageFormat.Jpg` to [ImageFormat.Jpeg](xref:GLTFast.ImageFormat.Jpeg).
-- [IGltfReadable.GetAccessor](xref:GLTFast.IGltfReadable.GetAccessor(System.Int32)) and [IGltfReadable.GetAccessorData](xref:GLTFast.IGltfReadable.GetAccessorData(System.Int32)) (and their [GltfImport](xref:GLTFast.GltfImport) implementations) now return `NativeArray<byte>.ReadOnly` instead of `NativeSlice<byte>`.
+  - [IGltfWritable.AddNode](xref:Unity.Cloud.Gltfast.Export.IGltfWritable.AddNode*) `children` is `List<uint>` (was `uint[]`; ownership is transferred).
+  - [IGltfWritable.AddScene](xref:Unity.Cloud.Gltfast.Export.IGltfWritable.AddScene*) `nodes` is `List<uint>` (was `uint[]`; ownership is transferred).
+  - [IGltfWritable.AddMeshToNode](xref:Unity.Cloud.Gltfast.Export.IGltfWritable.AddMeshToNode*) `joints` is `List<uint>` (was `uint[]`; ownership is transferred).
+  - `IAnimationProcessor.AddMorphTargetWeightCurves` and `AnimationModuleProcessor.AddMorphTargetWeightCurves` `morphTargetNames` is `IReadOnlyList<string>` (was `string[]`). Affects [Unity.Cloud.Gltfast.Animations.IAnimationProcessor](xref:Unity.Cloud.Gltfast.Animations.IAnimationProcessor) implementations.
+- (Export) [ImageExportBase.MimeType](xref:Unity.Cloud.Gltfast.Export.ImageExportBase.MimeType) returns [ImageMimeType](xref:Unity.Cloud.Gltfast.Schema.ImageMimeType) (was `string`). Custom subclasses must update their overrides.
+- (Export) Merged `Unity.Cloud.Gltfast.Export.ImageFormat` into [Unity.Cloud.Gltfast.ImageFormat](xref:Unity.Cloud.Gltfast.ImageFormat). Affected method signatures across [ImageExportBase](xref:Unity.Cloud.Gltfast.Export.ImageExportBase), [ImageExport](xref:Unity.Cloud.Gltfast.Export.ImageExport), [OrmImageExport](xref:Unity.Cloud.Gltfast.Export.OrmImageExport), [MaskMapImageExport](xref:Unity.Cloud.Gltfast.Export.MaskMapImageExport), [NormalImageExport](xref:Unity.Cloud.Gltfast.Export.NormalImageExport) and material exporters.
+- (Export) Renamed `ImageFormat.Jpg` to [ImageFormat.Jpeg](xref:Unity.Cloud.Gltfast.ImageFormat.Jpeg).
+- [IGltfReadable.GetAccessor](xref:Unity.Cloud.Gltfast.IGltfReadable.GetAccessor(System.Int32)) and [IGltfReadable.GetAccessorData](xref:Unity.Cloud.Gltfast.IGltfReadable.GetAccessorData(System.Int32)) (and their [GltfImport](xref:Unity.Cloud.Gltfast.GltfImport) implementations) now return `NativeArray<byte>.ReadOnly` instead of `NativeSlice<byte>`.
 
 ### Fixed
-- Export's `GLTFast.Export.ManagedNativeArray` no longer leaks its pinned `GCHandle` when not explicitly disposed (added a finalizer); double-dispose is now a safe no-op.
+- Export's `Unity.Cloud.Gltfast.Export.ManagedNativeArray` no longer leaks its pinned `GCHandle` when not explicitly disposed (added a finalizer); double-dispose is now a safe no-op.
 - `GltfWriter.AddImage` no longer throws `NullReferenceException` when called after `Dispose()` in builds without `UNITY_IMAGECONVERSION` defined; now correctly throws `InvalidOperationException` from `CertifyNotDisposed()` instead.
 
 ### Removed
 - JsonUtility dependency and related code.
 - Newtonsoft JSON dependency.
-- (Export) `GLTFast.Export.ImageFormat` enum (use [GLTFast.ImageFormat](xref:GLTFast.ImageFormat) instead).
-- (Export) Hand-written `GLTFast.Schema.JsonWriter` and the `GltfSerialize` methods on every `GLTFast.Schema` type. `Root.GltfSerialize` war preserved for backwards compatibility, but its serialization runs through `System.Text.Json` instead.
-- (Export) `GLTFast.Export.ManagedNativeArray<TIn, TOut>` is no longer part of the public API (it is now internal).
+- (Export) `Unity.Cloud.Gltfast.Export.ImageFormat` enum (use [Unity.Cloud.Gltfast.ImageFormat](xref:Unity.Cloud.Gltfast.ImageFormat) instead).
+- (Export) Hand-written `Unity.Cloud.Gltfast.Schema.JsonWriter` and the `GltfSerialize` methods on every `Unity.Cloud.Gltfast.Schema` type. `Root.GltfSerialize` war preserved for backwards compatibility, but its serialization runs through `System.Text.Json` instead.
+- (Export) `Unity.Cloud.Gltfast.Export.ManagedNativeArray<TIn, TOut>` is no longer part of the public API (it is now internal).
 - Legacy `image/ktx` MIME type lenience. The glTF specification and `KHR_texture_basisu` require `image/ktx2`.
 - The 43 obsolete `MaterialGenerator.*Property` shader-property-ID aliases (e.g. `MaterialGenerator.BaseColorProperty`).
 - (Import) `GltfImport.LoadGltfBinary(byte[], …)`.
@@ -155,7 +156,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - (Export) `MaterialExportBase.AddImageExport`. Use [MaterialExport.TryAddImageExport](xref:GLTFast.Export.MaterialExport.TryAddImageExport*) instead.
 
 ### Deprecated
-- (Export) `Root.GltfSerialize(StreamWriter)` is obsolete. Use [Root.Serialize(Stream)](xref:GLTFast.Schema.Root.Serialize*) instead.
+- (Export) `Root.GltfSerialize(StreamWriter)` is obsolete. Use [Root.Serialize(Stream)](xref:Unity.Cloud.Gltfast.Schema.Root.Serialize*) instead.
 
 ### Security
 

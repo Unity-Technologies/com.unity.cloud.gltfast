@@ -8,8 +8,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast.Export
+namespace Unity.Cloud.Gltfast.Export
 {
 
     using Logging;
@@ -17,6 +18,7 @@ namespace GLTFast.Export
     /// <summary>
     /// Creates glTF files from GameObject hierarchies
     /// </summary>
+    [MovedFrom(true, sourceNamespace: "GLTFast.Export", sourceAssembly: "glTFast.Export")]
     public class GameObjectExport
     {
 
@@ -36,7 +38,7 @@ namespace GLTFast.Export
         /// <param name="materialExport">Provides material conversion</param>
         /// <param name="deferAgent">Defer agent (&lt;see cref="IDeferAgent"/&gt;); decides when/if to preempt
         /// export to preserve a stable frame rate.</param>
-        /// <param name="logger">Custom logger for reporting messages. Default behavior is inherited from the <see cref="GLTFast.Export.GltfWriter(GLTFast.Export.ExportSettings, GLTFast.IDeferAgent, GLTFast.Logging.ICodeLogger)"/> constructor that this method forwards to.</param>
+        /// <param name="logger">Custom logger for reporting messages. Default behavior is inherited from the <see cref="Unity.Cloud.Gltfast.Export.GltfWriter(Unity.Cloud.Gltfast.Export.ExportSettings, Unity.Cloud.Gltfast.IDeferAgent, Unity.Cloud.Gltfast.Logging.ICodeLogger)"/> constructor that this method forwards to.</param>
         public GameObjectExport(
             ExportSettings exportSettings = null,
             GameObjectExportSettings gameObjectExportSettings = null,

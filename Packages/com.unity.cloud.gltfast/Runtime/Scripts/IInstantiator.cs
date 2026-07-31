@@ -5,8 +5,9 @@ using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast
+namespace Unity.Cloud.Gltfast
 {
 
     /// <summary>
@@ -15,6 +16,7 @@ namespace GLTFast
     /// Implementors of this interface can convert glTF resources into scene
     /// objects.
     /// </summary>
+    [MovedFrom(true, sourceNamespace: "GLTFast", sourceAssembly: "glTFast")]
     public interface IInstantiator
     {
 

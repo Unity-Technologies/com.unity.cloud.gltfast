@@ -3,13 +3,13 @@
 
 using System.Collections;
 using System.Collections.Generic;
-using GLTFast.Schema;
 using NUnit.Framework;
+using Unity.Cloud.Gltfast.Schema;
 using UnityEngine;
 using UnityEngine.TestTools;
 using Material = UnityEngine.Material;
 
-namespace GLTFast.Tests
+namespace Unity.Cloud.Gltfast.Tests
 {
     class MaterialsVariantsTests
     {

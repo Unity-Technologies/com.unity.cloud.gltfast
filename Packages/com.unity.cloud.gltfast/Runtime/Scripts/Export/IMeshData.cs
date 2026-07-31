@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Unity.Collections;
 using UnityEngine;
 
-namespace GLTFast.Export
+namespace Unity.Cloud.Gltfast.Export
 {
     interface IMeshData
     {

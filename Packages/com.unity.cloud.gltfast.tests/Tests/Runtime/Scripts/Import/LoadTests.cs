@@ -11,7 +11,7 @@ using System.IO;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using UnityEngine;
-using GLTFast.Logging;
+using Unity.Cloud.Gltfast.Logging;
 using Unity.Collections;
 #if UNITY_ENTITIES_GRAPHICS
 using Unity.Entities;
@@ -24,7 +24,7 @@ using UnityEngine.TestTools;
 using Object = UnityEngine.Object;
 #endif
 
-namespace GLTFast.Tests.Import
+namespace Unity.Cloud.Gltfast.Tests.Import
 {
     /// <summary>
     /// Tests all of <see cref="GltfImport"/>'s load methods.

@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace GLTFast.Tests
+namespace Unity.Cloud.Gltfast.Tests
 {
     class MaterialProviderMock : IMaterialProvider
     {

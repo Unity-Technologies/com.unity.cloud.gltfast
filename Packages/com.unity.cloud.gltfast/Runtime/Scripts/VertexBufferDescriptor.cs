@@ -3,9 +3,9 @@
 
 #nullable enable
 using System;
-using GLTFast.Schema;
+using Unity.Cloud.Gltfast.Schema;
 
-namespace GLTFast
+namespace Unity.Cloud.Gltfast
 {
     readonly struct VertexBufferDescriptor : IEquatable<VertexBufferDescriptor>
     {

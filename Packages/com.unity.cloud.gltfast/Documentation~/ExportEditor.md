@@ -21,7 +21,7 @@ Exporting via script works exactly the same as [Runtime Export](ExportRuntime.md
 
 ### Editor Scripting: Enforce Synchronous I/O
 
-When triggering an export from Editor scripting &mdash; for example a menu item, a custom inspector, or an asset post-processor &mdash; pass `forceSync: true` to [SaveToFileAndDispose](xref:GLTFast.Export.GameObjectExport.SaveToFileAndDispose*):
+When triggering an export from Editor scripting &mdash; for example a menu item, a custom inspector, or an asset post-processor &mdash; pass `forceSync: true` to [SaveToFileAndDispose](xref:Unity.Cloud.Gltfast.Export.GameObjectExport.SaveToFileAndDispose*):
 
 ```csharp
 await export.SaveToFileAndDispose(path, forceSync: true);

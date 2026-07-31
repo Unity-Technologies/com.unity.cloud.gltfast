@@ -2,16 +2,16 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System.Text;
-using GLTFast.Schema;
 using NUnit.Framework;
+using Unity.Cloud.Gltfast.Schema;
 using Unity.Gltfast.Text.Json;
 using Unity.Mathematics;
-using CameraType = GLTFast.Schema.CameraType;
-using Color = GLTFast.Schema.Color;
-using LightType = GLTFast.Schema.LightType;
-using SchemaConstants = GLTFast.Schema.Constants;
+using CameraType = Unity.Cloud.Gltfast.Schema.CameraType;
+using Color = Unity.Cloud.Gltfast.Schema.Color;
+using LightType = Unity.Cloud.Gltfast.Schema.LightType;
+using SchemaConstants = Unity.Cloud.Gltfast.Schema.Constants;
 
-namespace GLTFast.Tests.JsonParsing
+namespace Unity.Cloud.Gltfast.Tests.JsonParsing
 {
     class JsonDeserializationTests
     {

@@ -2,13 +2,15 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using UnityEngine;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast.Logging
+namespace Unity.Cloud.Gltfast.Logging
 {
 
     /// <summary>
     /// A logger that can receive log messages of severeness levels
     /// </summary>
+    [MovedFrom(true, sourceNamespace: "GLTFast.Logging", sourceAssembly: "glTFast")]
     public interface ICodeLogger
     {
 

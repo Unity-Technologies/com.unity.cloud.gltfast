@@ -3,12 +3,14 @@
 
 using System;
 using Unity.Collections;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast
+namespace Unity.Cloud.Gltfast
 {
     /// <summary>
     /// Provides read-only access to typed glTF accessor data.
     /// </summary>
+    [MovedFrom(true, sourceNamespace: "GLTFast", sourceAssembly: "glTFast")]
     public interface IGltfAccessors
     {
         /// <summary>

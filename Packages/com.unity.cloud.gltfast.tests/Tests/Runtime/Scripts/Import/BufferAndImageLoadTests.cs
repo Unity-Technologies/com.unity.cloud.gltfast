@@ -6,12 +6,12 @@ using System.Collections;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using GLTFast.Logging;
 using NUnit.Framework;
+using Unity.Cloud.Gltfast.Logging;
 using UnityEngine;
 using UnityEngine.TestTools;
 
-namespace GLTFast.Tests.Import
+namespace Unity.Cloud.Gltfast.Tests.Import
 {
     [Category("Import")]
     class BufferAndImageLoadTests

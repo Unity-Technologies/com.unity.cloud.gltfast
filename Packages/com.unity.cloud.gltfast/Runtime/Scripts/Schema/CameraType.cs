@@ -3,13 +3,15 @@
 
 using System;
 using Unity.Gltfast.Text.Json.Serialization;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast.Schema
+namespace Unity.Cloud.Gltfast.Schema
 {
     /// <summary>
     /// Camera projection type
     /// </summary>
     [JsonConverter(typeof(JsonStringEnumConverter<CameraType>))]
+    [MovedFrom(true, sourceNamespace: "GLTFast.Schema", sourceAssembly: "glTFast")]
     public enum CameraType
     {
         /// <summary>Undefined</summary>

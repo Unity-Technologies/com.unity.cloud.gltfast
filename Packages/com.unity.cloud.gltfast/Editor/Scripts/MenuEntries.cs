@@ -5,7 +5,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using GLTFast.Export;
+using Unity.Cloud.Gltfast.Export;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -16,7 +16,7 @@ using UnityEngine.SceneManagement;
 using UnityEditor.Formats.Gltf.Validation;
 #endif
 
-namespace GLTFast.Editor
+namespace Unity.Cloud.Gltfast.Editor
 {
 
     using Logging;

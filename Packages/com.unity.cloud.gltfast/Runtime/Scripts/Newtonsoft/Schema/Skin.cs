@@ -2,9 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast.Newtonsoft.Schema
+namespace Unity.Cloud.Gltfast.Newtonsoft.Schema
 {
-    [Obsolete("Use GLTFast.Schema.Skin instead.")]
-    public class Skin : GLTFast.Schema.Skin, IJsonObject { }
+    [Obsolete("Use Unity.Cloud.Gltfast.Schema.Skin instead.")]
+    [MovedFrom(true, sourceNamespace: "GLTFast.Newtonsoft.Schema", sourceAssembly: "glTFast.Newtonsoft")]
+    public class Skin : Unity.Cloud.Gltfast.Schema.Skin, IJsonObject { }
 }

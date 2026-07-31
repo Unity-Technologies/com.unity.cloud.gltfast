@@ -1,14 +1,14 @@
 // SPDX-FileCopyrightText: 2023 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
-namespace GLTFast.Documentation.Examples
+namespace Unity.Cloud.Gltfast.Documentation.Examples
 {
     #region CustomGltfImport
     using System;
     using System.Threading.Tasks;
-    using GLTFast;
-    using GLTFast.Addons;
-    using GLTFast.Logging;
+    using Unity.Cloud.Gltfast;
+    using Unity.Cloud.Gltfast.Addons;
+    using Unity.Cloud.Gltfast.Logging;
     using UnityEngine;
 
     class CustomGltfImport : MonoBehaviour

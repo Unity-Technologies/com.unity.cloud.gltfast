@@ -10,7 +10,7 @@ using NUnit.Framework.Internal;
 using NUnit.Framework.Internal.Builders;
 using UnityEngine;
 
-namespace GLTFast.Tests.Export
+namespace Unity.Cloud.Gltfast.Tests.Export
 {
 
     class SceneRootObjectTestCaseAttribute : UnityEngine.TestTools.UnityTestAttribute, ITestBuilder

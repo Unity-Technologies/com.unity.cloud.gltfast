@@ -2,19 +2,21 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
-using GLTFast.Schema;
+using Unity.Cloud.Gltfast.Schema;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Experimental.Rendering;
+using UnityEngine.Scripting.APIUpdating;
 using Material = UnityEngine.Material;
 using Object = UnityEngine.Object;
 
-namespace GLTFast.Export
+namespace Unity.Cloud.Gltfast.Export
 {
 
     /// <summary>
     /// Wrapper to export a glTF image from one or more Unity textures
     /// </summary>
+    [MovedFrom(true, sourceNamespace: "GLTFast.Export", sourceAssembly: "glTFast.Export")]
     public abstract class ImageExportBase
     {
         /// <summary>

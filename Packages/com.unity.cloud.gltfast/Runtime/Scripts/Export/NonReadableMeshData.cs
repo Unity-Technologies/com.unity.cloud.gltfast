@@ -8,7 +8,7 @@ using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Rendering;
 
-namespace GLTFast.Export
+namespace Unity.Cloud.Gltfast.Export
 {
     class NonReadableMeshData<TIndex> : IMeshData<TIndex> where TIndex : unmanaged
     {

@@ -3,7 +3,7 @@
 
 using UnityEngine;
 
-namespace GLTFast.Tests
+namespace Unity.Cloud.Gltfast.Tests
 {
     static class ExtensionExtensions
     {

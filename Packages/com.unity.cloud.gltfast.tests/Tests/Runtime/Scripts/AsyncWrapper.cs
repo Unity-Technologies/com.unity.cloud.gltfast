@@ -7,7 +7,7 @@ using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace GLTFast.Tests
+namespace Unity.Cloud.Gltfast.Tests
 {
     static class AsyncWrapper
     {

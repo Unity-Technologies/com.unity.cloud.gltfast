@@ -2,8 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using Unity.Collections;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast.Loading
+namespace Unity.Cloud.Gltfast.Loading
 {
     /// <summary>
     /// Provides access to downloaded data without creating an implicit copy in memory.
@@ -13,6 +14,7 @@ namespace GLTFast.Loading
     /// upon the next API breaking major release!
     /// </remarks>
     // TODO: Merge into IDownload upon next major API breaking release.
+    [MovedFrom(true, sourceNamespace: "GLTFast.Loading", sourceAssembly: "glTFast")]
     public interface INativeDownload
     {
         /// <summary>

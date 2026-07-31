@@ -1,10 +1,10 @@
 {
-    "name": "glTFast.Editor.Documentation.Examples",
-    "rootNamespace": "GLTFast.Editor.Documentation.Examples",
+    "name": "Unity.Cloud.Gltfast.Documentation.Examples.Editor",
+    "rootNamespace": "Unity.Cloud.Gltfast.Documentation.Examples.Editor",
     "references": [
-        "glTFast",
-        "glTFast.Editor",
-        "glTFast.Export"
+        "Unity.Cloud.Gltfast",
+        "Unity.Cloud.Gltfast.Editor",
+        "Unity.Cloud.Gltfast.Export"
     ],
     "includePlatforms": [
         "Editor"

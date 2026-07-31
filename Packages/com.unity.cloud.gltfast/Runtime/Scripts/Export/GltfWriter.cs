@@ -8,11 +8,12 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine.Scripting.APIUpdating;
 
 #if DRACO_IS_INSTALLED
 using Draco.Encode;
 #endif
-using GLTFast.Schema;
+using Unity.Cloud.Gltfast.Schema;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Gltfast.Text.Json;
@@ -23,21 +24,21 @@ using UnityEngine.Assertions;
 using UnityEngine.Profiling;
 using UnityEngine.Rendering;
 
-using Buffer = GLTFast.Schema.Buffer;
-using Camera = GLTFast.Schema.Camera;
+using Buffer = Unity.Cloud.Gltfast.Schema.Buffer;
+using Camera = Unity.Cloud.Gltfast.Schema.Camera;
 using CameraType = UnityEngine.CameraType;
 using Debug = UnityEngine.Debug;
-using LightType = GLTFast.Schema.LightType;
-using Material = GLTFast.Schema.Material;
-using Mesh = GLTFast.Schema.Mesh;
-using Sampler = GLTFast.Schema.Sampler;
-using Texture = GLTFast.Schema.Texture;
+using LightType = Unity.Cloud.Gltfast.Schema.LightType;
+using Material = Unity.Cloud.Gltfast.Schema.Material;
+using Mesh = Unity.Cloud.Gltfast.Schema.Mesh;
+using Sampler = Unity.Cloud.Gltfast.Schema.Sampler;
+using Texture = Unity.Cloud.Gltfast.Schema.Texture;
 
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 
-namespace GLTFast.Export
+namespace Unity.Cloud.Gltfast.Export
 {
 
     using Logging;
@@ -45,6 +46,7 @@ namespace GLTFast.Export
     /// <summary>
     /// Provides glTF export independent of workflow (GameObjects/Entities)
     /// </summary>
+    [MovedFrom(true, sourceNamespace: "GLTFast.Export", sourceAssembly: "glTFast.Export")]
     public class GltfWriter : IGltfWritable
     {
         enum State
@@ -120,7 +122,7 @@ namespace GLTFast.Export
         /// <param name="exportSettings">Export settings</param>
         /// <param name="deferAgent">Defer agent (<see cref="IDeferAgent"/>); decides when/if to preempt
         /// export to preserve a stable frame rate.</param>
-        /// <param name="logger">Custom logger for reporting messages. Defaults to the shared <see cref="GLTFast.Logging.ConsoleLogger.Instance"/> (writes to Unity's Console) when <c>null</c> is passed. Pass <see cref="GLTFast.Logging.NullLogger.Instance"/> (or <c>new NullLogger()</c>) to suppress all output.</param>
+        /// <param name="logger">Custom logger for reporting messages. Defaults to the shared <see cref="Unity.Cloud.Gltfast.Logging.ConsoleLogger.Instance"/> (writes to Unity's Console) when <c>null</c> is passed. Pass <see cref="Unity.Cloud.Gltfast.Logging.NullLogger.Instance"/> (or <c>new NullLogger()</c>) to suppress all output.</param>
         public GltfWriter(
             ExportSettings exportSettings = null,
             IDeferAgent deferAgent = null,

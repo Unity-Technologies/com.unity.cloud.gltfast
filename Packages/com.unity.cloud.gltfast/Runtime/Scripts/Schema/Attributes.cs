@@ -5,14 +5,16 @@ using System;
 using System.Collections.Generic;
 using Unity.Gltfast.Text.Json;
 using Unity.Gltfast.Text.Json.Serialization;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast.Schema
+namespace Unity.Cloud.Gltfast.Schema
 {
     /// <summary>
     /// Mesh vertex attribute collection. Each property value is the index of
     /// the accessor containing attribute’s data.
     /// </summary>
     [JsonConverter(typeof(AttributesConverter))]
+    [MovedFrom(true, sourceNamespace: "GLTFast.Schema", sourceAssembly: "glTFast")]
     public class Attributes : IGltfObject
     {
         /// <summary>Vertex position accessor index.</summary>

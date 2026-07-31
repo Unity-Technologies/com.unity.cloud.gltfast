@@ -4,13 +4,13 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using GLTFast.Addons;
+using Unity.Cloud.Gltfast.Addons;
 using Unity.Collections;
 using UnityEngine;
 using UnityEngine.Experimental.Rendering;
 using UnityEngine.Profiling;
 
-namespace GLTFast.Documentation.Examples
+namespace Unity.Cloud.Gltfast.Documentation.Examples
 {
     class PngTextureAddon : ImportAddon<PngTextureAddonInstance> { }
 

@@ -2,15 +2,17 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System.IO;
-using GLTFast.Schema;
+using Unity.Cloud.Gltfast.Schema;
 using Unity.Gltfast.Text.Json;
 using UnityEngine;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast
+namespace Unity.Cloud.Gltfast
 {
     /// <summary>
     /// Extension methods for <see cref="Root"/>
     /// </summary>
+    [MovedFrom(true, sourceNamespace: "GLTFast", sourceAssembly: "glTFast")]
     public static class RootExtension
     {
         /// <summary>

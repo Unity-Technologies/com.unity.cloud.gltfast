@@ -4,7 +4,7 @@
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 
-namespace GLTFast
+namespace Unity.Cloud.Gltfast
 {
     static class NativeArrayExtensions
     {

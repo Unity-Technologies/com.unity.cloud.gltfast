@@ -7,19 +7,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using GLTFast.Logging;
-using GLTFast.Schema;
 using NUnit.Framework;
+using Unity.Cloud.Gltfast.Logging;
+using Unity.Cloud.Gltfast.Schema;
 using Unity.Collections;
 using UnityEngine;
 using UnityEngine.TestTools;
-using Camera = GLTFast.Schema.Camera;
-using GltfMaterial = GLTFast.Schema.Material;
+using Camera = Unity.Cloud.Gltfast.Schema.Camera;
+using GltfMaterial = Unity.Cloud.Gltfast.Schema.Material;
 using Material = UnityEngine.Material;
-using Mesh = GLTFast.Schema.Mesh;
-using Texture = GLTFast.Schema.Texture;
+using Mesh = Unity.Cloud.Gltfast.Schema.Mesh;
+using Texture = Unity.Cloud.Gltfast.Schema.Texture;
 
-namespace GLTFast.Tests.Import
+namespace Unity.Cloud.Gltfast.Tests.Import
 {
     [Category("Import")]
     class MeshGeneratorTests

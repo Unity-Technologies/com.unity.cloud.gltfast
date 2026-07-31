@@ -1,11 +1,11 @@
 {
-    "name": "glTFast.Documentation.Examples",
-    "rootNamespace": "GLTFast.Documentation.Examples",
+    "name": "Unity.Cloud.Gltfast.Documentation.Examples",
+    "rootNamespace": "Unity.Cloud.Gltfast.Documentation.Examples",
     "references": [
         "Unity.Burst",
         "Unity.Mathematics",
-        "glTFast",
-        "glTFast.Export"
+        "Unity.Cloud.Gltfast",
+        "Unity.Cloud.Gltfast.Export"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

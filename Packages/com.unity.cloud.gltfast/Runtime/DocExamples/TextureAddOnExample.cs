@@ -3,14 +3,14 @@
 
 using System;
 using System.Threading.Tasks;
-using GLTFast.Addons;
-using GLTFast.Logging;
+using Unity.Cloud.Gltfast.Addons;
+using Unity.Cloud.Gltfast.Logging;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 using UnityEngine;
 
-namespace GLTFast.Documentation.Examples
+namespace Unity.Cloud.Gltfast.Documentation.Examples
 {
     class TextureAddOnExample : MonoBehaviour
     {

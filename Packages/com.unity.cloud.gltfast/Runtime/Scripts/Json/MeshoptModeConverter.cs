@@ -7,7 +7,7 @@ using System;
 using Unity.Gltfast.Text.Json;
 using Unity.Gltfast.Text.Json.Serialization;
 
-namespace GLTFast.Schema
+namespace Unity.Cloud.Gltfast.Schema
 {
     class MeshoptModeConverter : JsonConverter<MeshoptMode>
     {

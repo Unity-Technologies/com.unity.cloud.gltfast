@@ -3,14 +3,16 @@
 
 using System;
 using Unity.Gltfast.Text.Json.Serialization;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast.Schema
+namespace Unity.Cloud.Gltfast.Schema
 {
     /// <summary>
     /// Specifies if the accessor’s elements are scalars, vectors, or matrices.
     /// </summary>
     /// <seealso href="https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html#_accessor_type"/>
     [JsonConverter(typeof(JsonStringEnumConverter<AccessorType>))]
+    [MovedFrom(true, sourceNamespace: "GLTFast.Schema", sourceAssembly: "glTFast")]
     public enum AccessorType : byte
     {
         /// <summary>Undefined</summary>

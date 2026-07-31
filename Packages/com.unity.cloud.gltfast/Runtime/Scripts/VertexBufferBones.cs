@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
-using GLTFast.Jobs;
-using GLTFast.Logging;
-using GLTFast.Schema;
-using GLTFast.Vertex;
+using Unity.Cloud.Gltfast.Jobs;
+using Unity.Cloud.Gltfast.Logging;
+using Unity.Cloud.Gltfast.Schema;
+using Unity.Cloud.Gltfast.Vertex;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Jobs;
@@ -14,7 +14,7 @@ using UnityEngine;
 using UnityEngine.Profiling;
 using UnityEngine.Rendering;
 
-namespace GLTFast
+namespace Unity.Cloud.Gltfast
 {
     sealed class VertexBufferBones : IDisposable
     {

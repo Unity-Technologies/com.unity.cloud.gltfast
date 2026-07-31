@@ -3,12 +3,12 @@
 
 using System;
 using AOT;
-using GLTFast.Schema;
 using Unity.Burst;
+using Unity.Cloud.Gltfast.Schema;
 using Unity.Mathematics;
 using UnityEngine;
 
-namespace GLTFast.Jobs
+namespace Unity.Cloud.Gltfast.Jobs
 {
     [BurstCompile]
     static unsafe class CachedFunction

@@ -3,8 +3,9 @@
 
 using System;
 using System.Diagnostics;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast.Schema
+namespace Unity.Cloud.Gltfast.Schema
 {
     /// <summary>
     /// Wrapper for glTF string properties that the specification has a limited set of valid values for.
@@ -13,6 +14,7 @@ namespace GLTFast.Schema
     /// </summary>
     /// <typeparam name="TEnum">Enum type the string is deserialized to.</typeparam>
     [DebuggerDisplay("{ToString(),nq}")]
+    [MovedFrom(true, sourceNamespace: "GLTFast.Schema", sourceAssembly: "glTFast")]
     public readonly struct EnumOrRawValue<TEnum> : IEquatable<TEnum>, IEquatable<EnumOrRawValue<TEnum>> where TEnum : struct, Enum
     {
         /// <summary>Enum value</summary>

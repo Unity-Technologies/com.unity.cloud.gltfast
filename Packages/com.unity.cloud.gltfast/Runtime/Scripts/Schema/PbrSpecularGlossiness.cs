@@ -3,8 +3,9 @@
 
 using Unity.Gltfast.Text.Json.Serialization;
 using UnityEngine;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast.Schema
+namespace Unity.Cloud.Gltfast.Schema
 {
 
     /// <summary>
@@ -12,6 +13,7 @@ namespace GLTFast.Schema
     /// Physically-Based Rendering (PBR).
     /// </summary>
     /// <seealso href="https://github.com/KhronosGroup/glTF/tree/main/extensions/2.0/Archived/KHR_materials_pbrSpecularGlossiness"/>
+    [MovedFrom(true, sourceNamespace: "GLTFast.Schema", sourceAssembly: "glTFast")]
     public class PbrSpecularGlossiness
     {
         /// <summary>

@@ -2,12 +2,14 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast.Newtonsoft.Schema
+namespace Unity.Cloud.Gltfast.Newtonsoft.Schema
 {
     /// <summary>
     /// JSON object, with unknown structure
     /// </summary>
-    [Obsolete("Use GLTFast.Schema.UnclassifiedData instead.")]
-    public class UnclassifiedData : GLTFast.Schema.UnclassifiedData { }
+    [Obsolete("Use Unity.Cloud.Gltfast.Schema.UnclassifiedData instead.")]
+    [MovedFrom(true, sourceNamespace: "GLTFast.Newtonsoft.Schema", sourceAssembly: "glTFast.Newtonsoft")]
+    public class UnclassifiedData : Unity.Cloud.Gltfast.Schema.UnclassifiedData { }
 }

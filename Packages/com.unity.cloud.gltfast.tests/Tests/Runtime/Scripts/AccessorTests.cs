@@ -2,11 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
-using GLTFast.Schema;
 using NUnit.Framework;
+using Unity.Cloud.Gltfast.Schema;
 using UnityEngine;
 
-namespace GLTFast.Tests
+namespace Unity.Cloud.Gltfast.Tests
 {
     class AccessorTests
     {

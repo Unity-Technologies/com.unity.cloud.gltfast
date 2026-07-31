@@ -4,11 +4,11 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using GLTFast.Tests.Export;
+using Unity.Cloud.Gltfast.Tests.Export;
 #if USING_GRAPHICS_TEST_FRAMEWORK
-using GLTFast.Tests.Graphics;
+using Unity.Cloud.Gltfast.Tests.Graphics;
 #endif
-using GLTFast.Tests.Import;
+using Unity.Cloud.Gltfast.Tests.Import;
 using UnityEditor;
 using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
@@ -20,7 +20,7 @@ using UnityEngine.Rendering.Universal;
 #endif
 using Object = UnityEngine.Object;
 
-namespace GLTFast.Editor.Tests
+namespace Unity.Cloud.Gltfast.Editor.Tests
 {
     public class PreprocessBuild : IPreprocessBuildWithReport
     {

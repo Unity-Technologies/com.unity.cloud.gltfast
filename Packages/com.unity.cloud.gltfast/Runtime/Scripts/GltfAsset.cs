@@ -4,8 +4,9 @@
 using System.IO;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast
+namespace Unity.Cloud.Gltfast
 {
     using Loading;
     using Logging;
@@ -14,6 +15,7 @@ namespace GLTFast
     /// <summary>
     /// Base component for code-less loading of glTF files
     /// </summary>
+    [MovedFrom(true, sourceNamespace: "GLTFast", sourceAssembly: "glTFast")]
     public class GltfAsset : GltfAssetBase
     {
         /// <summary>
@@ -62,7 +64,7 @@ namespace GLTFast
             set => streamingAsset = value;
         }
 
-        /// <inheritdoc cref="GLTFast.InstantiationSettings"/>
+        /// <inheritdoc cref="Unity.Cloud.Gltfast.InstantiationSettings"/>
         public InstantiationSettings InstantiationSettings
         {
             get => instantiationSettings;

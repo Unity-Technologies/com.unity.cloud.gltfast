@@ -4,16 +4,18 @@
 #if USING_HDRP
 
 using System;
-using GLTFast.Logging;
-using GLTFast.Materials;
+using Unity.Cloud.Gltfast.Logging;
+using Unity.Cloud.Gltfast.Materials;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast.Export
+namespace Unity.Cloud.Gltfast.Export
 {
 
     using Schema;
 
+    [MovedFrom(true, sourceNamespace: "GLTFast.Export", sourceAssembly: "glTFast.Export")]
     public class HighDefinitionMaterialExport : MaterialExportBase
     {
 

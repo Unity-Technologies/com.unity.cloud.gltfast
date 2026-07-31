@@ -1,12 +1,15 @@
 // SPDX-FileCopyrightText: 2023 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
-namespace GLTFast.Addons
+using UnityEngine.Scripting.APIUpdating;
+
+namespace Unity.Cloud.Gltfast.Addons
 {
 
     /// <summary>
     /// Import add-on base class.
     /// </summary>
+    [MovedFrom(true, sourceNamespace: "GLTFast.Addons", sourceAssembly: "glTFast")]
     public abstract class ImportAddon
     {
         /// <summary>
@@ -20,6 +23,7 @@ namespace GLTFast.Addons
     /// Extension base class.
     /// </summary>
     /// <typeparam name="TInstance">Type of the addon instance, that that is constructed per <see cref="GltfImport"/>.</typeparam>
+    [MovedFrom(true, sourceNamespace: "GLTFast.Addons", sourceAssembly: "glTFast")]
     public abstract class ImportAddon<TInstance> : ImportAddon
         where TInstance : ImportAddonInstance, new()
     {

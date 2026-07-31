@@ -3,17 +3,18 @@
 
 using System;
 using System.Collections.Generic;
-using GLTFast.Schema;
+using Unity.Cloud.Gltfast.Schema;
 using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Profiling;
+using UnityEngine.Scripting.APIUpdating;
 #if UNITY_ANIMATION
 using Animation = UnityEngine.Animation;
 #endif
 using Camera = UnityEngine.Camera;
-using CameraType = GLTFast.Schema.CameraType;
-using LightType = GLTFast.Schema.LightType;
+using CameraType = Unity.Cloud.Gltfast.Schema.CameraType;
+using LightType = Unity.Cloud.Gltfast.Schema.LightType;
 using Material = UnityEngine.Material;
 using Mesh = UnityEngine.Mesh;
 
@@ -21,7 +22,7 @@ using Mesh = UnityEngine.Mesh;
 // using UnityEditor.Animations;
 // #endif
 
-namespace GLTFast
+namespace Unity.Cloud.Gltfast
 {
 
     using Logging;
@@ -29,6 +30,7 @@ namespace GLTFast
     /// <summary>
     /// Generates a GameObject hierarchy from a glTF scene
     /// </summary>
+    [MovedFrom(true, sourceNamespace: "GLTFast", sourceAssembly: "glTFast")]
     public class GameObjectInstantiator : IInstantiator
     {
         // Developers might want to customize this class by deriving from it.
@@ -42,7 +44,7 @@ namespace GLTFast
 
         /// <summary>
         /// Logger used by this instantiator. May be <c>null</c> when the caller passed
-        /// <see cref="GLTFast.Logging.NullLogger.Instance"/>; subclasses MUST use
+        /// <see cref="Unity.Cloud.Gltfast.Logging.NullLogger.Instance"/>; subclasses MUST use
         /// null-conditional access (<c>m_Logger?.Error(...)</c>).
         /// </summary>
         protected ICodeLogger m_Logger;
@@ -82,7 +84,7 @@ namespace GLTFast
         /// </summary>
         /// <param name="gltf">glTF to instantiate from</param>
         /// <param name="parent">Generated GameObjects will get parented to this Transform</param>
-        /// <param name="logger">Custom logger for reporting messages. Defaults to the shared <see cref="GLTFast.Logging.ConsoleLogger.Instance"/> (writes to Unity's Console) when <c>null</c> is passed. Pass <see cref="GLTFast.Logging.NullLogger.Instance"/> (or <c>new NullLogger()</c>) to suppress all output.</param>
+        /// <param name="logger">Custom logger for reporting messages. Defaults to the shared <see cref="Unity.Cloud.Gltfast.Logging.ConsoleLogger.Instance"/> (writes to Unity's Console) when <c>null</c> is passed. Pass <see cref="Unity.Cloud.Gltfast.Logging.NullLogger.Instance"/> (or <c>new NullLogger()</c>) to suppress all output.</param>
         /// <param name="settings">Instantiation settings</param>
         public GameObjectInstantiator(
             IGltfReadable gltf,

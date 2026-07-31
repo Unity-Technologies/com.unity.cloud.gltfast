@@ -4,13 +4,13 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using GLTFast.Addons;
-using GLTFast.Schema;
+using Unity.Cloud.Gltfast.Addons;
+using Unity.Cloud.Gltfast.Schema;
 using Unity.Collections;
 using UnityEngine;
-using Texture = GLTFast.Schema.Texture;
+using Texture = Unity.Cloud.Gltfast.Schema.Texture;
 
-namespace GLTFast.Documentation.Examples
+namespace Unity.Cloud.Gltfast.Documentation.Examples
 {
     class WebpTextureAddon : ImportAddon<WebpTextureAddonInstance> { }
 

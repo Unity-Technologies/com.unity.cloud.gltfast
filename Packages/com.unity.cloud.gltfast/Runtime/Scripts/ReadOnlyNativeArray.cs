@@ -9,7 +9,7 @@ using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 
-namespace GLTFast
+namespace Unity.Cloud.Gltfast
 {
     /// <summary>
     /// This is a stripped-down version of <see cref="NativeArray{T}.ReadOnly"/> that supports <see cref="GetSubArray(int,int)"/>.

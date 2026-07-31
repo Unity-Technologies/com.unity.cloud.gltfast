@@ -2,11 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
-using GLTFast.Schema;
+using Unity.Cloud.Gltfast.Schema;
 using UnityEngine;
-using Texture = GLTFast.Schema.Texture;
+using Texture = Unity.Cloud.Gltfast.Schema.Texture;
 
-namespace GLTFast.Export
+namespace Unity.Cloud.Gltfast.Export
 {
     static class TextureComparer
     {

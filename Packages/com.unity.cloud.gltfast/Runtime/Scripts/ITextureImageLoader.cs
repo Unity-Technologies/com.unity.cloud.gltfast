@@ -4,16 +4,17 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using GLTFast.Schema;
 using Unity.Collections;
 using UnityEngine;
-using Texture = GLTFast.Schema.Texture;
+using UnityEngine.Scripting.APIUpdating;
+using Texture = Unity.Cloud.Gltfast.Schema.Texture;
 
-namespace GLTFast
+namespace Unity.Cloud.Gltfast
 {
     /// <summary>
     /// Creates a <see cref="UnityEngine.Texture2D"/> from raw, usually compressed image data.
     /// </summary>
+    [MovedFrom(true, sourceNamespace: "GLTFast", sourceAssembly: "glTFast")]
     public interface ITextureImageLoader
     {
         /// <summary>

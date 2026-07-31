@@ -2,9 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast.Newtonsoft.Schema
+namespace Unity.Cloud.Gltfast.Newtonsoft.Schema
 {
-    [Obsolete("Use GLTFast.Schema.CameraOrthographic instead.")]
-    public class CameraOrthographic : GLTFast.Schema.CameraOrthographic, IJsonObject { }
+    [Obsolete("Use Unity.Cloud.Gltfast.Schema.CameraOrthographic instead.")]
+    [MovedFrom(true, sourceNamespace: "GLTFast.Newtonsoft.Schema", sourceAssembly: "glTFast.Newtonsoft")]
+    public class CameraOrthographic : Unity.Cloud.Gltfast.Schema.CameraOrthographic, IJsonObject { }
 }

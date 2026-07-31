@@ -7,7 +7,7 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.Profiling;
 
-namespace GLTFast.Tests
+namespace Unity.Cloud.Gltfast.Tests
 {
     class UriHelperTest
     {

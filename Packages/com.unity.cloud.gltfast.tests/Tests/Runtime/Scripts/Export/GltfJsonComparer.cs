@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 using NUnit.Framework;
 using Unity.Gltfast.Text.Json;
 
-namespace GLTFast.Tests.Export
+namespace Unity.Cloud.Gltfast.Tests.Export
 {
     public static class GltfJsonComparer
     {

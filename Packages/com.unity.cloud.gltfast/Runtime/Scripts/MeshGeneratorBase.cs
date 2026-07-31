@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine.Rendering;
 
-namespace GLTFast
+namespace Unity.Cloud.Gltfast
 {
 
     abstract class MeshGeneratorBase : IDisposable

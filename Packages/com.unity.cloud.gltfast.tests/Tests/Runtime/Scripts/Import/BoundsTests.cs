@@ -5,14 +5,14 @@ using System;
 using System.Collections;
 using System.IO;
 using System.Threading.Tasks;
-using GLTFast.Logging;
 using NUnit.Framework;
+using Unity.Cloud.Gltfast.Logging;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.TestTools;
 using Object = UnityEngine.Object;
 
-namespace GLTFast.Tests.Import
+namespace Unity.Cloud.Gltfast.Tests.Import
 {
     [Category("Import")]
     class BoundsTests

@@ -5,8 +5,8 @@ using System;
 using System.Collections;
 using System.IO;
 using System.Threading.Tasks;
-using GLTFast.Logging;
-using GLTFast.Tests.Import;
+using Unity.Cloud.Gltfast.Logging;
+using Unity.Cloud.Gltfast.Tests.Import;
 using NUnit.Framework;
 #if UNITY_ENTITIES_GRAPHICS
 using Unity.Entities;
@@ -18,7 +18,7 @@ using UnityEngine.TestTools;
 using Object = UnityEngine.Object;
 #endif
 
-namespace GLTFast.Tests
+namespace Unity.Cloud.Gltfast.Tests
 {
     [Category("Performance")]
     class ImportPerformanceTests : IPrebuildSetup

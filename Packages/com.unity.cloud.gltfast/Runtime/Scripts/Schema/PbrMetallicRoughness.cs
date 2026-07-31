@@ -5,13 +5,15 @@ using System.Collections.Generic;
 using Unity.Gltfast.Text.Json;
 using Unity.Gltfast.Text.Json.Serialization;
 using UnityEngine;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast.Schema
+namespace Unity.Cloud.Gltfast.Schema
 {
     /// <summary>
     /// A set of parameter values that are used to define the metallic-roughness
     /// material model from Physically-Based Rendering (PBR) methodology.
     /// </summary>
+    [MovedFrom(true, sourceNamespace: "GLTFast.Schema", sourceAssembly: "glTFast")]
     public class PbrMetallicRoughness : IGltfObject
     {
         /// <summary>

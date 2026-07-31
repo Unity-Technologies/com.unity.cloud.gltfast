@@ -1,0 +1,17 @@
+{
+    "name": "ApiUpdaterMigration.LegacyConsumer",
+    "rootNamespace": "ApiUpdaterMigration",
+    "references": [
+        "Unity.Cloud.Gltfast",
+        "Unity.Cloud.Gltfast.Export"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

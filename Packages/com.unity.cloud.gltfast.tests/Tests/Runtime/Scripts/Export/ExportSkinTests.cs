@@ -4,8 +4,8 @@
 using System.Collections;
 using System.IO;
 using System.Threading.Tasks;
-using GLTFast.Export;
-using GLTFast.Logging;
+using Unity.Cloud.Gltfast.Export;
+using Unity.Cloud.Gltfast.Logging;
 using NUnit.Framework;
 #if GLTF_VALIDATOR && UNITY_EDITOR
 using UnityEditor.Formats.Gltf.Validation;
@@ -14,7 +14,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
 
-namespace GLTFast.Tests.Export
+namespace Unity.Cloud.Gltfast.Tests.Export
 {
     [TestFixture, Category("Export")]
     class ExportSkinTests : IPrebuildSetup

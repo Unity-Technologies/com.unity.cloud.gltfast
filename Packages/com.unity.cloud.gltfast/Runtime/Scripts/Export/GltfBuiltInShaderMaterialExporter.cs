@@ -2,18 +2,19 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
-using GLTFast.Materials;
-using GLTFast.Schema;
+using Unity.Cloud.Gltfast.Materials;
+using Unity.Cloud.Gltfast.Schema;
 using UnityEngine;
 using UnityEngine.Rendering;
-using GltfMaterial = GLTFast.Schema.Material;
+using UnityEngine.Scripting.APIUpdating;
 using Material = UnityEngine.Material;
 
-namespace GLTFast.Export
+namespace Unity.Cloud.Gltfast.Export
 {
     /// <summary>
     /// Converts Unity Materials that use a glTFast Built-In shader to glTF materials
     /// </summary>
+    [MovedFrom(true, sourceNamespace: "GLTFast.Export", sourceAssembly: "glTFast.Export")]
     public class GltfBuiltInShaderMaterialExporter : GltfMaterialExporter
     {
         /// <inheritdoc />

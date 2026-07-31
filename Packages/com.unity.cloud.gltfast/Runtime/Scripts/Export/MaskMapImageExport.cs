@@ -7,7 +7,7 @@ using System;
 using System.IO;
 using UnityEngine;
 
-namespace GLTFast.Export
+namespace Unity.Cloud.Gltfast.Export
 {
 
     /// <summary>

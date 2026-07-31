@@ -2,14 +2,14 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
-using GLTFast.Schema;
 using NUnit.Framework;
+using Unity.Cloud.Gltfast.Schema;
 using Unity.Gltfast.Text.Json;
 using UnityEngine;
-using CameraType = GLTFast.Schema.CameraType;
-using Material = GLTFast.Schema.Material;
+using CameraType = Unity.Cloud.Gltfast.Schema.CameraType;
+using Material = Unity.Cloud.Gltfast.Schema.Material;
 
-namespace GLTFast.Tests.JsonParsing
+namespace Unity.Cloud.Gltfast.Tests.JsonParsing
 {
     [Category("JsonParsing")]
     class JsonParsingTests

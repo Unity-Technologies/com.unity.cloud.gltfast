@@ -56,7 +56,7 @@ owners
    [unreleased section](./Templates/changelog-section.md). Move any entries
    which may have been added to develop since the release to the new unreleased
    section.
-1. Update the constant variable `GLTFast.Export.Constants.version`
+1. Update the constant variable `Unity.Cloud.Gltfast.Export.Constants.version`
    (in `Packages/com.unity.cloud.gltfast/Runtime/Scripts/Export/Constants.cs`)
    to `X.Y.W-pre.1`.
 1. Open a PR and, once reviewed, merge it into develop and delete the working

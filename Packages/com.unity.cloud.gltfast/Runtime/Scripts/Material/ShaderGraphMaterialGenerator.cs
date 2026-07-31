@@ -9,22 +9,24 @@
 
 using System;
 
-using GLTFast.Logging;
-using GLTFast.Schema;
+using Unity.Cloud.Gltfast.Logging;
+using Unity.Cloud.Gltfast.Schema;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 using UnityEngine;
 using UnityEngine.Rendering;
-using Color = GLTFast.Schema.Color;
+using UnityEngine.Scripting.APIUpdating;
+using Color = Unity.Cloud.Gltfast.Schema.Color;
 using Material = UnityEngine.Material;
-using GltfMaterial = GLTFast.Schema.Material;
+using GltfMaterial = Unity.Cloud.Gltfast.Schema.Material;
 
-namespace GLTFast.Materials
+namespace Unity.Cloud.Gltfast.Materials
 {
 
     using AlphaMode = AlphaMode;
 
+    [MovedFrom(true, sourceNamespace: "GLTFast.Materials", sourceAssembly: "glTFast")]
     public class ShaderGraphMaterialGenerator : MaterialGenerator
     {
 

@@ -5,12 +5,12 @@ using System.Collections;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using GLTFast.Logging;
 using NUnit.Framework;
+using Unity.Cloud.Gltfast.Logging;
 using UnityEngine;
 using UnityEngine.TestTools;
 
-namespace GLTFast.Tests
+namespace Unity.Cloud.Gltfast.Tests
 {
     using Addons;
 

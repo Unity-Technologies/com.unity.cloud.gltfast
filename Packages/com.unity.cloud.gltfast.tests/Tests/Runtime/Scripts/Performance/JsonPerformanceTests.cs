@@ -6,8 +6,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using GLTFast.Schema;
 using NUnit.Framework;
+using Unity.Cloud.Gltfast.Schema;
 using Unity.Collections;
 using Unity.Gltfast.Text.Json;
 using Unity.PerformanceTesting;
@@ -16,7 +16,7 @@ using UnityEngine;
 using UnityEngine.Profiling;
 using UnityEngine.TestTools;
 
-namespace GLTFast.Tests.Performance
+namespace Unity.Cloud.Gltfast.Tests.Performance
 {
     [TestFixture]
     [Category("Performance")]

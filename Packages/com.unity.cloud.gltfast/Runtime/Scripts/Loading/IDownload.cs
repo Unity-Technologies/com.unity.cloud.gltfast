@@ -2,15 +2,16 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
-using Unity.Collections;
 using UnityEngine;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast.Loading
+namespace Unity.Cloud.Gltfast.Loading
 {
     /// <summary>
     /// Provides a mechanism to inspect the progress and result of a download
     /// or file access request
     /// </summary>
+    [MovedFrom(true, sourceNamespace: "GLTFast.Loading", sourceAssembly: "glTFast")]
     public interface IDownload : IDisposable
     {
         /// <summary>

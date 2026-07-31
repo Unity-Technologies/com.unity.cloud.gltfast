@@ -2,9 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast.Newtonsoft.Schema
+namespace Unity.Cloud.Gltfast.Newtonsoft.Schema
 {
-    [Obsolete("Use GLTFast.Schema.BufferViewExtensions instead.")]
-    public class BufferViewExtensions : GLTFast.Schema.BufferViewExtensions, IJsonObject { }
+    [Obsolete("Use Unity.Cloud.Gltfast.Schema.BufferViewExtensions instead.")]
+    [MovedFrom(true, sourceNamespace: "GLTFast.Newtonsoft.Schema", sourceAssembly: "glTFast.Newtonsoft")]
+    public class BufferViewExtensions : Unity.Cloud.Gltfast.Schema.BufferViewExtensions, IJsonObject { }
 }

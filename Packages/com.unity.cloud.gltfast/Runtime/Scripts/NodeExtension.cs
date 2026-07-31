@@ -2,8 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using Unity.Mathematics;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast
+namespace Unity.Cloud.Gltfast
 {
 
     using Schema;
@@ -11,6 +12,7 @@ namespace GLTFast
     /// <summary>
     /// Extension methods for <see cref="Node"/>
     /// </summary>
+    [MovedFrom(true, sourceNamespace: "GLTFast", sourceAssembly: "glTFast")]
     public static class NodeExtension
     {
         /// <summary>

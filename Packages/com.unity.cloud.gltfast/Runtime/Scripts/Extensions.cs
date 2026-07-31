@@ -1,16 +1,18 @@
 // SPDX-FileCopyrightText: 2023 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
-using GLTFast.Schema;
+using Unity.Cloud.Gltfast.Schema;
 using Unity.Gltfast.Text.Json.Serialization;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast
+namespace Unity.Cloud.Gltfast
 {
 
     /// <summary>
     /// <a href="https://www.khronos.org/registry/glTF/specs/2.0/glTF-2.0.html#specifying-extensions">glTF Extensions</a>
     /// </summary>
     [JsonConverter(typeof(JsonStringEnumConverter<Extension>))]
+    [MovedFrom(true, sourceNamespace: "GLTFast", sourceAssembly: "glTFast")]
     public enum Extension
     {
         /// <summary>
@@ -98,6 +100,7 @@ namespace GLTFast
     /// <summary>
     /// Collection of glTF extension names
     /// </summary>
+    [MovedFrom(true, sourceNamespace: "GLTFast", sourceAssembly: "glTFast")]
     public static class ExtensionName
     {
         /// <inheritdoc cref="Extension.DracoMeshCompression"/>

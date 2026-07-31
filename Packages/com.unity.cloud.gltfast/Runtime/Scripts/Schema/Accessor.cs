@@ -11,8 +11,9 @@ using UnityEngine.Assertions;
 
 // GLTF_EXPORT
 using UnityEngine.Rendering;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast.Schema
+namespace Unity.Cloud.Gltfast.Schema
 {
     /// <summary>
     /// An accessor defines a method for retrieving data as typed arrays from
@@ -20,6 +21,7 @@ namespace GLTFast.Schema
     /// See <a href="https://www.khronos.org/registry/glTF/specs/2.0/glTF-2.0.html#accessors">.
     /// accessor in the glTF 2.0 specification</a>.
     /// </summary>
+    [MovedFrom(true, sourceNamespace: "GLTFast.Schema", sourceAssembly: "glTFast")]
     public class Accessor : NamedObject, IGltfObject
     {
         /// <summary>

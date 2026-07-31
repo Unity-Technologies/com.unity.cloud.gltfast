@@ -6,12 +6,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using GLTFast.Addons;
-using GLTFast.Loading;
-using GLTFast.Logging;
+using Unity.Cloud.Gltfast.Addons;
+using Unity.Cloud.Gltfast.Loading;
+using Unity.Cloud.Gltfast.Logging;
 using UnityEngine;
 
-namespace GLTFast
+namespace Unity.Cloud.Gltfast
 {
     static class ImageImport
     {

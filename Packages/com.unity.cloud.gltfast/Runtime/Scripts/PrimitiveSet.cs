@@ -3,10 +3,10 @@
 
 using System;
 using System.Collections.Generic;
-using GLTFast.Schema;
+using Unity.Cloud.Gltfast.Schema;
 using UnityEngine.Assertions;
 
-namespace GLTFast
+namespace Unity.Cloud.Gltfast
 {
     interface IPrimitiveSet
     {

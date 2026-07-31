@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using UnityEngine;
-using Material = GLTFast.Schema.Material;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast.Materials
+namespace Unity.Cloud.Gltfast.Materials
 {
     using Logging;
     using Schema;
@@ -12,6 +12,7 @@ namespace GLTFast.Materials
     /// <summary>
     /// Provides a mechanism to convert glTF materials into Unity Materials
     /// </summary>
+    [MovedFrom(true, sourceNamespace: "GLTFast.Materials", sourceAssembly: "glTFast")]
     public interface IMaterialGenerator
     {
 

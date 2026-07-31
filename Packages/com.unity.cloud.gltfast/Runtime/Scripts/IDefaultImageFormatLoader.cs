@@ -2,9 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
-using GLTFast.Schema;
+using Unity.Cloud.Gltfast.Schema;
+using UnityEngine.Scripting.APIUpdating;
 
-namespace GLTFast
+namespace Unity.Cloud.Gltfast
 {
     /// <summary>
     /// Texture image loader that is able to load glTF core specification image formats (PNG and/or JPEG).
@@ -12,6 +13,7 @@ namespace GLTFast
     /// To add support for texture extensions that add support for an image format that's not in the glTF specification
     /// (i.e. that override the image source) use <see cref="ITextureImageLoader"/> instead.
     /// </summary>
+    [MovedFrom(true, sourceNamespace: "GLTFast", sourceAssembly: "glTFast")]
     public interface IDefaultImageFormatLoader : ITextureImageLoader
     {
         /// <summary>

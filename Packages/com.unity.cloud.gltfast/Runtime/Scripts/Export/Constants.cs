@@ -3,7 +3,7 @@
 
 using UnityEngine;
 
-namespace GLTFast.Export
+namespace Unity.Cloud.Gltfast.Export
 {
     static class Constants
     {

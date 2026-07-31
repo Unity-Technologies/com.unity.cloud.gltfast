@@ -6,9 +6,9 @@ using System;
 using System.Collections;
 using System.IO;
 using System.Threading.Tasks;
-using GLTFast.Logging;
-using GLTFast.Tests.Export;
-using GLTFast.Tests.Import;
+using Unity.Cloud.Gltfast.Logging;
+using Unity.Cloud.Gltfast.Tests.Export;
+using Unity.Cloud.Gltfast.Tests.Import;
 using NUnit.Framework;
 using Unity.Mathematics;
 #if UNITY_EDITOR
@@ -19,7 +19,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
 using UnityEngine.TestTools.Graphics;
 
-namespace GLTFast.Tests.Graphics
+namespace Unity.Cloud.Gltfast.Tests.Graphics
 {
     [Category("Graphics")]
     [CodeBasedGraphicsTest("Assets/ReferenceImages")]

@@ -5,15 +5,15 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using GLTFast.Export;
-using GLTFast.Logging;
+using Unity.Cloud.Gltfast.Export;
+using Unity.Cloud.Gltfast.Logging;
 using Unity.Mathematics;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 using UnityEngine;
 
-namespace GLTFast.Tests
+namespace Unity.Cloud.Gltfast.Tests
 {
     static class TestGltfGenerator
     {

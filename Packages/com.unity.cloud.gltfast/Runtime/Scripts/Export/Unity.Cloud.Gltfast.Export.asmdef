@@ -1,8 +1,8 @@
 {
-    "name": "glTFast.Export",
-    "rootNamespace": "GLTFast.Export",
+    "name": "Unity.Cloud.Gltfast.Export",
+    "rootNamespace": "Unity.Cloud.Gltfast.Export",
     "references": [
-        "glTFast",
+        "Unity.Cloud.Gltfast",
         "Unity.Mathematics",
         "Unity.Burst",
         "Unity.RenderPipelines.Core.Runtime",

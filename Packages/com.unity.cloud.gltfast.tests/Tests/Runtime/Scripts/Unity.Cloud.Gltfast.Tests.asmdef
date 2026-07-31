@@ -1,6 +1,6 @@
 {
-    "name": "glTFast.Tests",
-    "rootNamespace": "GLTFast.Tests",
+    "name": "Unity.Cloud.Gltfast.Tests",
+    "rootNamespace": "Unity.Cloud.Gltfast.Tests",
     "references": [
         "UnityEngine.TestRunner",
         "Unity.Burst",
@@ -10,10 +10,10 @@
         "Unity.PerformanceTesting",
         "Unity.Transforms",
         "UnityEditor.Formats.Gltf.Validation",
-        "glTFast",
-        "glTFast.dots",
-        "glTFast.Export",
-        "glTFast.Documentation.Examples",
+        "Unity.Cloud.Gltfast",
+        "Unity.Cloud.Gltfast.Dots",
+        "Unity.Cloud.Gltfast.Export",
+        "Unity.Cloud.Gltfast.Documentation.Examples",
         "Unity.Meshopt.Decompress",
         "UnityEngine.TestTools.Graphics",
         "Unity.RenderPipelines.HighDefinition.Runtime"

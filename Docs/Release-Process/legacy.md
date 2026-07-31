@@ -11,7 +11,7 @@
 1. Update `Packages/com.unity.cloud.gltfast/CHANGELOG.md` and replace `Unreleased`
    by the version and the release date, commit this change. Remove empty sub-sections. If you go out
    of a pre-release version, merge all sections in the x.y.z section.
-1. Update the constant variable `GLTFast.Export.Constants.version`
+1. Update the constant variable `Unity.Cloud.Gltfast.Export.Constants.version`
    (in `Packages/com.unity.cloud.gltfast/Runtime/Scripts/Export/Constants.cs`)
    to the release version.
 1. Push the branch and open a Pull Request targeting the previously created
