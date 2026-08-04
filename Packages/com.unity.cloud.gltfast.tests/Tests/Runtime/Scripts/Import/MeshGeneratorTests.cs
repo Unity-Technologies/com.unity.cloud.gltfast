@@ -56,7 +56,7 @@ namespace Unity.Cloud.Gltfast.Tests.Import
                 );
 
             using var tokenSource = new CancellationTokenSource();
-            var mesh = await mg.CreateMeshResult(tokenSource.Token);
+            var mesh = await mg.CreateMeshResultAsync(tokenSource.Token);
             Assert.IsNull(mesh);
             var message = logger.Items.First();
             Assert.AreEqual(LogCode.IndexCountInvalid, message.Code);

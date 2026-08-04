@@ -77,8 +77,14 @@ namespace Unity.Cloud.Gltfast
             return duration <= m_TimeBudget - (Time.realtimeSinceStartup - m_LastTime);
         }
 
+        [Obsolete("BreakPoint has been renamed to BreakPointAsync. (UnityUpgradable) -> BreakPointAsync(*)", true)]
+        public Task BreakPoint() => BreakPointAsync();
+
+        [Obsolete("BreakPoint has been renamed to BreakPointAsync. (UnityUpgradable) -> BreakPointAsync(*)", true)]
+        public Task BreakPoint(float duration) => BreakPointAsync(duration);
+
         /// <inheritdoc />
-        public async Task BreakPoint()
+        public async Task BreakPointAsync()
         {
             if (ShouldDefer())
             {
@@ -87,7 +93,7 @@ namespace Unity.Cloud.Gltfast
         }
 
         /// <inheritdoc />
-        public async Task BreakPoint(float duration)
+        public async Task BreakPointAsync(float duration)
         {
             if (ShouldDefer(duration))
             {

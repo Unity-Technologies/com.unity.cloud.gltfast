@@ -44,7 +44,7 @@ namespace Unity.Cloud.Gltfast
 
         public abstract void AddPrimitive(Attributes att);
         public abstract void Initialize();
-        public abstract Task<bool> CreateVertexBuffer();
+        public abstract Task<bool> CreateVertexBufferAsync();
 
         public abstract void ApplyOnMesh(UnityEngine.Mesh msh, MeshUpdateFlags flags = MeshGeneratorBase.defaultMeshUpdateFlags);
         public abstract int VertexCount { get; }

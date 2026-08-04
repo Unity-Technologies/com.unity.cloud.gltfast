@@ -41,7 +41,7 @@ namespace Unity.Cloud.Gltfast
 
             var task = addons
                 ?.First<ITextureImageLoader>(addon => addon.IsAbleToLoad(data.Data.AsReadOnlySpan()))
-                ?.LoadImage(
+                ?.LoadImageAsync(
                     data.Data,
                     linear,
                     readable,
@@ -112,7 +112,7 @@ namespace Unity.Cloud.Gltfast
                 cancellationToken.ThrowIfCancellationRequestedWithTracking();
                 await Task.Yield();
             }
-            return await loader.LoadImage(data.Data, linear, readable, generateMipMaps, cancellationToken);
+            return await loader.LoadImageAsync(data.Data, linear, readable, generateMipMaps, cancellationToken);
         }
 
         internal static async Task<IReadOnlyDisposableData> LoadDataAsync(
@@ -121,7 +121,7 @@ namespace Unity.Cloud.Gltfast
             CancellationToken cancellationToken
         )
         {
-            var download = await context.DownloadProvider.Request(uri);
+            var download = await context.DownloadProvider.RequestAsync(uri);
             if (download == null)
             {
                 context.Logger?.Error(LogCode.TextureDownloadFailed, "?", uri.ToString());

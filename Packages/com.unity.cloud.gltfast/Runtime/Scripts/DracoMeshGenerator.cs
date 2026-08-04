@@ -180,7 +180,7 @@ namespace Unity.Cloud.Gltfast
                 while (!m_MorphTargetsJobHandle.IsCompleted)
                     await Task.Yield();
                 m_MorphTargetsJobHandle.Complete();
-                await m_MorphTargetsGenerator.ApplyOnMeshAndDispose(mesh);
+                await m_MorphTargetsGenerator.ApplyOnMeshAndDisposeAsync(mesh);
             }
 
             mesh.name = m_MeshName;

@@ -31,7 +31,7 @@ namespace Unity.Cloud.Gltfast
             m_MeshName = meshName;
         }
 
-        public async Task<UnityEngine.Mesh> CreateMeshResult(CancellationToken cancellationToken)
+        public async Task<UnityEngine.Mesh> CreateMeshResultAsync(CancellationToken cancellationToken)
         {
             while (!IsCompleted)
             {

@@ -40,7 +40,7 @@ namespace Unity.Cloud.Gltfast
         bool createBoxCollider = true;
 
         /// <inheritdoc />
-        public override async Task<bool> Load(
+        public override async Task<bool> LoadAsync(
             string gltfUrl,
             IDownloadProvider downloadProvider = null,
             IDeferAgent deferAgent = null,
@@ -49,7 +49,7 @@ namespace Unity.Cloud.Gltfast
             )
         {
             Importer = new GltfImport(downloadProvider, deferAgent, materialGenerator, logger);
-            var success = await Importer.Load(gltfUrl);
+            var success = await Importer.LoadAsync(gltfUrl);
             if (success)
             {
                 var instantiator = (GameObjectBoundsInstantiator)GetDefaultInstantiator(logger);
@@ -76,11 +76,11 @@ namespace Unity.Cloud.Gltfast
         }
 
         /// <inheritdoc />
-        public override async Task<bool> InstantiateScene(int sceneIndex, ICodeLogger logger = null)
+        public override async Task<bool> InstantiateSceneAsync(int sceneIndex, ICodeLogger logger = null)
         {
             logger ??= ConsoleLogger.Instance;
             var instantiator = (GameObjectBoundsInstantiator)GetDefaultInstantiator(logger);
-            var success = await base.InstantiateScene(sceneIndex, instantiator);
+            var success = await base.InstantiateSceneAsync(sceneIndex, instantiator);
             CurrentSceneId = success ? sceneIndex : (int?)null;
             SceneInstance = instantiator.SceneInstance;
             if (success)

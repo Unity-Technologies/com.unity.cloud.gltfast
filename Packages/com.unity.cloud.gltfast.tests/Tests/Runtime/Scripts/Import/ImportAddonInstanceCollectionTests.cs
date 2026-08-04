@@ -161,7 +161,7 @@ namespace Unity.Cloud.Gltfast.Tests
             return false;
         }
 
-        public Task<ImageResult> LoadImage(
+        public Task<ImageResult> LoadImageAsync(
             NativeArray<byte>.ReadOnly data,
             bool linear,
             bool readable,

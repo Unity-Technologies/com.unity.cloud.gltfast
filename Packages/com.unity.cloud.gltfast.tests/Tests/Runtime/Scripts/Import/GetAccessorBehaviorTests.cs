@@ -26,7 +26,7 @@ namespace Unity.Cloud.Gltfast.Tests.Import
         static async System.Threading.Tasks.Task GetAccessorDataInvalidIndexReturnsDefaultAsync()
         {
             using var gltf = new GltfImport(logger: new CollectingLogger());
-            var success = await gltf.LoadGltfJson(k_MinimalGltfJson);
+            var success = await gltf.LoadGltfJsonAsync(k_MinimalGltfJson);
             Assert.IsTrue(success);
 #pragma warning disable CS0618 // Type or member is obsolete
             Assert.IsFalse(gltf.GetAccessorData(-1).IsCreated);
@@ -43,7 +43,7 @@ namespace Unity.Cloud.Gltfast.Tests.Import
         static async System.Threading.Tasks.Task GetAccessorInvalidIndexReturnsDefaultAsync()
         {
             using var gltf = new GltfImport(logger: new CollectingLogger());
-            var success = await gltf.LoadGltfJson(k_MinimalGltfJson);
+            var success = await gltf.LoadGltfJsonAsync(k_MinimalGltfJson);
             Assert.IsTrue(success);
 #pragma warning disable CS0618 // Type or member is obsolete
             Assert.IsFalse(gltf.GetAccessor(-1).IsCreated);

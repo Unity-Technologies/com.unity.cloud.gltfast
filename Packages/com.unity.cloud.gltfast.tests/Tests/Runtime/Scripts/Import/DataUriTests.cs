@@ -142,7 +142,7 @@ namespace Unity.Cloud.Gltfast.Tests.Import
             var logger = new CollectingLogger();
             var import = new GltfImport(logger: logger);
             var settings = new ImportSettings { GenerateMipMaps = true };
-            Assert.AreEqual(expectSuccess, await import.LoadGltfJson(gltf, importSettings: settings));
+            Assert.AreEqual(expectSuccess, await import.LoadGltfJsonAsync(gltf, importSettings: settings));
             Assert.AreEqual(1 + expectedLogCodes.Length, logger.Count);
             LoggerTest.AssertLogger(logger, expectedLogCodes);
         }

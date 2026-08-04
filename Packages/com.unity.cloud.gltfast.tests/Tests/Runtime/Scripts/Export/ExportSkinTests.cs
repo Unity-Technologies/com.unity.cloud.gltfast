@@ -98,7 +98,7 @@ namespace Unity.Cloud.Gltfast.Tests.Export
             var export = new GameObjectExport(logger: logger, exportSettings: settings);
             export.AddScene(objects);
             var path = Path.Combine(Application.persistentDataPath, $"{name}.gltf");
-            var success = await export.SaveToFileAndDispose(path); ;
+            var success = await export.SaveToFileAndDisposeAsync(path); ;
             ExportTests.AssertLogger(logger);
             Assert.IsTrue(success);
             ExportTests.ValidateGltf(path, "NODE_SKINNED_MESH_NON_ROOT");

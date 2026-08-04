@@ -15,11 +15,11 @@ namespace Unity.Cloud.Gltfast.Export
         MeshTopology GetTopology(int subMesh);
         int GetIndexCount(int subMesh);
 
-        Task<NativeArray<byte>> GetVertexData(int stream, bool sync);
+        Task<NativeArray<byte>> GetVertexDataAsync(int stream, bool sync);
     }
 
     interface IMeshData<TIndex> : IMeshData where TIndex : unmanaged
     {
-        Task<NativeArray<TIndex>> GetIndexData(bool sync);
+        Task<NativeArray<TIndex>> GetIndexDataAsync(bool sync);
     }
 }

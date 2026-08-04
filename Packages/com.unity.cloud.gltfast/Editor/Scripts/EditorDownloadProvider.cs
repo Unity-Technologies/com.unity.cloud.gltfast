@@ -20,7 +20,7 @@ namespace Unity.Cloud.Gltfast.Editor
         public List<GltfAssetDependency> assetDependencies = new List<GltfAssetDependency>();
 
 #pragma warning disable 1998
-        public async Task<IDownload> Request(Uri url)
+        public async Task<IDownload> RequestAsync(Uri url)
         {
             var dependency = new GltfAssetDependency
             {
@@ -31,7 +31,7 @@ namespace Unity.Cloud.Gltfast.Editor
             return req;
         }
 
-        public async Task<ITextureDownload> RequestTexture(Uri url, bool nonReadable)
+        public async Task<ITextureDownload> RequestTextureAsync(Uri url, bool nonReadable)
         {
             var dependency = new GltfAssetDependency
             {

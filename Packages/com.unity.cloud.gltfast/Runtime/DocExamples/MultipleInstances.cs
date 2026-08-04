@@ -32,7 +32,7 @@ namespace Unity.Cloud.Gltfast.Documentation.Examples
         public async Task LoadGltf()
         {
             var gltfImport = new GltfImport();
-            await gltfImport.Load(uri);
+            await gltfImport.LoadAsync(uri);
 
             for (var i = 0; i < quantity; i++)
             {

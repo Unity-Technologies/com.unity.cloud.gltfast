@@ -62,7 +62,7 @@ namespace Unity.Cloud.Gltfast.Documentation.Examples
                 {
                     path = uri;
                 }
-                await gltfImport.Load(path, settings);
+                await gltfImport.LoadAsync(path, settings);
                 await gltfImport.InstantiateMainSceneAsync(transform);
             }
             catch (Exception e)

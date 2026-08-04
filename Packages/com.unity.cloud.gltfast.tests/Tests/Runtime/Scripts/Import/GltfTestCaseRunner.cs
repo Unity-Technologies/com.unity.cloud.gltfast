@@ -47,7 +47,7 @@ namespace Unity.Cloud.Gltfast.Tests.Import
 
             using var gltf = new GltfImport(deferAgent: deferAgent, logger: loadLogger);
             preLoadCallback?.Invoke(gltf);
-            var success = await gltf.Load(path, cancellationToken: cancellationToken);
+            var success = await gltf.LoadAsync(path, cancellationToken: cancellationToken);
             if (loadLogger.Items?.Any(x => x.Code == LogCode.OperationCanceled) is true)
             {
                 if (success)

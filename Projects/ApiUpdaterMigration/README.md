@@ -20,7 +20,9 @@ The complementary in-process guardrail — asserting every public 7.0 type carri
 - `Assets/LegacyConsumer/UsesGltfastLegacy.cs` — code written against glTFast **6.x** (`namespace GLTFast`).
   Does not compile against 7.0 until the updater rewrites it. Covers the core assembly + its
   `Schema`/`Logging`/`Materials` sub-namespaces and the `Export` assembly, via both `using`-reachable and
-  fully-qualified references.
+  fully-qualified references, plus the `Async`-suffixed method renames — those ride on
+  `[Obsolete("… (UnityUpgradable) -> …Async(*)")]` shims rather than `[MovedFrom]`, so they are a
+  separate mechanism the script asserts separately.
 - `Assets/LegacyConsumer/ApiUpdaterMigration.LegacyConsumer.asmdef` — references the **new** assembly
   names (`Unity.Cloud.Gltfast`, `Unity.Cloud.Gltfast.Export`), mirroring a consumer who has already done
   the one manual step the updater cannot do for them (updating `.asmdef` references by name).

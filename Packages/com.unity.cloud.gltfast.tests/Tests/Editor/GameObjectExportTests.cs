@@ -75,8 +75,8 @@ namespace Unity.Cloud.Gltfast.Editor.Tests.Export
                 var export = new global::Unity.Cloud.Gltfast.Export.GameObjectExport();
                 Assert.IsTrue(export.AddScene(new[] { cube }, name));
 
-                var task = export.SaveToFileAndDispose(path, forceSync: true);
-                Assert.IsTrue(task.IsCompleted, "SaveToFileAndDispose(forceSync: true) should complete synchronously.");
+                var task = export.SaveToFileAndDisposeAsync(path, forceSync: true);
+                Assert.IsTrue(task.IsCompleted, "SaveToFileAndDisposeAsync(forceSync: true) should complete synchronously.");
                 Assert.IsTrue(task.Result, "Export returned false.");
                 FileAssert.Exists(path);
             }
@@ -103,8 +103,8 @@ namespace Unity.Cloud.Gltfast.Editor.Tests.Export
                 Assert.IsTrue(export.AddScene(new[] { cube }, name));
 
                 using var stream = new MemoryStream();
-                var task = export.SaveToStreamAndDispose(stream, forceSync: true);
-                Assert.IsTrue(task.IsCompleted, "SaveToStreamAndDispose(forceSync: true) should complete synchronously.");
+                var task = export.SaveToStreamAndDisposeAsync(stream, forceSync: true);
+                Assert.IsTrue(task.IsCompleted, "SaveToStreamAndDisposeAsync(forceSync: true) should complete synchronously.");
                 Assert.IsTrue(task.Result, "Export returned false.");
                 Assert.Greater(stream.Length, 0, "Expected stream to contain exported glTF data.");
             }

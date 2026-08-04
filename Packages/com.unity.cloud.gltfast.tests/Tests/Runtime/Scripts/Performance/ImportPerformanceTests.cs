@@ -122,7 +122,7 @@ namespace Unity.Cloud.Gltfast.Tests
             await TestWrapper(() => RunTest(gltf =>
             {
                 Debug.Log($"Loading {path}");
-                return gltf.Load(data.AsReadOnly(), new Uri(path));
+                return gltf.LoadAsync(data.AsReadOnly(), new Uri(path));
             }), k_Repetitions);
         }
 
@@ -131,7 +131,7 @@ namespace Unity.Cloud.Gltfast.Tests
             await RunTest(gltf =>
             {
                 Debug.Log($"Loading {path}");
-                return gltf.Load(path);
+                return gltf.LoadAsync(path);
             });
         }
 

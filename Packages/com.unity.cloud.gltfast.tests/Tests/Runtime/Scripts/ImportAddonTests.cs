@@ -55,7 +55,7 @@ namespace Unity.Cloud.Gltfast.Tests
             {
                 var gltf = new GltfImport();
                 new PostJsonDeserializationAddon().Inject(gltf);
-                Assert.IsTrue(await gltf.LoadGltfJson(@"{""asset"":{""copyright"":""© 2026 Unity Technologies and the glTFast authors.""}}"));
+                Assert.IsTrue(await gltf.LoadGltfJsonAsync(@"{""asset"":{""copyright"":""© 2026 Unity Technologies and the glTFast authors.""}}"));
                 var root = gltf.Root;
                 Assert.NotNull(root?.Asset?.Generator);
                 Assert.AreEqual("My Custom Generator", root.Asset.Generator);
@@ -73,7 +73,7 @@ namespace Unity.Cloud.Gltfast.Tests
                 var logger = new CollectingLogger();
                 var gltf = new GltfImport(logger: logger);
                 new PostJsonDeserializationAddon().Inject(gltf);
-                Assert.IsFalse(await gltf.LoadGltfJson(@"{""asset"":{}}"));
+                Assert.IsFalse(await gltf.LoadGltfJsonAsync(@"{""asset"":{}}"));
                 Assert.IsTrue(logger.Items.Any(
                     log => log.Type == LogType.Error && log.ToString() == "Asset copyright is missing."));
             }

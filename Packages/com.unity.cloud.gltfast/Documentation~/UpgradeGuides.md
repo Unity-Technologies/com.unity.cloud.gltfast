@@ -50,6 +50,41 @@ The `Unity.Cloud.Gltfast.Newtonsoft` assembly will be removed when 7.0 leaves th
 
 If your assembly definition referenced `Unity.Cloud.Gltfast.Newtonsoft`, replace the reference with `Unity.Cloud.Gltfast`.
 
+### Async methods carry an `Async` suffix
+
+Asynchronous (`Task`-returning) methods were renamed to end in `Async`, per the .NET naming convention.
+
+The API Updater rewrites calls whose compile-time type is one of the classes below, so accepting the
+update prompt covers them. Everything else is a manual rename.
+
+Rewritten for you:
+
+| Before | After |
+|--------|-------|
+| `GltfImport.Load` (all overloads) | `GltfImport.LoadAsync` |
+| `GltfImport.LoadFile` / `.LoadStream` / `.LoadGltfJson` | `…LoadFileAsync` / `…LoadStreamAsync` / `…LoadGltfJsonAsync` |
+| `GltfAssetBase.Load` / `.Instantiate` / `.InstantiateScene`, and the same calls on `GltfAsset`, `GltfBoundsAsset` and `GltfEntityAsset` | `…LoadAsync` / `…InstantiateAsync` / `…InstantiateSceneAsync` |
+| `GameObjectExport.SaveToFileAndDispose` / `.SaveToStreamAndDispose` | `…SaveToFileAndDisposeAsync` / `…SaveToStreamAndDisposeAsync` |
+| `GltfWriter.SaveToFileAndDispose` / `.SaveToStreamAndDispose` | `…SaveToFileAndDisposeAsync` / `…SaveToStreamAndDisposeAsync` |
+| `DefaultDownloadProvider` / `CustomHeaderDownloadProvider` `Request` / `.RequestTexture` | `…RequestAsync` / `…RequestTextureAsync` |
+| `TimeBudgetPerFrameDeferAgent` / `UninterruptedDeferAgent` `BreakPoint` | `…BreakPointAsync` |
+
+Rename by hand:
+
+| Before | After | Why not automatic |
+|--------|-------|-------------------|
+| `IDeferAgent.BreakPoint` | `IDeferAgent.BreakPointAsync` | interface member |
+| `IDownloadProvider.Request` / `.RequestTexture` | `…RequestAsync` / `…RequestTextureAsync` | interface member |
+| `IGltfWritable.SaveToFileAndDispose` / `.SaveToStreamAndDispose` | `…SaveToFileAndDisposeAsync` / `…SaveToStreamAndDisposeAsync` | interface member |
+| `ITextureImageLoader.LoadImage` | `ITextureImageLoader.LoadImageAsync` | interface member |
+| Your `override` of `GltfAssetBase.Load` or `.InstantiateScene` (including one that overrides `GltfAsset`, `GltfBoundsAsset` or `GltfEntityAsset`) | same name with `Async` | the updater rewrites call sites, never a declaration |
+
+Two consequences of that last row. A member you **declare** — an interface implementation, or an
+`override` of `GltfAssetBase.Load`/`.InstantiateScene` — is never rewritten, and an `override` of the old
+name now fails with CS0506 because the shim that carries it is not `virtual`. And a **call site** whose
+compile-time type is one of the four interfaces is not rewritten either, so
+`IDeferAgent agent; agent.BreakPoint();` needs the same manual edit as the declaration does.
+
 ### Schema enum properties wrapped in `EnumOrRawValue<TEnum>`
 
 Several `Unity.Cloud.Gltfast.Schema` properties that used to be enums or strings are now wrapped in [EnumOrRawValue&lt;TEnum&gt;](xref:Unity.Cloud.Gltfast.Schema.EnumOrRawValue`1) so that values introduced by glTF extensions (and therefore unknown at build time) are preserved through deserialization and serialization.
@@ -408,9 +443,9 @@ Public entry points that accept an [ICodeLogger](xref:Unity.Cloud.Gltfast.Loggin
 - [GameObjectInstantiator](xref:Unity.Cloud.Gltfast.GameObjectInstantiator.#ctor(Unity.Cloud.Gltfast.IGltfReadable,UnityEngine.Transform,Unity.Cloud.Gltfast.Logging.ICodeLogger,Unity.Cloud.Gltfast.InstantiationSettings))
 - [GameObjectBoundsInstantiator](xref:Unity.Cloud.Gltfast.GameObjectBoundsInstantiator.#ctor(Unity.Cloud.Gltfast.IGltfReadable,UnityEngine.Transform,Unity.Cloud.Gltfast.Logging.ICodeLogger,Unity.Cloud.Gltfast.InstantiationSettings))
 - [EntityInstantiator](xref:Unity.Cloud.Gltfast.EntityInstantiator.#ctor(Unity.Cloud.Gltfast.IGltfReadable,Unity.Entities.Entity,Unity.Cloud.Gltfast.Logging.ICodeLogger,Unity.Cloud.Gltfast.InstantiationSettings))
-- [GltfAssetBase.Instantiate](xref:Unity.Cloud.Gltfast.GltfAssetBase.Instantiate(Unity.Cloud.Gltfast.Logging.ICodeLogger))
-- [GltfAssetBase.InstantiateScene](xref:Unity.Cloud.Gltfast.GltfAssetBase.InstantiateScene(System.Int32,Unity.Cloud.Gltfast.Logging.ICodeLogger))
-- [GltfBoundsAsset.InstantiateScene](xref:Unity.Cloud.Gltfast.GltfBoundsAsset.InstantiateScene(System.Int32,Unity.Cloud.Gltfast.Logging.ICodeLogger))
+- [GltfAssetBase.InstantiateAsync](xref:Unity.Cloud.Gltfast.GltfAssetBase.InstantiateAsync(Unity.Cloud.Gltfast.Logging.ICodeLogger))
+- [GltfAssetBase.InstantiateSceneAsync](xref:Unity.Cloud.Gltfast.GltfAssetBase.InstantiateSceneAsync(System.Int32,Unity.Cloud.Gltfast.Logging.ICodeLogger))
+- [GltfBoundsAsset.InstantiateSceneAsync](xref:Unity.Cloud.Gltfast.GltfBoundsAsset.InstantiateSceneAsync(System.Int32,Unity.Cloud.Gltfast.Logging.ICodeLogger))
 
 To keep the previous silent behavior, pass [NullLogger.Instance](xref:Unity.Cloud.Gltfast.Logging.NullLogger).
 
@@ -527,7 +562,7 @@ Since loading a glTF (the step before instantiation) has been async before, chan
 ```csharp
 async void Start() {
     var gltf = new GltfImport();
-    var success = await gltf.Load("file:///path/to/file.gltf");
+    var success = await gltf.LoadAsync("file:///path/to/file.gltf");
     if(!success) return;
 
     // Old, sync instantiation
@@ -541,7 +576,7 @@ All you now have to do is switch to the async method and await it.
 ```csharp
 async void Start() {
     var gltf = new GltfImport();
-    var success = await gltf.Load("file:///path/to/file.gltf");
+    var success = await gltf.LoadAsync("file:///path/to/file.gltf");
     if(!success) return;
 
     // New, async instantiation
@@ -579,7 +614,7 @@ You have to explicitly use a [`GameObjectInstantiator`][GameObjectInstantiator].
 async void Start() {
 
     var gltfImport = new GltfImport();
-    await gltfImport.Load("test.gltf");
+    await gltfImport.LoadAsync("test.gltf");
     var instantiator = new GameObjectInstantiator(gltfImport,transform);
     var success = gltfImport.InstantiateMainScene(instantiator);
     if (success) {

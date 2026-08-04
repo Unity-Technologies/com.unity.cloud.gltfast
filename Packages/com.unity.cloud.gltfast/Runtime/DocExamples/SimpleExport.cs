@@ -26,7 +26,7 @@ namespace Unity.Cloud.Gltfast.Documentation.Examples
             export.AddScene(rootLevelNodes);
 
             // Async glTF export
-            var success = await export.SaveToFileAndDispose(destinationFilePath);
+            var success = await export.SaveToFileAndDisposeAsync(destinationFilePath);
 
             if (!success)
             {

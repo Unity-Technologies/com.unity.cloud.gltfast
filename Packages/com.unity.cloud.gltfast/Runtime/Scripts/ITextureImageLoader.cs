@@ -26,7 +26,7 @@ namespace Unity.Cloud.Gltfast
         /// <param name="generateMipMaps">If true, mipmap levels should get generated.</param>
         /// <param name="cancellationToken">Token to submit cancellation requests. The default value is None.</param>
         /// <returns>An image texture result</returns>
-        Task<ImageResult> LoadImage(
+        Task<ImageResult> LoadImageAsync(
             NativeArray<byte>.ReadOnly data,
             bool linear,
             bool readable,

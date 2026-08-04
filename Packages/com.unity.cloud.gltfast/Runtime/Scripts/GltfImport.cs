@@ -318,22 +318,14 @@ namespace Unity.Cloud.Gltfast
             return m_Addons?.Get<T>();
         }
 
-        /// <summary>
-        /// Load a glTF file (JSON or binary)
-        /// The URL can be a file path (using the "file://" scheme) or a web address.
-        /// </summary>
-        /// <param name="url">Uniform Resource Locator. Can be a file path (using the "file://" scheme) or a web address.</param>
-        /// <param name="importSettings">Import Settings (<see cref="ImportSettings"/> for details)</param>
-        /// <param name="cancellationToken">Token to submit cancellation requests. The default value is None.</param>
-        /// <returns>True if loading was mainly successful and no critical error occurred, false otherwise</returns>
-        /// <exception cref="OperationCanceledException">Thrown when cancelled before completion.</exception>
-        public async Task<bool> Load(
+        [Obsolete("Load has been renamed to LoadAsync. (UnityUpgradable) -> LoadAsync(*)", true)]
+        public Task<bool> Load(
             string url,
             ImportSettings importSettings = null,
             CancellationToken cancellationToken = default
             )
         {
-            return await Load(new Uri(url, UriKind.RelativeOrAbsolute), importSettings, cancellationToken);
+            return LoadAsync(url, importSettings, cancellationToken);
         }
 
         /// <summary>
@@ -345,7 +337,35 @@ namespace Unity.Cloud.Gltfast
         /// <param name="cancellationToken">Token to submit cancellation requests. The default value is None.</param>
         /// <returns>True if loading was mainly successful and no critical error occurred, false otherwise</returns>
         /// <exception cref="OperationCanceledException">Thrown when cancelled before completion.</exception>
-        public async Task<bool> Load(
+        public async Task<bool> LoadAsync(
+            string url,
+            ImportSettings importSettings = null,
+            CancellationToken cancellationToken = default
+            )
+        {
+            return await LoadAsync(new Uri(url, UriKind.RelativeOrAbsolute), importSettings, cancellationToken);
+        }
+
+        [Obsolete("Load has been renamed to LoadAsync. (UnityUpgradable) -> LoadAsync(*)", true)]
+        public Task<bool> Load(
+            Uri url,
+            ImportSettings importSettings = null,
+            CancellationToken cancellationToken = default
+            )
+        {
+            return LoadAsync(url, importSettings, cancellationToken);
+        }
+
+        /// <summary>
+        /// Load a glTF file (JSON or binary)
+        /// The URL can be a file path (using the "file://" scheme) or a web address.
+        /// </summary>
+        /// <param name="url">Uniform Resource Locator. Can be a file path (using the "file://" scheme) or a web address.</param>
+        /// <param name="importSettings">Import Settings (<see cref="ImportSettings"/> for details)</param>
+        /// <param name="cancellationToken">Token to submit cancellation requests. The default value is None.</param>
+        /// <returns>True if loading was mainly successful and no critical error occurred, false otherwise</returns>
+        /// <exception cref="OperationCanceledException">Thrown when cancelled before completion.</exception>
+        public async Task<bool> LoadAsync(
             Uri url,
             ImportSettings importSettings = null,
             CancellationToken cancellationToken = default
@@ -353,6 +373,17 @@ namespace Unity.Cloud.Gltfast
         {
             m_Settings = importSettings ?? new ImportSettings();
             return await LoadFromUri(url, cancellationToken);
+        }
+
+        [Obsolete("Load has been renamed to LoadAsync. (UnityUpgradable) -> LoadAsync(*)", true)]
+        public Task<bool> Load(
+            byte[] data,
+            Uri uri = null,
+            ImportSettings importSettings = null,
+            CancellationToken cancellationToken = default
+        )
+        {
+            return LoadAsync(data, uri, importSettings, cancellationToken);
         }
 
         /// <summary>
@@ -364,7 +395,7 @@ namespace Unity.Cloud.Gltfast
         /// <param name="cancellationToken">Token to submit cancellation requests. The default value is None.</param>
         /// <returns>True if loading was mainly successful and no critical error occurred, false otherwise</returns>
         /// <exception cref="OperationCanceledException">Thrown when cancelled before completion.</exception>
-        public async Task<bool> Load(
+        public async Task<bool> LoadAsync(
             byte[] data,
             Uri uri = null,
             ImportSettings importSettings = null,
@@ -374,12 +405,23 @@ namespace Unity.Cloud.Gltfast
             var managedNativeArray = new ReadOnlyNativeArrayFromManagedArray<byte>(data);
             m_VolatileDisposables ??= new List<IDisposable>();
             m_VolatileDisposables.Add(managedNativeArray);
-            return await Load(
+            return await LoadAsync(
                 managedNativeArray.Array.AsNativeArrayReadOnly(),
                 uri,
                 importSettings,
                 cancellationToken
                 );
+        }
+
+        [Obsolete("Load has been renamed to LoadAsync. (UnityUpgradable) -> LoadAsync(*)", true)]
+        public Task<bool> Load(
+            NativeArray<byte>.ReadOnly data,
+            Uri uri = null,
+            ImportSettings importSettings = null,
+            CancellationToken cancellationToken = default
+            )
+        {
+            return LoadAsync(data, uri, importSettings, cancellationToken);
         }
 
         /// <summary>
@@ -391,7 +433,7 @@ namespace Unity.Cloud.Gltfast
         /// <param name="cancellationToken">Token to submit cancellation requests. The default value is None.</param>
         /// <returns>True if loading was mainly successful and no critical error occurred, false otherwise</returns>
         /// <exception cref="OperationCanceledException">Thrown when cancelled before completion.</exception>
-        public async Task<bool> Load(
+        public async Task<bool> LoadAsync(
             NativeArray<byte>.ReadOnly data,
             Uri uri = null,
             ImportSettings importSettings = null,
@@ -408,7 +450,18 @@ namespace Unity.Cloud.Gltfast
             // Fallback interpreting data as string
             // TODO: ToArray does another, slow memcpy! Find a better solution.
             var json = Encoding.UTF8.GetString(data.ToArray(), 0, data.Length);
-            return await LoadGltfJson(json, uri, importSettings, cancellationToken);
+            return await LoadGltfJsonAsync(json, uri, importSettings, cancellationToken);
+        }
+
+        [Obsolete("LoadFile has been renamed to LoadFileAsync. (UnityUpgradable) -> LoadFileAsync(*)", true)]
+        public Task<bool> LoadFile(
+            string localPath,
+            Uri uri = null,
+            ImportSettings importSettings = null,
+            CancellationToken cancellationToken = default
+            )
+        {
+            return LoadFileAsync(localPath, uri, importSettings, cancellationToken);
         }
 
         /// <summary>
@@ -420,7 +473,7 @@ namespace Unity.Cloud.Gltfast
         /// <param name="cancellationToken">Token to submit cancellation requests. The default value is None.</param>
         /// <returns>True if loading was mainly successful and no critical error occurred, false otherwise</returns>
         /// <exception cref="OperationCanceledException">Thrown when cancelled before completion.</exception>
-        public async Task<bool> LoadFile(
+        public async Task<bool> LoadFileAsync(
             string localPath,
             Uri uri = null,
             ImportSettings importSettings = null,
@@ -428,8 +481,18 @@ namespace Unity.Cloud.Gltfast
             )
         {
             await using var fs = new FileStream(localPath, FileMode.Open, FileAccess.Read);
-            var result = await LoadStream(fs, uri, importSettings, cancellationToken);
+            var result = await LoadStreamAsync(fs, uri, importSettings, cancellationToken);
             return result;
+        }
+
+        [Obsolete("LoadStream has been renamed to LoadStreamAsync. (UnityUpgradable) -> LoadStreamAsync(*)", true)]
+        public Task<bool> LoadStream(
+            Stream stream,
+            Uri uri = null,
+            ImportSettings importSettings = null,
+            CancellationToken cancellationToken = default)
+        {
+            return LoadStreamAsync(stream, uri, importSettings, cancellationToken);
         }
 
         /// <summary>
@@ -441,7 +504,7 @@ namespace Unity.Cloud.Gltfast
         /// <param name="cancellationToken">Token to submit cancellation requests. The default value is None.</param>
         /// <returns>True if loading was mainly successful and no critical error occurred, false otherwise</returns>
         /// <exception cref="OperationCanceledException">Thrown when cancelled before completion.</exception>
-        public async Task<bool> LoadStream(
+        public async Task<bool> LoadStreamAsync(
             Stream stream,
             Uri uri = null,
             ImportSettings importSettings = null,
@@ -536,19 +599,30 @@ namespace Unity.Cloud.Gltfast
 
             cancellationToken.ThrowIfCancellationRequestedWithTracking();
 
-            return await LoadGltfJson(json, uri, importSettings, cancellationToken);
+            return await LoadGltfJsonAsync(json, uri, importSettings, cancellationToken);
+        }
+
+        [Obsolete("LoadGltfJson has been renamed to LoadGltfJsonAsync. (UnityUpgradable) -> LoadGltfJsonAsync(*)", true)]
+        public Task<bool> LoadGltfJson(
+            string json,
+            Uri uri = null,
+            ImportSettings importSettings = null,
+            CancellationToken cancellationToken = default
+            )
+        {
+            return LoadGltfJsonAsync(json, uri, importSettings, cancellationToken);
         }
 
         /// <summary>
         /// Load a glTF JSON from a string
         /// </summary>
-        /// <param name="json">glTF JSON</param>
+        /// <param name="json">A glTF document, as UTF-8 JSON text.</param>
         /// <param name="uri">Base URI for relative paths of external buffers or images</param>
         /// <param name="importSettings">Import Settings (<see cref="ImportSettings"/> for details)</param>
         /// <param name="cancellationToken">Token to submit cancellation requests. The default value is None.</param>
         /// <returns>True if loading was mainly successful and no critical error occurred, false otherwise</returns>
         /// <exception cref="OperationCanceledException">Thrown when cancelled before completion.</exception>
-        public async Task<bool> LoadGltfJson(
+        public async Task<bool> LoadGltfJsonAsync(
             string json,
             Uri uri = null,
             ImportSettings importSettings = null,
@@ -1192,7 +1266,7 @@ namespace Unity.Cloud.Gltfast
             {
                 cancellationToken.ThrowIfCancellationRequestedWithTracking();
 
-                download = await m_Context.DownloadProvider.Request(url);
+                download = await m_Context.DownloadProvider.RequestAsync(url);
                 success = download.Success;
 
                 cancellationToken.ThrowIfCancellationRequestedWithTracking();
@@ -1894,7 +1968,7 @@ namespace Unity.Cloud.Gltfast
 
         async Task<bool> LoadBufferFromUriAsync(int index, Uri uri)
         {
-            var request = m_Context.DownloadProvider.Request(uri);
+            var request = m_Context.DownloadProvider.RequestAsync(uri);
             var download = await request;
             if (download.Success)
             {
@@ -2297,7 +2371,7 @@ namespace Unity.Cloud.Gltfast
             if (Root.Accessors != null)
             {
                 success = await LoadAccessorData(cancellationToken);
-                await DeferAgent.BreakPoint();
+                await DeferAgent.BreakPointAsync();
 
                 while (!m_AccessorJobsHandle.IsCompleted)
                 {
@@ -2339,12 +2413,12 @@ namespace Unity.Cloud.Gltfast
             {
                 await GenerateMaterials(cancellationToken);
             }
-            await DeferAgent.BreakPoint();
+            await DeferAgent.BreakPointAsync();
 
             if (m_MeshOrders != null)
             {
                 await WaitForAllMeshGenerators(cancellationToken);
-                await DeferAgent.BreakPoint();
+                await DeferAgent.BreakPointAsync();
 
                 await AssignAllAccessorData(cancellationToken);
 
@@ -2603,7 +2677,7 @@ namespace Unity.Cloud.Gltfast
             {
                 cancellationToken.ThrowIfCancellationRequestedWithTracking();
 
-                var mesh = await meshOrder.generator.CreateMeshResult(cancellationToken);
+                var mesh = await meshOrder.generator.CreateMeshResultAsync(cancellationToken);
                 if (!ReferenceEquals(mesh, null))
                 {
                     foreach (var meshSubset in meshOrder.Recipients)
@@ -2623,7 +2697,7 @@ namespace Unity.Cloud.Gltfast
                 }
 
                 meshOrder.Dispose();
-                await DeferAgent.BreakPoint();
+                await DeferAgent.BreakPointAsync();
             }
 
             m_MeshOrders = null;
@@ -2652,7 +2726,7 @@ namespace Unity.Cloud.Gltfast
                 // TODO fix resource disposal when calling DisposeVolatileData() while jobs are queued/running
                 // cancellationToken.ThrowIfCancellationRequestedWithTracking();
 
-                await DeferAgent.BreakPoint(.0001f);
+                await DeferAgent.BreakPointAsync(.0001f);
                 Profiler.BeginSample("GenerateMaterial");
                 m_MaterialGenerator.SetLogger(m_Context.Logger);
                 var pointsSupport = GetMaterialPointsSupport(i);
@@ -2943,7 +3017,7 @@ namespace Unity.Cloud.Gltfast
             {
                 var node = this.Root.Nodes[(int)nodeIndex];
                 callback(nodeIndex, parentIndex);
-                await DeferAgent.BreakPoint();
+                await DeferAgent.BreakPointAsync();
                 if (node.Children != null)
                 {
                     foreach (var child in node.Children)
@@ -3528,7 +3602,7 @@ namespace Unity.Cloud.Gltfast
 #endif
                 }
                 Profiler.EndSample();
-                await DeferAgent.BreakPoint();
+                await DeferAgent.BreakPointAsync();
             }
 
             Profiler.BeginSample("LoadAccessorData.Schedule");
@@ -3662,7 +3736,7 @@ namespace Unity.Cloud.Gltfast
                             .Reinterpret<Matrix4x4>().ToArray();
                     }
                     Profiler.EndSample();
-                    await DeferAgent.BreakPoint();
+                    await DeferAgent.BreakPointAsync();
                 }
             }
         }

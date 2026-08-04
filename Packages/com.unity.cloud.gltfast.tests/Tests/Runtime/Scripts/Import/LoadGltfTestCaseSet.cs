@@ -83,13 +83,13 @@ namespace Unity.Cloud.Gltfast.Tests
                         , deferAgent
                     );
                     loadTasks.Add(loadTask);
-                    await deferAgent.BreakPoint();
+                    await deferAgent.BreakPointAsync();
                 }
                 else
                 {
                     var loadTask = LoadIt(path, deferAgent);
                     loadTasks.Add(loadTask);
-                    await deferAgent.BreakPoint();
+                    await deferAgent.BreakPointAsync();
                 }
             }
 
@@ -105,7 +105,7 @@ namespace Unity.Cloud.Gltfast.Tests
             // Debug.Log(go.name);
             var gltfAsset = go.AddComponent<GltfAsset>();
             gltfAsset.LoadOnStartup = false; // prevent auto-loading
-            await gltfAsset.Load(n, null, deferAgent); // load manually with custom defer agent
+            await gltfAsset.LoadAsync(n, null, deferAgent); // load manually with custom defer agent
             if (m_VisibleAssets.Count >= m_NumVisibleAssets)
             {
                 var oldAsset = m_VisibleAssets.Dequeue();

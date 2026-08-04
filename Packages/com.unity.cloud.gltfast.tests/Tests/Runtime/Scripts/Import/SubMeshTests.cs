@@ -35,7 +35,7 @@ namespace Unity.Cloud.Gltfast.Tests.Import
             var go = new GameObject();
             var deferAgent = new UninterruptedDeferAgent();
             using var gltf = new GltfImport(deferAgent: deferAgent);
-            var success = await gltf.Load(path);
+            var success = await gltf.LoadAsync(path);
             Assert.IsTrue(success);
 
             // The glTF has 3 meshes, but two of them are identical and should get merged.

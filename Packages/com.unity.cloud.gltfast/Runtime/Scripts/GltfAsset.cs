@@ -115,12 +115,12 @@ namespace Unity.Cloud.Gltfast
             if (loadOnStartup && !string.IsNullOrEmpty(url))
             {
                 // Automatic load on startup
-                await Load(FullUrl);
+                await LoadAsync(FullUrl);
             }
         }
 
         /// <inheritdoc />
-        public override async Task<bool> Load(
+        public override async Task<bool> LoadAsync(
             string gltfUrl,
             IDownloadProvider downloadProvider = null,
             IDeferAgent deferAgent = null,
@@ -129,18 +129,18 @@ namespace Unity.Cloud.Gltfast
             )
         {
             logger ??= ConsoleLogger.Instance;
-            var success = await base.Load(gltfUrl, downloadProvider, deferAgent, materialGenerator, logger);
+            var success = await base.LoadAsync(gltfUrl, downloadProvider, deferAgent, materialGenerator, logger);
             if (success)
             {
-                if (deferAgent != null) await deferAgent.BreakPoint();
+                if (deferAgent != null) await deferAgent.BreakPointAsync();
                 // Auto-Instantiate
                 if (sceneId >= 0)
                 {
-                    success = await InstantiateScene(sceneId, logger);
+                    success = await InstantiateSceneAsync(sceneId, logger);
                 }
                 else
                 {
-                    success = await Instantiate(logger);
+                    success = await InstantiateAsync(logger);
                 }
             }
             return success;

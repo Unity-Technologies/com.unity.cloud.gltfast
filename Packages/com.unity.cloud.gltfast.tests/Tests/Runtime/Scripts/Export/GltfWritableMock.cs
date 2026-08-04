@@ -166,12 +166,12 @@ namespace Unity.Cloud.Gltfast.Tests.Export
             }
         }
 
-        public Task<bool> SaveToFileAndDispose(string path)
+        public Task<bool> SaveToFileAndDisposeAsync(string path)
         {
             throw new NotImplementedException();
         }
 
-        public Task<bool> SaveToStreamAndDispose(Stream stream)
+        public Task<bool> SaveToStreamAndDisposeAsync(Stream stream)
         {
             throw new NotImplementedException();
         }

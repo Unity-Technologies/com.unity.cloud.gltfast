@@ -36,7 +36,7 @@ namespace Unity.Cloud.Gltfast.Documentation.Examples.Editor
                     var export = new GameObjectExport(exportSettings);
                     export.AddScene(new[] { rootObject }, rootObject.name);
 
-                    var success = await export.SaveToFileAndDispose(
+                    var success = await export.SaveToFileAndDisposeAsync(
                         $"Assets/{rootObject.name}.glb",
                         // Edit Mode does not pump the main-thread SynchronizationContext;
                         // awaited I/O continuations could hang. Force the synchronous path.

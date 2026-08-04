@@ -18,14 +18,14 @@ Here's a step-by-step guide to export a GameObject hierarchy/scene from script
 - Create an instance of [GameObjectExport](xref:Unity.Cloud.Gltfast.Export.GameObjectExport)
 - Add content via [AddScene](xref:Unity.Cloud.Gltfast.Export.GameObjectExport.AddScene*)
 - Two options for the final export
-  - Call [SaveToFileAndDispose](xref:Unity.Cloud.Gltfast.Export.GameObjectExport.SaveToFileAndDispose*) to export a glTF to a file(s)
-  - Call [SaveToStreamAndDispose](xref:Unity.Cloud.Gltfast.Export.GameObjectExport.SaveToStreamAndDispose*) to export to a [Stream][Stream]
+  - Call [SaveToFileAndDisposeAsync](xref:Unity.Cloud.Gltfast.Export.GameObjectExport.SaveToFileAndDisposeAsync*) to export a glTF to a file(s)
+  - Call [SaveToStreamAndDisposeAsync](xref:Unity.Cloud.Gltfast.Export.GameObjectExport.SaveToStreamAndDisposeAsync*) to export to a [Stream][Stream]
 
 glTF export might create more than one file. For example the binary buffer is usually a separate `.bin` file and textures might be separate files as well.
 
 [!code-cs [simple-export](../Runtime/DocExamples/SimpleExport.cs#SimpleExport)]
 
-After calling [SaveToFileAndDispose](xref:Unity.Cloud.Gltfast.Export.GameObjectExport.SaveToFileAndDispose*) the GameObjectExport instance becomes invalid. Do not re-use it.
+After calling [SaveToFileAndDisposeAsync](xref:Unity.Cloud.Gltfast.Export.GameObjectExport.SaveToFileAndDisposeAsync*) the GameObjectExport instance becomes invalid. Do not re-use it.
 
 Further, the export can be customized by passing [ExportSettings](xref:Unity.Cloud.Gltfast.Export.ExportSettings), [GameObjectExportSettings](xref:Unity.Cloud.Gltfast.Export.GameObjectExportSettings) and injectables to [GameObjectExport](xref:Unity.Cloud.Gltfast.Export.GameObjectExport)'s constructor:
 

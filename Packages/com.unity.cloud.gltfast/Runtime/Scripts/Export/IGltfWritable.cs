@@ -152,7 +152,7 @@ namespace Unity.Cloud.Gltfast.Export
         /// </summary>
         /// <param name="path">glTF destination file path</param>
         /// <returns>True if the glTF file was created successfully, false otherwise</returns>
-        Task<bool> SaveToFileAndDispose(string path);
+        Task<bool> SaveToFileAndDisposeAsync(string path);
 
         /// <summary>
         /// Exports the collected scenes/content as glTF, writes it to a Stream
@@ -161,6 +161,6 @@ namespace Unity.Cloud.Gltfast.Export
         /// </summary>
         /// <param name="stream">glTF destination stream</param>
         /// <returns>True if the glTF file was created successfully, false otherwise</returns>
-        Task<bool> SaveToStreamAndDispose(Stream stream);
+        Task<bool> SaveToStreamAndDisposeAsync(Stream stream);
     }
 }

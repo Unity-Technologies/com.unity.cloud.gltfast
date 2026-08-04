@@ -48,7 +48,7 @@ namespace Unity.Cloud.Gltfast.Documentation.Examples
             return ImageFormatDetection.IsWebP(data);
         }
 
-        public async Task<ImageResult> LoadImage(
+        public async Task<ImageResult> LoadImageAsync(
             NativeArray<byte>.ReadOnly data,
             bool linear,
             bool readable,

@@ -88,7 +88,7 @@ namespace Unity.Cloud.Gltfast
             VertexIntervals[m_Attributes.Length] = vertexCount;
         }
 
-        public override async Task<bool> CreateVertexBuffer()
+        public override async Task<bool> CreateVertexBufferAsync()
         {
             var jh = CreateVertexBufferHandle();
             if (!jh.HasValue)

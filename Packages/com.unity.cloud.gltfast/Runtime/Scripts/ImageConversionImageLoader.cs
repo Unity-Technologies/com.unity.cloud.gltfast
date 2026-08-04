@@ -25,7 +25,7 @@ namespace Unity.Cloud.Gltfast
             CancellationToken cancellationToken
         )
         {
-            using var download = await context.DownloadProvider.RequestTexture(uri, !readable);
+            using var download = await context.DownloadProvider.RequestTextureAsync(uri, !readable);
             if (download == null)
             {
                 context.Logger?.Error(LogCode.TextureDownloadFailed, "?", uri.ToString());

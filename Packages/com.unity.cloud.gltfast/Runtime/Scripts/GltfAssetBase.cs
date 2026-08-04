@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: 2023 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
+using System;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Scripting.APIUpdating;
@@ -45,6 +46,16 @@ namespace Unity.Cloud.Gltfast
         /// </summary>
         public int? CurrentSceneId { get; protected set; }
 
+        [Obsolete("Load has been renamed to LoadAsync. (UnityUpgradable) -> LoadAsync(*)", true)]
+        public Task<bool> Load(
+            string gltfUrl,
+            IDownloadProvider downloadProvider = null,
+            IDeferAgent deferAgent = null,
+            IMaterialGenerator materialGenerator = null,
+            ICodeLogger logger = null
+            )
+            => LoadAsync(gltfUrl, downloadProvider, deferAgent, materialGenerator, logger);
+
         /// <summary>
         /// Method for manual loading with custom <see cref="IDownloadProvider"/> and <see cref="IDeferAgent"/>.
         /// </summary>
@@ -55,7 +66,7 @@ namespace Unity.Cloud.Gltfast
         /// <param name="materialGenerator">Used to convert glTF materials to <see cref="Material"/> instances</param>
         /// <param name="logger">Custom logger for reporting messages. Default behavior is inherited from the <see cref="Unity.Cloud.Gltfast.GltfImport(Unity.Cloud.Gltfast.Loading.IDownloadProvider, Unity.Cloud.Gltfast.IDeferAgent, Unity.Cloud.Gltfast.Materials.IMaterialGenerator, Unity.Cloud.Gltfast.Logging.ICodeLogger)"/> constructor that this method forwards to.</param>
         /// <returns>Async Task that loads the glTF's contents</returns>
-        public virtual async Task<bool> Load(
+        public virtual async Task<bool> LoadAsync(
             string gltfUrl,
             IDownloadProvider downloadProvider = null,
             IDeferAgent deferAgent = null,
@@ -64,7 +75,13 @@ namespace Unity.Cloud.Gltfast
             )
         {
             Importer = new GltfImport(downloadProvider, deferAgent, materialGenerator, logger);
-            return await Importer.Load(gltfUrl, importSettings);
+            return await Importer.LoadAsync(gltfUrl, importSettings);
+        }
+
+        [Obsolete("Instantiate has been renamed to InstantiateAsync. (UnityUpgradable) -> InstantiateAsync(*)", true)]
+        public Task<bool> Instantiate(ICodeLogger logger = null)
+        {
+            return InstantiateAsync(logger);
         }
 
         /// <summary>
@@ -73,7 +90,7 @@ namespace Unity.Cloud.Gltfast
         /// <param name="logger">Custom logger for reporting messages. Defaults to the shared <see cref="Unity.Cloud.Gltfast.Logging.ConsoleLogger.Instance"/> (writes to Unity's Console) when <c>null</c> is passed. Pass <see cref="Unity.Cloud.Gltfast.Logging.NullLogger.Instance"/> (or <c>new NullLogger()</c>) to suppress all output.</param>
         /// <returns>True if instantiation was successful.</returns>
         // ReSharper disable once MemberCanBeProtected.Global
-        public async Task<bool> Instantiate(ICodeLogger logger = null)
+        public async Task<bool> InstantiateAsync(ICodeLogger logger = null)
         {
             if (Importer == null) return false;
             logger ??= ConsoleLogger.Instance;
@@ -83,13 +100,17 @@ namespace Unity.Cloud.Gltfast
             return success;
         }
 
+        [Obsolete("InstantiateScene has been renamed to InstantiateSceneAsync. (UnityUpgradable) -> InstantiateSceneAsync(*)", true)]
+        public Task<bool> InstantiateScene(int sceneIndex, ICodeLogger logger = null)
+            => InstantiateSceneAsync(sceneIndex, logger);
+
         /// <summary>
         /// Creates an instance of the scene specified by the scene index.
         /// </summary>
         /// <param name="sceneIndex">Index of the scene to be instantiated</param>
         /// <param name="logger">Custom logger for reporting messages. Defaults to the shared <see cref="Unity.Cloud.Gltfast.Logging.ConsoleLogger.Instance"/> (writes to Unity's Console) when <c>null</c> is passed. Pass <see cref="Unity.Cloud.Gltfast.Logging.NullLogger.Instance"/> (or <c>new NullLogger()</c>) to suppress all output.</param>
         /// <returns>True if instantiation was successful.</returns>
-        public virtual async Task<bool> InstantiateScene(int sceneIndex, ICodeLogger logger = null)
+        public virtual async Task<bool> InstantiateSceneAsync(int sceneIndex, ICodeLogger logger = null)
         {
             if (Importer == null) return false;
             logger ??= ConsoleLogger.Instance;
@@ -99,13 +120,17 @@ namespace Unity.Cloud.Gltfast
             return success;
         }
 
+        [Obsolete("InstantiateScene has been renamed to InstantiateSceneAsync. (UnityUpgradable) -> InstantiateSceneAsync(*)", true)]
+        protected Task<bool> InstantiateScene(int sceneIndex, GameObjectInstantiator instantiator)
+            => InstantiateSceneAsync(sceneIndex, instantiator);
+
         /// <summary>
         /// Creates an instance of the scene specified by the scene index.
         /// </summary>
         /// <param name="sceneIndex">Index of the scene to be instantiated</param>
         /// <param name="instantiator">Receives scene construction calls</param>
         /// <returns>True if instantiation was successful.</returns>
-        protected async Task<bool> InstantiateScene(int sceneIndex, GameObjectInstantiator instantiator)
+        protected async Task<bool> InstantiateSceneAsync(int sceneIndex, GameObjectInstantiator instantiator)
         {
             if (Importer == null) return false;
             var success = await Importer.InstantiateSceneAsync(instantiator, sceneIndex);

@@ -31,7 +31,7 @@ namespace Unity.Cloud.Gltfast.Tests.Import
             using var gltf = CreateGltfBinary(totalLengthOffset: 1000);
             gltf.CopyTo(file);
             file.Close();
-            var task = Test(import => import.Load(path), false, LogCode.UnexpectedEndOfContent);
+            var task = Test(import => import.LoadAsync(path), false, LogCode.UnexpectedEndOfContent);
             yield return AsyncWrapper.WaitForTask(task);
         }
 
@@ -39,7 +39,7 @@ namespace Unity.Cloud.Gltfast.Tests.Import
         public IEnumerator UnexpectedEndOfContentStream()
         {
             var gltf = CreateGltfBinary(totalLengthOffset: 1000);
-            var task = Test(import => import.LoadStream(gltf), false, LogCode.UnexpectedEndOfContent);
+            var task = Test(import => import.LoadStreamAsync(gltf), false, LogCode.UnexpectedEndOfContent);
             yield return AsyncWrapper.WaitForTask(task);
         }
 
@@ -51,7 +51,7 @@ namespace Unity.Cloud.Gltfast.Tests.Import
             using var gltf = CreateGltfBinary(appendGarbage: true);
             gltf.CopyTo(file);
             file.Close();
-            var task = Test(import => import.Load(path), true);
+            var task = Test(import => import.LoadAsync(path), true);
             yield return AsyncWrapper.WaitForTask(task);
         }
 
@@ -59,7 +59,7 @@ namespace Unity.Cloud.Gltfast.Tests.Import
         public IEnumerator TooMuchDataStream()
         {
             var gltf = CreateGltfBinary(appendGarbage: true);
-            var task = Test(import => import.LoadStream(gltf), true);
+            var task = Test(import => import.LoadStreamAsync(gltf), true);
             yield return AsyncWrapper.WaitForTask(task);
         }
 
@@ -72,7 +72,7 @@ namespace Unity.Cloud.Gltfast.Tests.Import
             Assert.AreEqual(incompleteGltf.Length, gltf.Read(incompleteGltf, 0, incompleteGltf.Length));
             // fake valid length in glb header
             incompleteGltf[8] = (byte)incompleteGltf.Length;
-            var task = Test(import => import.Load(incompleteGltf), false, LogCode.ChunkIncomplete);
+            var task = Test(import => import.LoadAsync(incompleteGltf), false, LogCode.ChunkIncomplete);
             yield return AsyncWrapper.WaitForTask(task);
         }
 
@@ -85,7 +85,7 @@ namespace Unity.Cloud.Gltfast.Tests.Import
             Assert.AreEqual(incompleteGltf.Length, gltf.Read(incompleteGltf, 0, incompleteGltf.Length));
             // fake valid length in glb header
             incompleteGltf[8] = (byte)incompleteGltf.Length;
-            var task = Test(import => import.Load(incompleteGltf), false, LogCode.ChunkIncomplete);
+            var task = Test(import => import.LoadAsync(incompleteGltf), false, LogCode.ChunkIncomplete);
             yield return AsyncWrapper.WaitForTask(task);
         }
 
@@ -101,7 +101,7 @@ namespace Unity.Cloud.Gltfast.Tests.Import
             path = copyTask.Result;
 #endif
             // Test copying glb from stream to memory in a thread (enforced by large content)
-            var task = Test(import => import.LoadFile(path), true);
+            var task = Test(import => import.LoadFileAsync(path), true);
             yield return AsyncWrapper.WaitForTask(task);
         }
 

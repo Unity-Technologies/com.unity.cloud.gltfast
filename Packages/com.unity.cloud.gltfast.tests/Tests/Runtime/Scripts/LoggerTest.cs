@@ -120,9 +120,9 @@ namespace Unity.Cloud.Gltfast.Tests
                 new Regex(".*Save to Stream currently only works for self-contained glTF-Binary.*"));
             var writer = new GltfWriter(new ExportSettings { Format = GltfFormat.Json });
             var stream = new MemoryStream();
-            var task = writer.SaveToStreamAndDispose(stream);
+            var task = writer.SaveToStreamAndDisposeAsync(stream);
             yield return AsyncWrapper.WaitForTask(task);
-            Assert.IsFalse(task.Result, "SaveToStreamAndDispose should fail for non-binary format.");
+            Assert.IsFalse(task.Result, "SaveToStreamAndDisposeAsync should fail for non-binary format.");
             stream.Dispose();
         }
 
@@ -133,9 +133,9 @@ namespace Unity.Cloud.Gltfast.Tests
             var nodeId = writer.AddNode(name: "n");
             writer.AddScene(new List<uint> { nodeId });
             var tmpPath = Path.Combine(Application.temporaryCachePath, $"gltfwriter-dispose-{Guid.NewGuid():N}.glb");
-            var saveTask = writer.SaveToFileAndDisposeInternal(tmpPath, true);
+            var saveTask = writer.SaveToFileAndDisposeAsyncInternal(tmpPath, true);
             yield return AsyncWrapper.WaitForTask(saveTask);
-            Assert.IsTrue(saveTask.Result, "Initial SaveToFileAndDisposeInternal should succeed.");
+            Assert.IsTrue(saveTask.Result, "Initial SaveToFileAndDisposeAsyncInternal should succeed.");
 
             Assert.Throws<InvalidOperationException>(() => writer.AddNode(name: "after"));
 
@@ -166,11 +166,11 @@ namespace Unity.Cloud.Gltfast.Tests
                 throw;
             }
 
-            var instantiateTask = asset.Instantiate(logger: null);
+            var instantiateTask = asset.InstantiateAsync(logger: null);
             yield return AsyncWrapper.WaitForTask(instantiateTask);
             Assert.IsFalse(instantiateTask.Result, "Instantiate with no Importer should return false.");
 
-            var instantiateSceneTask = asset.InstantiateScene(0, logger: null);
+            var instantiateSceneTask = asset.InstantiateSceneAsync(0, logger: null);
             yield return AsyncWrapper.WaitForTask(instantiateSceneTask);
             Assert.IsFalse(instantiateSceneTask.Result, "InstantiateScene with no Importer should return false.");
 
@@ -193,7 +193,7 @@ namespace Unity.Cloud.Gltfast.Tests
                 throw;
             }
 
-            var instantiateSceneTask = asset.InstantiateScene(0, logger: null);
+            var instantiateSceneTask = asset.InstantiateSceneAsync(0, logger: null);
             yield return AsyncWrapper.WaitForTask(instantiateSceneTask);
             Assert.IsFalse(instantiateSceneTask.Result, "InstantiateScene with no Importer should return false.");
 
@@ -217,7 +217,7 @@ namespace Unity.Cloud.Gltfast.Tests
 
             using var import = new GltfImport(logger: new NullLogger());
 
-            var loadTask = import.Load(malformed);
+            var loadTask = import.LoadAsync(malformed);
             yield return AsyncWrapper.WaitForTask(loadTask);
 
             Assert.IsFalse(
@@ -349,9 +349,9 @@ namespace Unity.Cloud.Gltfast.Tests
             var nodeId = writer.AddNode(name: "n");
             writer.AddScene(new List<uint> { nodeId });
             var tmpPath = Path.Combine(Application.temporaryCachePath, $"addimage-dispose-{Guid.NewGuid():N}.glb");
-            var saveTask = writer.SaveToFileAndDisposeInternal(tmpPath, true);
+            var saveTask = writer.SaveToFileAndDisposeAsyncInternal(tmpPath, true);
             yield return AsyncWrapper.WaitForTask(saveTask);
-            Assert.IsTrue(saveTask.Result, "Initial SaveToFileAndDisposeInternal should succeed.");
+            Assert.IsTrue(saveTask.Result, "Initial SaveToFileAndDisposeAsyncInternal should succeed.");
 
             Assert.Throws<InvalidOperationException>(() => writer.AddImage(null));
 

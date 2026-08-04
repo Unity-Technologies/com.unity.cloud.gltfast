@@ -44,7 +44,7 @@ namespace Unity.Cloud.Gltfast.Tests.Import
             var deferAgent = new UninterruptedDeferAgent();
             var logger = new CollectingLogger();
             using var gltf = new GltfImport(deferAgent: deferAgent, logger: logger);
-            var success = await gltf.Load(path);
+            var success = await gltf.LoadAsync(path);
             Assert.IsTrue(success);
 
             GltfTestCaseRunner.AssertLoggers(new[] { logger }, testCase);

@@ -103,7 +103,7 @@ namespace Unity.Cloud.Gltfast.Tests.Export
             var export = new GameObjectExport(exportSettings: settings, logger: logger);
             export.AddScene(nodes);
             var path = Path.Combine(Application.persistentDataPath, $"{name}.gltf");
-            var success = await export.SaveToFileAndDispose(path);
+            var success = await export.SaveToFileAndDisposeAsync(path);
             Assert.IsTrue(success);
             LoggerTest.AssertLogger(logger, expectedLogCodes);
             ExportTests.ValidateGltf(path);

@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Renamed all assemblies and the root namespace from `glTFast`/`GLTFast.*` to `Unity.Cloud.Gltfast`/`Unity.Cloud.Gltfast.*` to follow the .NET Framework Design and Unity assembly naming guidelines. Public types carry `[MovedFrom]` attributes, so the API Updater rewrites `using` directives and type references in consuming C# automatically. Assembly definition (`.asmdef`) references to the old assembly names must be updated manually (see the [Upgrade Guide](xref:doc-upgrade-guides)).
+- Asynchronous (`Task`-returning) methods were renamed to end in `Async` (see the [upgrade guide](xref:doc-upgrade-guides)). Calls to the renamed class methods are rewritten by the API Updater; interface members, and members you override or implement yourself, need a manual rename.
 - Public entry points accepting an [ICodeLogger](xref:Unity.Cloud.Gltfast.Logging.ICodeLogger) now default to Unity's Console when `null` is passed (was silent).
 - JSON serialization and de-serialization are performed by [System.Text.Json](https://www.nuget.org/packages/system.text.json/) (or `Unity.Gltfast.Text.Json`, a copy of it to avoid assembly conflicts).
   - (Export) Replaced the hand-written `JsonWriter`/`Root.GltfSerialize` writers with `JsonSerializer.Serialize` driven by the source-generated `GltfJsonContext`. Exported JSON is functionally equivalent but not byte-identical to previous releases.
@@ -154,9 +155,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - (Export) `StandardMaterialExport`. Use [BuiltInStandardMaterialExport](xref:GLTFast.Export.BuiltInStandardMaterialExport) or [LitMaterialExport](xref:GLTFast.Export.LitMaterialExport) instead.
 - (Export) `MetaMaterialExport<TLitExport, TGltfShaderGraphExport>`. Use [MaterialExport.GetDefaultMaterialExport](xref:GLTFast.Export.MaterialExport.GetDefaultMaterialExport) instead, which picks the pipeline-appropriate exporter; HDRP output can differ from the removed type.
 - (Export) `MaterialExportBase.AddImageExport`. Use [MaterialExport.TryAddImageExport](xref:GLTFast.Export.MaterialExport.TryAddImageExport*) instead.
+- The un-suffixed names of `Task`-returning **interface** members, which carry no shim on the declaring type: `IDeferAgent.BreakPoint` (both overloads), `IDownloadProvider.Request`/`RequestTexture`, `ITextureImageLoader.LoadImage` and `IGltfWritable.SaveToFileAndDispose`/`SaveToStreamAndDispose`. Implement the `Async`-suffixed member instead.
 
 ### Deprecated
 - (Export) `Root.GltfSerialize(StreamWriter)` is obsolete. Use [Root.Serialize(Stream)](xref:Unity.Cloud.Gltfast.Schema.Root.Serialize*) instead.
+- The un-suffixed names of the renamed `Task`-returning class methods (`GltfImport.Load`/`LoadFile`/`LoadStream`/`LoadGltfJson`, `GltfAssetBase.Load`/`Instantiate`/`InstantiateScene`, `GameObjectExport` and `GltfWriter` `SaveToFileAndDispose`/`SaveToStreamAndDispose`, `DefaultDownloadProvider`/`CustomHeaderDownloadProvider` `Request`/`RequestTexture`, and the defer agents' `BreakPoint`). They are compile **errors**, not warnings, and exist so the API Updater can rewrite call sites to the `Async` name.
 
 ### Security
 

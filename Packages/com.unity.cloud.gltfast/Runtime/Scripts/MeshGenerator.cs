@@ -202,7 +202,7 @@ namespace Unity.Cloud.Gltfast
 
         async Task<Mesh> GenerateMesh(IGltfBuffers buffers, ICodeLogger logger)
         {
-            if (!await m_VertexData.CreateVertexBuffer())
+            if (!await m_VertexData.CreateVertexBufferAsync())
                 return null;
 
             var indexFormat = IndexFormat.UInt16;
@@ -409,7 +409,7 @@ namespace Unity.Cloud.Gltfast
 
             await AwaitJobs(tmpList);
 
-            return await CreateMeshResultAsync(logger);
+            return await BuildMeshResultAsync(logger);
         }
 
         void AddMorphTargets(int subMesh, MeshPrimitive primitive, ICodeLogger logger)
@@ -433,7 +433,7 @@ namespace Unity.Cloud.Gltfast
             }
         }
 
-        async Task<Mesh> CreateMeshResultAsync(ICodeLogger logger)
+        async Task<Mesh> BuildMeshResultAsync(ICodeLogger logger)
         {
             Profiler.BeginSample("CreateMesh");
             var msh = new Mesh
@@ -531,7 +531,7 @@ namespace Unity.Cloud.Gltfast
 
             if (m_MorphTargetsGenerator != null)
             {
-                await m_MorphTargetsGenerator.ApplyOnMeshAndDispose(msh);
+                await m_MorphTargetsGenerator.ApplyOnMeshAndDisposeAsync(msh);
             }
 
 #if GLTFAST_KEEP_MESH_DATA

@@ -163,7 +163,7 @@ namespace Unity.Cloud.Gltfast.Editor
 #if GLTF_VALIDATOR
             var success =
 #endif
-            await export.SaveToFileAndDispose(destinationPath);
+            await export.SaveToFileAndDisposeAsync(destinationPath);
 
 #if GLTF_VALIDATOR
             if (success)
@@ -227,7 +227,7 @@ namespace Unity.Cloud.Gltfast.Editor
                 var settings = GetDefaultSettings(binary);
                 var export = new GameObjectExport(settings);
                 export.AddScene(gameObjects, scene.name);
-                await export.SaveToFileAndDispose(path);
+                await export.SaveToFileAndDisposeAsync(path);
 #if GLTF_VALIDATOR
                 var report = Validator.Validate(path);
                 report.Log();

@@ -61,17 +61,23 @@ namespace Unity.Cloud.Gltfast.Loading
             m_Headers = headers;
         }
 
+        [Obsolete("Request has been renamed to RequestAsync. (UnityUpgradable) -> RequestAsync(*)", true)]
+        public Task<IDownload> Request(Uri url) => RequestAsync(url);
+
         /// <inheritdoc />
-        public async Task<IDownload> Request(Uri url)
+        public async Task<IDownload> RequestAsync(Uri url)
         {
             var req = new CustomHeaderDownload(url, RegisterHttpHeaders);
             await req.WaitAsync();
             return req;
         }
 
+        [Obsolete("RequestTexture has been renamed to RequestTextureAsync. (UnityUpgradable) -> RequestTextureAsync(*)", true)]
+        public Task<ITextureDownload> RequestTexture(Uri url, bool nonReadable) => RequestTextureAsync(url, nonReadable);
+
         /// <inheritdoc />
 #pragma warning disable CS1998
-        public async Task<ITextureDownload> RequestTexture(Uri url, bool nonReadable)
+        public async Task<ITextureDownload> RequestTextureAsync(Uri url, bool nonReadable)
         {
 #pragma warning restore CS1998
 #if UNITY_WEBREQUEST_TEXTURE

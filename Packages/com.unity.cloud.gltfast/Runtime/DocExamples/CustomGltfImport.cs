@@ -27,7 +27,7 @@ namespace Unity.Cloud.Gltfast.Documentation.Examples
             {
                 ImportAddonRegistry.RegisterImportAddon(new MyAddon());
                 var gltfImport = new GltfImport();
-                await gltfImport.Load(uri);
+                await gltfImport.LoadAsync(uri);
                 await gltfImport.InstantiateMainSceneAsync(transform);
             }
             catch (Exception e)

@@ -19,17 +19,23 @@ namespace Unity.Cloud.Gltfast.Loading
     public class DefaultDownloadProvider : IDownloadProvider
     {
 
+        [Obsolete("Request has been renamed to RequestAsync. (UnityUpgradable) -> RequestAsync(*)", true)]
+        public Task<IDownload> Request(Uri url) => RequestAsync(url);
+
         /// <summary>
         /// Sends a URI request and waits for its completion.
         /// </summary>
         /// <param name="url">URI to request</param>
         /// <returns>Object representing the request</returns>
-        public async Task<IDownload> Request(Uri url)
+        public async Task<IDownload> RequestAsync(Uri url)
         {
             var req = new AwaitableDownload(url);
             await req.WaitAsync();
             return req;
         }
+
+        [Obsolete("RequestTexture has been renamed to RequestTextureAsync. (UnityUpgradable) -> RequestTextureAsync(*)", true)]
+        public Task<ITextureDownload> RequestTexture(Uri url, bool nonReadable) => RequestTextureAsync(url, nonReadable);
 
         /// <summary>
         /// Sends a URI request to load a texture
@@ -38,7 +44,7 @@ namespace Unity.Cloud.Gltfast.Loading
         /// <param name="nonReadable">If true, resulting texture is not CPU readable (uses less memory)</param>
         /// <returns>Object representing the request</returns>
 #pragma warning disable CS1998
-        public async Task<ITextureDownload> RequestTexture(Uri url, bool nonReadable)
+        public async Task<ITextureDownload> RequestTextureAsync(Uri url, bool nonReadable)
         {
 #pragma warning restore CS1998
 #if UNITY_WEBREQUEST_TEXTURE

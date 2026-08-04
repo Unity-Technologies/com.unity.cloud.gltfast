@@ -89,13 +89,13 @@ namespace Unity.Cloud.Gltfast.Tests.Import
             setupCallback(gltf);
             // gltf.Url = uri;
             Debug.Log($"Loading {uri}");
-            var result = await gltf.Load(uri);
+            var result = await gltf.LoadAsync(uri);
             Assert.IsTrue(result, $"Failed to load {uri}.");
             for (var i = 0; i < repetitions; i++)
             {
                 gltf.ClearScenes();
                 gltf.Dispose();
-                result = await gltf.Load(uri);
+                result = await gltf.LoadAsync(uri);
                 Assert.IsTrue(result, $"Failed to load {uri} on repetition {repetitions}");
             }
             return gltf;

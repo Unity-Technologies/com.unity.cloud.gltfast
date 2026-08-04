@@ -268,7 +268,7 @@ namespace Unity.Cloud.Gltfast.Tests.Export
             var export = new GameObjectExport(logger: logger);
             export.AddScene(new[] { root }, "UnityScene");
             var path = Path.Combine(Application.persistentDataPath, "root.gltf");
-            var task = export.SaveToFileAndDispose(path);
+            var task = export.SaveToFileAndDisposeAsync(path);
             yield return AsyncWrapper.WaitForTask(task);
             var success = task.Result;
             Assert.IsTrue(success);
@@ -418,7 +418,7 @@ namespace Unity.Cloud.Gltfast.Tests.Export
             export.AddScene(new[] { childA }, "scene A");
             export.AddScene(new[] { childA }, "scene B");
             var path = Path.Combine(Application.persistentDataPath, "TwoScenes.gltf");
-            var task = export.SaveToFileAndDispose(path);
+            var task = export.SaveToFileAndDisposeAsync(path);
             yield return AsyncWrapper.WaitForTask(task);
             var success = task.Result;
             Assert.IsTrue(success);
@@ -433,7 +433,7 @@ namespace Unity.Cloud.Gltfast.Tests.Export
             var logger = new CollectingLogger();
             var export = new GameObjectExport(logger: logger);
             var path = Path.Combine(Application.persistentDataPath, "Empty.gltf");
-            var task = export.SaveToFileAndDispose(path);
+            var task = export.SaveToFileAndDisposeAsync(path);
             yield return AsyncWrapper.WaitForTask(task);
             var success = task.Result;
             Assert.IsTrue(success);
@@ -588,7 +588,7 @@ namespace Unity.Cloud.Gltfast.Tests.Export
             var export = new GameObjectExport(logger: logger);
             export.AddScene(new[] { childA });
             var path = Path.Combine(Application.persistentDataPath, "SavedTwice1.gltf");
-            var task = export.SaveToFileAndDispose(path);
+            var task = export.SaveToFileAndDisposeAsync(path);
             yield return AsyncWrapper.WaitForTask(task);
             var success = task.Result;
             Assert.IsTrue(success);
@@ -599,7 +599,7 @@ namespace Unity.Cloud.Gltfast.Tests.Export
                 export.AddScene(new[] { childA });
             });
             path = Path.Combine(Application.persistentDataPath, "SavedTwice2.gltf");
-            AssertThrowsAsync<InvalidOperationException>(async () => await export.SaveToFileAndDispose(path));
+            AssertThrowsAsync<InvalidOperationException>(async () => await export.SaveToFileAndDisposeAsync(path));
         }
 
         static async Task ExportTest(
@@ -617,7 +617,7 @@ namespace Unity.Cloud.Gltfast.Tests.Export
                 );
             export.AddScene(objects);
             var resultPath = Path.Combine(Application.persistentDataPath, $"{testName}.gltf");
-            var success = await export.SaveToFileAndDispose(resultPath);
+            var success = await export.SaveToFileAndDisposeAsync(resultPath);
             Assert.IsTrue(success);
             AssertLogger(logger);
             ValidateGltf(resultPath);
@@ -672,13 +672,13 @@ namespace Unity.Cloud.Gltfast.Tests.Export
             if (toStream)
             {
                 await using var glbStream = new FileStream(path, FileMode.Create, FileAccess.Write);
-                success = await export.SaveToStreamAndDispose(glbStream);
+                success = await export.SaveToStreamAndDisposeAsync(glbStream);
                 Assert.Greater(glbStream.Length, 20);
                 await glbStream.FlushAsync();
             }
             else
             {
-                success = await export.SaveToFileAndDispose(path);
+                success = await export.SaveToFileAndDisposeAsync(path);
             }
             Assert.IsTrue(success);
             AssertLogger(logger);
@@ -801,13 +801,13 @@ namespace Unity.Cloud.Gltfast.Tests.Export
             if (toStream)
             {
                 var glbStream = new MemoryStream();
-                success = await export.SaveToStreamAndDispose(glbStream);
+                success = await export.SaveToStreamAndDisposeAsync(glbStream);
                 Assert.Greater(glbStream.Length, 20);
                 glbStream.Close();
             }
             else
             {
-                success = await export.SaveToFileAndDispose(path);
+                success = await export.SaveToFileAndDisposeAsync(path);
             }
             Assert.IsTrue(success);
             LoggerTest.AssertLogger(logger, new LogCode[] { });
@@ -964,7 +964,7 @@ namespace Unity.Cloud.Gltfast.Tests.Export
             var export = new GameObjectExport(logger: logger);
             export.AddScene(new[] { root }, "UnityScene");
             var path = Path.Combine(Application.persistentDataPath, "root.gltf");
-            var task = export.SaveToFileAndDispose(path);
+            var task = export.SaveToFileAndDisposeAsync(path);
             yield return AsyncWrapper.WaitForTask(task);
             var success = task.Result;
             Assert.IsTrue(success);

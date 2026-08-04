@@ -151,7 +151,7 @@ namespace Unity.Cloud.Gltfast.Tests.Import
             var deferAgent = new UninterruptedDeferAgent();
             var logger = new CollectingLogger();
             using var gltf = new GltfImport(deferAgent: deferAgent, logger: logger);
-            var task = gltf.LoadStream(stream);
+            var task = gltf.LoadStreamAsync(stream);
             yield return Utils.WaitForTask(task);
             stream.Dispose();
             var success = task.Result;
@@ -188,39 +188,39 @@ namespace Unity.Cloud.Gltfast.Tests.Import
                 case LoadType.NativeArray:
                 {
                     using var data = await ReadNativeArrayAsync(path);
-                    success = await gltf.Load(data.AsReadOnly(), new Uri(path));
+                    success = await gltf.LoadAsync(data.AsReadOnly(), new Uri(path));
                     break;
                 }
                 case LoadType.ManagedByteArray:
                 {
                     var data = await ReadAllBytesAsync(path);
-                    success = await gltf.Load(data, new Uri(path));
+                    success = await gltf.LoadAsync(data, new Uri(path));
                     break;
                 }
                 case LoadType.Path:
-                    success = await gltf.Load(path);
+                    success = await gltf.LoadAsync(path);
                     break;
                 case LoadType.Uri:
                     var uri = new Uri(path, UriKind.RelativeOrAbsolute);
-                    success = await gltf.Load(uri);
+                    success = await gltf.LoadAsync(uri);
                     break;
                 case LoadType.File:
-                    success = await gltf.LoadFile(path, new Uri(path));
+                    success = await gltf.LoadFileAsync(path, new Uri(path));
                     break;
                 case LoadType.Binary:
                 {
                     var data = await ReadAllBytesAsync(path);
-                    success = await gltf.Load(data, new Uri(path));
+                    success = await gltf.LoadAsync(data, new Uri(path));
                     break;
                 }
                 case LoadType.Stream:
                     var stream = new FileStream(path, FileMode.Open);
-                    success = await gltf.LoadStream(stream, new Uri(path));
+                    success = await gltf.LoadStreamAsync(stream, new Uri(path));
                     await stream.DisposeAsync();
                     break;
                 case LoadType.Json:
                     var json = await ReadAllTextAsync(path);
-                    success = await gltf.LoadGltfJson(json, new Uri(path));
+                    success = await gltf.LoadGltfJsonAsync(json, new Uri(path));
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(loadType), loadType, null);

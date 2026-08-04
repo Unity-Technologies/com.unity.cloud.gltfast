@@ -113,7 +113,7 @@ namespace Unity.Cloud.Gltfast.Editor
                 instantiationSettings = new InstantiationSettings();
             }
 
-            var success = AsyncHelpers.RunSync(() => m_Gltf.Load(ctx.assetPath, importSettings));
+            var success = AsyncHelpers.RunSync(() => m_Gltf.LoadAsync(ctx.assetPath, importSettings));
 
             CollectingLogger instantiationLogger = null;
             if (success)

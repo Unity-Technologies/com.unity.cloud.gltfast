@@ -21,12 +21,12 @@ To load from sources other than a URI or for advanced [customization](#customize
 
 1. Create a [GltfImport] instance.
 2. Call one of the instance's loading methods, depending on your source.
-   - From URI, [Load(Uri,…)](xref:Unity.Cloud.Gltfast.GltfImportBase.Load(System.Uri,Unity.Cloud.Gltfast.ImportSettings,System.Threading.CancellationToken)) or [Load(string,…)](xref:Unity.Cloud.Gltfast.GltfImportBase.Load(System.String,Unity.Cloud.Gltfast.ImportSettings,System.Threading.CancellationToken))
-   - From a buffer [Load(NativeArray&lt;byte&gt;.ReadOnly,…)](xref:Unity.Cloud.Gltfast.GltfImportBase.Load(Unity.Collections.NativeArray{System.Byte}.ReadOnly,System.Uri,Unity.Cloud.Gltfast.ImportSettings,System.Threading.CancellationToken))
-   - From a managed buffer [Load(byte[],…)](xref:Unity.Cloud.Gltfast.GltfImportBase.Load(System.Byte[],System.Uri,Unity.Cloud.Gltfast.ImportSettings,System.Threading.CancellationToken))
-   - From a file path [LoadFile(string,…)](xref:Unity.Cloud.Gltfast.GltfImportBase.LoadFile*)
-   - From a glTF JSON string [LoadGltfJson(string,…)][GltfImportLoadGltfJson]
-   - From a [Stream] [LoadStream(Stream,…)][GltfImportLoadStream]
+   - From URI, [LoadAsync(Uri,…)](xref:Unity.Cloud.Gltfast.GltfImportBase.LoadAsync(System.Uri,Unity.Cloud.Gltfast.ImportSettings,System.Threading.CancellationToken)) or [LoadAsync(string,…)](xref:Unity.Cloud.Gltfast.GltfImportBase.LoadAsync(System.String,Unity.Cloud.Gltfast.ImportSettings,System.Threading.CancellationToken))
+   - From a buffer [LoadAsync(NativeArray&lt;byte&gt;.ReadOnly,…)](xref:Unity.Cloud.Gltfast.GltfImportBase.LoadAsync(Unity.Collections.NativeArray{System.Byte}.ReadOnly,System.Uri,Unity.Cloud.Gltfast.ImportSettings,System.Threading.CancellationToken))
+   - From a managed buffer [LoadAsync(byte[],…)](xref:Unity.Cloud.Gltfast.GltfImportBase.LoadAsync(System.Byte[],System.Uri,Unity.Cloud.Gltfast.ImportSettings,System.Threading.CancellationToken))
+   - From a file path [LoadFileAsync(string,…)](xref:Unity.Cloud.Gltfast.GltfImportBase.LoadFileAsync*)
+   - From a glTF JSON string [LoadGltfJsonAsync(string,…)][GltfImportLoadGltfJson]
+   - From a [Stream] [LoadStreamAsync(Stream,…)][GltfImportLoadStream]
 3. Instantiate one ore more scenes however often you need.
    - The main scene [InstantiateMainSceneAsync](xref:Unity.Cloud.Gltfast.GltfImportBase.InstantiateMainSceneAsync*)
    - Or select one by index [InstantiateSceneAsync](xref:Unity.Cloud.Gltfast.GltfImportBase.InstantiateSceneAsync*)
@@ -43,7 +43,7 @@ Both the loading and instantiation methods return a boolean value indicating if 
 [!code-cs [load-gltf-from-memory](../Runtime/DocExamples/LoadGltfFromMemory.cs#LoadGltfFromMemory)]
 
 > [!TIP]
-> Provide the original URI of glTF-binary file as `uri` parameter to [Load][GltfImportLoad], so that it is able to resolve relative URIs in non-self-contained glTFs.
+> Provide the original URI of glTF-binary file as `uri` parameter to [LoadAsync][GltfImportLoad], so that it is able to resolve relative URIs in non-self-contained glTFs.
 
 ## Customize loading behavior
 
@@ -60,13 +60,13 @@ Loading via script allows you to:
 
 ### Import Settings
 
-All [`GltfImport.Load`][GltfImportLoad] overloads accept an optional instance of [`ImportSettings`][ImportSettings] as parameter. Have a look at this class to see all options available. Here's an example usage:
+All [`GltfImport.LoadAsync`][GltfImportLoad] overloads accept an optional instance of [`ImportSettings`][ImportSettings] as parameter. Have a look at this class to see all options available. Here's an example usage:
 
 [!code-cs [import-settings](../Runtime/DocExamples/LoadGltfFromMemory.cs#ImportSettings)]
 
 ### Custom Post-Loading Behavior
 
-The async `Load` method can be awaited and followed up by custom behavior.
+The async `LoadAsync` method can be awaited and followed up by custom behavior.
 
 [!code-cs [instantiation](../Runtime/DocExamples/LoadGltfFromMemory.cs#Instantiation)]
 
@@ -201,9 +201,9 @@ When you no longer need a loaded instance of a glTF scene you might want to remo
 [GltfAsset]: xref:Unity.Cloud.Gltfast.GltfAsset
 [GltfImport]: xref:Unity.Cloud.Gltfast.GltfImport
 [GltfImportDispose]: xref:Unity.Cloud.Gltfast.GltfImportBase.Dispose
-[GltfImportLoad]: xref:Unity.Cloud.Gltfast.GltfImportBase.Load*
-[GltfImportLoadGltfJson]: xref:Unity.Cloud.Gltfast.GltfImportBase.LoadGltfJson*
-[GltfImportLoadStream]: xref:Unity.Cloud.Gltfast.GltfImportBase.LoadStream*
+[GltfImportLoad]: xref:Unity.Cloud.Gltfast.GltfImportBase.LoadAsync*
+[GltfImportLoadGltfJson]: xref:Unity.Cloud.Gltfast.GltfImportBase.LoadGltfJsonAsync*
+[GltfImportLoadStream]: xref:Unity.Cloud.Gltfast.GltfImportBase.LoadStreamAsync*
 [GameObjectInstantiator]: xref:Unity.Cloud.Gltfast.GameObjectInstantiator
 [gltfasset_component]: Images/gltfasset_component.png  "Inspector showing a GltfAsset component added to a GameObject"
 [ICodeLogger]: xref:Unity.Cloud.Gltfast.Logging.ICodeLogger

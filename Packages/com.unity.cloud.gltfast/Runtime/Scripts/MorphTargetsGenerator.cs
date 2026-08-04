@@ -79,14 +79,14 @@ namespace Unity.Cloud.Gltfast
             return handle;
         }
 
-        public async Task ApplyOnMeshAndDispose(Mesh mesh)
+        public async Task ApplyOnMeshAndDisposeAsync(Mesh mesh)
         {
             for (var index = 0; index < m_Contexts.Length; index++)
             {
                 var context = m_Contexts[index];
                 context.AddToMesh(mesh, m_MorphTargetNames?[index] ?? index.ToString());
                 context.Dispose();
-                await m_DeferAgent.BreakPoint();
+                await m_DeferAgent.BreakPointAsync();
             }
             m_Contexts = null;
         }

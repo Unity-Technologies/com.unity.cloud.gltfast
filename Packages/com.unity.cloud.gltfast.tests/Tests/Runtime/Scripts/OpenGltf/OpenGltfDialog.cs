@@ -124,8 +124,8 @@ namespace Unity.Cloud.Gltfast.Tests
             m_Gltf = new GltfImport();
             var success = loadMethod switch
             {
-                LoadMethod.File => await m_Gltf.LoadFile(path, new Uri(path, UriKind.RelativeOrAbsolute), importSettings),
-                LoadMethod.Uri => await m_Gltf.Load(path, importSettings),
+                LoadMethod.File => await m_Gltf.LoadFileAsync(path, new Uri(path, UriKind.RelativeOrAbsolute), importSettings),
+                LoadMethod.Uri => await m_Gltf.LoadAsync(path, importSettings),
                 _ => throw new ArgumentOutOfRangeException()
             };
             var filename = Path.GetFileName(path);

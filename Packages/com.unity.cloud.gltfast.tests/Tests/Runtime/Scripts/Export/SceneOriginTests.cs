@@ -86,7 +86,7 @@ namespace Unity.Cloud.Gltfast.Tests.Export
             export.AddScene(new[] { node }, sceneOrigin ?? double4x4.identity, "UnityScene");
 
             var path = Path.Combine(Application.persistentDataPath, "SceneOrigin.gltf");
-            var success = await export.SaveToFileAndDispose(path);
+            var success = await export.SaveToFileAndDisposeAsync(path);
             Assert.IsTrue(success);
             LoggerTest.AssertLogger(logger);
 

@@ -65,7 +65,7 @@ namespace Unity.Cloud.Gltfast.Documentation.Examples
             export.AddScene(rootLevelNodes, "My new glTF scene");
 
             // Async glTF export
-            var success = await export.SaveToFileAndDispose(destinationFilePath);
+            var success = await export.SaveToFileAndDisposeAsync(destinationFilePath);
 
             if (!success)
             {
@@ -118,7 +118,7 @@ namespace Unity.Cloud.Gltfast.Documentation.Examples
             #endregion
 
             // Async glTF export
-            var success = await export.SaveToFileAndDispose(destinationFilePath);
+            var success = await export.SaveToFileAndDisposeAsync(destinationFilePath);
 
             if (!success)
             {

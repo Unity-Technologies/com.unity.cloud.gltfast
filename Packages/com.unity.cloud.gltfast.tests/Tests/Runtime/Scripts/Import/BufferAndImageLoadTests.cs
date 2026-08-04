@@ -24,7 +24,7 @@ namespace Unity.Cloud.Gltfast.Tests.Import
         public IEnumerator BufferDoesNotExist()
         {
             var task = Test(
-                import => import.LoadGltfJson(k_GltfInvalidBufferUri, new Uri("file:///nonExistingFolder")),
+                import => import.LoadGltfJsonAsync(k_GltfInvalidBufferUri, new Uri("file:///nonExistingFolder")),
                 false, LogCode.BufferLoadFailed
                 );
             yield return AsyncWrapper.WaitForTask(task);
@@ -35,7 +35,7 @@ namespace Unity.Cloud.Gltfast.Tests.Import
         {
             var gltf = CreateGltfBinaryFromJson(k_GltfInvalidBufferUri);
             var task = Test(
-                import => import.Load(gltf, new Uri("file:///nonExistingFolder")),
+                import => import.LoadAsync(gltf, new Uri("file:///nonExistingFolder")),
                 false, LogCode.BufferLoadFailed
                 );
             yield return AsyncWrapper.WaitForTask(task);
@@ -47,7 +47,7 @@ namespace Unity.Cloud.Gltfast.Tests.Import
             var path = Path.Combine(Application.temporaryCachePath, "GltfInvalidBufferUri.gltf");
             File.WriteAllText(path, k_GltfInvalidBufferUri);
             var task = Test(
-                import => import.LoadFile(path, new Uri("file:///nonExistingFolder")),
+                import => import.LoadFileAsync(path, new Uri("file:///nonExistingFolder")),
                 false, LogCode.BufferLoadFailed
                 );
             yield return AsyncWrapper.WaitForTask(task);
@@ -58,7 +58,7 @@ namespace Unity.Cloud.Gltfast.Tests.Import
         public IEnumerator ImageDoesNotExist()
         {
             var task = Test(
-                import => import.LoadGltfJson(k_GltfInvalidImageUri, new Uri("file:///nonExistingFolder")),
+                import => import.LoadGltfJsonAsync(k_GltfInvalidImageUri, new Uri("file:///nonExistingFolder")),
                 true, LogCode.TextureDownloadFailed
             );
             yield return AsyncWrapper.WaitForTask(task);
@@ -69,7 +69,7 @@ namespace Unity.Cloud.Gltfast.Tests.Import
         {
             var path = Path.Combine(Application.temporaryCachePath, "GltfInvalidImageUri.gltf");
             File.WriteAllText(path, k_GltfInvalidImageUri);
-            var task = Test(import => import.Load(path), true, LogCode.TextureDownloadFailed);
+            var task = Test(import => import.LoadAsync(path), true, LogCode.TextureDownloadFailed);
             yield return AsyncWrapper.WaitForTask(task);
             File.Delete(path);
         }
@@ -79,7 +79,7 @@ namespace Unity.Cloud.Gltfast.Tests.Import
         {
             var path = Path.Combine(Application.temporaryCachePath, "GltfInvalidImageUri.glb");
             File.WriteAllBytes(path, CreateGltfBinaryFromJson(k_GltfInvalidImageUri));
-            var task = Test(import => import.Load(path), true, LogCode.TextureDownloadFailed);
+            var task = Test(import => import.LoadAsync(path), true, LogCode.TextureDownloadFailed);
             yield return AsyncWrapper.WaitForTask(task);
             File.Delete(path);
         }
@@ -90,7 +90,7 @@ namespace Unity.Cloud.Gltfast.Tests.Import
             var path = Path.Combine(Application.temporaryCachePath, "GltfImageEmpty.gltf");
             const string gltfImageEmpty = @"{""images"":[{""mimeType"":""image/png""}],""textures"":[{""source"":0}]}";
             File.WriteAllText(path, gltfImageEmpty);
-            var task = Test(import => import.Load(path), true, LogCode.MissingImageURL);
+            var task = Test(import => import.LoadAsync(path), true, LogCode.MissingImageURL);
             yield return AsyncWrapper.WaitForTask(task);
             File.Delete(path);
         }
@@ -101,7 +101,7 @@ namespace Unity.Cloud.Gltfast.Tests.Import
             var path = Path.Combine(Application.temporaryCachePath, "GltfImageUnsupported.gltf");
             const string gltfImageEmpty = @"{""extensionsRequired"":[""EXT_texture_webp""],""extensionsUsed"":[""EXT_texture_webp""],""images"":[{""uri"":""DoesNotExist.webp"",""mimeType"":""image/webp""}],""textures"":[{""source"":0}]}";
             File.WriteAllText(path, gltfImageEmpty);
-            var task = Test(import => import.Load(path), false, LogCode.ExtensionUnsupported);
+            var task = Test(import => import.LoadAsync(path), false, LogCode.ExtensionUnsupported);
             yield return AsyncWrapper.WaitForTask(task);
             File.Delete(path);
         }
@@ -122,7 +122,7 @@ namespace Unity.Cloud.Gltfast.Tests.Import
     ]
 }}";
             File.WriteAllText(path, gltfImageEmpty);
-            var task = Test(import => import.Load(path), true, logger =>
+            var task = Test(import => import.LoadAsync(path), true, logger =>
             {
                 Assert.AreEqual(2, logger.Count);
                 var items = logger.Items.ToList();
@@ -157,7 +157,7 @@ namespace Unity.Cloud.Gltfast.Tests.Import
             var task = Test(
                 async import =>
                 {
-                    var success = await import.Load(path);
+                    var success = await import.LoadAsync(path);
                     Assert.AreEqual(1, import.TextureCount);
                     var image = import.GetTexture(0);
                     Assert.NotNull(image);
@@ -212,7 +212,7 @@ namespace Unity.Cloud.Gltfast.Tests.Import
             var task = Test(
                 async import =>
                 {
-                    var success = await import.Load(path);
+                    var success = await import.LoadAsync(path);
                     Assert.AreEqual(2, import.TextureCount);
                     Assert.NotNull(import.GetTexture(0), "Texture 0 must be loaded.");
                     Assert.NotNull(import.GetTexture(1), "Texture 1 must be loaded (shares image with texture 0).");

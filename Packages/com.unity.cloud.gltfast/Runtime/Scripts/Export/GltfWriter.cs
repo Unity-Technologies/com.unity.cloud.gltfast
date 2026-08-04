@@ -517,10 +517,13 @@ namespace Unity.Cloud.Gltfast.Export
             }
         }
 
-        /// <inheritdoc />
-        public Task<bool> SaveToFileAndDispose(string path) => SaveToFileAndDisposeInternal(path, false);
+        [Obsolete("SaveToFileAndDispose has been renamed to SaveToFileAndDisposeAsync. (UnityUpgradable) -> SaveToFileAndDisposeAsync(*)", true)]
+        public Task<bool> SaveToFileAndDispose(string path) => SaveToFileAndDisposeAsync(path);
 
-        internal async Task<bool> SaveToFileAndDisposeInternal(string path, bool sync)
+        /// <inheritdoc />
+        public Task<bool> SaveToFileAndDisposeAsync(string path) => SaveToFileAndDisposeAsyncInternal(path, false);
+
+        internal async Task<bool> SaveToFileAndDisposeAsyncInternal(string path, bool sync)
         {
             CertifyNotDisposed();
 
@@ -545,10 +548,13 @@ namespace Unity.Cloud.Gltfast.Export
             return success;
         }
 
-        /// <inheritdoc />
-        public Task<bool> SaveToStreamAndDispose(Stream stream) => SaveToStreamAndDispose(stream, false);
+        [Obsolete("SaveToStreamAndDispose has been renamed to SaveToStreamAndDisposeAsync. (UnityUpgradable) -> SaveToStreamAndDisposeAsync(*)", true)]
+        public Task<bool> SaveToStreamAndDispose(Stream stream) => SaveToStreamAndDisposeAsync(stream);
 
-        internal async Task<bool> SaveToStreamAndDispose(Stream stream, bool sync)
+        /// <inheritdoc />
+        public Task<bool> SaveToStreamAndDisposeAsync(Stream stream) => SaveToStreamAndDisposeAsync(stream, false);
+
+        internal async Task<bool> SaveToStreamAndDisposeAsync(Stream stream, bool sync)
         {
             CertifyNotDisposed();
 
@@ -979,7 +985,7 @@ namespace Unity.Cloud.Gltfast.Export
 
                 if (!sync)
                 {
-                    await m_DeferAgent.BreakPoint();
+                    await m_DeferAgent.BreakPointAsync();
                 }
             }
 
@@ -1251,7 +1257,7 @@ namespace Unity.Cloud.Gltfast.Export
 
             for (var stream = 0; stream < streamCount; stream++)
             {
-                inputStreams[stream] = await meshData.GetVertexData(stream, sync);
+                inputStreams[stream] = await meshData.GetVertexDataAsync(stream, sync);
                 outputStreams[stream] = new NativeArray<byte>(outputStrides[stream] * vertexCount, Allocator.Persistent);
             }
 
@@ -1370,7 +1376,7 @@ namespace Unity.Cloud.Gltfast.Export
             NativeArray<byte> indices;
             if (uMesh.indexFormat == IndexFormat.UInt16)
             {
-                using var indexData16 = await ((IMeshData<ushort>)meshData).GetIndexData(sync);
+                using var indexData16 = await ((IMeshData<ushort>)meshData).GetIndexDataAsync(sync);
 
                 NativeArray<ushort> destIndices;
                 JobHandle job = default;
@@ -1438,7 +1444,7 @@ namespace Unity.Cloud.Gltfast.Export
             }
             else
             {
-                using var indexData32 = await ((IMeshData<uint>)meshData).GetIndexData(sync);
+                using var indexData32 = await ((IMeshData<uint>)meshData).GetIndexDataAsync(sync);
                 NativeArray<uint> destIndices;
                 JobHandle job = default;
                 if (topology.Value == MeshTopology.Quads)
@@ -1827,7 +1833,7 @@ namespace Unity.Cloud.Gltfast.Export
                         }
                     }
                     if (!sync)
-                        await m_DeferAgent.BreakPoint();
+                        await m_DeferAgent.BreakPointAsync();
                 }
             }
 

@@ -117,7 +117,7 @@ namespace Unity.Cloud.Gltfast.Tests.Graphics
             // Build the file path
             var filePath = Path.Combine(testCaseSet.RootPath, testCase.relativeUri);
             using var gltfImport = new GltfImport(deferAgent: deferAgent, logger: loadLogger);
-            var loadSuccess = await gltfImport.Load(filePath);
+            var loadSuccess = await gltfImport.LoadAsync(filePath);
 
             // Validate loading process
             if (loadSuccess == testCase.expectLoadFail)

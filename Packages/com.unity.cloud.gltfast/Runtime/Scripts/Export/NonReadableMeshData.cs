@@ -35,7 +35,7 @@ namespace Unity.Cloud.Gltfast.Export
         }
 
 
-        public async Task<NativeArray<TIndex>> GetIndexData(bool sync)
+        public async Task<NativeArray<TIndex>> GetIndexDataAsync(bool sync)
         {
             if (!m_IndexData.IsCreated)
             {
@@ -57,7 +57,7 @@ namespace Unity.Cloud.Gltfast.Export
             return m_IndexData;
         }
 
-        public async Task<NativeArray<byte>> GetVertexData(int stream, bool sync)
+        public async Task<NativeArray<byte>> GetVertexDataAsync(int stream, bool sync)
         {
             Assert.IsTrue(stream >= 0 && stream < 4, "stream must in range 0 to 3");
             m_VertexData ??= new NativeArray<byte>[4];

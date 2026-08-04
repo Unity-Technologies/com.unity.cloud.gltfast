@@ -140,7 +140,7 @@ namespace Unity.Cloud.Gltfast.Tests
 
             writer.AddMeshToNode((int)nodeId, cylinderMesh, new[] { materialId }, (List<uint>)null);
             writer.AddScene(nodes);
-            await writer.SaveToFileAndDisposeInternal(path, true);
+            await writer.SaveToFileAndDisposeAsyncInternal(path, true);
         }
 
         static async Task CreateGltfFlatHierarchy(string path, int nodeCount, GltfFormat format)
@@ -167,7 +167,7 @@ namespace Unity.Cloud.Gltfast.Tests
                 }
             }
             writer.AddScene(nodes);
-            await writer.SaveToFileAndDisposeInternal(path, true);
+            await writer.SaveToFileAndDisposeAsyncInternal(path, true);
         }
 
         static async Task CreateGltfBigCylinderMesh(string path, uint triangleCount, GltfFormat format)
@@ -186,7 +186,7 @@ namespace Unity.Cloud.Gltfast.Tests
                 (List<uint>)null
                 );
             writer.AddScene(new List<uint> { nodeId });
-            await writer.SaveToFileAndDisposeInternal(path, true);
+            await writer.SaveToFileAndDisposeAsyncInternal(path, true);
         }
     }
 }

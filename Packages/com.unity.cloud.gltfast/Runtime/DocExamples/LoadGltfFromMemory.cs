@@ -20,7 +20,7 @@ namespace Unity.Cloud.Gltfast.Documentation.Examples
         {
             var gltfDataAsByteArray = await File.ReadAllBytesAsync(filePath);
             var gltf = new GltfImport();
-            var success = await gltf.Load(
+            var success = await gltf.LoadAsync(
                 gltfDataAsByteArray,
                 // The URI of the original data is important for resolving relative URIs within the glTF
                 new Uri(filePath)
@@ -54,7 +54,7 @@ namespace Unity.Cloud.Gltfast.Documentation.Examples
                 NodeNameMethod = NameImportMethod.OriginalUnique
             };
             // Load the glTF and pass along the settings
-            var success = await gltf.Load(filePath, settings);
+            var success = await gltf.LoadAsync(filePath, settings);
 
             if (success)
             {
@@ -73,7 +73,7 @@ namespace Unity.Cloud.Gltfast.Documentation.Examples
             #region Instantiation
             // First step: load glTF
             var gltf = new Unity.Cloud.Gltfast.GltfImport();
-            var success = await gltf.Load(filePath);
+            var success = await gltf.LoadAsync(filePath);
 
             if (success)
             {
@@ -106,7 +106,7 @@ namespace Unity.Cloud.Gltfast.Documentation.Examples
         {
             #region SceneInstanceAccess
             var gltfImport = new GltfImport();
-            await gltfImport.Load(filePath);
+            await gltfImport.LoadAsync(filePath);
             var instantiator = new GameObjectInstantiator(gltfImport, transform);
             var success = await gltfImport.InstantiateMainSceneAsync(instantiator);
             if (success)
@@ -158,7 +158,7 @@ namespace Unity.Cloud.Gltfast.Documentation.Examples
             foreach (var url in manyUrls)
             {
                 var gltf = new GltfImport(null, deferAgent);
-                var task = gltf.Load(url).ContinueWith(
+                var task = gltf.LoadAsync(url).ContinueWith(
                     async t =>
                     {
                         if (t.Result)

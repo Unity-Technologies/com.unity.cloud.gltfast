@@ -128,6 +128,10 @@ namespace Unity.Cloud.Gltfast.Export
             return success;
         }
 
+        [Obsolete("SaveToFileAndDispose has been renamed to SaveToFileAndDisposeAsync. (UnityUpgradable) -> SaveToFileAndDisposeAsync(*)", true)]
+        public Task<bool> SaveToFileAndDispose(string path, CancellationToken cancellationToken = default)
+            => SaveToFileAndDisposeAsync(path, cancellationToken);
+
         /// <summary>
         /// Exports the collected scenes/content as glTF, writes it to a file
         /// and disposes this object.
@@ -136,8 +140,16 @@ namespace Unity.Cloud.Gltfast.Export
         /// <param name="path">glTF destination file path</param>
         /// <param name="cancellationToken">Token to submit cancellation requests. The default value is None.</param>
         /// <returns>True if the glTF file was created successfully, false otherwise</returns>
-        public Task<bool> SaveToFileAndDispose(string path, CancellationToken cancellationToken = default)
-            => SaveToFileAndDispose(path, false, cancellationToken);
+        public Task<bool> SaveToFileAndDisposeAsync(string path, CancellationToken cancellationToken = default)
+            => SaveToFileAndDisposeAsync(path, false, cancellationToken);
+
+        [Obsolete("SaveToFileAndDispose has been renamed to SaveToFileAndDisposeAsync. (UnityUpgradable) -> SaveToFileAndDisposeAsync(*)", true)]
+        public Task<bool> SaveToFileAndDispose(
+            string path,
+            bool forceSync,
+            CancellationToken cancellationToken = default
+        )
+            => SaveToFileAndDisposeAsync(path, forceSync, cancellationToken);
 
         /// <summary>
         /// Exports the collected scenes/content as glTF, writes it to a file
@@ -149,7 +161,7 @@ namespace Unity.Cloud.Gltfast.Export
         /// scripting.</param>
         /// <param name="cancellationToken">Token to submit cancellation requests. The default value is None.</param>
         /// <returns>True if the glTF file was created successfully, false otherwise</returns>
-        public async Task<bool> SaveToFileAndDispose(
+        public async Task<bool> SaveToFileAndDisposeAsync(
             string path,
             bool forceSync,
             CancellationToken cancellationToken = default
@@ -157,12 +169,18 @@ namespace Unity.Cloud.Gltfast.Export
         {
             CertifyNotDisposed();
 #if UNITY_EDITOR
-            CertifyEditorForceSync(forceSync, nameof(SaveToFileAndDispose));
+            CertifyEditorForceSync(forceSync, nameof(SaveToFileAndDisposeAsync));
 #endif
-            var success = await m_Writer.SaveToFileAndDisposeInternal(path, forceSync);
+            var success = await m_Writer.SaveToFileAndDisposeAsyncInternal(path, forceSync);
             m_Writer = null;
             return success;
         }
+
+        [Obsolete("SaveToStreamAndDispose has been renamed to SaveToStreamAndDisposeAsync. (UnityUpgradable) -> SaveToStreamAndDisposeAsync(*)", true)]
+        public Task<bool> SaveToStreamAndDispose(
+            Stream stream,
+            CancellationToken cancellationToken = default
+            ) => SaveToStreamAndDisposeAsync(stream, cancellationToken);
 
         /// <summary>
         /// Exports the collected scenes/content as glTF, writes it to a Stream
@@ -172,10 +190,18 @@ namespace Unity.Cloud.Gltfast.Export
         /// <param name="stream">glTF destination stream</param>
         /// <param name="cancellationToken">Token to submit cancellation requests. The default value is None.</param>
         /// <returns>True if the glTF file was written successfully, false otherwise</returns>
-        public Task<bool> SaveToStreamAndDispose(
+        public Task<bool> SaveToStreamAndDisposeAsync(
             Stream stream,
             CancellationToken cancellationToken = default
-            ) => SaveToStreamAndDispose(stream, false, cancellationToken);
+            ) => SaveToStreamAndDisposeAsync(stream, false, cancellationToken);
+
+        [Obsolete("SaveToStreamAndDispose has been renamed to SaveToStreamAndDisposeAsync. (UnityUpgradable) -> SaveToStreamAndDisposeAsync(*)", true)]
+        public Task<bool> SaveToStreamAndDispose(
+            Stream stream,
+            bool forceSync,
+            CancellationToken cancellationToken = default
+        )
+            => SaveToStreamAndDisposeAsync(stream, forceSync, cancellationToken);
 
         /// <summary>
         /// Exports the collected scenes/content as glTF, writes it to a Stream
@@ -187,7 +213,7 @@ namespace Unity.Cloud.Gltfast.Export
         /// scripting.</param>
         /// <param name="cancellationToken">Token to submit cancellation requests. The default value is None.</param>
         /// <returns>True if the glTF file was written successfully, false otherwise</returns>
-        public async Task<bool> SaveToStreamAndDispose(
+        public async Task<bool> SaveToStreamAndDisposeAsync(
             Stream stream,
             bool forceSync,
             CancellationToken cancellationToken = default
@@ -195,9 +221,9 @@ namespace Unity.Cloud.Gltfast.Export
         {
             CertifyNotDisposed();
 #if UNITY_EDITOR
-            CertifyEditorForceSync(forceSync, nameof(SaveToStreamAndDispose));
+            CertifyEditorForceSync(forceSync, nameof(SaveToStreamAndDisposeAsync));
 #endif
-            var success = await m_Writer.SaveToStreamAndDispose(stream, forceSync);
+            var success = await m_Writer.SaveToStreamAndDisposeAsync(stream, forceSync);
             m_Writer = null;
             return success;
         }
