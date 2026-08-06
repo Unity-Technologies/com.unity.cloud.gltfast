@@ -47,7 +47,13 @@ namespace Unity.Cloud.Gltfast.Editor.Tests
             "Unity.Cloud.Gltfast.Schema.AdditionalPropertyContainer",
             "Unity.Cloud.Gltfast.Schema.IAdditionalPropertyContainer",
             "Unity.Cloud.Gltfast.Schema.IPropertyContainer",
+            "Unity.Cloud.Gltfast.Schema.IReadOnlyPropertyContainer",
             "Unity.Cloud.Gltfast.Schema.Properties",
+            "Unity.Cloud.Gltfast.Schema.Property",
+            "Unity.Cloud.Gltfast.Schema.PropertyEnumerator",
+            "Unity.Cloud.Gltfast.Schema.ReadOnlyProperties",
+            "Unity.Cloud.Gltfast.Schema.Value",
+            "Unity.Cloud.Gltfast.Schema.ValueKind",
         };
 
         static IEnumerable<TestCaseData> PublicShippingTypes()

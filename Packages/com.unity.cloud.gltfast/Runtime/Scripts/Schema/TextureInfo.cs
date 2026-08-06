@@ -42,7 +42,7 @@ namespace Unity.Cloud.Gltfast.Schema
 
         /// <inheritdoc/>
         [JsonIgnore]
-        public Properties AdditionalProperties => new(ExtensionData);
+        public ReadOnlyProperties AdditionalProperties => new(ExtensionData ?? ReadOnlyProperties.Empty);
 
         /// <summary>
         /// Applies a texture transform by initializing <see cref="Extensions" /> (if required) and setting its

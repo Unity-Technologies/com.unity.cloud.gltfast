@@ -73,7 +73,7 @@ namespace Unity.Cloud.Gltfast.Schema
 
         /// <inheritdoc/>
         [JsonIgnore]
-        public Properties AdditionalProperties => new(ExtensionData);
+        public ReadOnlyProperties AdditionalProperties => new(ExtensionData ?? ReadOnlyProperties.Empty);
 
     }
 }

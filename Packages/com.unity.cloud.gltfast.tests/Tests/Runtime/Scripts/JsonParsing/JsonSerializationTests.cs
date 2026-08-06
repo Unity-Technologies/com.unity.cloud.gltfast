@@ -1743,6 +1743,45 @@ namespace Unity.Cloud.Gltfast.Tests.JsonParsing
         }
 
         [Test]
+        public void MeshExtrasCustomProperty()
+        {
+            var mesh = new Mesh { Extras = new MeshExtras() };
+            mesh.Extras.Set("uuid", "3fb0442f-0bd4-4947-bc88-b99b0adb16d0");
+            mesh.Extras.Set("value", 12.3);
+            var json = JsonSerializer.Serialize(mesh, GltfJsonContext.Default.Mesh);
+            Assert.AreEqual(@"{""extras"":{""uuid"":""3fb0442f-0bd4-4947-bc88-b99b0adb16d0"",""value"":12.300000000000001}}", json);
+        }
+
+        [Test]
+        public void MeshExtrasCustomPropertyConflict()
+        {
+            var mesh = new Mesh { Extras = new MeshExtras() };
+            mesh.Extras.TargetNames = new List<string> { "a", "b", "c" };
+            mesh.Extras.Set("targetNames", new List<string> { "1", "2", "3" });
+            var json = JsonSerializer.Serialize(mesh, GltfJsonContext.Default.Mesh);
+            // Note that there's two members with name "targetNames". That's expected. Users need to make sure they
+            // don't run into conflicts. See glTF specification about JSON encoding.
+            // https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html#json-encoding
+            // > 4. Property names (keys) within JSON objects SHOULD be unique. glTF client implementations SHOULD
+            // >    override lexically preceding values for the same key.
+            Assert.AreEqual(@"{""extras"":{""targetNames"":[""a"",""b"",""c""],""targetNames"":[""1"",""2"",""3""]}}", json);
+        }
+
+        [Test]
+        public void NodeCustomExtensions()
+        {
+            var node = new Node { Extensions = new NodeExtensions() };
+            var extension = new Dictionary<string, object>
+            {
+                ["property"] = "value",
+                ["value"] = 42.0
+            };
+            node.Extensions.Set("MY_custom_extension", extension);
+            var json = JsonSerializer.Serialize(node, GltfJsonContext.Default.Node);
+            Assert.AreEqual(@"{""extensions"":{""MY_custom_extension"":{""property"":""value"",""value"":42}}}", json);
+        }
+
+        [Test]
         public void NodeExtensionsDefault()
         {
             var json = JsonSerializer.Serialize(new NodeExtensions(), GltfJsonContext.Default.NodeExtensions);

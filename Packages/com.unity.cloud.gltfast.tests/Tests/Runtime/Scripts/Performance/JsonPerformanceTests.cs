@@ -186,18 +186,29 @@ namespace Unity.Cloud.Gltfast.Tests.Performance
             string profilingMarker,
             Func<NativeArray<byte>.ReadOnly, T> jsonParser
             ) where T : Root
+            => RunWork(() => jsonParser(gltfJson), profilingMarker);
+
+        /// <summary>
+        /// Measures one unit of <paramref name="work"/>: timing (via
+        /// <see cref="Measure.Method"/>) followed by managed allocation (via
+        /// <see cref="MeasureAllocatedBytes"/>). The work's return value is
+        /// kept alive so the JIT cannot elide it. Use this to benchmark a step
+        /// in isolation — e.g. post-deserialization traversal or conversion —
+        /// rather than always folding it into the parse.
+        /// </summary>
+        internal static IEnumerator RunWork(Func<object> work, string profilingMarker)
         {
             // Timing (synchronous; Measure.Method does its own iteration).
             var profilerMarkerName = $"JsonPerf.{profilingMarker}";
             Measure.Method(() =>
                 {
                     Profiler.BeginSample(profilerMarkerName);
-                    jsonParser(gltfJson);
+                    GC.KeepAlive(work());
                     Profiler.EndSample();
                 }).GC().Run();
 
             // Allocation (frame-gated; needs to yield).
-            yield return MeasureAllocatedBytes(gltfJson, profilingMarker, jsonParser);
+            yield return MeasureAllocatedBytes(work, profilingMarker);
         }
 
         // Per-frame counter exposed by Unity Profiler. Captures every managed
@@ -234,15 +245,14 @@ namespace Unity.Cloud.Gltfast.Tests.Performance
         /// API that exposes per-frame bytes allocated. (On IL2CPP it works
         /// too, so this measurement is the same on every backend.)
         /// </summary>
-        static IEnumerator MeasureAllocatedBytes<T>(
-            NativeArray<byte>.ReadOnly gltfJson,
-            string profilingMarker,
-            Func<NativeArray<byte>.ReadOnly, T> jsonParser
-            ) where T : Root
+        static IEnumerator MeasureAllocatedBytes(
+            Func<object> work,
+            string profilingMarker
+            )
         {
             // Warm up so JIT, string interning, and lazy type init don't
             // contaminate the first measured iteration.
-            GC.KeepAlive(jsonParser(gltfJson));
+            GC.KeepAlive(work());
 
             var recorder = ProfilerRecorder.StartNew(
                 ProfilerCategory.Memory, k_GcAllocCounter);
@@ -285,7 +295,7 @@ namespace Unity.Cloud.Gltfast.Tests.Performance
                     // Pack k_CallsPerFrame invocations into this single frame
                     // so per-frame engine overhead amortizes to ~0 per call.
                     for (var i = 0; i < k_CallsPerFrame; i++)
-                        keepAlive[i] = jsonParser(gltfJson);
+                        keepAlive[i] = work();
 
                     // Yield once so the frame ends and the recorder snapshots
                     // its counter for the just-completed frame.

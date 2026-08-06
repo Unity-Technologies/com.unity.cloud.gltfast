@@ -2385,6 +2385,57 @@ namespace Unity.Cloud.Gltfast.Tests.JsonParsing
         {
             var obj = JsonSerializer.Deserialize("{}", GltfJsonContext.Default.AdditionalPropertyContainer);
             Assert.IsNotNull(obj);
+            Assert.AreEqual(0, obj.Count);
+            Assert.IsFalse(obj.ContainsKey("anything"));
+            CollectionAssert.IsEmpty(obj.Keys);
+        }
+
+        [Test]
+        public void AdditionalPropertyContainerMembers()
+        {
+            var obj = JsonSerializer.Deserialize(
+                @"{""alpha"":1,""beta"":""two"",""gamma"":true}",
+                GltfJsonContext.Default.AdditionalPropertyContainer);
+            Assert.AreEqual(3, obj.Count);
+            Assert.IsTrue(obj.ContainsKey("alpha"));
+            Assert.IsTrue(obj.ContainsKey("beta"));
+            Assert.IsTrue(obj.ContainsKey("gamma"));
+            Assert.IsFalse(obj.ContainsKey("delta"));
+            CollectionAssert.AreEquivalent(new[] { "alpha", "beta", "gamma" }, obj.Keys);
+        }
+
+        [Test]
+        public void PropertiesMembers()
+        {
+            var obj = JsonSerializer.Deserialize(
+                @"{""POSITION"":0,""_CUSTOM_A"":5,""_CUSTOM_B"":6}",
+                GltfJsonContext.Default.Attributes);
+            Assert.AreEqual(2, obj.AdditionalProperties.Count);
+            Assert.IsTrue(obj.AdditionalProperties.ContainsKey("_CUSTOM_A"));
+            Assert.IsTrue(obj.AdditionalProperties.ContainsKey("_CUSTOM_B"));
+            Assert.IsFalse(obj.AdditionalProperties.ContainsKey("POSITION"));
+            Assert.IsFalse(obj.AdditionalProperties.ContainsKey("_MISSING"));
+            CollectionAssert.AreEquivalent(new[] { "_CUSTOM_A", "_CUSTOM_B" }, obj.AdditionalProperties.Keys);
+        }
+
+        [Test]
+        public void PropertiesRoundTrip()
+        {
+            const string original = @"{""POSITION"":0,""_CUSTOM_A"":5,""_CUSTOM_B"":6}";
+            var obj = JsonSerializer.Deserialize(
+                original,
+                GltfJsonContext.Default.Attributes);
+            var json = JsonSerializer.Serialize(obj, GltfJsonContext.Default.Attributes);
+            Assert.AreEqual(original, json);
+        }
+
+        [Test]
+        public void PropertiesMembersEmpty()
+        {
+            var obj = JsonSerializer.Deserialize("{}", GltfJsonContext.Default.Attributes);
+            Assert.AreEqual(0, obj.AdditionalProperties.Count);
+            Assert.IsFalse(obj.AdditionalProperties.ContainsKey("anything"));
+            CollectionAssert.IsEmpty(obj.AdditionalProperties.Keys);
         }
     }
 }
