@@ -33,11 +33,34 @@ One step is **not** automatic and must be done by hand, **before** you rely on t
 > [!WARNING]
 > Do this first, or the API Updater will appear to fail.
 
-- **Assembly definition references** — if one of your own `.asmdef` files references a glTFast assembly by name, update the reference to the new name (for example `glTFast` ⇒ `Unity.Cloud.Gltfast`, `glTFast.Export` ⇒ `Unity.Cloud.Gltfast.Export`, `glTFast.Newtonsoft` ⇒ `Unity.Cloud.Gltfast.Newtonsoft`). `Unity.Cloud.Gltfast.Export` and `Unity.Cloud.Gltfast.Newtonsoft` are **not** auto-referenced (same as their 6.x predecessors), so your own `.asmdef` must reference them explicitly. If that reference still points at the old assembly name — or is missing altogether — the compiler can't resolve the old type at all, so it reports a generic "type or namespace could not be found" (`CS0246`) instead of the usual API Update prompt. The updater only rewrites references it can resolve to a `[MovedFrom]` type; an unresolvable symbol doesn't look like a moved type to it, it looks like a typo. Fix the assembly reference(s) first, reload, then let the API Updater handle the `using` directives and type references.
+- **Assembly definition references** — if one of your own `.asmdef` files references a glTFast assembly by name, update the reference to the new name (for example `glTFast` ⇒ `Unity.Cloud.Gltfast`, `glTFast.Export` ⇒ `Unity.Cloud.Gltfast.Export`, `glTFast.Newtonsoft` ⇒ `Unity.Cloud.Gltfast.Newtonsoft`, `glTFast.dots` ⇒ `Unity.Cloud.Gltfast.Dots`). Apart from `Unity.Cloud.Gltfast` itself, none of the glTFast assemblies are auto-referenced, so your own `.asmdef` must reference them explicitly — see [Assemblies are no longer auto-referenced](#assemblies-are-no-longer-auto-referenced). If that reference still points at the old assembly name — or is missing altogether — the compiler can't resolve the old type at all, so it reports a generic "type or namespace could not be found" (`CS0246`) instead of the usual API Update prompt. The updater only rewrites references it can resolve to a `[MovedFrom]` type; an unresolvable symbol doesn't look like a moved type to it, it looks like a typo. Fix the assembly reference(s) first, reload, then let the API Updater handle the `using` directives and type references.
 
 [NamingGuidelines]: https://learn.microsoft.com/en-us/dotnet/standard/design-guidelines/naming-guidelines
 [AsmdefNaming]: https://docs.unity3d.com/Manual/cus-asmdef.html
 [APIUpdater]: https://docs.unity3d.com/Manual/APIUpdater.html
+
+### Assemblies are no longer auto-referenced
+
+`Unity.Cloud.Gltfast` is now the only glTFast assembly that is auto-referenced. An auto-referenced assembly is one that Unity's [predefined assemblies][PredefinedAssemblies] (`Assembly-CSharp`, `Assembly-CSharp-Editor`, …) reference implicitly — that is, code in a folder without an `.asmdef` can use it without any setup.
+
+| Assembly | 6.x | 7.0 |
+|----------|-----|-----|
+| `Unity.Cloud.Gltfast` (was `glTFast`) | auto-referenced | auto-referenced |
+| `Unity.Cloud.Gltfast.Dots` (was `glTFast.dots`) | auto-referenced | **explicit reference required** |
+| `Unity.Cloud.Gltfast.Editor` (was `glTFast.Editor`) | auto-referenced | explicit reference required |
+| `Unity.Cloud.Gltfast.Export` | explicit reference required | explicit reference required |
+| `Unity.Cloud.Gltfast.Newtonsoft` | explicit reference required | explicit reference required |
+
+Only the `Unity.Cloud.Gltfast.Dots` row requires action from you, and only if you use the DOTS/Entities import API ([EntityInstantiator](xref:Unity.Cloud.Gltfast.EntityInstantiator), [GltfEntityAsset](xref:Unity.Cloud.Gltfast.GltfEntityAsset)):
+
+- **Your code already lives in an `.asmdef`** — add `Unity.Cloud.Gltfast.Dots` to that assembly definition's *Assembly References*.
+- **Your code lives in a predefined assembly** (no `.asmdef`, the default for scripts dropped straight into `Assets`) — it can no longer see these types. Move the code into a folder with an `.asmdef` that references `Unity.Cloud.Gltfast.Dots`.
+
+The symptom of a missing reference is a generic "type or namespace could not be found" (`CS0246`) on the glTFast type, exactly as described for a stale assembly name above.
+
+`Unity.Cloud.Gltfast.Editor` is listed for completeness only. It exposes no public API, so losing the implicit reference cannot break compilation. Importing `.gltf`/`.glb` assets is likewise unaffected: the importer is registered through Unity's `ScriptedImporter` attribute scan, which is independent of assembly references.
+
+[PredefinedAssemblies]: https://docs.unity3d.com/Manual/script-compile-order-folders.html
 
 ### Newtonsoft assembly removal
 
