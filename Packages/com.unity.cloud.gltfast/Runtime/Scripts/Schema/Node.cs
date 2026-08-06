@@ -14,7 +14,7 @@ namespace Unity.Cloud.Gltfast.Schema
     /// its content.
     /// </summary>
     [MovedFrom(true, sourceNamespace: "GLTFast.Schema", sourceAssembly: "glTFast")]
-    public class Node : NamedObject, IGltfObject
+    public class Node : NamedObject, IAdditionalPropertyContainer
     {
         /// <inheritdoc cref="NodeExtensions"/>
         [JsonPropertyName("extensions")]
@@ -86,15 +86,15 @@ namespace Unity.Cloud.Gltfast.Schema
         /// </summary>
         /// <seealso href="https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html#reference-extras"/>
         [JsonPropertyName("extras")]
-        public UnclassifiedData Extras { get; set; }
+        public AdditionalPropertyContainer Extras { get; set; }
 
         /// <summary>JSON properties without a matching member.</summary>
-        [JsonExtensionData, JsonInclude] internal Dictionary<string, JsonElement> ExtensionsData { get; set; }
+        [JsonExtensionData, JsonInclude]
+        internal Dictionary<string, JsonElement> ExtensionData { get; set; }
 
         /// <inheritdoc/>
-        public bool TryGetValue<T>(string key, out T value)
-        {
-            return ExtensionsData.TryGetValue(key, out value);
-        }
+        [JsonIgnore]
+        public Properties AdditionalProperties => new(ExtensionData);
+
     }
 }

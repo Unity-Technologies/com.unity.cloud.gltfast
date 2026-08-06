@@ -14,7 +14,7 @@ namespace Unity.Cloud.Gltfast.Schema
     /// The material appearance of a primitive.
     /// </summary>
     [MovedFrom(true, sourceNamespace: "GLTFast.Schema", sourceAssembly: "glTFast")]
-    public class Material : NamedObject, IGltfObject
+    public class Material : NamedObject, IAdditionalPropertyContainer
     {
         /// <summary>
         /// Material extensions.
@@ -100,16 +100,16 @@ namespace Unity.Cloud.Gltfast.Schema
 
         /// <inheritdoc cref="Root.Extras"/>
         [JsonPropertyName("extras")]
-        public UnclassifiedData Extras { get; set; }
+        public AdditionalPropertyContainer Extras { get; set; }
 
         /// <summary>JSON properties without a matching member.</summary>
-        [JsonExtensionData, JsonInclude] internal Dictionary<string, JsonElement> ExtensionsData { get; set; }
+        [JsonExtensionData, JsonInclude]
+        internal Dictionary<string, JsonElement> ExtensionData { get; set; }
 
         /// <inheritdoc/>
-        public bool TryGetValue<T>(string key, out T value)
-        {
-            return ExtensionsData.TryGetValue(key, out value);
-        }
+        [JsonIgnore]
+        public Properties AdditionalProperties => new(ExtensionData);
+
 
         /// <summary>
         /// True if the material requires the mesh to have normals.

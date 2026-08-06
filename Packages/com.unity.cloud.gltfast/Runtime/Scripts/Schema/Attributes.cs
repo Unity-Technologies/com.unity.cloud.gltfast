@@ -15,7 +15,7 @@ namespace Unity.Cloud.Gltfast.Schema
     /// </summary>
     [JsonConverter(typeof(AttributesConverter))]
     [MovedFrom(true, sourceNamespace: "GLTFast.Schema", sourceAssembly: "glTFast")]
-    public class Attributes : IGltfObject
+    public class Attributes : IAdditionalPropertyContainer
     {
         /// <summary>Vertex position accessor index.</summary>
         public int? Position { get; set; }
@@ -57,13 +57,13 @@ namespace Unity.Cloud.Gltfast.Schema
         public List<int?> Weights { get; set; }
 
         /// <summary>JSON properties without a matching member (e.g. application-defined attribute semantics such as <c>_TEMPERATURE</c>).</summary>
-        [JsonExtensionData, JsonInclude] internal Dictionary<string, JsonElement> ExtensionsData { get; set; }
+        [JsonExtensionData, JsonInclude]
+        internal Dictionary<string, JsonElement> ExtensionData { get; set; }
 
         /// <inheritdoc/>
-        public bool TryGetValue<T>(string key, out T value)
-        {
-            return ExtensionsData.TryGetValue(key, out value);
-        }
+        [JsonIgnore]
+        public Properties AdditionalProperties => new(ExtensionData);
+
 
         /// <summary>
         /// Consolidates all `TEXCOORD_*` accessor fields into a single array.

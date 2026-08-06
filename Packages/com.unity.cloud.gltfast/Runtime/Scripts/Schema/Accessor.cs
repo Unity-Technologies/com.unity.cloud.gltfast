@@ -22,7 +22,7 @@ namespace Unity.Cloud.Gltfast.Schema
     /// accessor in the glTF 2.0 specification</a>.
     /// </summary>
     [MovedFrom(true, sourceNamespace: "GLTFast.Schema", sourceAssembly: "glTFast")]
-    public class Accessor : NamedObject, IGltfObject
+    public class Accessor : NamedObject, IAdditionalPropertyContainer
     {
         /// <summary>
         /// Sparse storage of attributes that deviate from their initialization value.
@@ -85,20 +85,19 @@ namespace Unity.Cloud.Gltfast.Schema
 
         /// <inheritdoc cref="Root.Extras"/>
         [JsonPropertyName("extras")]
-        public UnclassifiedData Extras { get; set; }
+        public AdditionalPropertyContainer Extras { get; set; }
 
         /// <inheritdoc cref="Asset.Extensions"/>
         [JsonPropertyName("extensions")]
-        public UnclassifiedData Extensions { get; set; }
+        public AdditionalPropertyContainer Extensions { get; set; }
 
         /// <summary>JSON properties without a matching member.</summary>
-        [JsonExtensionData, JsonInclude] internal Dictionary<string, JsonElement> ExtensionsData { get; set; }
+        [JsonExtensionData, JsonInclude]
+        internal Dictionary<string, JsonElement> ExtensionData { get; set; }
 
         /// <inheritdoc/>
-        public bool TryGetValue<T>(string key, out T value)
-        {
-            return ExtensionsData.TryGetValue(key, out value);
-        }
+        [JsonIgnore]
+        public Properties AdditionalProperties => new(ExtensionData);
 
         /// <summary>
         /// Maximum value of each component in this attribute.

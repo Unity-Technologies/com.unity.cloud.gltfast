@@ -96,7 +96,7 @@ namespace Unity.Cloud.Gltfast.Schema
                 {
                     var name = reader.GetString();
                     reader.Read();
-                    (result.ExtensionsData ??= new Dictionary<string, JsonElement>())[name] = JsonElement.ParseValue(ref reader);
+                    (result.ExtensionData ??= new Dictionary<string, JsonElement>())[name] = JsonElement.ParseValue(ref reader);
                 }
             }
 
@@ -113,9 +113,9 @@ namespace Unity.Cloud.Gltfast.Schema
             WriteChannel(writer, k_Color, value.Colors);
             WriteChannel(writer, k_Joints, value.Joints);
             WriteChannel(writer, k_Weights, value.Weights);
-            if (value.ExtensionsData != null)
+            if (value.ExtensionData != null)
             {
-                foreach (var pair in value.ExtensionsData)
+                foreach (var pair in value.ExtensionData)
                 {
                     writer.WritePropertyName(pair.Key);
                     pair.Value.WriteTo(writer);

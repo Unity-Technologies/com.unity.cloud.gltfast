@@ -8,5 +8,12 @@ namespace Unity.Cloud.Gltfast.Newtonsoft.Schema
 {
     [Obsolete("Use Unity.Cloud.Gltfast.Schema.CameraPerspective instead.")]
     [MovedFrom(true, sourceNamespace: "GLTFast.Newtonsoft.Schema", sourceAssembly: "glTFast.Newtonsoft")]
-    public class CameraPerspective : Unity.Cloud.Gltfast.Schema.CameraPerspective, IJsonObject { }
+    public class CameraPerspective : Unity.Cloud.Gltfast.Schema.CameraPerspective, IJsonObject
+    {
+        /// <inheritdoc/>
+        public bool TryGetValue<T>(string key, out T value)
+        {
+            return AdditionalProperties.TryGetValue(key, out value);
+        }
+    }
 }

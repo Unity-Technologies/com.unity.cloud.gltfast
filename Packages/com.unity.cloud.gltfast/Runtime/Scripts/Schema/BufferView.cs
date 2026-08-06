@@ -10,7 +10,7 @@ namespace Unity.Cloud.Gltfast.Schema
 {
     /// <inheritdoc cref="IBufferView"/>
     [MovedFrom(true, sourceNamespace: "GLTFast.Schema", sourceAssembly: "glTFast")]
-    public class BufferView : NamedObject, IBufferView, IGltfObject
+    public class BufferView : NamedObject, IBufferView, IAdditionalPropertyContainer
     {
         /// <inheritdoc cref="BufferViewExtensions"/>
         [JsonPropertyName("extensions")]
@@ -65,15 +65,15 @@ namespace Unity.Cloud.Gltfast.Schema
 
         /// <inheritdoc cref="Root.Extras"/>
         [JsonPropertyName("extras")]
-        public UnclassifiedData Extras { get; set; }
+        public AdditionalPropertyContainer Extras { get; set; }
 
         /// <summary>JSON properties without a matching member.</summary>
-        [JsonExtensionData, JsonInclude] internal Dictionary<string, JsonElement> ExtensionsData { get; set; }
+        [JsonExtensionData, JsonInclude]
+        internal Dictionary<string, JsonElement> ExtensionData { get; set; }
 
         /// <inheritdoc/>
-        public bool TryGetValue<T>(string key, out T value)
-        {
-            return ExtensionsData.TryGetValue(key, out value);
-        }
+        [JsonIgnore]
+        public Properties AdditionalProperties => new(ExtensionData);
+
     }
 }

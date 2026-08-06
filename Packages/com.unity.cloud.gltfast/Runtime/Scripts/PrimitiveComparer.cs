@@ -42,7 +42,7 @@ namespace Unity.Cloud.Gltfast
                 && ChannelEquals(x.Colors, y.Colors)
                 && ChannelEquals(x.Joints, y.Joints)
                 && ChannelEquals(x.Weights, y.Weights)
-                && ExtensionsDataEquals(x.ExtensionsData, y.ExtensionsData);
+                && ExtensionDataEquals(x.ExtensionData, y.ExtensionData);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -60,7 +60,7 @@ namespace Unity.Cloud.Gltfast
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        static bool ExtensionsDataEquals(Dictionary<string, JsonElement> x, Dictionary<string, JsonElement> y)
+        static bool ExtensionDataEquals(Dictionary<string, JsonElement> x, Dictionary<string, JsonElement> y)
         {
             if (ReferenceEquals(x, y)) return true;
             var xCount = x?.Count ?? 0;
@@ -119,12 +119,12 @@ namespace Unity.Cloud.Gltfast
             AddChannel(ref hash, x.Colors);
             AddChannel(ref hash, x.Joints);
             AddChannel(ref hash, x.Weights);
-            if (x.ExtensionsData != null)
+            if (x.ExtensionData != null)
             {
                 // XOR to keep the contribution order-independent — Dictionary
                 // iteration order isn't part of the schema's identity.
                 var extHash = 0;
-                foreach (var pair in x.ExtensionsData)
+                foreach (var pair in x.ExtensionData)
                 {
                     var valHash = pair.Value.ValueKind == JsonValueKind.Number && pair.Value.TryGetDouble(out var d)
                         ? d.GetHashCode()

@@ -38,6 +38,18 @@ namespace Unity.Cloud.Gltfast.Editor.Tests
         const string k_NewRootNamespace = "Unity.Cloud.Gltfast";
         const string k_OldRootNamespace = "GLTFast";
 
+        // Public types introduced after the 7.0 rename. They never existed in glTFast 6.x, so there is
+        // no old namespace/assembly to migrate from and they correctly carry no [MovedFrom]. Every other
+        // public type must still be annotated, so a genuinely forgotten [MovedFrom] keeps failing the test.
+        // Add a new post-rename public type here deliberately.
+        static readonly HashSet<string> k_PostRenameTypes = new(StringComparer.Ordinal)
+        {
+            "Unity.Cloud.Gltfast.Schema.AdditionalPropertyContainer",
+            "Unity.Cloud.Gltfast.Schema.IAdditionalPropertyContainer",
+            "Unity.Cloud.Gltfast.Schema.IPropertyContainer",
+            "Unity.Cloud.Gltfast.Schema.Properties",
+        };
+
         static IEnumerable<TestCaseData> PublicShippingTypes()
         {
             foreach (var (newAssembly, oldAssembly) in k_ShippingAssemblies)
@@ -63,6 +75,8 @@ namespace Unity.Cloud.Gltfast.Editor.Tests
                         continue; // skip types injected into the assembly by other packages' source
                                   // generators (e.g. Unity.Entities' AssemblyTypeRegistry) — they live
                                   // in their own namespaces and are not part of glTFast's public API
+                    if (k_PostRenameTypes.Contains(type.FullName))
+                        continue; // introduced after the rename; no old name to migrate from
                     yield return new TestCaseData(type, oldAssembly)
                         .SetName($"{newAssembly}::{type.FullName}");
                 }

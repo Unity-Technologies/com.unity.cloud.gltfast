@@ -13,7 +13,7 @@ namespace Unity.Cloud.Gltfast.Schema
     /// Joints and matrices defining a skinned mesh.
     /// </summary>
     [MovedFrom(true, sourceNamespace: "GLTFast.Schema", sourceAssembly: "glTFast")]
-    public class Skin : NamedObject, IGltfObject
+    public class Skin : NamedObject, IAdditionalPropertyContainer
     {
         /// <summary>
         /// The index of the accessor containing the
@@ -36,19 +36,19 @@ namespace Unity.Cloud.Gltfast.Schema
 
         /// <inheritdoc cref="Asset.Extensions"/>
         [JsonPropertyName("extensions")]
-        public UnclassifiedData Extensions { get; set; }
+        public AdditionalPropertyContainer Extensions { get; set; }
 
         /// <inheritdoc cref="Root.Extras"/>
         [JsonPropertyName("extras")]
-        public UnclassifiedData Extras { get; set; }
+        public AdditionalPropertyContainer Extras { get; set; }
 
         /// <summary>JSON properties without a matching member.</summary>
-        [JsonExtensionData, JsonInclude] internal Dictionary<string, JsonElement> ExtensionsData { get; set; }
+        [JsonExtensionData, JsonInclude]
+        internal Dictionary<string, JsonElement> ExtensionData { get; set; }
 
         /// <inheritdoc/>
-        public bool TryGetValue<T>(string key, out T value)
-        {
-            return ExtensionsData.TryGetValue(key, out value);
-        }
+        [JsonIgnore]
+        public Properties AdditionalProperties => new(ExtensionData);
+
     }
 }

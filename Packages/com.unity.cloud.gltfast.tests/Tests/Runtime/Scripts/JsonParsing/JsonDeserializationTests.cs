@@ -1566,7 +1566,7 @@ namespace Unity.Cloud.Gltfast.Tests.JsonParsing
             Assert.IsNull(obj.Colors);
             Assert.IsNull(obj.Joints);
             Assert.IsNull(obj.Weights);
-            Assert.IsFalse(obj.TryGetValue("anything", out int _));
+            Assert.IsFalse(obj.AdditionalProperties.TryGetValue("anything", out int _));
         }
 
         [Test]
@@ -1659,9 +1659,9 @@ namespace Unity.Cloud.Gltfast.Tests.JsonParsing
                 @"{""POSITION"":0,""_NORMALMAP"":5}",
                 GltfJsonContext.Default.Attributes);
             Assert.AreEqual(0, obj.Position);
-            Assert.IsTrue(obj.TryGetValue("_NORMALMAP", out int accessor));
+            Assert.IsTrue(obj.AdditionalProperties.TryGetValue("_NORMALMAP", out int accessor));
             Assert.AreEqual(5, accessor);
-            Assert.IsFalse(obj.TryGetValue("_MISSING", out int _));
+            Assert.IsFalse(obj.AdditionalProperties.TryGetValue("_MISSING", out int _));
         }
 
         [Test]
@@ -2381,9 +2381,9 @@ namespace Unity.Cloud.Gltfast.Tests.JsonParsing
         }
 
         [Test]
-        public void UnclassifiedDataDefault()
+        public void AdditionalPropertyContainerDefault()
         {
-            var obj = JsonSerializer.Deserialize("{}", GltfJsonContext.Default.UnclassifiedData);
+            var obj = JsonSerializer.Deserialize("{}", GltfJsonContext.Default.AdditionalPropertyContainer);
             Assert.IsNotNull(obj);
         }
     }

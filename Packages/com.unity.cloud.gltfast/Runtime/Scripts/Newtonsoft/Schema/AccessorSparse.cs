@@ -8,5 +8,12 @@ namespace Unity.Cloud.Gltfast.Newtonsoft.Schema
 {
     [Obsolete("Use Unity.Cloud.Gltfast.Schema.AccessorSparse instead.")]
     [MovedFrom(true, sourceNamespace: "GLTFast.Newtonsoft.Schema", sourceAssembly: "glTFast.Newtonsoft")]
-    public class AccessorSparse : Unity.Cloud.Gltfast.Schema.AccessorSparse, IJsonObject { }
+    public class AccessorSparse : Unity.Cloud.Gltfast.Schema.AccessorSparse, IJsonObject
+    {
+        /// <inheritdoc/>
+        public bool TryGetValue<T>(string key, out T value)
+        {
+            return AdditionalProperties.TryGetValue(key, out value);
+        }
+    }
 }

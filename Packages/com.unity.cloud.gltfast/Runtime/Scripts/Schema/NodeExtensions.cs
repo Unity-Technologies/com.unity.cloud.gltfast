@@ -1,8 +1,6 @@
 // SPDX-FileCopyrightText: 2023 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
-using System.Collections.Generic;
-using Unity.Gltfast.Text.Json;
 using Unity.Gltfast.Text.Json.Serialization;
 using UnityEngine.Scripting.APIUpdating;
 
@@ -12,7 +10,7 @@ namespace Unity.Cloud.Gltfast.Schema
     /// Node extensions
     /// </summary>
     [MovedFrom(true, sourceNamespace: "GLTFast.Schema", sourceAssembly: "glTFast")]
-    public class NodeExtensions : IGltfObject
+    public class NodeExtensions : AdditionalPropertyContainer
     {
         /// <inheritdoc cref="Schema.MeshGpuInstancing"/>
         [JsonPropertyName("EXT_mesh_gpu_instancing")]
@@ -21,14 +19,5 @@ namespace Unity.Cloud.Gltfast.Schema
         /// <inheritdoc cref="Schema.LightsPunctual"/>
         [JsonPropertyName("KHR_lights_punctual")]
         public NodeLightsPunctual LightsPunctual { get; set; }
-
-        /// <summary>JSON properties without a matching member.</summary>
-        [JsonExtensionData, JsonInclude] internal Dictionary<string, JsonElement> ExtensionsData { get; set; }
-
-        /// <inheritdoc/>
-        public bool TryGetValue<T>(string key, out T value)
-        {
-            return ExtensionsData.TryGetValue(key, out value);
-        }
     }
 }

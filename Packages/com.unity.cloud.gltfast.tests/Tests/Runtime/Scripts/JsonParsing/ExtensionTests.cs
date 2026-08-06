@@ -454,14 +454,14 @@ $@"
             CertifyCustomExtras(gltf.Textures[0].Extras);
         }
 
-        static void CertifyCustomData(IGltfObject gltf, int expected)
+        static void CertifyCustomData(IAdditionalPropertyContainer gltf, int expected)
         {
             Assert.NotNull(gltf);
-            Assert.IsTrue(gltf.TryGetValue("customProperty", out int prop));
+            Assert.IsTrue(gltf.AdditionalProperties.TryGetValue("customProperty", out int prop));
             Assert.AreEqual(expected, prop);
         }
 
-        static void CertifyCustomExtensions(IGltfObject extensions)
+        static void CertifyCustomExtensions(IPropertyContainer extensions)
         {
             Assert.NotNull(extensions);
             Assert.IsFalse(extensions.TryGetValue<MyExtension>("NO_MATCH", out _));
@@ -497,7 +497,7 @@ $@"
             }
         }
 
-        static void CertifyCustomExtras(IGltfObject extras)
+        static void CertifyCustomExtras(IPropertyContainer extras)
         {
             Assert.NotNull(extras);
             Assert.IsFalse(extras.TryGetValue("NoMatch", out int _));

@@ -8,5 +8,12 @@ namespace Unity.Cloud.Gltfast.Newtonsoft.Schema
 {
     [Obsolete("Use Unity.Cloud.Gltfast.Schema.Buffer instead.")]
     [MovedFrom(true, sourceNamespace: "GLTFast.Newtonsoft.Schema", sourceAssembly: "glTFast.Newtonsoft")]
-    public class Buffer : Unity.Cloud.Gltfast.Schema.Buffer, IJsonObject { }
+    public class Buffer : Unity.Cloud.Gltfast.Schema.Buffer, IJsonObject
+    {
+        /// <inheritdoc/>
+        public bool TryGetValue<T>(string key, out T value)
+        {
+            return AdditionalProperties.TryGetValue(key, out value);
+        }
+    }
 }

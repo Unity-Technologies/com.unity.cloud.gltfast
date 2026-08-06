@@ -11,7 +11,7 @@ using UnityEngine.Scripting.APIUpdating;
 namespace Unity.Cloud.Gltfast.Schema
 {
     [MovedFrom(true, sourceNamespace: "GLTFast.Schema", sourceAssembly: "glTFast")]
-    public class AnimationChannel : IGltfObject
+    public class AnimationChannel : IAdditionalPropertyContainer
     {
         /// <summary>
         /// The index of a sampler in this animation used to compute the value for the
@@ -35,20 +35,20 @@ namespace Unity.Cloud.Gltfast.Schema
 
         /// <inheritdoc cref="Asset.Extensions"/>
         [JsonPropertyName("extensions")]
-        public UnclassifiedData Extensions { get; set; }
+        public AdditionalPropertyContainer Extensions { get; set; }
 
         /// <inheritdoc cref="Root.Extras"/>
         [JsonPropertyName("extras")]
-        public UnclassifiedData Extras { get; set; }
+        public AdditionalPropertyContainer Extras { get; set; }
 
         /// <summary>JSON properties without a matching member.</summary>
-        [JsonExtensionData, JsonInclude] internal Dictionary<string, JsonElement> ExtensionsData { get; set; }
+        [JsonExtensionData, JsonInclude]
+        internal Dictionary<string, JsonElement> ExtensionData { get; set; }
 
         /// <inheritdoc/>
-        public bool TryGetValue<T>(string key, out T value)
-        {
-            return ExtensionsData.TryGetValue(key, out value);
-        }
+        [JsonIgnore]
+        public Properties AdditionalProperties => new(ExtensionData);
+
     }
 }
 #endif // UNITY_ANIMATION || GLTFAST_ANIMATION

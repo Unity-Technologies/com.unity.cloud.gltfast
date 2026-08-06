@@ -23,6 +23,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [NullLogger](xref:Unity.Cloud.Gltfast.Logging.NullLogger), a no-op `ICodeLogger`.
 - Shared `ConsoleLogger.Instance` and `NullLogger.Instance` singletons.
 - (Export) [MaterialExport.TryAddImageExport](xref:Unity.Cloud.Gltfast.Export.MaterialExport.TryAddImageExport*) is public (was internal `MaterialExport.AddImageExport`).
+- Typed access to additional JSON properties &mdash; properties present in the JSON that have no matching schema member (e.g. fields from a newer, unsupported glTF version).
+  - [IPropertyContainer](xref:GLTFast.Schema.IPropertyContainer) provides access to additional properties on glTF extension or extras objects.
+  - [Properties](xref:GLTFast.Schema.Properties), an allocation-free `readonly ref struct` (returned by `AdditionalProperties`) that provides a view into additional properties.
+  - [AdditionalPropertyContainer](xref:GLTFast.Schema.AdditionalPropertyContainer), the base class for extension and extras objects (e.g. [MaterialExtensions](xref:GLTFast.Schema.MaterialExtensions)).
+  - [IAdditionalPropertyContainer](xref:GLTFast.Schema.IAdditionalPropertyContainer), implemented by glTF schema objects (e.g. [Accessor](xref:GLTFast.Schema.Accessor), [Material](xref:GLTFast.Schema.Material), [Node](xref:GLTFast.Schema.Node)), exposes them via its `AdditionalProperties` property.
 
 ### Changed
 - Renamed all assemblies and the root namespace from `glTFast`/`GLTFast.*` to `Unity.Cloud.Gltfast`/`Unity.Cloud.Gltfast.*` to follow the .NET Framework Design and Unity assembly naming guidelines. Public types carry `[MovedFrom]` attributes, so the API Updater rewrites `using` directives and type references in consuming C# automatically. Assembly definition (`.asmdef`) references to the old assembly names must be updated manually (see the [Upgrade Guide](xref:doc-upgrade-guides)).

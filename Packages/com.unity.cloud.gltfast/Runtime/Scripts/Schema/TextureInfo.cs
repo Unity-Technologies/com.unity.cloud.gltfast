@@ -12,9 +12,8 @@ namespace Unity.Cloud.Gltfast.Schema
     /// Reference to a texture.
     /// </summary>
     [MovedFrom(true, sourceNamespace: "GLTFast.Schema", sourceAssembly: "glTFast")]
-    public class TextureInfo : IGltfObject
+    public class TextureInfo : IAdditionalPropertyContainer
     {
-
         /// <summary>
         /// The index of the texture.
         /// </summary>
@@ -35,16 +34,15 @@ namespace Unity.Cloud.Gltfast.Schema
 
         /// <inheritdoc cref="Root.Extras"/>
         [JsonPropertyName("extras")]
-        public UnclassifiedData Extras { get; set; }
+        public AdditionalPropertyContainer Extras { get; set; }
 
         /// <summary>JSON properties without a matching member.</summary>
-        [JsonExtensionData, JsonInclude] internal Dictionary<string, JsonElement> ExtensionsData { get; set; }
+        [JsonExtensionData, JsonInclude]
+        internal Dictionary<string, JsonElement> ExtensionData { get; set; }
 
         /// <inheritdoc/>
-        public bool TryGetValue<T>(string key, out T value)
-        {
-            return ExtensionsData.TryGetValue(key, out value);
-        }
+        [JsonIgnore]
+        public Properties AdditionalProperties => new(ExtensionData);
 
         /// <summary>
         /// Applies a texture transform by initializing <see cref="Extensions" /> (if required) and setting its

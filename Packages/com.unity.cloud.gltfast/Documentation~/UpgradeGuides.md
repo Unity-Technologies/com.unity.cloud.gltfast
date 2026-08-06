@@ -28,9 +28,12 @@ Most of the migration is automatic:
 
 - **C# source** — public types are annotated with `[MovedFrom]`, so Unity's [API Updater][APIUpdater] rewrites your `using` directives and type references on import. Accept the API Update prompt when it appears.
 
-One step is **not** automatic and must be done by hand:
+One step is **not** automatic and must be done by hand, **before** you rely on the API Updater:
 
-- **Assembly definition references** — if one of your own `.asmdef` files references a glTFast assembly by name, update the reference to the new name (for example `glTFast` ⇒ `Unity.Cloud.Gltfast`, `glTFast.Export` ⇒ `Unity.Cloud.Gltfast.Export`).
+> [!WARNING]
+> Do this first, or the API Updater will appear to fail.
+
+- **Assembly definition references** — if one of your own `.asmdef` files references a glTFast assembly by name, update the reference to the new name (for example `glTFast` ⇒ `Unity.Cloud.Gltfast`, `glTFast.Export` ⇒ `Unity.Cloud.Gltfast.Export`, `glTFast.Newtonsoft` ⇒ `Unity.Cloud.Gltfast.Newtonsoft`). `Unity.Cloud.Gltfast.Export` and `Unity.Cloud.Gltfast.Newtonsoft` are **not** auto-referenced (same as their 6.x predecessors), so your own `.asmdef` must reference them explicitly. If that reference still points at the old assembly name — or is missing altogether — the compiler can't resolve the old type at all, so it reports a generic "type or namespace could not be found" (`CS0246`) instead of the usual API Update prompt. The updater only rewrites references it can resolve to a `[MovedFrom]` type; an unresolvable symbol doesn't look like a moved type to it, it looks like a typo. Fix the assembly reference(s) first, reload, then let the API Updater handle the `using` directives and type references.
 
 [NamingGuidelines]: https://learn.microsoft.com/en-us/dotnet/standard/design-guidelines/naming-guidelines
 [AsmdefNaming]: https://docs.unity3d.com/Manual/cus-asmdef.html
@@ -38,7 +41,7 @@ One step is **not** automatic and must be done by hand:
 
 ### Newtonsoft assembly removal
 
-The `Unity.Cloud.Gltfast.Newtonsoft` assembly will be removed when 7.0 leaves the experimental phase. Migrate to the main `Unity.Cloud.Gltfast` assembly now to avoid breakage at that cutover.
+The `Unity.Cloud.Gltfast.Newtonsoft` assembly (previously `GLTFast.Newtonsoft`) will be removed when 7.0 leaves the experimental phase. Migrate to the main `Unity.Cloud.Gltfast` assembly now to avoid breakage at that cutover.
 
 | Before | After |
 |--------|-------|
@@ -46,9 +49,39 @@ The `Unity.Cloud.Gltfast.Newtonsoft` assembly will be removed when 7.0 leaves th
 | `Unity.Cloud.Gltfast.Newtonsoft.GltfImport` | `Unity.Cloud.Gltfast.GltfImport` |
 | `using Unity.Cloud.Gltfast.Newtonsoft.Schema;` | `using Unity.Cloud.Gltfast.Schema;` |
 | `Unity.Cloud.Gltfast.Newtonsoft.Schema.Accessor`, `…Asset`, `…Material`, `…Node`, `…Root`, `…Mesh`, etc. | `Unity.Cloud.Gltfast.Schema.Accessor`, `…Asset`, `…Material`, `…Node`, `…Root`, `…Mesh`, etc. |
-| `Unity.Cloud.Gltfast.Newtonsoft.Schema.IJsonObject` interface | `Unity.Cloud.Gltfast.Schema.IGltfObject` interface (note: the interface itself was renamed) |
+| `Unity.Cloud.Gltfast.Newtonsoft.Schema.IJsonObject` interface | `Unity.Cloud.Gltfast.Schema.IPropertyContainer` (on extension/extras objects) or `Unity.Cloud.Gltfast.Schema.IAdditionalPropertyContainer` (on glTF schema objects, reached via its `AdditionalProperties` property) |
 
-If your assembly definition referenced `Unity.Cloud.Gltfast.Newtonsoft`, replace the reference with `Unity.Cloud.Gltfast`.
+If your assembly definition referenced the old `glTFast.Newtonsoft` assembly by name, rename that reference to `Unity.Cloud.Gltfast.Newtonsoft` first — this keeps the code compiling (and the API Updater working) while you migrate. Once your code no longer uses any `Unity.Cloud.Gltfast.Newtonsoft.*` type, replace the reference with `Unity.Cloud.Gltfast` and remove it entirely.
+
+### Extension properties renamed from raw glTF extension keys
+
+`*Extensions` schema types (`RootExtensions`, `NodeExtensions`, `MaterialExtensions`, `MeshPrimitiveExtensions`, `BufferViewExtensions`, `TextureExtensions`, `TextureInfoExtensions`) used to expose each glTF extension through a C# member literally named after its glTF extension key (for example `KHR_lights_punctual`). Those members are now regular PascalCase properties; the glTF extension key moved to a `[JsonPropertyName]` attribute used for (de)serialization only.
+
+This is a member rename within an unchanged class, so it's **not** covered by `[MovedFrom]` (which only retargets namespace/assembly-level type moves) or by the API Updater — update these call sites by hand.
+
+| Class | Before | After |
+| ----- | ------ | ----- |
+| `RootExtensions` | `KHR_lights_punctual` | `LightsPunctual` |
+| `RootExtensions` | `KHR_materials_variants` | `MaterialsVariants` |
+| `NodeExtensions` | `EXT_mesh_gpu_instancing` | `MeshGpuInstancing` |
+| `NodeExtensions` | `KHR_lights_punctual` | `LightsPunctual` |
+| `MaterialExtensions` | `KHR_materials_pbrSpecularGlossiness` | `PbrSpecularGlossiness` |
+| `MaterialExtensions` | `KHR_materials_unlit` | `Unlit` |
+| `MaterialExtensions` | `KHR_materials_transmission` | `Transmission` |
+| `MaterialExtensions` | `KHR_materials_clearcoat` | `Clearcoat` |
+| `MaterialExtensions` | `KHR_materials_sheen` | `Sheen` |
+| `MaterialExtensions` | `KHR_materials_specular` | `Specular` |
+| `MaterialExtensions` | `KHR_materials_ior` | `IndexOfRefraction` |
+| `MeshPrimitiveExtensions` | `KHR_draco_mesh_compression` (`DRACO_IS_INSTALLED`) | `DracoMeshCompression` |
+| `MeshPrimitiveExtensions` | `KHR_materials_variants` | `MaterialsVariants` |
+| `BufferViewExtensions` | `EXT_meshopt_compression` (`MESHOPT_IS_RECENT`) | `ExtMeshoptCompression` |
+| `TextureExtensions` | `KHR_texture_basisu` | `BasisU` |
+| `TextureInfoExtensions` | `KHR_texture_transform` | `TextureTransform` |
+
+| Before | After |
+| ------ | ----- |
+| `root.Extensions.KHR_lights_punctual` | `root.Extensions.LightsPunctual` |
+| `material.Extensions.KHR_materials_unlit` | `material.Extensions.Unlit` |
 
 ### Async methods carry an `Async` suffix
 
@@ -256,7 +289,7 @@ Extension add-ons that relax a previously-required field can detect absence with
 
 ### `Attributes` indexed channels
 
-[Attributes](xref:Unity.Cloud.Gltfast.Schema.Attributes) replaces the per-index properties with per-family `List<int?>` collections. Bounds-checked index access is provided by extension methods on [AttributesExtensions](xref:Unity.Cloud.Gltfast.Schema.AttributesExtensions); unrecognized JSON properties (extensions, application-specific semantics) are captured via `[JsonExtensionData]` and exposed through [IGltfObject](xref:Unity.Cloud.Gltfast.IGltfObject).
+[Attributes](xref:Unity.Cloud.Gltfast.Schema.Attributes) replaces the per-index properties with per-family `List<int?>` collections. Bounds-checked index access is provided by extension methods on [AttributesExtensions](xref:Unity.Cloud.Gltfast.Schema.AttributesExtensions); unrecognized JSON properties (extensions, application-specific semantics) are captured via `[JsonExtensionData]` and exposed through [IAdditionalPropertyContainer.AdditionalProperties](xref:Unity.Cloud.Gltfast.Schema.IAdditionalPropertyContainer.AdditionalProperties).
 
 | Property | Before | After |
 | -------- | ------ | ----- |
@@ -264,7 +297,7 @@ Extension add-ons that relax a previously-required field can detect absence with
 | `COLOR_0` | single `int` (`COLOR_0` only) | `List<int?> Colors` + `GetColor(n)`/`SetColor(n, v)` extensions (round-trip `COLOR_n` for any `n`) |
 | `JOINTS_0` | single `int` (`JOINTS_0` only) | `List<int?> Joints` + `GetJoint(n)`/`SetJoint(n, v)` extensions |
 | `WEIGHTS_0` | single `int` (`WEIGHTS_0` only) | `List<int?> Weights` + `GetWeight(n)`/`SetWeight(n, v)` extensions |
-| (unrepresentable: `_TEMPERATURE` etc.) | silently dropped | reached through `attrs.TryGetValue<T>("_TEMPERATURE", out var v)` (`Attributes` implements `IGltfObject`) |
+| (unrepresentable: `_TEMPERATURE` etc.) | silently dropped | reached through `attrs.AdditionalProperties.TryGetValue<T>("_TEMPERATURE", out var v)` (`Attributes` implements `IAdditionalPropertyContainer`) |
 
 The `Get…` extensions return `null` past the end of the underlying list. The `Set…` extensions lazily allocate and null-pad as needed. Iterate the underlying list directly for bulk operations.
 
@@ -273,7 +306,7 @@ The `Get…` extensions return `null` past the end of the underlying list. The `
 | `attrs.TEXCOORD_3` | `attrs.GetTexCoord(3)` |
 | `attrs.TEXCOORD_3 = 7;` | `attrs.SetTexCoord(3, 7);` |
 | `attrs.COLOR_0` / `.JOINTS_0` / `.WEIGHTS_0` | `attrs.GetColor(0)` / `attrs.GetJoint(0)` / `attrs.GetWeight(0)` (read) — `attrs.SetColor(0, v)` / `attrs.SetJoint(0, v)` / `attrs.SetWeight(0, v)` (write) |
-| (previously unrepresentable) `COLOR_1`, `JOINTS_1`, `_TEMPERATURE` | `attrs.SetColor(1, v)`, `attrs.SetJoint(1, v)`, `attrs.TryGetValue("_TEMPERATURE", out int idx)` |
+| (previously unrepresentable) `COLOR_1`, `JOINTS_1`, `_TEMPERATURE` | `attrs.SetColor(1, v)`, `attrs.SetJoint(1, v)`, `attrs.AdditionalProperties.TryGetValue("_TEMPERATURE", out int idx)` |
 
 Helper method `Attributes.GetTexCoordsCount()` was moved to `AttributesExtensions` and `Attributes.TryGetAllUVAccessors` declared obsolete.
 

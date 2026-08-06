@@ -10,7 +10,14 @@ namespace Unity.Cloud.Gltfast.Newtonsoft.Schema
 {
     [Obsolete("Use Unity.Cloud.Gltfast.Schema.AnimationSampler instead.")]
     [MovedFrom(true, sourceNamespace: "GLTFast.Newtonsoft.Schema", sourceAssembly: "glTFast.Newtonsoft")]
-    public class AnimationSampler : Unity.Cloud.Gltfast.Schema.AnimationSampler, IJsonObject { }
+    public class AnimationSampler : Unity.Cloud.Gltfast.Schema.AnimationSampler, IJsonObject
+    {
+        /// <inheritdoc/>
+        public bool TryGetValue<T>(string key, out T value)
+        {
+            return AdditionalProperties.TryGetValue(key, out value);
+        }
+    }
 }
 
 #endif

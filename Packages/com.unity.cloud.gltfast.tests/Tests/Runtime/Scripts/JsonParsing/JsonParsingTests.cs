@@ -6,8 +6,6 @@ using NUnit.Framework;
 using Unity.Cloud.Gltfast.Schema;
 using Unity.Gltfast.Text.Json;
 using UnityEngine;
-using CameraType = Unity.Cloud.Gltfast.Schema.CameraType;
-using Material = Unity.Cloud.Gltfast.Schema.Material;
 
 namespace Unity.Cloud.Gltfast.Tests.JsonParsing
 {
@@ -602,7 +600,7 @@ namespace Unity.Cloud.Gltfast.Tests.JsonParsing
             else
             {
                 Assert.NotNull(node2.Extensions);
-                if (node2.Extensions.ExtensionsData.TryGetValue(
+                if (node2.Extensions.ExtensionData.TryGetValue(
                         "MOZ_hubs_components",
                         out var mozExtensionData)
                     )
