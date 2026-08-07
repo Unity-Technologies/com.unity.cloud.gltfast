@@ -57,17 +57,17 @@ namespace Unity.Cloud.Gltfast.Tests.Export
                 translation, rotation?.value, scale, children == null ? null : new List<uint>(children), name);
         }
 
-        public void AddMeshToNode(int nodeId, Mesh uMesh, int[] materialIds, List<uint> joints)
+        public void AddMeshToNode(uint nodeId, Mesh uMesh, int[] materialIds, List<uint> joints)
         {
             throw new NotImplementedException();
         }
 
-        public void AddCameraToNode(int nodeId, int cameraId)
+        public void AddCameraToNode(uint nodeId, int cameraId)
         {
             throw new NotImplementedException();
         }
 
-        public void AddLightToNode(int nodeId, int lightId)
+        public void AddLightToNode(uint nodeId, int lightId)
         {
             throw new NotImplementedException();
         }

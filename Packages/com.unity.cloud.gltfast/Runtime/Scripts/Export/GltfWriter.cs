@@ -111,7 +111,7 @@ namespace Unity.Cloud.Gltfast.Export
         List<UnityEngine.Material> m_UnityMaterials;
         List<UnityEngine.Mesh> m_UnityMeshes;
         List<VertexAttributeUsage> m_MeshVertexAttributeUsage;
-        Dictionary<int, int[]> m_NodeMaterials;
+        Dictionary<uint, int[]> m_NodeMaterials;
 
         Stream m_BufferStream;
         string m_BufferPath;
@@ -175,7 +175,7 @@ namespace Unity.Cloud.Gltfast.Export
 
         /// <inheritdoc />
         public void AddMeshToNode(
-            int nodeId,
+            uint nodeId,
             UnityEngine.Mesh uMesh,
             int[] materialIds,
             List<uint> joints
@@ -187,7 +187,7 @@ namespace Unity.Cloud.Gltfast.Export
             if (!ValidateMesh(uMesh))
                 return;
 
-            var node = m_Nodes[nodeId];
+            var node = GetNode(nodeId);
 
             // Always export positions.
             var attributeUsage = VertexAttributeUsage.Position;
@@ -200,7 +200,7 @@ namespace Unity.Cloud.Gltfast.Export
 
             if (materialIds != null && materialIds.Length > 0)
             {
-                m_NodeMaterials ??= new Dictionary<int, int[]>();
+                m_NodeMaterials ??= new Dictionary<uint, int[]>();
                 m_NodeMaterials[nodeId] = materialIds;
 
                 foreach (var materialId in materialIds)
@@ -319,7 +319,7 @@ namespace Unity.Cloud.Gltfast.Export
         }
 
         /// <inheritdoc />
-        public void AddCameraToNode(int nodeId, int cameraId)
+        public void AddCameraToNode(uint nodeId, int cameraId)
         {
             CertifyNotDisposed();
             // glTF cameras face in the opposite direction, so we create a
@@ -327,16 +327,16 @@ namespace Unity.Cloud.Gltfast.Export
             // TODO: Detect if this is node is already a helper node
             //       (from glTF import) and discard it (if possible) to enable
             //       lossless round-trips
-            var parent = m_Nodes[nodeId];
+            var parent = GetNode(nodeId);
             var node = AddChildNode(nodeId, rotation: Mathematics.RotateY(math.PI_DBL), name: $"{parent.Name}_Orientation");
             node.Camera = cameraId;
         }
 
         /// <inheritdoc />
-        public void AddLightToNode(int nodeId, int lightId)
+        public void AddLightToNode(uint nodeId, int lightId)
         {
             CertifyNotDisposed();
-            var node = m_Nodes[nodeId];
+            var node = GetNode(nodeId);
             var light = m_Lights[lightId];
             if (light.Type != LightType.Point)
             {
@@ -877,7 +877,7 @@ namespace Unity.Cloud.Gltfast.Export
                 {
                     var nodeId = nodeMaterial.Key;
                     var materialIds = nodeMaterial.Value;
-                    var node = m_Nodes[nodeId];
+                    var node = GetNode(nodeId);
                     if (node.Mesh is not int originalMeshId) continue;
                     var mesh = m_Meshes[originalMeshId];
 
@@ -2145,15 +2145,17 @@ namespace Unity.Cloud.Gltfast.Export
             }
         }
 
+        Node GetNode(uint id) => m_Nodes[(int)id];
+
         Node AddChildNode(
-            int parentId,
+            uint parentId,
             double3? translation = null,
             double4? rotation = null,
             double3? scale = null,
             string name = null
         )
         {
-            var parent = m_Nodes[parentId];
+            var parent = GetNode(parentId);
             var node = CreateNode(translation, rotation, scale, name);
             m_Nodes.Add(node);
             var nodeId = (uint)m_Nodes.Count - 1;

@@ -58,21 +58,21 @@ namespace Unity.Cloud.Gltfast.Export
         /// <param name="joints">Node indices representing the joints of a skin.
         /// Ownership of the list is transferred to the writer; the caller must
         /// not modify it after the call.</param>
-        void AddMeshToNode(int nodeId, Mesh uMesh, int[] materialIds, List<uint> joints);
+        void AddMeshToNode(uint nodeId, Mesh uMesh, int[] materialIds, List<uint> joints);
 
         /// <summary>
         /// Assigns a camera to a previously added node
         /// </summary>
-        /// <param name="nodeId">Index of the node to add the mesh to</param>
+        /// <param name="nodeId">Index of the node to add the camera to</param>
         /// <param name="cameraId">glTF camera ID to be assigned</param>
-        void AddCameraToNode(int nodeId, int cameraId);
+        void AddCameraToNode(uint nodeId, int cameraId);
 
         /// <summary>
         /// Assigns a light to a previously added node
         /// </summary>
-        /// <param name="nodeId">Index of the node to add the mesh to</param>
+        /// <param name="nodeId">Index of the node to add the light to</param>
         /// <param name="lightId">glTF light ID to be assigned</param>
-        void AddLightToNode(int nodeId, int lightId);
+        void AddLightToNode(uint nodeId, int lightId);
 
         /// <summary>
         /// Adds a Unity material

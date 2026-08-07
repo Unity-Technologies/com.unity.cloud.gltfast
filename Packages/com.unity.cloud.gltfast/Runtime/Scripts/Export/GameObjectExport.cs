@@ -401,7 +401,7 @@ namespace Unity.Cloud.Gltfast.Export
                         joints.Add(boneNodeId);
                     }
                 }
-                m_Writer.AddMeshToNode((int)nodeId, mesh, materialIds, joints);
+                m_Writer.AddMeshToNode(nodeId, mesh, materialIds, joints);
             }
 
             if (gameObject.TryGetComponent(out Camera camera))
@@ -410,7 +410,7 @@ namespace Unity.Cloud.Gltfast.Export
                 {
                     if (m_Writer.AddCamera(camera, out var cameraId))
                     {
-                        m_Writer.AddCameraToNode((int)nodeId, cameraId);
+                        m_Writer.AddCameraToNode(nodeId, cameraId);
                     }
                 }
             }
@@ -421,7 +421,7 @@ namespace Unity.Cloud.Gltfast.Export
                 {
                     if (m_Writer.AddLight(light, out var lightId))
                     {
-                        m_Writer.AddLightToNode((int)nodeId, lightId);
+                        m_Writer.AddLightToNode(nodeId, lightId);
                     }
                 }
             }

@@ -474,6 +474,20 @@ The redundant `Unity.Cloud.Gltfast.Export.ImageFormat` enum was removed and merg
 
 The internal helpers `Unity.Cloud.Gltfast.Export.Constants.mimeTypePNG` and `mimeTypeJPG` were removed; use `ImageMimeType.Png` / `ImageMimeType.Jpeg` instead.
 
+### Export `nodeId` parameters are `uint`
+
+The `nodeId` parameter of [IGltfWritable.AddMeshToNode](xref:Unity.Cloud.Gltfast.Export.IGltfWritable.AddMeshToNode*), [IGltfWritable.AddCameraToNode](xref:Unity.Cloud.Gltfast.Export.IGltfWritable.AddCameraToNode*) and [IGltfWritable.AddLightToNode](xref:Unity.Cloud.Gltfast.Export.IGltfWritable.AddLightToNode*) changed from `int` to `uint`, matching the `uint` node index that [IGltfWritable.AddNode](xref:Unity.Cloud.Gltfast.Export.IGltfWritable.AddNode*) returns. Chaining the two no longer needs a cast.
+
+| Before | After |
+| ------ | ----- |
+| `writer.AddMeshToNode((int)nodeId, mesh, materialIds, joints);` | `writer.AddMeshToNode(nodeId, mesh, materialIds, joints);` |
+| `writer.AddLightToNode(myIntId, lightId);` | `writer.AddLightToNode((uint)myIntId, lightId);` |
+| `writer.AddCameraToNode(0, cameraId);` | unchanged |
+
+Only two things break: call sites passing a **non-constant** `int` expression, and [IGltfWritable](xref:Unity.Cloud.Gltfast.Export.IGltfWritable) implementers, whose signatures must change to keep compiling. Constant `int` arguments in range — literals and `const int` — convert implicitly and need no edit.
+
+No shim is offered: this is a deliberate hard break in a major version, and the API Updater cannot rewrite argument types. An `[Obsolete]` `int` overload was possible but rejected, because `int`-typed call sites would keep binding to it silently instead of migrating.
+
 ### Exported JSON is no longer byte-identical
 
 The hand-written `Unity.Cloud.Gltfast.Schema.JsonWriter` and the per-type `GltfSerialize` methods are gone; export now runs through `System.Text.Json` via the source-generated `GltfJsonContext`. The resulting glTF JSON is functionally equivalent and continues to round-trip through the importer, but the bytes are not identical to previous releases:

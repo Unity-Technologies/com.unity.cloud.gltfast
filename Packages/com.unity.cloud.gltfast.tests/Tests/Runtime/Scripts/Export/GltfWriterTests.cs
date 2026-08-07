@@ -155,7 +155,7 @@ namespace Unity.Cloud.Gltfast.Tests.Export
 
             var node = writer.AddNode();
             var tmpGameObject = GameObject.CreatePrimitive(PrimitiveType.Plane);
-            writer.AddMeshToNode((int)node, tmpGameObject.GetComponent<MeshFilter>().sharedMesh, null, (List<uint>)null);
+            writer.AddMeshToNode(node, tmpGameObject.GetComponent<MeshFilter>().sharedMesh, null, null);
 
             await writer.SaveToStreamAndDisposeAsync(new MemoryStream());
 
@@ -176,7 +176,7 @@ namespace Unity.Cloud.Gltfast.Tests.Export
 
             var node = writer.AddNode();
             var tmpGameObject = GameObject.CreatePrimitive(PrimitiveType.Plane);
-            writer.AddMeshToNode((int)node, tmpGameObject.GetComponent<MeshFilter>().sharedMesh, null, (List<uint>)null);
+            writer.AddMeshToNode(node, tmpGameObject.GetComponent<MeshFilter>().sharedMesh, null, null);
 
             await writer.SaveToStreamAndDisposeAsync(new MemoryStream());
 
@@ -207,7 +207,7 @@ namespace Unity.Cloud.Gltfast.Tests.Export
             writer.AddMaterial(new Material(shader) { color = Color.yellow }, out materials[3], materialExport);
             writer.AddMaterial(new Material(shader) { color = Color.magenta }, out materials[4], materialExport);
             writer.AddMaterial(new Material(shader) { color = Color.cyan }, out materials[5], materialExport);
-            writer.AddMeshToNode((int)node, TestMeshGenerator.GenerateSubMeshCube(indexFormat), materials, (List<uint>)null);
+            writer.AddMeshToNode(node, TestMeshGenerator.GenerateSubMeshCube(indexFormat), materials, null);
             writer.AddScene(new List<uint> { node }, "CubeScene");
             await writer.SaveToFileAndDisposeAsync(Path.Combine(Application.persistentDataPath, $"MeshCubeQuadsSubMesh-{indexFormat}.gltf"));
         }

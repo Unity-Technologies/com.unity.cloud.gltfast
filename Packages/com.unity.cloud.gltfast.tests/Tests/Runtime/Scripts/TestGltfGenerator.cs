@@ -138,7 +138,7 @@ namespace Unity.Cloud.Gltfast.Tests
             var nodeId = writer.AddNode(new float3(0), name: "Cylinder");
             nodes.Add(nodeId);
 
-            writer.AddMeshToNode((int)nodeId, cylinderMesh, new[] { materialId }, (List<uint>)null);
+            writer.AddMeshToNode(nodeId, cylinderMesh, new[] { materialId }, null);
             writer.AddScene(nodes);
             await writer.SaveToFileAndDisposeAsyncInternal(path, true);
         }
@@ -180,10 +180,10 @@ namespace Unity.Cloud.Gltfast.Tests
             var nodeId = writer.AddNode(name: "Cylinder");
             var mesh = TestMeshGenerator.GenerateCylinderMesh(triangleCount);
             writer.AddMeshToNode(
-                (int)nodeId,
+                nodeId,
                 mesh,
                 null,
-                (List<uint>)null
+                null
                 );
             writer.AddScene(new List<uint> { nodeId });
             await writer.SaveToFileAndDisposeAsyncInternal(path, true);
