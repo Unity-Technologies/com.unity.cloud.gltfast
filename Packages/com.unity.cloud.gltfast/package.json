@@ -19,8 +19,8 @@
     "com.unity.modules.jsonserialize": "1.0.0",
     "com.unity.modules.unitywebrequest": "1.0.0",
     "com.unity.mathematics": "1.3.3",
-    "com.unity.burst": "1.8.29",
-    "com.unity.collections": "2.6.6"
+    "com.unity.burst": "1.8.30",
+    "com.unity.collections": "2.6.8"
   },
   "relatedPackages": {
     "com.unity.cloud.gltfast.tests": "0.0.0"

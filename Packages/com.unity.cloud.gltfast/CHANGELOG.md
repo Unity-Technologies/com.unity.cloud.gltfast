@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Moved documentation code examples from `DocExamples` into `Runtime/DocExamples` to comply with package assembly layout requirements.
 - Clarified [IDeferAgent.ShouldDefer](xref:GLTFast.IDeferAgent.ShouldDefer) documentation to note that it must eventually return `false`, otherwise imports may stall indefinitely without raising an error.
 - Removed legacy .NET Framework fallback code paths (`#if NET_STANDARD` / `#if NET_STANDARD_2_1`). They were only needed for Unity versions prior to 2021.2, which are no longer supported (minimum is now Unity 6.0 LTS).
+- Bumped `com.unity.collections` to 2.6.8 and `com.unity.burst` to 1.8.30, the versions recommended for Unity 6000.0.
 
 ### Fixed
 - Corrected invalid `cref` references in XML documentation comments (parameters, type parameters and a stale method reference) that produced warnings during documentation generation.
