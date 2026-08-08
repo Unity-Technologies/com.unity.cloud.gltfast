@@ -157,7 +157,7 @@ namespace Unity.Cloud.Gltfast
 
                 var att = m_Attributes[i];
 
-                if (m_PositionAccessors[i].IsSparse && m_PositionAccessors[i].BufferView >= 0)
+                if (m_PositionAccessors[i].IsSparse && m_PositionAccessors[i].BufferView is >= 0)
                     jobCount++;
 
                 if (att.Normal >= 0)
@@ -217,7 +217,7 @@ namespace Unity.Cloud.Gltfast
         {
             JobHandle? h = null;
 
-            if (m_PositionAccessors[i].BufferView >= 0)
+            if (m_PositionAccessors[i].BufferView is >= 0)
             {
                 h = GetVector3Job(
                     m_Buffers,

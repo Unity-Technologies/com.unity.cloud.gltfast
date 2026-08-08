@@ -19,15 +19,8 @@ namespace Unity.Cloud.Gltfast.Schema
         /// <summary>
         /// The index of the buffer.
         /// </summary>
-        [JsonIgnore]
-        public int Buffer { get; set; } = Constants.UnsetIndex;
-
-        [JsonPropertyName("buffer"), JsonInclude]
-        internal int? BufferSerialized
-        {
-            get => Buffer < 0 ? null : Buffer;
-            set => Buffer = value ?? Constants.UnsetIndex;
-        }
+        [JsonPropertyName("buffer")]
+        public int? Buffer { get; set; }
 
         /// <summary>
         /// The offset into the buffer in bytes.
@@ -38,15 +31,8 @@ namespace Unity.Cloud.Gltfast.Schema
         /// <summary>
         /// The length of the bufferView in bytes.
         /// </summary>
-        [JsonIgnore]
-        public int ByteLength { get; set; } = Constants.UnsetIndex;
-
-        [JsonPropertyName("byteLength"), JsonInclude]
-        internal int? ByteLengthSerialized
-        {
-            get => ByteLength < 0 ? null : ByteLength;
-            set => ByteLength = value ?? Constants.UnsetIndex;
-        }
+        [JsonPropertyName("byteLength")]
+        public int ByteLength { get; set; }
 
         /// <summary>
         /// The stride, in bytes, between vertex attributes or other interleaved data.

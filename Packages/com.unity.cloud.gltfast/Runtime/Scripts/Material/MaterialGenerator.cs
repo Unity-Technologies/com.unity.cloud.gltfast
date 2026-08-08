@@ -214,7 +214,7 @@ namespace Unity.Cloud.Gltfast.Materials
             int uvChannelPropertyId = -1
             )
         {
-            if (textureInfo?.Index is int textureIndex)
+            if (textureInfo?.Index is { } textureIndex)
             {
                 var srcTexture = gltf.GetSourceTexture(textureIndex);
                 if (srcTexture != null)

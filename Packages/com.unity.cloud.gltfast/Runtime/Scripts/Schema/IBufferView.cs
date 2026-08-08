@@ -1,21 +1,17 @@
 // SPDX-FileCopyrightText: 2023 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
-using System;
-using UnityEngine.Scripting.APIUpdating;
-
 namespace Unity.Cloud.Gltfast.Schema
 {
     /// <summary>
     /// A view into a buffer generally representing a subset of the buffer.
     /// </summary>
-    [MovedFrom(true, sourceNamespace: "GLTFast.Schema", sourceAssembly: "glTFast")]
-    public interface IBufferView
+    interface IBufferView
     {
         /// <summary>
         /// The index of the buffer.
         /// </summary>
-        int Buffer { get; }
+        int? Buffer { get; }
 
         /// <summary>
         /// The offset into the buffer in bytes.

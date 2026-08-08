@@ -68,15 +68,8 @@ namespace Unity.Cloud.Gltfast.Schema
         /// The number of attributes referenced by this accessor, not to be confused
         /// with the number of bytes or number of components.
         /// </summary>
-        [JsonIgnore]
-        public int Count { get; set; } = Constants.UnsetIndex;
-
-        [JsonPropertyName("count"), JsonInclude]
-        internal int? CountSerialized
-        {
-            get => Count < 0 ? null : Count;
-            set => Count = value ?? Constants.UnsetIndex;
-        }
+        [JsonPropertyName("count")]
+        public int Count { get; set; }
 
         /// <inheritdoc cref="AccessorType"/>
         [JsonPropertyName("type")]

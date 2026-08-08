@@ -267,7 +267,7 @@ namespace Unity.Cloud.Gltfast
             fixed (void* dest = &(m_Normals[offset]))
             {
                 JobHandle? h = null;
-                if (nrmAcc.BufferView >= 0)
+                if (nrmAcc.BufferView.HasValue)
                 {
                     h = VertexBufferGeneratorBase.GetVector3Job(
                         buffers,
@@ -332,7 +332,7 @@ namespace Unity.Cloud.Gltfast
             fixed (void* dest = &(m_Tangents[offset]))
             {
                 JobHandle? h = null;
-                if (tanAcc.BufferView >= 0)
+                if (tanAcc.BufferView.HasValue)
                 {
                     h = VertexBufferGeneratorBase.GetVector3Job(
                         buffers,

@@ -152,7 +152,11 @@ namespace Unity.Cloud.Gltfast
             for (var index = 0; index < primitives.Count; index++)
             {
                 var dracoExt = primitives[index].Extensions.DracoMeshCompression;
-                bufferViews[index] = buffers.GetBufferView(dracoExt.BufferView, out _).AsNativeArrayReadOnly();
+                if (dracoExt.BufferView is not { } bufferViewIndex)
+                {
+                    return null;
+                }
+                bufferViews[index] = buffers.GetBufferView(bufferViewIndex, out _).AsNativeArrayReadOnly();
                 attributesArray[index] = dracoExt.Attributes;
             }
 

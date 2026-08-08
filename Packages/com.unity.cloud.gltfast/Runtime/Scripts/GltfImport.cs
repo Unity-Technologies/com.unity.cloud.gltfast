@@ -1139,13 +1139,13 @@ namespace Unity.Cloud.Gltfast
         [Obsolete("This is going to be removed and replaced with an improved way to access accessors' data in a future release.")]
         public NativeArray<byte>.ReadOnly GetAccessorData(int accessorIndex)
         {
-            if (Root?.Accessors == null || accessorIndex < 0 || accessorIndex >= Root?.Accessors.Count)
+            if (!GltfIndex.TryGetElement(Root?.Accessors, accessorIndex, out var accessor)
+                || accessor.BufferView is not { } bufferViewIndex)
             {
                 return default;
             }
-            var accessor = Root.Accessors[accessorIndex];
             return ((IGltfBuffers)this).GetBufferView(
-                accessor.BufferView.Value,
+                bufferViewIndex,
                 out _,
                 accessor.ByteOffset,
                 accessor.ByteSize
@@ -1160,9 +1160,8 @@ namespace Unity.Cloud.Gltfast
         /// <returns>Image's data (needs to be disposed after consumption)</returns>
         async Task<IReadOnlyDisposableData> GetImageDataAsync(Image image, CancellationToken cancellationToken)
         {
-            if (image.BufferView.HasValue)
+            if (GltfIndex.TryGetElement(Root.BufferViews, image.BufferView, out var bufferView))
             {
-                var bufferView = Root.BufferViews[image.BufferView.Value];
                 return new ReadOnlyData(
                     await GetBufferViewAsync(bufferView),
                     null
@@ -1716,7 +1715,7 @@ namespace Unity.Cloud.Gltfast
                     void SetTextureGamma(TextureInfo textureInfo)
                     {
                         if (
-                            textureInfo?.Index is int index &&
+                            textureInfo?.Index is { } index &&
                             index < Root.Textures.Count
                         )
                         {
@@ -1761,18 +1760,11 @@ namespace Unity.Cloud.Gltfast
 
                         // Determine which images need to be readable, because they
                         // are applied using different samplers.
-                        SamplerKey key;
-                        if (txt.Sampler.HasValue)
-                        {
-                            var sampler = Root.Samplers[txt.Sampler.Value];
-                            key = new SamplerKey(sampler);
-                        }
-                        else
-                        {
-                            key = defaultKey;
-                        }
+                        var key = GltfIndex.TryGetElement(Root.Samplers, txt.Sampler, out var sampler)
+                            ? new SamplerKey(sampler)
+                            : defaultKey;
 
-                        if (GetImageIndexFromTexture(txt, textureIndex) is int imageIndex && imageIndex < Root.Images.Count)
+                        if (GltfIndex.TryGetIndex(GetImageIndexFromTexture(txt, textureIndex), Root.Images.Count, out var imageIndex))
                         {
                             if (imageVariants[imageIndex] == null)
                             {
@@ -2203,9 +2195,10 @@ namespace Unity.Cloud.Gltfast
         ) where T : unmanaged
         {
             Assert.IsTrue(offset >= 0);
-            var bufferIndex = bufferView.Buffer;
-            Assert.IsNotNull(m_Buffers);
-            Assert.IsTrue(bufferIndex < m_Buffers.Length);
+            if (!GltfIndex.TryGetIndex(bufferView.Buffer, m_Buffers?.Length ?? 0, out var bufferIndex))
+            {
+                return default;
+            }
             Assert.IsTrue(m_Buffers[bufferIndex].IsCreated);
             var chunk = m_BinChunks[bufferIndex];
             var totalOffset = chunk.Start + bufferView.ByteOffset + offset;
@@ -2220,9 +2213,10 @@ namespace Unity.Cloud.Gltfast
         ) where T : unmanaged
         {
             Assert.IsTrue(offset >= 0);
-            var bufferIndex = bufferView.Buffer;
-            Assert.IsNotNull(m_Buffers);
-            Assert.IsTrue(bufferIndex < m_Buffers.Length);
+            if (!GltfIndex.TryGetIndex(bufferView.Buffer, m_Buffers?.Length ?? 0, out var bufferIndex))
+            {
+                return default;
+            }
             Assert.IsTrue(m_Buffers[bufferIndex].IsCreated);
             var chunk = m_BinChunks[bufferIndex];
             var totalOffset = chunk.Start + bufferView.ByteOffset + offset;
@@ -2237,7 +2231,10 @@ namespace Unity.Cloud.Gltfast
             int length = 0
             )
         {
-            var bufferIndex = bufferView.Buffer;
+            if (!GltfIndex.TryGetIndex(bufferView.Buffer, m_Buffers?.Length ?? 0, out var bufferIndex))
+            {
+                return default;
+            }
             if (!m_Buffers[bufferIndex].IsCreated)
             {
                 var download = m_BufferLoadTasks?[bufferIndex];
@@ -2265,9 +2262,10 @@ namespace Unity.Cloud.Gltfast
             }
             Assert.IsTrue(offset + length <= bufferView.ByteLength);
 
-            var bufferIndex = bufferView.Buffer;
-            Assert.IsNotNull(m_Buffers);
-            Assert.IsTrue(bufferIndex < m_Buffers.Length);
+            if (!GltfIndex.TryGetIndex(bufferView.Buffer, m_Buffers?.Length ?? 0, out var bufferIndex))
+            {
+                return default;
+            }
             Assert.IsTrue(m_Buffers[bufferIndex].IsCreated);
 
             var chunk = m_BinChunks[bufferIndex];
@@ -2493,18 +2491,15 @@ namespace Unity.Cloud.Gltfast
                 for (var j = 0; j < animation.Channels.Count; j++)
                 {
                     var channel = animation.Channels[j];
-                    if (channel.Sampler < 0 || channel.Sampler >= animation.Samplers.Count)
+                    if (!GltfIndex.TryGetElement(animation.Samplers, channel.Sampler, out var sampler)
+                        || sampler == null
+                        || !GltfIndex.TryGetIndex(sampler.Output, Root.Accessors?.Count ?? 0, out var outputIndex)
+                        || !GltfIndex.TryGetIndex(sampler.Input, Root.Accessors?.Count ?? 0, out var inputIndex))
                     {
                         Logger?.Error(LogCode.AnimationChannelSamplerInvalid, j.ToString());
                         continue;
                     }
-                    var sampler = animation.Samplers[channel.Sampler];
-                    if (sampler == null || sampler.Output < 0 || sampler.Output >= Root.Accessors.Count)
-                    {
-                        Logger?.Error(LogCode.AnimationChannelSamplerInvalid, j.ToString());
-                        continue;
-                    }
-                    if (channel.Target?.Node is not int targetNode || targetNode < 0 || targetNode >= Root.Nodes.Count)
+                    if (!GltfIndex.TryGetIndex(channel.Target?.Node, Root.Nodes?.Count ?? 0, out var targetNode))
                     {
                         Logger?.Error(LogCode.AnimationChannelNodeInvalid, j.ToString());
                         continue;
@@ -2512,10 +2507,10 @@ namespace Unity.Cloud.Gltfast
 
 
                     var nodeHierarchyInfo = new NodeHierarchyInfo(m_NodeNames, parentIndex);
-                    var times = GetAccessorData<float>(sampler.Input);
+                    var times = GetAccessorData<float>(inputIndex);
                     if (!times.IsCreated)
                     {
-                        Logger?.Error(LogCode.AccessorAccessFailed, sampler.Input.ToString());
+                        Logger?.Error(LogCode.AccessorAccessFailed, inputIndex.ToString());
                         continue;
                     }
                     var interpolation = sampler.Interpolation.Value;
@@ -2524,10 +2519,10 @@ namespace Unity.Cloud.Gltfast
                     {
                         case AnimationPath.Translation:
                         {
-                            var values = GetAccessorData<float3>(sampler.Output);
+                            var values = GetAccessorData<float3>(outputIndex);
                             if (!values.IsCreated)
                             {
-                                Logger?.Error(LogCode.AccessorAccessFailed, sampler.Output.ToString());
+                                Logger?.Error(LogCode.AccessorAccessFailed, outputIndex.ToString());
                                 continue;
                             }
                             animationAddons.AddTranslationCurves(
@@ -2542,10 +2537,10 @@ namespace Unity.Cloud.Gltfast
                         }
                         case AnimationPath.Rotation:
                         {
-                            var values = GetAccessorData<quaternion>(sampler.Output);
+                            var values = GetAccessorData<quaternion>(outputIndex);
                             if (!values.IsCreated)
                             {
-                                Logger?.Error(LogCode.AccessorAccessFailed, sampler.Output.ToString());
+                                Logger?.Error(LogCode.AccessorAccessFailed, outputIndex.ToString());
                                 continue;
                             }
                             animationAddons.AddRotationCurves(
@@ -2560,10 +2555,10 @@ namespace Unity.Cloud.Gltfast
                         }
                         case AnimationPath.Scale:
                         {
-                            var values = GetAccessorData<float3>(sampler.Output);
+                            var values = GetAccessorData<float3>(outputIndex);
                             if (!values.IsCreated)
                             {
-                                Logger?.Error(LogCode.AccessorAccessFailed, sampler.Output.ToString());
+                                Logger?.Error(LogCode.AccessorAccessFailed, outputIndex.ToString());
                                 continue;
                             }
                             animationAddons.AddScaleCurves(
@@ -2579,15 +2574,14 @@ namespace Unity.Cloud.Gltfast
                         case AnimationPath.Weights:
                         {
                             var node = Root.Nodes[targetNode];
-                            if (!node.Mesh.HasValue || node.Mesh.Value >= Root.Meshes.Count)
+                            if (!GltfIndex.TryGetElement(Root.Meshes, node.Mesh, out var mesh))
                             {
                                 break;
                             }
-                            var mesh = Root.Meshes[node.Mesh.Value];
-                            var values = GetAccessorData<float>(sampler.Output);
+                            var values = GetAccessorData<float>(outputIndex);
                             if (!values.IsCreated)
                             {
-                                Logger?.Error(LogCode.AccessorAccessFailed, sampler.Output.ToString());
+                                Logger?.Error(LogCode.AccessorAccessFailed, outputIndex.ToString());
                                 continue;
                             }
                             animationAddons.AddMorphTargetWeightCurves(
@@ -2758,13 +2752,10 @@ namespace Unity.Cloud.Gltfast
                     }
                     if (originalTexture.isReadable)
                     {
-                        Sampler sampler = null;
-                        if (Root.Samplers != null && txt.Sampler is int samplerIndex && samplerIndex < Root.Samplers.Count)
+                        if (!GltfIndex.TryGetElement(Root.Samplers, txt.Sampler, out var sampler))
                         {
-                            sampler = Root.Samplers[samplerIndex];
+                            sampler = new Sampler();
                         }
-
-                        sampler ??= new Sampler();
 
                         var texture = UnityEngine.Object.Instantiate(originalTexture);
 #if DEBUG
@@ -2779,7 +2770,7 @@ namespace Unity.Cloud.Gltfast
                     {
                         Logger?.Warning(
                             LogCode.TextureSamplerNotApplied,
-                            txt.Sampler >= 0 ? $"#{txt.Sampler}" : "default",
+                            txt.Sampler.HasValue ? $"#{txt.Sampler.Value}" : "default",
                             textureIndex.ToString(),
                             txt.GetImageIndex().ToString()
                         );
@@ -2896,7 +2887,7 @@ namespace Unity.Cloud.Gltfast
             var name = gltf.Nodes[(int)index].Name;
             if (string.IsNullOrWhiteSpace(name))
             {
-                if (gltf.Nodes[(int)index].Mesh is int meshIndex)
+                if (gltf.Nodes[(int)index].Mesh is { } meshIndex)
                 {
                     name = gltf.Meshes[meshIndex].Name;
                 }
@@ -3075,9 +3066,9 @@ namespace Unity.Cloud.Gltfast
 
                         if (mesh.HasVertexAttribute(UnityEngine.Rendering.VertexAttribute.BlendIndices))
                         {
-                            if (node.Skin is int skinIndex)
+                            if (node.Skin is { } skinIndex
+                                && GltfIndex.TryGetElement(Root.Skins, skinIndex, out var skin))
                             {
-                                var skin = Root.Skins[skinIndex];
                                 // TODO: see if this can be moved to mesh creation phase / before instantiation
                                 mesh.bindposes = GetBindPoses(skinIndex);
                                 if (skin.Skeleton is int skeletonIndex)
@@ -3164,7 +3155,7 @@ namespace Unity.Cloud.Gltfast
                     }
                 }
 
-                if (node.Camera is int cameraIndex
+                if (node.Camera is { } cameraIndex
                     && Root.Cameras != null
                     && cameraIndex < Root.Cameras.Count
                     )
@@ -3174,7 +3165,7 @@ namespace Unity.Cloud.Gltfast
 
                 if (node.Extensions?.LightsPunctual != null && Root.Extensions?.LightsPunctual?.Lights != null)
                 {
-                    if (node.Extensions.LightsPunctual.Light is int lightIndex
+                    if (node.Extensions.LightsPunctual.Light is { } lightIndex
                         && lightIndex < Root.Extensions.LightsPunctual.Lights.Count)
                     {
                         instantiator.AddLightPunctual(nodeIndex, (uint)lightIndex);
@@ -3321,7 +3312,7 @@ namespace Unity.Cloud.Gltfast
 
             // For compatibility reasons textures are named after their glTF image.
             // TODO: Change name to glTF texture name in the next major release.
-            if (GetImageIndexFromTexture(texture, textureIndex) is int imageIndex)
+            if (GetImageIndexFromTexture(texture, textureIndex) is { } imageIndex)
             {
                 var image = GetSourceImage(imageIndex);
                 if (image != null)
@@ -3404,7 +3395,7 @@ namespace Unity.Cloud.Gltfast
                         SetAccessorUsage(primitive.Indices.Value, usage);
                     }
 
-                    if (primitive.Material is int materialIndex)
+                    if (primitive.Material is { } materialIndex)
                     {
                         if (Root.Materials != null && primitive.Mode == PrimitiveMode.Points)
                         {
@@ -3467,7 +3458,7 @@ namespace Unity.Cloud.Gltfast
                 m_SkinsInverseBindMatrices = new Matrix4x4[Root.Skins.Count][];
                 foreach (var skin in Root.Skins)
                 {
-                    if (skin.InverseBindMatrices is int ibmIndex)
+                    if (skin.InverseBindMatrices is { } ibmIndex)
                     {
                         SetAccessorUsage(ibmIndex, AccessorUsage.InverseBindMatrix);
                     }
@@ -3481,15 +3472,15 @@ namespace Unity.Cloud.Gltfast
                     var attr = node.Extensions?.MeshGpuInstancing?.Attributes;
                     if (attr != null)
                     {
-                        if (attr.Translation is int t)
+                        if (attr.Translation is { } t)
                         {
                             SetAccessorUsage(t, AccessorUsage.Translation | AccessorUsage.RequiredForInstantiation);
                         }
-                        if (attr.Rotation is int r)
+                        if (attr.Rotation is { } r)
                         {
                             SetAccessorUsage(r, AccessorUsage.Rotation | AccessorUsage.RequiredForInstantiation);
                         }
-                        if (attr.Scale is int s)
+                        if (attr.Scale is { } s)
                         {
                             SetAccessorUsage(s, AccessorUsage.Scale | AccessorUsage.RequiredForInstantiation);
                         }
@@ -3514,12 +3505,19 @@ namespace Unity.Cloud.Gltfast
                 {
                     foreach (var sampler in animation.Samplers)
                     {
-                        SetAccessorUsage(sampler.Input, AccessorUsage.AnimationTimes);
+                        if (sampler.Input is { } inputIndex)
+                        {
+                            SetAccessorUsage(inputIndex, AccessorUsage.AnimationTimes);
+                        }
                     }
 
                     foreach (var channel in animation.Channels)
                     {
-                        var accessorIndex = animation.Samplers[channel.Sampler].Output;
+                        if (!GltfIndex.TryGetElement(animation.Samplers, channel.Sampler, out var channelSampler)
+                            || channelSampler.Output is not int accessorIndex)
+                        {
+                            continue;
+                        }
                         switch (channel.Target.Path.Value)
                         {
                             case AnimationPath.Translation:
@@ -3547,7 +3545,7 @@ namespace Unity.Cloud.Gltfast
             {
                 Profiler.BeginSample("LoadAccessorData.IndicesMatrixJob");
                 var acc = Root.Accessors[i];
-                if (acc.BufferView < 0)
+                if (!acc.BufferView.HasValue)
                 {
                     // Not actual accessor to data
                     // Common for draco meshes
@@ -3729,7 +3727,7 @@ namespace Unity.Cloud.Gltfast
 
                     Profiler.BeginSample("AssignAllAccessorData.Skin");
                     var skin = Root.Skins[s];
-                    if (skin.InverseBindMatrices is int ibmIndex)
+                    if (skin.InverseBindMatrices is { } ibmIndex)
                     {
                         m_SkinsInverseBindMatrices[s] =
                             ((NativeArray<float4x4>)m_AccessorData[ibmIndex])
@@ -4012,9 +4010,7 @@ namespace Unity.Cloud.Gltfast
 
         Accessor IGltfBuffers.GetAccessor(int index)
         {
-            return index < 0 || Root.Accessors == null || index >= Root.Accessors.Count
-                ? null
-                : Root.Accessors[index];
+            return GltfIndex.TryGetElement(Root.Accessors, index, out var accessor) ? accessor : null;
         }
 
         /// <summary>
@@ -4027,14 +4023,13 @@ namespace Unity.Cloud.Gltfast
         unsafe void IGltfBuffers.GetAccessorAndData(
             int index, out Accessor accessor, out void* data, out int? byteStride)
         {
-            accessor = Root.Accessors[index];
-            if (!accessor.BufferView.HasValue || accessor.BufferView.Value >= Root.BufferViews.Count)
+            if (!GltfIndex.TryGetElement(Root.Accessors, index, out accessor)
+                || !GltfIndex.TryGetIndex(accessor.BufferView, Root.BufferViews?.Count ?? 0, out var bufferViewIndex))
             {
                 data = null;
                 byteStride = 0;
                 return;
             }
-            var bufferViewIndex = accessor.BufferView.Value;
             var bufferView = Root.BufferViews[bufferViewIndex];
 #if MESHOPT_IS_ENABLED
             var meshopt = bufferView.Extensions?.ExtMeshoptCompression;
@@ -4047,7 +4042,11 @@ namespace Unity.Cloud.Gltfast
 #endif
             {
                 byteStride = bufferView.ByteStride;
-                var bufferIndex = bufferView.Buffer;
+                if (!GltfIndex.TryGetIndex(bufferView.Buffer, m_Buffers?.Length ?? 0, out var bufferIndex))
+                {
+                    data = null;
+                    return;
+                }
                 var buffer = GetBuffer(bufferIndex);
                 data = (byte*)buffer.GetUnsafeReadOnlyPtr()
                     + (accessor.ByteOffset + bufferView.ByteOffset + m_BinChunks[bufferIndex].Start);
@@ -4065,23 +4064,30 @@ namespace Unity.Cloud.Gltfast
         /// <param name="data">Pointer to accessor's data in memory</param>
         public unsafe void GetAccessorSparseIndices(AccessorSparseIndices sparseIndices, out void* data)
         {
-            if (sparseIndices.BufferView < 0 || sparseIndices.BufferView >= Root.BufferViews.Count)
+            if (!GltfIndex.TryGetIndex(sparseIndices.BufferView, Root.BufferViews?.Count ?? 0, out var bufferViewIndex))
             {
-                Logger?.Error(LogCode.AccessorAccessFailed, sparseIndices.BufferView.ToString());
+                Logger?.Error(
+                    sparseIndices.BufferView.HasValue ? LogCode.IndexOutOfRange : LogCode.RequiredPropertyMissing,
+                    "accessor.sparse.indices.bufferView",
+                    GltfIndex.Describe(sparseIndices.BufferView));
                 data = null;
                 return;
             }
-            var bufferView = Root.BufferViews[sparseIndices.BufferView];
+            var bufferView = Root.BufferViews[bufferViewIndex];
 #if MESHOPT_IS_ENABLED
             var meshopt = bufferView.Extensions?.ExtMeshoptCompression;
             if (meshopt != null)
             {
-                data = (byte*)m_MeshoptBufferViews[sparseIndices.BufferView].GetUnsafeReadOnlyPtr() + sparseIndices.ByteOffset;
+                data = (byte*)m_MeshoptBufferViews[bufferViewIndex].GetUnsafeReadOnlyPtr() + sparseIndices.ByteOffset;
             }
             else
 #endif
             {
-                var bufferIndex = bufferView.Buffer;
+                if (!GltfIndex.TryGetIndex(bufferView.Buffer, m_Buffers?.Length ?? 0, out var bufferIndex))
+                {
+                    data = null;
+                    return;
+                }
                 var buffer = GetBuffer(bufferIndex);
                 data = (byte*)buffer.GetUnsafeReadOnlyPtr()
                     + (sparseIndices.ByteOffset + bufferView.ByteOffset + m_BinChunks[bufferIndex].Start);
@@ -4095,23 +4101,30 @@ namespace Unity.Cloud.Gltfast
         /// <param name="data">Pointer to accessor's data in memory</param>
         public unsafe void GetAccessorSparseValues(AccessorSparseValues sparseValues, out void* data)
         {
-            if (sparseValues.BufferView < 0 || sparseValues.BufferView >= Root.BufferViews.Count)
+            if (!GltfIndex.TryGetIndex(sparseValues.BufferView, Root.BufferViews?.Count ?? 0, out var bufferViewIndex))
             {
-                Logger?.Error(LogCode.AccessorAccessFailed, sparseValues.BufferView.ToString());
+                Logger?.Error(
+                    sparseValues.BufferView.HasValue ? LogCode.IndexOutOfRange : LogCode.RequiredPropertyMissing,
+                    "accessor.sparse.values.bufferView",
+                    GltfIndex.Describe(sparseValues.BufferView));
                 data = null;
                 return;
             }
-            var bufferView = Root.BufferViews[sparseValues.BufferView];
+            var bufferView = Root.BufferViews[bufferViewIndex];
 #if MESHOPT_IS_ENABLED
             var meshopt = bufferView.Extensions?.ExtMeshoptCompression;
             if (meshopt != null)
             {
-                data = (byte*)m_MeshoptBufferViews[sparseValues.BufferView].GetUnsafeReadOnlyPtr() + sparseValues.ByteOffset;
+                data = (byte*)m_MeshoptBufferViews[bufferViewIndex].GetUnsafeReadOnlyPtr() + sparseValues.ByteOffset;
             }
             else
 #endif
             {
-                var bufferIndex = bufferView.Buffer;
+                if (!GltfIndex.TryGetIndex(bufferView.Buffer, m_Buffers?.Length ?? 0, out var bufferIndex))
+                {
+                    data = null;
+                    return;
+                }
                 var buffer = GetBuffer(bufferIndex);
                 data = (byte*)buffer.GetUnsafeReadOnlyPtr()
                     + (sparseValues.ByteOffset + bufferView.ByteOffset + m_BinChunks[bufferIndex].Start);

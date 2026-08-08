@@ -714,15 +714,15 @@ namespace Unity.Cloud.Gltfast.Tests.JsonParsing
         }
 
         /// <summary>
-        /// Extension-relaxation scenario: an empty JSON object deserializes with sentinel values
+        /// Extension-relaxation scenario: an empty JSON object deserializes to absent values
         /// and must re-serialize back to an empty object (no spurious "input"/"output" emitted).
         /// </summary>
         [Test]
         public void AnimationSamplerAbsentRoundTrip()
         {
             var obj = JsonSerializer.Deserialize("{}", GltfJsonContext.Default.AnimationSampler);
-            Assert.IsTrue(obj.Input < 0);
-            Assert.IsTrue(obj.Output < 0);
+            Assert.IsNull(obj.Input);
+            Assert.IsNull(obj.Output);
             var json = JsonSerializer.Serialize(obj, GltfJsonContext.Default.AnimationSampler);
             Assert.AreEqual("{}", json);
         }

@@ -20,30 +20,16 @@ namespace Unity.Cloud.Gltfast.Schema
         /// seconds with `time[0] >= 0.0`, and strictly increasing values,
         /// i.e., `time[n + 1] > time[n]`
         /// </summary>
-        [JsonIgnore]
-        public int Input { get; set; } = Constants.UnsetIndex;
-
-        [JsonPropertyName("input"), JsonInclude]
-        internal int? InputSerialized
-        {
-            get => Input < 0 ? null : Input;
-            set => Input = value ?? Constants.UnsetIndex;
-        }
+        [JsonPropertyName("input")]
+        public int? Input { get; set; }
 
         /// <summary>
         /// The index of an accessor, containing keyframe output values. Output and input
         /// accessors must have the same `count`. When sampler is used with TRS target,
         /// output accessor's componentType must be `FLOAT`.
         /// </summary>
-        [JsonIgnore]
-        public int Output { get; set; } = Constants.UnsetIndex;
-
-        [JsonPropertyName("output"), JsonInclude]
-        internal int? OutputSerialized
-        {
-            get => Output < 0 ? null : Output;
-            set => Output = value ?? Constants.UnsetIndex;
-        }
+        [JsonPropertyName("output")]
+        public int? Output { get; set; }
 
         /// <summary>
         /// Interpolation algorithm. When an animation targets a node's rotation,

@@ -878,7 +878,7 @@ namespace Unity.Cloud.Gltfast.Export
                     var nodeId = nodeMaterial.Key;
                     var materialIds = nodeMaterial.Value;
                     var node = GetNode(nodeId);
-                    if (node.Mesh is not int originalMeshId) continue;
+                    if (node.Mesh is not { } originalMeshId) continue;
                     var mesh = m_Meshes[originalMeshId];
 
                     var meshMaterialCombo = new MeshMaterialCombination(originalMeshId, materialIds);

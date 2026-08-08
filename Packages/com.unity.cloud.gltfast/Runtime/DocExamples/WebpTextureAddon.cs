@@ -18,10 +18,7 @@ namespace Unity.Cloud.Gltfast.Documentation.Examples
     {
         public override void Inject(GltfImport gltfImport)
         {
-            if (gltfImport is not GltfImport)
-                return;
-
-            gltfImport.AddImportAddonInstance(this);
+            gltfImport?.AddImportAddonInstance(this);
         }
 
         public override bool SupportsGltfExtension(string extensionName)

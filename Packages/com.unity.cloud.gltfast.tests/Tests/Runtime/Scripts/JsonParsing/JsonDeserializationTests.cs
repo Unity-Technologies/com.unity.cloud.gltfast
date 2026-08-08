@@ -9,7 +9,6 @@ using Unity.Mathematics;
 using CameraType = Unity.Cloud.Gltfast.Schema.CameraType;
 using Color = Unity.Cloud.Gltfast.Schema.Color;
 using LightType = Unity.Cloud.Gltfast.Schema.LightType;
-using SchemaConstants = Unity.Cloud.Gltfast.Schema.Constants;
 
 namespace Unity.Cloud.Gltfast.Tests.JsonParsing
 {
@@ -110,9 +109,9 @@ namespace Unity.Cloud.Gltfast.Tests.JsonParsing
             var obj = JsonSerializer.Deserialize("{}", GltfJsonContext.Default.BufferView);
             Assert.IsNotNull(obj);
             Assert.IsNull(obj.Name);
-            Assert.AreEqual(SchemaConstants.UnsetIndex, obj.Buffer);
+            Assert.IsNull(obj.Buffer);
             Assert.AreEqual(0, obj.ByteOffset);
-            Assert.AreEqual(SchemaConstants.UnsetIndex, obj.ByteLength);
+            Assert.AreEqual(0, obj.ByteLength);
             Assert.IsNull(obj.ByteStride);
             Assert.AreEqual(BufferViewTarget.Undefined, obj.Target);
         }
@@ -451,7 +450,7 @@ namespace Unity.Cloud.Gltfast.Tests.JsonParsing
             Assert.AreEqual(0, obj.ByteOffset);
             Assert.AreEqual((AccessorDataType)0, obj.ComponentType);
             Assert.IsFalse(obj.Normalized);
-            Assert.AreEqual(SchemaConstants.UnsetIndex, obj.Count);
+            Assert.AreEqual(0, obj.Count);
             Assert.AreEqual(AccessorType.Undefined, obj.Type.Value);
             Assert.IsNull(obj.Type.RawValue);
             Assert.IsNull(obj.Max);
@@ -565,7 +564,7 @@ namespace Unity.Cloud.Gltfast.Tests.JsonParsing
         {
             var obj = JsonSerializer.Deserialize("{}", GltfJsonContext.Default.AccessorSparse);
             Assert.IsNotNull(obj);
-            Assert.AreEqual(SchemaConstants.UnsetIndex, obj.Count);
+            Assert.AreEqual(0, obj.Count);
             Assert.IsNull(obj.Indices);
             Assert.IsNull(obj.Values);
         }
@@ -598,7 +597,7 @@ namespace Unity.Cloud.Gltfast.Tests.JsonParsing
         {
             var obj = JsonSerializer.Deserialize("{}", GltfJsonContext.Default.AccessorSparseIndices);
             Assert.IsNotNull(obj);
-            Assert.AreEqual(SchemaConstants.UnsetIndex, obj.BufferView);
+            Assert.IsNull(obj.BufferView);
             Assert.AreEqual(0, obj.ByteOffset);
             Assert.AreEqual((AccessorDataType)0, obj.ComponentType);
         }
@@ -629,7 +628,7 @@ namespace Unity.Cloud.Gltfast.Tests.JsonParsing
         {
             var obj = JsonSerializer.Deserialize("{}", GltfJsonContext.Default.AccessorSparseValues);
             Assert.IsNotNull(obj);
-            Assert.AreEqual(SchemaConstants.UnsetIndex, obj.BufferView);
+            Assert.IsNull(obj.BufferView);
             Assert.AreEqual(0, obj.ByteOffset);
         }
 
@@ -687,7 +686,7 @@ namespace Unity.Cloud.Gltfast.Tests.JsonParsing
         {
             var obj = JsonSerializer.Deserialize("{}", GltfJsonContext.Default.AnimationChannel);
             Assert.IsNotNull(obj);
-            Assert.AreEqual(SchemaConstants.UnsetIndex, obj.Sampler);
+            Assert.IsNull(obj.Sampler);
             Assert.IsNull(obj.Target);
         }
 
@@ -740,8 +739,8 @@ namespace Unity.Cloud.Gltfast.Tests.JsonParsing
         {
             var obj = JsonSerializer.Deserialize("{}", GltfJsonContext.Default.AnimationSampler);
             Assert.IsNotNull(obj);
-            Assert.AreEqual(SchemaConstants.UnsetIndex, obj.Input);
-            Assert.AreEqual(SchemaConstants.UnsetIndex, obj.Output);
+            Assert.IsNull(obj.Input);
+            Assert.IsNull(obj.Output);
             Assert.AreEqual(Interpolation.Linear, obj.Interpolation.Value);
         }
 
@@ -776,7 +775,7 @@ namespace Unity.Cloud.Gltfast.Tests.JsonParsing
             var obj = JsonSerializer.Deserialize("{}", GltfJsonContext.Default.Buffer);
             Assert.IsNotNull(obj);
             Assert.IsNull(obj.Name);
-            Assert.AreEqual(SchemaConstants.UnsetByteLength, obj.ByteLength);
+            Assert.AreEqual(0L, obj.ByteLength);
             Assert.IsNull(obj.Uri);
         }
 
@@ -826,7 +825,7 @@ namespace Unity.Cloud.Gltfast.Tests.JsonParsing
         {
             var obj = JsonSerializer.Deserialize("{}", GltfJsonContext.Default.BufferViewMeshoptExtension);
             Assert.IsNotNull(obj);
-            Assert.AreEqual(SchemaConstants.UnsetIndex, obj.Buffer);
+            Assert.IsNull(obj.Buffer);
             Assert.AreEqual(0, obj.ByteOffset);
             Assert.AreEqual(0, obj.ByteLength);
             Assert.IsNull(obj.ByteStride);
@@ -1748,7 +1747,7 @@ namespace Unity.Cloud.Gltfast.Tests.JsonParsing
         {
             var obj = JsonSerializer.Deserialize("{}", GltfJsonContext.Default.MaterialVariantsMapping);
             Assert.IsNotNull(obj);
-            Assert.AreEqual(SchemaConstants.UnsetIndex, obj.Material);
+            Assert.IsNull(obj.Material);
             Assert.IsNull(obj.Variants);
         }
 

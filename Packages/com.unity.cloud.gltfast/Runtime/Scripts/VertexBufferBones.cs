@@ -40,6 +40,12 @@ namespace Unity.Cloud.Gltfast
             Profiler.BeginSample("ScheduleVertexBonesJob");
 
             buffers.GetAccessorAndData(weightsAccessorIndex, out var weightsAcc, out var weightsData, out var weightsByteStride);
+            if (weightsAcc == null)
+            {
+                m_Logger?.Error(LogCode.AccessorAccessFailed, weightsAccessorIndex.ToString());
+                Profiler.EndSample();
+                return null;
+            }
             if (weightsAcc.IsSparse)
             {
                 m_Logger?.Error(LogCode.SparseAccessor, "bone weights");
@@ -72,6 +78,12 @@ namespace Unity.Cloud.Gltfast
 
             {
                 buffers.GetAccessorAndData(jointsAccessorIndex, out var jointsAcc, out var jointsData, out var jointsByteStride);
+                if (jointsAcc == null)
+                {
+                    m_Logger?.Error(LogCode.AccessorAccessFailed, jointsAccessorIndex.ToString());
+                    Profiler.EndSample();
+                    return null;
+                }
                 if (jointsAcc.IsSparse)
                 {
                     m_Logger?.Error(LogCode.SparseAccessor, "bone joints");

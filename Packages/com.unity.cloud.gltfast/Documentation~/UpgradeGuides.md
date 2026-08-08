@@ -200,13 +200,15 @@ Constructing from code (e.g. for export):
 
 ### Schema index properties wrapped in `int?`
 
-Schema properties that hold indices into root-level arrays (and are optional in the glTF specification) changed from `int` to `int?`. The legacy `-1` sentinel that previously signaled "not set" is gone; an absent value is now `null`.
+**Every** schema property that holds an index into a root-level array changed from `int` to `int?`. An absent value is `null`; the legacy `-1` sentinel is gone. This holds whether or not the glTF specification marks the property as required, so an extension that relaxes a requirement needs no API change.
+
+Size and count properties are **not** nullable: [Accessor.Count](xref:Unity.Cloud.Gltfast.Schema.Accessor.Count), `AccessorSparse.Count`, [BufferView.ByteLength](xref:Unity.Cloud.Gltfast.Schema.BufferView.ByteLength) and [Buffer.ByteLength](xref:Unity.Cloud.Gltfast.Schema.Buffer.ByteLength) keep `int`/`long`. The specification requires them to be at least `1`, so `0` denotes an absent property.
 
 This applies to (non-exhaustive — see the changelog for the full list):
 
 - `Accessor.BufferView`
 - `AnimationChannelTarget.Node` (absent target is permitted by an extension)
-- `BufferView.ByteStride` (and the [IBufferView](xref:Unity.Cloud.Gltfast.Schema.IBufferView) interface)
+- `BufferView.ByteStride`
 - `Image.BufferView`
 - `MeshPrimitive.Indices`, `MeshPrimitive.Material`
 - `Attributes` (`Position`, `Normal`, `Tangent`, `TexCoords`, `Colors`, `Joints`, `Weights`) and `MorphTarget` (`Position`, `Normal`, `Tangent`)
@@ -217,6 +219,10 @@ This applies to (non-exhaustive — see the changelog for the full list):
 - `TextureInfo.Index`, `TextureTransform.TexCoord`
 - `NodeLightsPunctual.Light`, `TextureBasisUniversal.Source`
 - `InstancesAttributes` (`TRANSLATION`, `ROTATION`, `SCALE`)
+- `BufferView.Buffer`, `BufferViewMeshoptExtension.Buffer`
+- `AccessorSparseIndices.BufferView`, `AccessorSparseValues.BufferView`, `MeshPrimitiveDracoExtension.BufferView`
+- `AnimationChannel.Sampler`, `AnimationSampler.Input`, `AnimationSampler.Output`
+- `MaterialVariantsMapping.Material`
 
 Reading: replace `x >= 0` checks with `x.HasValue`, and dereference via `x.Value`. The C# `is int` pattern combines both:
 
@@ -245,54 +251,23 @@ JSON serialization omits the property when `null`. Existing code that left a pro
 | `MeshResult.materialIndices` | `int[]` | `int?[]` |
 | `IGltfBuffers.GetBufferView` / `GetAccessorAndData` `byteStride` out param | `int` | `int?` |
 
-Custom implementations of [IMaterialsVariantsSlot](xref:Unity.Cloud.Gltfast.IMaterialsVariantsSlot), [IBufferView](xref:Unity.Cloud.Gltfast.Schema.IBufferView) or [IGltfBuffers](xref:Unity.Cloud.Gltfast.IGltfBuffers) need to update their member signatures accordingly.
+Custom implementations of [IMaterialsVariantsSlot](xref:Unity.Cloud.Gltfast.IMaterialsVariantsSlot) or [IGltfBuffers](xref:Unity.Cloud.Gltfast.IGltfBuffers) need to update their member signatures accordingly.
 
-### Spec-required scalar fields use a negative "unset" sentinel
+### `IBufferView` is internal
 
-Schema properties that the glTF specification marks as **required** and that the runtime previously stored as non-nullable `int`/`uint` now default to a negative sentinel (`Constants.UnsetIndex` = `-1`, or `Constants.UnsetByteLength` = `-1L`). Any negative value serializes as "absent" and reads back as "absent" again. The non-nullable type is preserved so hot-path call sites (e.g. iterating up to `Accessor.Count`) don't need `.Value`.
+`Unity.Cloud.Gltfast.Schema.IBufferView` is no longer public. No public member accepted or returned it, so an implementation could not be handed to *glTFast* anyway. Code that merely reads [BufferView](xref:Unity.Cloud.Gltfast.Schema.BufferView) or the `EXT_meshopt_compression` extension object is unaffected; remove any `IBufferView` implementation or reference.
 
-This is the counterpart to the `int?`-for-optional convention above:
+### `uint` → `int` for sparse accessor `BufferView`
 
-| Spec optionality | C# type | Absent value |
-| ---------------- | ------- | ------------ |
-| Optional in glTF | `int?` | `null` |
-| Required in glTF | `int` (or `long`) | `Constants.UnsetIndex` / `Constants.UnsetByteLength` (`< 0`) |
-
-The change fixes a JSON-serializer bug where the framework's `JsonIgnoreCondition.WhenWritingDefault` silently dropped properties whose value was `0` — for example an `AnimationSampler` whose input accessor was at index `0` (the typical time accessor).
-
-Affected fields:
-
-| Property | Before | After |
-| -------- | ------ | ----- |
-| `Accessor.Count` | `int`, default `0` | `int`, default `Constants.UnsetIndex` |
-| `AccessorSparse.Count` | `int`, default `0` | `int`, default `Constants.UnsetIndex` |
-| `AccessorSparseIndices.BufferView` | `uint`, default `0u` | `int`, default `Constants.UnsetIndex` |
-| `AccessorSparseValues.BufferView` | `uint`, default `0u` | `int`, default `Constants.UnsetIndex` |
-| `AnimationChannel.Sampler` | `int`, default `0` | `int`, default `Constants.UnsetIndex` |
-| `AnimationSampler.Input`/`.Output` | `int`, default `0` | `int`, default `Constants.UnsetIndex` |
-| `Buffer.ByteLength` | `uint`, default `0u` | `long`, default `Constants.UnsetByteLength` |
-| `BufferView.Buffer`/`.ByteLength` | `int`, default `0` | `int`, default `Constants.UnsetIndex` |
-| `BufferViewMeshoptExtension.Buffer` (`MESHOPT_IS_RECENT`) | `int`, default `0` | `int`, default `Constants.UnsetIndex` |
-| `MaterialVariantsMapping.Material` | `int`, default `0` | `int`, default `Constants.UnsetIndex` |
-| `MeshPrimitiveDracoExtension.BufferView` | `int`, default `0` | `int`, default `Constants.UnsetIndex` |
-
-#### Reading
-
-Most call sites are unchanged. Validating consumers should check `< 0` before using the value as an index/length.
-
-Extension add-ons that relax a previously-required field can detect absence with the same `< 0` check and skip their own consumption logic accordingly.
-
-#### `uint` → `int` for sparse accessor `BufferView`
-
-`AccessorSparseIndices.BufferView` and `AccessorSparseValues.BufferView` changed from `uint` to `int`. Indexing call sites can drop the `(int)` cast:
+`AccessorSparseIndices.BufferView` and `AccessorSparseValues.BufferView` changed from `uint` to `int?`. Indexing call sites can drop the `(int)` cast:
 
 | Before | After |
 | ------ | ----- |
-| `Root.BufferViews[(int)sparseIndices.BufferView]` | `Root.BufferViews[sparseIndices.BufferView]` |
+| `Root.BufferViews[(int)sparseIndices.BufferView]` | `Root.BufferViews[sparseIndices.BufferView.Value]` |
 
-#### `Buffer.ByteLength` typed as `long`
+### `Buffer.ByteLength` typed as `long`
 
-`Buffer.ByteLength` changed from `uint` to `long`. Sentinel needs a signed type; this is also a first step toward eventual `>4 GB` buffer support. Assignments from `Stream.Length` (already `long`) drop the `(uint)` cast; comparisons against `int` widen automatically:
+[Buffer.ByteLength](xref:Unity.Cloud.Gltfast.Schema.Buffer.ByteLength) changed from `uint` to `long`, a first step toward eventual `>4 GB` buffer support. It does not by itself enable buffers above `int.MaxValue`. Assignments from `Stream.Length` (already `long`) drop the `(uint)` cast; comparisons against `int` widen automatically:
 
 | Before | After |
 | ------ | ----- |

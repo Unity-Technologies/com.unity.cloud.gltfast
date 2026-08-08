@@ -18,15 +18,8 @@ namespace Unity.Cloud.Gltfast.Schema
         /// <summary>
         /// Number of entries stored in the sparse array.
         /// </summary>
-        [JsonIgnore]
-        public int Count { get; set; } = Constants.UnsetIndex;
-
-        [JsonPropertyName("count"), JsonInclude]
-        internal int? CountSerialized
-        {
-            get => Count < 0 ? null : Count;
-            set => Count = value ?? Constants.UnsetIndex;
-        }
+        [JsonPropertyName("count")]
+        public int Count { get; set; }
 
         /// <summary>
         /// Index array of size `count` that points to those accessor attributes that

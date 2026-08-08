@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `EnumOrRawValue<TEnum>` for serialization of JSON strings to enum values that can have values unknown at build time.
 - [MeshoptFilter](xref:Unity.Cloud.Gltfast.Schema.MeshoptFilter) and [MeshoptMode](xref:Unity.Cloud.Gltfast.Schema.MeshoptMode) for custom JSON serialization of `Meshoptimizer.Filter` and `Meshoptimizer.Mode`.
 - `UriValue`, a wrapper for serialization of URIs.
+- [LogCode](xref:Unity.Cloud.Gltfast.Logging.LogCode) `RequiredPropertyMissing` and `IndexOutOfRange`, which distinguish an absent glTF property from an index that does not address an existing element.
 - [Color](xref:Unity.Cloud.Gltfast.Schema.Color) and [ColorAlpha](xref:Unity.Cloud.Gltfast.Schema.ColorAlpha) structs for serialization of glTF color values.
 - [ImageMimeType](xref:Unity.Cloud.Gltfast.Schema.ImageMimeType) for type-safe access to glTF image MIME types.
 - [Attributes](xref:Unity.Cloud.Gltfast.Schema.Attributes): Additional vertex attribute accessor properties are (de-)serialized from/to JSON.
@@ -18,7 +19,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `COLOR_n` for `n ≥ 1`
   - `JOINTS_n`/`WEIGHTS_n` for `n ≥ 1` (required for multi-influence skinning)
   - Application-specific attribute semantics (starting with underscore `_`)
-- `Constants.UnsetIndex` (`-1`) and `Constants.UnsetByteLength` (`-1L`) — sentinel values that signal absence for spec-required scalar schema fields whose `0` is valid (e.g. accessor at index `0`).
 - [Root.Serialize(Stream)](xref:Unity.Cloud.Gltfast.Schema.Root.Serialize*) for JSON serialization via `System.Text.Json` without requiring callers to reach for `JsonSerializer`/`GltfJsonContext` directly.
 - [NullLogger](xref:Unity.Cloud.Gltfast.Logging.NullLogger), a no-op `ICodeLogger`.
 - Shared `ConsoleLogger.Instance` and `NullLogger.Instance` singletons.
@@ -91,10 +91,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
       - [Root.Buffers](xref:Unity.Cloud.Gltfast.Schema.Root.Buffers)
       - [Scene.Nodes](xref:Unity.Cloud.Gltfast.Schema.Scene.Nodes)
       - [Skin.Joints](xref:Unity.Cloud.Gltfast.Schema.Skin.Joints)
-    - `int` ⇒ `int?` for index properties that are optional in the glTF specification. `null` now represents an absent value; the legacy `-1` sentinel is gone.
+    - `int` ⇒ `int?` for **all** index properties. `null` represents an absent value; the legacy `-1` sentinel is gone. This holds whether or not the glTF specification marks the property as required, so an extension that relaxes a requirement needs no API change.
       - [Accessor.BufferView](xref:Unity.Cloud.Gltfast.Schema.Accessor.BufferView)
       - `AnimationChannelTarget.Node`
-      - [BufferView.ByteStride](xref:Unity.Cloud.Gltfast.Schema.BufferView.ByteStride) (also on [IBufferView](xref:Unity.Cloud.Gltfast.Schema.IBufferView))
+      - [BufferView.ByteStride](xref:Unity.Cloud.Gltfast.Schema.BufferView.ByteStride)
       - [Image.BufferView](xref:Unity.Cloud.Gltfast.Schema.Image.BufferView)
       - `InstancesAttributes.Translation`, `.Rotation`, `.Scale`
       - `MeshPrimitive.Indices`, `.Material`
@@ -108,10 +108,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
       - `TextureBasisUniversal.Source`
       - [TextureInfo.Index](xref:Unity.Cloud.Gltfast.Schema.TextureInfo.Index)
       - `TextureTransform.TexCoord`
+      - `AccessorSparseIndices.BufferView`, `AccessorSparseValues.BufferView`
+      - `AnimationChannel.Sampler`, `AnimationSampler.Input`, `AnimationSampler.Output`
+      - `BufferViewMeshoptExtension.Buffer`, `MeshPrimitiveDracoExtension.BufferView`
+      - [BufferView.Buffer](xref:Unity.Cloud.Gltfast.Schema.BufferView.Buffer)
+      - `MaterialVariantsMapping.Material`
     - `int` ⇒ [BufferViewTarget](xref:Unity.Cloud.Gltfast.Schema.BufferViewTarget) for [BufferView.Target](xref:Unity.Cloud.Gltfast.Schema.BufferView.Target).
     - `uint` ⇒ `long` for [Buffer.ByteLength](xref:Unity.Cloud.Gltfast.Schema.Buffer.ByteLength). First step toward `>4 GB` buffer support.
     - `uint` ⇒ `int` for `AccessorSparseIndices.BufferView` and `AccessorSparseValues.BufferView`. Aligns with the sibling index convention; drops the `(int)` cast at consumer call sites.
-  - Spec-required scalar fields use a negative sentinel (`Constants.UnsetIndex`/`UnsetByteLength`) for "unset" so explicit zero values round-trip and absence (e.g. extension-relaxed requirements) survives deserialization. Non-nullable type and hot-path call sites are unchanged; validating consumers report `< 0` as missing/invalid.
+  - Size and count properties ([Accessor.Count](xref:Unity.Cloud.Gltfast.Schema.Accessor.Count), `AccessorSparse.Count`, [BufferView.ByteLength](xref:Unity.Cloud.Gltfast.Schema.BufferView.ByteLength), [Buffer.ByteLength](xref:Unity.Cloud.Gltfast.Schema.Buffer.ByteLength)) stay non-nullable. The specification requires them to be at least `1`, so `0` denotes an absent property.
   - [Attributes](xref:Unity.Cloud.Gltfast.Schema.Attributes) reshaped — the per-index properties `TexCoord0..TexCoord8`, `Color0`, `Joints0`, `Weights0` are replaced with per-family `List<int?>` collections (`TexCoords`, `Colors`, `Joints`, `Weights`). Bounds-checked index access is provided by extension methods on [AttributesExtensions](xref:Unity.Cloud.Gltfast.Schema.AttributesExtensions): `attrs.GetTexCoord(n)` / `attrs.SetTexCoord(n, value)` (and the matching `Color`/`Joint`/`Weight` pairs). `Attributes.GetTexCoordsCount()` was moved to `AttributesExtensions`. `Attributes.TryGetAllUVAccessors` declared obsolete.
   - (Performance) Data URIs are decoded directly to unmanaged buffers during JSON deserialization eliminating allocation of a UTF-16 string twice the size of the data URI.
   - (Performance) `Root.ExtensionsUsed`/`Root.ExtensionsRequired` entries that match a recognized [Extension](xref:Unity.Cloud.Gltfast.Extension) deserialize directly into the enum, avoiding the managed string allocation per entry. Extension-support checks (`GltfImport`) now use `HashSet<Extension>` instead of `HashSet<string>`.
@@ -144,6 +149,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Export's `Unity.Cloud.Gltfast.Export.ManagedNativeArray` no longer leaks its pinned `GCHandle` when not explicitly disposed (added a finalizer); double-dispose is now a safe no-op.
 - `GltfWriter.AddImage` no longer throws `NullReferenceException` when called after `Dispose()` in builds without `UNITY_IMAGECONVERSION` defined; now correctly throws `InvalidOperationException` from `CertifyNotDisposed()` instead.
+- Malformed glTF referencing a non-existent image buffer view, texture sampler, node mesh, node skin or accessor no longer throws `IndexOutOfRangeException`, `InvalidOperationException` or `NullReferenceException` during import. Out-of-range, negative and absent indices are reported or skipped instead.
+- Accessors without a buffer view (meta-information-only accessors, common in Draco-compressed meshes) are skipped again during accessor data loading. A `< 0` check against the nullable `Accessor.BufferView` always evaluated to `false`, so those accessors were processed as if they held data.
+- `MaterialsVariantsExtension.TryGetMaterialIndex` returns `false` for a mapping whose `material` is absent, instead of `true` with an invalid index that callers then used to index the material list.
 
 ### Removed
 - JsonUtility dependency and related code.
@@ -151,6 +159,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - (Export) `Unity.Cloud.Gltfast.Export.ImageFormat` enum (use [Unity.Cloud.Gltfast.ImageFormat](xref:Unity.Cloud.Gltfast.ImageFormat) instead).
 - (Export) Hand-written `Unity.Cloud.Gltfast.Schema.JsonWriter` and the `GltfSerialize` methods on every `Unity.Cloud.Gltfast.Schema` type. `Root.GltfSerialize` war preserved for backwards compatibility, but its serialization runs through `System.Text.Json` instead.
 - (Export) `Unity.Cloud.Gltfast.Export.ManagedNativeArray<TIn, TOut>` is no longer part of the public API (it is now internal).
+- `Unity.Cloud.Gltfast.Schema.IBufferView` is no longer part of the public API (it is now internal). No public member accepted or returned it, so an implementation could not be passed anywhere.
 - Legacy `image/ktx` MIME type lenience. The glTF specification and `KHR_texture_basisu` require `image/ktx2`.
 - The 43 obsolete `MaterialGenerator.*Property` shader-property-ID aliases (e.g. `MaterialGenerator.BaseColorProperty`).
 - (Import) `GltfImport.LoadGltfBinary(byte[], …)`.
@@ -417,7 +426,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Graphics Tests.
 - [EditorConfig](https://editorconfig.org/) for keeping a consistent code-style.
-- [IBufferView.ByteStride](xref:GLTFast.Schema.IBufferView.ByteStride).
+- `IBufferView.ByteStride`.
 
 ### Changed
 - (CI) Consolidated multiple redundant packaging and vetting/API validation jobs.

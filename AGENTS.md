@@ -8,6 +8,11 @@ This monorepo's main components:
 - `Packages/com.unity.cloud.gltfast.tests` - Unit and integration tests
 - `Projects/` - Contains multiple Unity projects with different setups for development and testing
   - `Projects/glTFast-Test` - main test project
+- `Docs/` - Contributor docs, not shipped: quality, testing, release process, design decisions
+
+## Design decisions
+
+`Docs/Decisions/` holds numbered records (`0001-*.md`). Consult the relevant one before changing schema types, public API shape or serialization behavior. Records are immutable: supersede, don't edit. `Status` says whether one still applies.
 
 ## Code style guidelines
 

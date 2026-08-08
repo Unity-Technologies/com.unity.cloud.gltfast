@@ -152,7 +152,7 @@ namespace Unity.Cloud.Gltfast.Tests
     {
         public bool IsAbleToLoad(Texture texture, out int imageIndex)
         {
-            if (texture.Source is int source && source % 4 == 0)
+            if (texture.Source is { } source && source % 4 == 0)
             {
                 imageIndex = source * 2;
                 return true;

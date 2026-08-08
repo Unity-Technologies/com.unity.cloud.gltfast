@@ -274,6 +274,10 @@ namespace Unity.Cloud.Gltfast.Logging
         AccessorAccessFailed,
         /// <summary>Could not create <see cref="Animation"/> component.</summary>
         AnimationComponentFail,
+        /// <summary>A property the glTF specification requires is absent.</summary>
+        RequiredPropertyMissing,
+        /// <summary>An index does not address an existing element.</summary>
+        IndexOutOfRange,
     }
 
     /// <summary>
@@ -287,6 +291,8 @@ namespace Unity.Cloud.Gltfast.Logging
 
         static readonly Dictionary<LogCode, string> k_FullMessages = new Dictionary<LogCode, string>() {
             { LogCode.AccessorAccessFailed, "Could not provide data for accessor {0}" },
+            { LogCode.RequiredPropertyMissing, "Required property {0} is missing" },
+            { LogCode.IndexOutOfRange, "Index {1} in property {0} does not address an existing element" },
             { LogCode.AccessorAttributeTypeUnknown, "Unknown accessor type" },
             { LogCode.AccessorInconsistentUsage, "Inconsistent accessor usage {0} != {1}" },
             { LogCode.AccessorsShared, @"glTF file uses certain vertex attributes/accessors across multiple meshes!

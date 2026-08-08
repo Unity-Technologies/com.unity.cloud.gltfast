@@ -12,15 +12,8 @@ namespace Unity.Cloud.Gltfast.Schema
     [MovedFrom(true, sourceNamespace: "GLTFast.Schema", sourceAssembly: "glTFast")]
     public class MeshPrimitiveDracoExtension
     {
-        [JsonIgnore]
-        public int BufferView { get; set; } = Constants.UnsetIndex;
-
-        [JsonPropertyName("bufferView"), JsonInclude]
-        internal int? BufferViewSerialized
-        {
-            get => BufferView < 0 ? null : BufferView;
-            set => BufferView = value ?? Constants.UnsetIndex;
-        }
+        [JsonPropertyName("bufferView")]
+        public int? BufferView { get; set; }
 
         [JsonPropertyName("attributes")]
         public Attributes Attributes { get; set; }

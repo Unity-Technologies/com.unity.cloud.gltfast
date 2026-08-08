@@ -14,20 +14,8 @@ namespace Unity.Cloud.Gltfast.Schema
         /// <summary>
         /// The index of the buffer.
         /// </summary>
-        /// <remarks>
-        /// Required per the EXT_meshopt_compression extension. Defaults to
-        /// <see cref="Constants.UnsetIndex"/> when absent from JSON so callers can
-        /// distinguish "missing" from an explicit value.
-        /// </remarks>
-        [JsonIgnore]
-        public int Buffer { get; set; } = Constants.UnsetIndex;
-
-        [JsonPropertyName("buffer"), JsonInclude]
-        internal int? BufferSerialized
-        {
-            get => Buffer < 0 ? null : Buffer;
-            set => Buffer = value ?? Constants.UnsetIndex;
-        }
+        [JsonPropertyName("buffer")]
+        public int? Buffer { get; set; }
 
         /// <summary>
         /// The offset into the buffer in bytes.

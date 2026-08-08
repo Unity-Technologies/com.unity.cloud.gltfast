@@ -18,15 +18,8 @@ namespace Unity.Cloud.Gltfast.Schema
         /// <summary>
         /// The length of the buffer in bytes.
         /// </summary>
-        [JsonIgnore]
-        public long ByteLength { get; set; } = Constants.UnsetByteLength;
-
-        [JsonPropertyName("byteLength"), JsonInclude]
-        internal long? ByteLengthSerialized
-        {
-            get => ByteLength < 0 ? null : ByteLength;
-            set => ByteLength = value ?? Constants.UnsetByteLength;
-        }
+        [JsonPropertyName("byteLength")]
+        public long ByteLength { get; set; }
 
         /// <summary>
         /// The URI (or IRI) of the buffer.

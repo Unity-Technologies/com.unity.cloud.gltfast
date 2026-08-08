@@ -53,11 +53,15 @@ namespace Unity.Cloud.Gltfast.Schema
         {
             foreach (var mapping in Mappings)
             {
+                if (mapping.Material is not { } material)
+                {
+                    continue;
+                }
                 foreach (var i in mapping.Variants)
                 {
                     if (variantIndex == i)
                     {
-                        materialIndex = mapping.Material;
+                        materialIndex = material;
                         return true;
                     }
                 }
@@ -75,15 +79,8 @@ namespace Unity.Cloud.Gltfast.Schema
     public class MaterialVariantsMapping
     {
         /// <summary>Material index.</summary>
-        [JsonIgnore]
-        public int Material { get; set; } = Constants.UnsetIndex;
-
-        [JsonPropertyName("material"), JsonInclude]
-        internal int? MaterialSerialized
-        {
-            get => Material < 0 ? null : Material;
-            set => Material = value ?? Constants.UnsetIndex;
-        }
+        [JsonPropertyName("material")]
+        public int? Material { get; set; }
 
         /// <summary>Materials variants indices.</summary>
         [JsonPropertyName("variants")]
