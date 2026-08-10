@@ -161,6 +161,20 @@ namespace GLTFast
             return node;
         }
 
+        /// <inheritdoc />
+        public virtual void CreateNode(
+            uint nodeIndex,
+            uint? parentIndex,
+            Vector3 position,
+            Quaternion rotation,
+            Vector3 scale,
+            string name
+        )
+        {
+            CreateNode(nodeIndex, parentIndex, position, rotation, scale);
+            SetNodeName(nodeIndex, name);
+        }
+
         public void SetNodeName(uint nodeIndex, string name)
         {
 #if UNITY_EDITOR

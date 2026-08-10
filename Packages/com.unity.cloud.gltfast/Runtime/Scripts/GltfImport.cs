@@ -3026,7 +3026,6 @@ namespace GLTFast
                 Profiler.BeginSample("CreateHierarchy");
                 var node = this.Root.Nodes[(int)nodeIndex];
                 node.GetTransform(out var position, out var rotation, out var scale);
-                instantiator.CreateNode(nodeIndex, parentIndex, position, rotation, scale);
 
                 var nodeName = m_NodeNames == null ? node.name : m_NodeNames[nodeIndex];
                 if (nodeName == null && node.mesh >= 0)
@@ -3043,7 +3042,7 @@ namespace GLTFast
                     }
                 }
 
-                instantiator.SetNodeName(nodeIndex, nodeName);
+                instantiator.CreateNode(nodeIndex, parentIndex, position, rotation, scale, nodeName);
                 Profiler.EndSample();
             }
 

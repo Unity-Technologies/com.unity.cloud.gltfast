@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: 2023 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
+using System;
 using Unity.Collections;
 using UnityEngine;
 
@@ -46,13 +47,15 @@ namespace GLTFast
         /// <param name="position">Node's local position in hierarchy</param>
         /// <param name="rotation">Node's local rotation in hierarchy</param>
         /// <param name="scale">Node's local scale in hierarchy</param>
+        [Obsolete("Implement the CreateNode overload that takes a name instead.")]
         void CreateNode(
             uint nodeIndex,
             uint? parentIndex,
             Vector3 position,
             Quaternion rotation,
             Vector3 scale
-            );
+            )
+        { }
 
         /// <summary>
         /// Sets the name of a node.
@@ -61,7 +64,38 @@ namespace GLTFast
         /// </summary>
         /// <param name="nodeIndex">Index of the node to be named.</param>
         /// <param name="name">Valid name or null</param>
-        void SetNodeName(uint nodeIndex, string name);
+        [Obsolete("Implement the CreateNode overload that takes a name instead.")]
+        void SetNodeName(uint nodeIndex, string name) { }
+
+        /// <summary>
+        /// Called for every Node in the glTF file.
+        /// </summary>
+        /// <remarks>
+        /// All three of this method, the parameterless-name <see cref="CreateNode(uint,uint?,Vector3,Quaternion,Vector3)"/>
+        /// overload and <see cref="SetNodeName"/> have default implementations, so an implementation that
+        /// overrides none of them compiles but creates no nodes.
+        /// </remarks>
+        /// <param name="nodeIndex">Index of node. Serves as identifier.</param>
+        /// <param name="parentIndex">Index of the parent's node. If it's null,
+        /// the node's a root-level node</param>
+        /// <param name="position">Node's local position in hierarchy</param>
+        /// <param name="rotation">Node's local rotation in hierarchy</param>
+        /// <param name="scale">Node's local scale in hierarchy</param>
+        /// <param name="name">Node's name. Falls back to the first valid mesh name. Null otherwise.</param>
+        void CreateNode(
+            uint nodeIndex,
+            uint? parentIndex,
+            Vector3 position,
+            Quaternion rotation,
+            Vector3 scale,
+            string name
+            )
+        {
+#pragma warning disable 618
+            CreateNode(nodeIndex, parentIndex, position, rotation, scale);
+            SetNodeName(nodeIndex, name);
+#pragma warning restore 618
+        }
 
         /// <summary>
         /// Adds a Mesh/MeshResult to a Node for rendering purpose.
