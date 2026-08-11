@@ -42,7 +42,7 @@ namespace Unity.Cloud.Gltfast.Schema
         /// <summary>JSON object with extension-specific objects.</summary>
         /// <seealso href="https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html#reference-extension"/>
         [JsonPropertyName("extensions")]
-        public AdditionalPropertyContainer Extensions { get; set; }
+        public AssetExtensions Extensions { get; set; }
 
         /// <inheritdoc cref="Root.Extras"/>
         [JsonPropertyName("extras")]

@@ -45,7 +45,7 @@ namespace Unity.Cloud.Gltfast.Schema
 
         /// <inheritdoc cref="Asset.Extensions"/>
         [JsonPropertyName("extensions")]
-        public AdditionalPropertyContainer Extensions { get; set; }
+        public CameraOrthographicExtensions Extensions { get; set; }
 
         /// <inheritdoc cref="Root.Extras"/>
         [JsonPropertyName("extras")]

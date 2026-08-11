@@ -82,7 +82,7 @@ namespace Unity.Cloud.Gltfast.Schema
 
         /// <inheritdoc cref="Asset.Extensions"/>
         [JsonPropertyName("extensions")]
-        public AdditionalPropertyContainer Extensions { get; set; }
+        public AccessorExtensions Extensions { get; set; }
 
         /// <summary>JSON properties without a matching member.</summary>
         [JsonExtensionData, JsonInclude]

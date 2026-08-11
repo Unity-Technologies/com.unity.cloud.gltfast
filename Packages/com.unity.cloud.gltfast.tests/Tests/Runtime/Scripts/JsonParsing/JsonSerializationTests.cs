@@ -393,7 +393,7 @@ namespace Unity.Cloud.Gltfast.Tests.JsonParsing
         [Test]
         public void AssetExtensions()
         {
-            var json = JsonSerializer.Serialize(new Asset { Extensions = new AdditionalPropertyContainer() }, GltfJsonContext.Default.Asset);
+            var json = JsonSerializer.Serialize(new Asset { Extensions = new Schema.AssetExtensions() }, GltfJsonContext.Default.Asset);
             Assert.AreEqual(@"{""extensions"":{}}", json);
         }
 
@@ -498,7 +498,7 @@ namespace Unity.Cloud.Gltfast.Tests.JsonParsing
         [Test]
         public void AccessorExtensions()
         {
-            var json = JsonSerializer.Serialize(new Accessor { Extensions = new AdditionalPropertyContainer() }, GltfJsonContext.Default.Accessor);
+            var json = JsonSerializer.Serialize(new Accessor { Extensions = new Schema.AccessorExtensions() }, GltfJsonContext.Default.Accessor);
             Assert.AreEqual(@"{""extensions"":{}}", json);
         }
 
