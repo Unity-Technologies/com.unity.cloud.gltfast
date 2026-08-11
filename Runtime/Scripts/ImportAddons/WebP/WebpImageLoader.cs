@@ -11,7 +11,7 @@ using Unity.Collections;
 using UnityEngine;
 using WebP;
 
-namespace GLTFast.Documentation.Examples
+namespace GLTFast.Addons
 {
     /// <summary>
     /// Decodes WebP image data into a <see cref="Texture2D"/> using the unity.webp package.

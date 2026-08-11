@@ -12,7 +12,7 @@ using Unity.Collections;
 using UnityEngine;
 using WebP;
 
-namespace GLTFast.Documentation.Examples
+namespace GLTFast.Addons
 {
     /// <summary>
     /// Import add-on that registers native WebP texture support.
@@ -40,7 +40,7 @@ namespace GLTFast.Documentation.Examples
         /// <inheritdoc />
         public override bool SupportsGltfExtension(string extensionName)
         {
-            return extensionName == ExtensionName.TextureWebP;
+            return extensionName == "EXT_texture_webp";
         }
 
         /// <summary>
@@ -77,6 +77,21 @@ namespace GLTFast.Documentation.Examples
             )
         {
             return WebpImageLoader.LoadAsync(data, linear, readable, generateMipMaps, null, cancellationToken);
+        }
+    }
+
+    /// <summary>
+    /// Auto-registers the WebP addon on load, for both Editor and Runtime.
+    /// </summary>
+    public static class WebpAddonBootstrapper
+    {
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+#if UNITY_EDITOR
+        [UnityEditor.InitializeOnLoadMethod]
+#endif
+        static void RegisterWebpAddon()
+        {
+            ImportAddonRegistry.RegisterImportAddon(new WebpTextureImportAddon());
         }
     }
 }

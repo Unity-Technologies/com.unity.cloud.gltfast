@@ -1630,6 +1630,18 @@ namespace GLTFast
                 return;
             }
 #endif
+#if !WEBP_IS_INSTALLED
+            if (ext == "EXT_texture_webp")
+            {
+                Logger?.Log(
+                    required ? LogType.Error : LogType.Warning,
+                    LogCode.PackageMissing,
+                    "unity.webp",
+                    ext
+                    );
+                return;
+            }
+#endif
             Logger?.Log(
                 required ? LogType.Error : LogType.Warning,
                 LogCode.ExtensionUnsupported,

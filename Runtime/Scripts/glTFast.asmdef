@@ -88,6 +88,11 @@
             "name": "com.unity.nuget.newtonsoft-json",
             "expression": "",
             "define": "NEWTONSOFT_JSON"
+        },
+        {
+            "name": "com.netpyoung.webp",
+            "expression": "",
+            "define": "WEBP_IS_INSTALLED"
         }
     ],
     "noEngineReferences": false
