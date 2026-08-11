@@ -26,6 +26,10 @@ namespace GLTFast
     /// <summary>
     /// Generates a GameObject hierarchy from a glTF scene
     /// </summary>
+    /// <remarks>
+    /// A derived class must re-declare the interface (<c>class MyInstantiator : GameObjectInstantiator, IInstantiator</c>)
+    /// for its own <see cref="IInstantiator.AddMesh"/> or <see cref="IInstantiator.AddMeshInstanced"/> to be reached.
+    /// </remarks>
     public class GameObjectInstantiator : IInstantiator
     {
         // Developers might want to customize this class by deriving from it.
@@ -206,6 +210,7 @@ namespace GLTFast
         }
 
         /// <inheritdoc />
+        [Obsolete("Use IInstantiator.AddMesh instead.")]
         public virtual void AddPrimitive(
             uint nodeIndex,
             string meshName,
@@ -304,6 +309,7 @@ namespace GLTFast
         }
 
         /// <inheritdoc />
+        [Obsolete("Use IInstantiator.AddMeshInstanced instead.")]
         public virtual void AddPrimitiveInstanced(
             uint nodeIndex,
             string meshName,

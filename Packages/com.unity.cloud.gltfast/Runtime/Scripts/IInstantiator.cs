@@ -107,8 +107,36 @@ namespace GLTFast
         /// <param name="rootJoint">Root joint node index, if present</param>
         /// <param name="morphTargetWeights">Morph target weights, if present</param>
         /// <param name="meshNumeration">Per glTF mesh <see cref="MeshResult"/> numeration. A glTF mesh is converted
+        /// into one or more MeshResults which are numbered consecutively. <see cref="AddMesh"/> is called once
+        /// for each of those MeshResults.</param>
+        /// <remarks>This is the method the importer calls, so implementing it is preferred, but implementors still
+        /// have to declare the obsolete <see cref="AddPrimitive"/> until version 7.0 removes it.</remarks>
+        public void AddMesh(
+            uint nodeIndex,
+            string meshName,
+            MeshResult meshResult,
+            uint[] joints = null,
+            uint? rootJoint = null,
+            float[] morphTargetWeights = null,
+            int meshNumeration = 0
+        )
+        {
+#pragma warning disable CS0618 // Type or member is obsolete
+            AddPrimitive(nodeIndex, meshName, meshResult, joints, rootJoint, morphTargetWeights, meshNumeration);
+#pragma warning restore CS0618 // Type or member is obsolete
+        }
+
+        /// <summary>Obsolete predecessor of <see cref="AddMesh"/>.</summary>
+        /// <param name="nodeIndex">Index of the node</param>
+        /// <param name="meshName">Mesh's name</param>
+        /// <param name="meshResult">The converted Mesh</param>
+        /// <param name="joints">If a skin was attached, the joint indices. Null otherwise</param>
+        /// <param name="rootJoint">Root joint node index, if present</param>
+        /// <param name="morphTargetWeights">Morph target weights, if present</param>
+        /// <param name="meshNumeration">Per glTF mesh <see cref="MeshResult"/> numeration. A glTF mesh is converted
         /// into one or more MeshResults which are numbered consecutively. <see cref="AddPrimitive"/> is called once
         /// for each of those MeshResults.</param>
+        [Obsolete("Use AddMesh instead.")]
         void AddPrimitive(
             uint nodeIndex,
             string meshName,
@@ -123,7 +151,7 @@ namespace GLTFast
         /// Adds a Mesh/MeshResult to a Node with the purpose of rendering multiple instances of this MeshResult and
         /// material combination (through glTF extension
         /// <a href="https://github.com/KhronosGroup/glTF/blob/main/extensions/2.0/Vendor/EXT_mesh_gpu_instancing/README.md">EXT_mesh_gpu_instancing</a>).
-        /// In contrast to <see cref="AddPrimitive"/> it lacks joints/skin support.
+        /// In contrast to <see cref="AddMesh"/> it lacks joints/skin support.
         /// </summary>
         /// <param name="nodeIndex">Index of the node</param>
         /// <param name="meshName">Mesh's name</param>
@@ -133,8 +161,38 @@ namespace GLTFast
         /// <param name="rotations">Instance rotations</param>
         /// <param name="scales">Instance scales</param>
         /// <param name="meshNumeration">Per glTF mesh <see cref="MeshResult"/> numeration. A glTF mesh is converted
-        /// into one or more MeshResults which are numbered consecutively. <see cref="AddPrimitive"/> is called once
+        /// into one or more MeshResults which are numbered consecutively. <see cref="AddMeshInstanced"/> is called once
         /// for each of those MeshResults.</param>
+        /// <remarks>This is the method the importer calls, so implementing it is preferred, but implementors still
+        /// have to declare the obsolete <see cref="AddPrimitiveInstanced"/> until version 7.0 removes it.</remarks>
+        public void AddMeshInstanced(
+            uint nodeIndex,
+            string meshName,
+            MeshResult meshResult,
+            uint instanceCount,
+            NativeArray<Vector3>? positions,
+            NativeArray<Quaternion>? rotations,
+            NativeArray<Vector3>? scales,
+            int meshNumeration = 0
+        )
+        {
+#pragma warning disable CS0618 // Type or member is obsolete
+            AddPrimitiveInstanced(nodeIndex, meshName, meshResult, instanceCount, positions, rotations, scales, meshNumeration);
+#pragma warning restore CS0618 // Type or member is obsolete
+        }
+
+        /// <summary>Obsolete predecessor of <see cref="AddMeshInstanced"/>.</summary>
+        /// <param name="nodeIndex">Index of the node</param>
+        /// <param name="meshName">Mesh's name</param>
+        /// <param name="meshResult">The converted Mesh</param>
+        /// <param name="instanceCount">Number of instances</param>
+        /// <param name="positions">Instance positions</param>
+        /// <param name="rotations">Instance rotations</param>
+        /// <param name="scales">Instance scales</param>
+        /// <param name="meshNumeration">Per glTF mesh <see cref="MeshResult"/> numeration. A glTF mesh is converted
+        /// into one or more MeshResults which are numbered consecutively. <see cref="AddPrimitiveInstanced"/> is called once
+        /// for each of those MeshResults.</param>
+        [Obsolete("Use AddMeshInstanced instead.")]
         void AddPrimitiveInstanced(
             uint nodeIndex,
             string meshName,

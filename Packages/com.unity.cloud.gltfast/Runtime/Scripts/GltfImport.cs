@@ -3099,7 +3099,7 @@ namespace GLTFast
 
                         if (meshInstancing == null)
                         {
-                            instantiator.AddPrimitive(
+                            instantiator.AddMesh(
                                 nodeIndex,
                                 meshResultName,
                                 meshResult,
@@ -3139,7 +3139,7 @@ namespace GLTFast
                                 instanceCount = (uint)scales.Value.Length;
                             }
 
-                            instantiator.AddPrimitiveInstanced(
+                            instantiator.AddMeshInstanced(
                                 nodeIndex,
                                 meshResultName,
                                 meshResult,
