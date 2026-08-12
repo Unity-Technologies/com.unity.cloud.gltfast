@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: 2023 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
+
 namespace Unity.Cloud.Gltfast.Documentation.Examples
 {
     #region CustomGltfImport
@@ -8,7 +9,7 @@ namespace Unity.Cloud.Gltfast.Documentation.Examples
     using System.Threading.Tasks;
     using Unity.Cloud.Gltfast;
     using Unity.Cloud.Gltfast.Addons;
-    using Unity.Cloud.Gltfast.Logging;
+    using Unity.Cloud.Gltfast.Schema;
     using UnityEngine;
 
     class CustomGltfImport : MonoBehaviour
@@ -93,11 +94,8 @@ namespace Unity.Cloud.Gltfast.Documentation.Examples
             var node = gltf.Nodes[(int)nodeIndex];
             var extras = node?.Extras;
 
-            if (extras == null)
-                return;
-
-            // Access values in the extras property
-            if (extras.TryGetValue("some-extra-key", out string extraValue))
+            if (extras is { Kind: ValueKind.Object }
+                && extras.TryGetValue("some-extra-key", out string extraValue))
             {
                 var component = gameObject.AddComponent<ExtraData>();
                 component.someExtraKey = extraValue;
@@ -105,5 +103,4 @@ namespace Unity.Cloud.Gltfast.Documentation.Examples
         }
     }
     #endregion
-
 }

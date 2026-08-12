@@ -78,7 +78,8 @@ namespace Unity.Cloud.Gltfast.Schema
 
         /// <inheritdoc cref="Root.Extras"/>
         [JsonPropertyName("extras")]
-        public AdditionalPropertyContainer Extras { get; set; }
+        [JsonConverter(typeof(ExtrasConverter))]
+        public ExtrasContainer Extras { get; set; }
 
         /// <inheritdoc cref="Asset.Extensions"/>
         [JsonPropertyName("extensions")]

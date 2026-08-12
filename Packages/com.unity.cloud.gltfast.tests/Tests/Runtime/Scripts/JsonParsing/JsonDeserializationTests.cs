@@ -374,6 +374,46 @@ namespace Unity.Cloud.Gltfast.Tests.JsonParsing
             Assert.IsNotNull(obj.Extras);
         }
 
+        [Test]
+        public void RootExtrasNonObject()
+        {
+            var obj = JsonSerializer.Deserialize(@"{""extras"":42}", GltfJsonContext.Default.Root);
+            Assert.IsNotNull(obj.Extras);
+            Assert.AreEqual(ValueKind.Number, obj.Extras.Kind);
+        }
+
+        [Test]
+        public void AssetExtrasNonObject()
+        {
+            var obj = JsonSerializer.Deserialize(@"{""extras"":""v2.1.0""}", GltfJsonContext.Default.Asset);
+            Assert.AreEqual(ValueKind.String, obj.Extras.Kind);
+            Assert.AreEqual("v2.1.0", obj.Extras.RawValue.GetString());
+        }
+
+        [Test]
+        public void MaterialExtrasNonObject()
+        {
+            var obj = JsonSerializer.Deserialize(@"{""extras"":[1,2]}", GltfJsonContext.Default.Material);
+            Assert.AreEqual(ValueKind.Array, obj.Extras.Kind);
+            Assert.AreEqual(2, obj.Extras.RawValue.ArrayLength);
+        }
+
+        [Test]
+        public void NodeExtrasNonObject()
+        {
+            var obj = JsonSerializer.Deserialize(@"{""extras"":true}", GltfJsonContext.Default.Node);
+            Assert.AreEqual(ValueKind.True, obj.Extras.Kind);
+            Assert.IsTrue(obj.Extras.RawValue.GetBoolean());
+        }
+
+        [Test]
+        public void MeshExtrasNonObject()
+        {
+            var obj = JsonSerializer.Deserialize(@"{""extras"":42}", GltfJsonContext.Default.Mesh);
+            Assert.AreEqual(ValueKind.Number, obj.Extras.Kind);
+            Assert.IsNull(obj.Extras.TargetNames);
+        }
+
 #if UNITY_ANIMATION || GLTFAST_ANIMATION
         [Test]
         public void RootAnimations()
@@ -2380,9 +2420,9 @@ namespace Unity.Cloud.Gltfast.Tests.JsonParsing
         }
 
         [Test]
-        public void AdditionalPropertyContainerDefault()
+        public void ExtrasContainerDefault()
         {
-            var obj = JsonSerializer.Deserialize("{}", GltfJsonContext.Default.AdditionalPropertyContainer);
+            var obj = JsonSerializer.Deserialize("{}", GltfJsonContext.Default.ExtrasContainer);
             Assert.IsNotNull(obj);
             Assert.AreEqual(0, obj.Count);
             Assert.IsFalse(obj.ContainsKey("anything"));
@@ -2390,11 +2430,11 @@ namespace Unity.Cloud.Gltfast.Tests.JsonParsing
         }
 
         [Test]
-        public void AdditionalPropertyContainerMembers()
+        public void ExtrasContainerMembers()
         {
             var obj = JsonSerializer.Deserialize(
                 @"{""alpha"":1,""beta"":""two"",""gamma"":true}",
-                GltfJsonContext.Default.AdditionalPropertyContainer);
+                GltfJsonContext.Default.ExtrasContainer);
             Assert.AreEqual(3, obj.Count);
             Assert.IsTrue(obj.ContainsKey("alpha"));
             Assert.IsTrue(obj.ContainsKey("beta"));

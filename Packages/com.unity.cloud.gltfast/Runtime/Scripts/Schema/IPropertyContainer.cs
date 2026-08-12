@@ -48,7 +48,9 @@ namespace Unity.Cloud.Gltfast.Schema
         /// <param name="key">Property key</param>
         /// <param name="value">Resulting value</param>
         /// <typeparam name="T">Desired target type</typeparam>
-        /// <returns>True if the property was found and successfully cast to type T. False otherwise.</returns>
+        /// <returns>True if the property was found and successfully cast to type T. False otherwise.
+        /// This includes target types that cannot be deserialized at all, like delegates or
+        /// interfaces.</returns>
         bool TryGetValue<T>(string key, out T value);
     }
 

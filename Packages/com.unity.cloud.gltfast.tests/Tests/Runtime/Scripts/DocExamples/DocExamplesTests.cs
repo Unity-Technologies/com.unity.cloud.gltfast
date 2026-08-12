@@ -2,16 +2,19 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 using NUnit.Framework;
 using Unity.Cloud.Gltfast.Documentation.Examples;
 using Unity.Cloud.Gltfast.Export;
+using Unity.Cloud.Gltfast.Schema;
 using Unity.Cloud.Gltfast.Tests;
 using Unity.Cloud.Gltfast.Tests.Import;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.TestTools;
+using Buffer = Unity.Cloud.Gltfast.Schema.Buffer;
 
 namespace Unity.Cloud.Gltfast.Documentation.Examples.Tests
 {
@@ -133,6 +136,40 @@ namespace Unity.Cloud.Gltfast.Documentation.Examples.Tests
             Assert.NotNull(extraData);
             Assert.AreEqual("some-extra-value", extraData.someExtraKey);
             Object.Destroy(go);
+        }
+
+        [Test]
+        public void GetBuffer()
+        {
+            var root = new Root { Buffers = new List<Buffer> { new() { ByteLength = 8 } } };
+
+            Assert.AreSame(root.Buffers[0], SchemaAccess.GetBuffer(root, new BufferView { Buffer = 0 }));
+            Assert.IsNull(SchemaAccess.GetBuffer(root, new BufferView()), "Absent index");
+            Assert.IsNull(SchemaAccess.GetBuffer(root, new BufferView { Buffer = 1 }), "Out of range");
+            Assert.IsNull(SchemaAccess.GetBuffer(root, new BufferView { Buffer = -1 }), "Negative");
+            Assert.IsNull(SchemaAccess.GetBuffer(new Root(), new BufferView { Buffer = 0 }), "No buffers");
+        }
+
+        [UnityTest]
+        [TestCase("null", false, null, ExpectedResult = null, TestName = "TryGetWeights-Null")]
+        [TestCase(@"{""weights"":[1.0,0.5]}", true, new[] { 1.0f, 0.5f }, ExpectedResult = null, TestName = "TryGetWeights-Object")]
+        [TestCase("{}", false, null, ExpectedResult = null, TestName = "TryGetWeights-EmptyObject")]
+        [TestCase("[1.0,0.5]", true, new[] { 1.0f, 0.5f }, ExpectedResult = null, TestName = "TryGetWeights-Array")]
+        [TestCase("42", false, null, ExpectedResult = null, TestName = "TryGetWeights-Number")]
+        [TestCase(@"""nope""", false, null, ExpectedResult = null, TestName = "TryGetWeights-String")]
+        public IEnumerator TryGetWeights(string extrasJson, bool expected, float[] expectedWeights)
+        {
+            using var gltf = new GltfImport();
+            var task = gltf.LoadGltfJsonAsync(
+                $@"{{""asset"":{{""version"":""2.0""}},""nodes"":[{{""extras"":{extrasJson}}}]}}");
+            yield return AsyncWrapper.WaitForTask(task);
+            Assert.IsTrue(task.Result, "Import failed.");
+
+            Assert.AreEqual(expected, SchemaAccess.TryGetWeights(gltf.Root.Nodes[0], out var weights));
+            if (expected)
+            {
+                CollectionAssert.AreEqual(expectedWeights, weights);
+            }
         }
 
         [UnityTest]

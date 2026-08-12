@@ -42,13 +42,13 @@ namespace Unity.Cloud.Gltfast.Schema
         public bool Remove(string key) => ExtensionData?.Remove(key) ?? false;
 
         /// <inheritdoc/>
-        public void Clear() => ExtensionData?.Clear();
+        public virtual void Clear() => ExtensionData?.Clear();
 
         /// <summary>Sets the property <paramref name="key"/> to <paramref name="value"/>, serialized to JSON.</summary>
         /// <param name="key">The property name.</param>
         /// <param name="value">The value to store.</param>
         /// <typeparam name="T">The type of the value to serialize.</typeparam>
-        public void Set<T>(string key, T value)
+        public virtual void Set<T>(string key, T value)
         {
             ExtensionData ??= new Dictionary<string, JsonElement>();
             ExtensionData[key] = JsonSerializer.SerializeToElement(value, JsonOptions.Options);
@@ -62,8 +62,19 @@ namespace Unity.Cloud.Gltfast.Schema
         {
             if (ExtensionData != null && ExtensionData.TryGetValue(key, out var token))
             {
-                value = token.Deserialize<T>(JsonOptions.Options);
-                return true;
+                try
+                {
+                    value = token.Deserialize<T>(JsonOptions.Options);
+                    return true;
+                }
+                // JsonException: the value does not fit T. NotSupportedException: T is not
+                // deserializable at all, which for interfaces and abstract types depends on the
+                // value's kind.
+                catch (Exception exception) when (exception is JsonException or NotSupportedException)
+                {
+                    value = default;
+                    return false;
+                }
             }
             value = default; return false;
         }

@@ -497,16 +497,17 @@ $@"
             }
         }
 
-        static void CertifyCustomExtras(IPropertyContainer extras)
+        static void CertifyCustomExtras(ExtrasContainer extras)
         {
             Assert.NotNull(extras);
+            Assert.AreEqual(ValueKind.Object, extras.Kind);
             Assert.IsFalse(extras.TryGetValue("NoMatch", out int _));
             Assert.IsTrue(extras.TryGetValue("myKey", out string value));
             Assert.AreEqual("myValue", value);
 
             // incorrect destination type int (actually is a string)
-            Assert.Throws<JsonException>(
-                () => extras.TryGetValue("myKey", out int intValue));
+            Assert.IsFalse(extras.TryGetValue("myKey", out int intValue));
+            Assert.AreEqual(default(int), intValue);
         }
 
         [Test]

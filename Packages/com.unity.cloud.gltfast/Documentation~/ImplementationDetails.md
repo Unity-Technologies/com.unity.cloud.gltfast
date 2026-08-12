@@ -10,19 +10,17 @@ The classes in `Unity.Cloud.Gltfast.Schema` do not enforce the glTF&trade; speci
 
 Properties holding an index into a root-level array are nullable (`int?`), where `null` means the property was absent from the JSON. This applies whether or not the specification marks the property as required. Check indices where you use them &mdash; a range check is needed in any case, since a malformed document may reference an element that does not exist:
 
-```csharp
-if (bufferView.Buffer is { } bufferIndex
-    && bufferIndex >= 0
-    && root.Buffers != null
-    && bufferIndex < root.Buffers.Count)
-{
-    var buffer = root.Buffers[bufferIndex];
-}
-```
+[!code-cs [buffer-view-index](../Runtime/DocExamples/SchemaAccess.cs#BufferViewIndex)]
 
 Sizes and counts &mdash; [Accessor.Count](xref:Unity.Cloud.Gltfast.Schema.Accessor.Count), `AccessorSparse.Count`, [BufferView.ByteLength](xref:Unity.Cloud.Gltfast.Schema.BufferView.ByteLength), [Buffer.ByteLength](xref:Unity.Cloud.Gltfast.Schema.Buffer.ByteLength) &mdash; are not nullable. The specification requires at least `1`, so `0` denotes an absent property.
 
 Integer widths follow what a member describes: external resource sizes are `long`, in-memory offsets and slice lengths are `int`, matching the native collections they address. [Buffer.ByteLength](xref:Unity.Cloud.Gltfast.Schema.Buffer.ByteLength) being `long` therefore does **not** imply support for buffers above `int.MaxValue` &mdash; buffer data lives in native collections whose length is `int`, and buffer view offsets are `int` too.
+
+The specification allows `extras` to be any JSON value, not just an object, so [ExtrasContainer.Kind](xref:Unity.Cloud.Gltfast.Schema.ExtrasContainer.Kind) reports what the JSON actually carried. It is [ValueKind.Object](xref:Unity.Cloud.Gltfast.Schema.ValueKind) in the common case, where the properties are reachable through `Count`, `Keys`, the indexer and `TryGetValue`. For any other kind the container has no properties and the value is read through [ExtrasContainer.RawValue](xref:Unity.Cloud.Gltfast.Schema.ExtrasContainer.RawValue):
+
+[!code-cs [extras-value](../Runtime/DocExamples/SchemaAccess.cs#ExtrasValue)]
+
+`extensions`, which the specification requires to be an object, does not allow this.
 
 ## Trademarks
 

@@ -32,8 +32,19 @@ namespace Unity.Cloud.Gltfast.Schema
         {
             if (m_Data.TryGetValue(key, out var token))
             {
-                value = token.Deserialize<T>(JsonOptions.Options);
-                return true;
+                try
+                {
+                    value = token.Deserialize<T>(JsonOptions.Options);
+                    return true;
+                }
+                // JsonException: the value does not fit T. NotSupportedException: T is not
+                // deserializable at all, which for interfaces and abstract types depends on the
+                // value's kind.
+                catch (Exception exception) when (exception is JsonException or NotSupportedException)
+                {
+                    value = default;
+                    return false;
+                }
             }
             value = default; return false;
         }

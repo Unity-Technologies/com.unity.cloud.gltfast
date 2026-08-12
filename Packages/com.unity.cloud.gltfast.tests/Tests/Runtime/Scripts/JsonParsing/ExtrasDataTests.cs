@@ -3,9 +3,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using NUnit.Framework;
 using Unity.Cloud.Gltfast.Schema;
 using Unity.Gltfast.Text.Json;
+using Unity.Gltfast.Text.Json.Serialization;
 
 namespace Unity.Cloud.Gltfast.Tests.JsonParsing
 {
@@ -265,7 +268,7 @@ namespace Unity.Cloud.Gltfast.Tests.JsonParsing
             Assert.Throws<KeyNotFoundException>(() => _ = e["foo"]);
         }
 
-        static AdditionalPropertyContainer DeserializeNodeExtras(string extrasJson)
+        static ExtrasContainer DeserializeNodeExtras(string extrasJson)
         {
             var json = $@"{{""nodes"":[{{""extras"":{extrasJson}}}]}}";
             var gltf = JsonSerializer.Deserialize(json, GltfJsonContext.Default.Root);
@@ -374,13 +377,50 @@ namespace Unity.Cloud.Gltfast.Tests.JsonParsing
             {
                 Assert.Fail("Expected no properties.");
             }
+            Assert.AreEqual(ValueKind.Object, e.Kind);
+        }
+
+        [Test]
+        public void UndefinedValueTryGetValueReturnsFalse()
+        {
+            // A Value can be Undefined without any misuse: RawValue of object-form extras, the result
+            // of a failed lookup, or default. TryGetValue<T> is the only kind-agnostic member, so it
+            // reports that as a failed conversion instead of throwing.
+            var e = DeserializeNodeExtras(@"{""obj"":{""a"":1}}");
+            Assert.AreEqual(ValueKind.Undefined, e.RawValue.Kind);
+            Assert.IsFalse(e.RawValue.TryGetValue(out int _));
+            Assert.IsFalse(e.RawValue.TryGetValue(out string _));
+
+            Assert.IsFalse(e["obj"].TryGetValue("missing", out var missing));
+            Assert.AreEqual(ValueKind.Undefined, missing.Kind);
+            Assert.IsFalse(missing.TryGetValue(out int _));
+
+            Assert.IsFalse(default(Value).TryGetValue(out int _));
+        }
+
+        [Test]
+        public void UndefinedValueKindSpecificMembersThrow()
+        {
+            // Every other member mirrors JsonElement: it requires a specific kind and throws for any
+            // other, Undefined included. Guarding only Undefined would be arbitrary, since the same
+            // calls throw on a number or a string too.
+            var e = DeserializeNodeExtras(@"{""num"":42}");
+            Assert.AreEqual(ValueKind.Undefined, e.RawValue.Kind);
+
+            Assert.Throws<InvalidOperationException>(() => e.RawValue.TryGetValue("any", out _));
+            Assert.Throws<InvalidOperationException>(() => e.RawValue.GetString());
+            Assert.Throws<InvalidOperationException>(() => _ = e.RawValue.ArrayLength);
+
+            // Same operation, same exception, on a defined but wrong kind.
+            Assert.Throws<InvalidOperationException>(() => e["num"].TryGetValue("any", out _));
+            Assert.Throws<InvalidOperationException>(() => _ = e["num"].ArrayLength);
         }
 
 
         [Test]
         public void SetAndSerializePrimitives()
         {
-            var node = new Node { Extras = new AdditionalPropertyContainer() };
+            var node = new Node { Extras = new ExtrasContainer() };
             var extras = node.Extras;
             extras.Set("stringProp", "Yadiya");
             extras.Set("intProp", 42L);
@@ -410,7 +450,7 @@ namespace Unity.Cloud.Gltfast.Tests.JsonParsing
         [Test]
         public void SetAndSerializeObject()
         {
-            var node = new Node { Extras = new AdditionalPropertyContainer() };
+            var node = new Node { Extras = new ExtrasContainer() };
             node.Extras.Set("meta", new MetaData { name = "foo", count = 7 });
 
             var json = JsonSerializer.Serialize(node, GltfJsonContext.Default.Node);
@@ -486,6 +526,298 @@ namespace Unity.Cloud.Gltfast.Tests.JsonParsing
         {
             IAdditionalPropertyContainer node = new Node();
             Assert.AreEqual(0, node.AdditionalProperties.Count);
+        }
+
+        [Test]
+        public void TryGetValueTypeMismatch()
+        {
+            var e = DeserializeNodeExtras(@"{""stringProp"":""Yadiya"",""intProp"":42}");
+
+            Assert.IsFalse(e.TryGetValue("stringProp", out int notAnInt));
+            Assert.AreEqual(default(int), notAnInt);
+            Assert.IsFalse(e.TryGetValue("intProp", out int[] notAnArray));
+            Assert.IsNull(notAnArray);
+
+            // A matching type still succeeds.
+            Assert.IsTrue(e.TryGetValue("intProp", out int intProp));
+            Assert.AreEqual(42, intProp);
+        }
+
+        [Test]
+        public void TryGetValueUnsupportedTargetType()
+        {
+            var e = DeserializeNodeExtras(@"{""num"":42,""obj"":{""a"":1}}");
+
+            // Delegates are refused outright, whatever the value is.
+            Assert.IsFalse(e.TryGetValue("num", out Action _));
+            Assert.IsFalse(e.TryGetValue("obj", out Action _));
+
+            // Interfaces are only refused for object values, so without this the same target type
+            // would report false for one document and throw for another.
+            Assert.IsFalse(e.TryGetValue("num", out IDisposable _));
+            Assert.IsFalse(e.TryGetValue("obj", out IDisposable _));
+        }
+
+        [Test]
+        public void RawValueTryGetValueUnsupportedTargetType()
+        {
+            var e = DeserializeNodeExtras("42");
+            Assert.AreEqual(ValueKind.Number, e.Kind);
+
+            Assert.IsFalse(e.RawValue.TryGetValue(out Action _));
+            Assert.IsFalse(e.RawValue.TryGetValue(out IDisposable _));
+
+            var obj = DeserializeNodeExtras(@"{""obj"":{""a"":1}}")["obj"];
+            Assert.IsFalse(obj.TryGetValue(out IDisposable _));
+        }
+
+        [Test]
+        public void AdditionalPropertiesTryGetValueUnsupportedTargetType()
+        {
+            var gltf = JsonSerializer.Deserialize(
+                @"{""nodes"":[{""unknownNum"":42,""unknownObj"":{""a"":1}}]}",
+                GltfJsonContext.Default.Root);
+
+            IAdditionalPropertyContainer node = gltf.Nodes[0];
+            Assert.IsFalse(node.AdditionalProperties.TryGetValue("unknownNum", out Action _));
+            Assert.IsFalse(node.AdditionalProperties.TryGetValue("unknownObj", out IDisposable _));
+        }
+
+        [Test]
+        public void AdditionalPropertiesTryGetValueTypeMismatch()
+        {
+            var gltf = JsonSerializer.Deserialize(
+                @"{""nodes"":[{""unknownProp"":""Yadiya""}]}",
+                GltfJsonContext.Default.Root);
+
+            IAdditionalPropertyContainer node = gltf.Nodes[0];
+            Assert.IsFalse(node.AdditionalProperties.TryGetValue("unknownProp", out int notAnInt));
+            Assert.AreEqual(default(int), notAnInt);
+            Assert.IsTrue(node.AdditionalProperties.TryGetValue("unknownProp", out string stringProp));
+            Assert.AreEqual("Yadiya", stringProp);
+        }
+
+        // The glTF specification allows "extras" to be any JSON value, not just an object.
+        // https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html#reference-extras
+
+        [Test]
+        [TestCase("42", ValueKind.Number)]
+        [TestCase("-3.5", ValueKind.Number)]
+        [TestCase(@"""Yadiya""", ValueKind.String)]
+        [TestCase("true", ValueKind.True)]
+        [TestCase("false", ValueKind.False)]
+        [TestCase("[1,2,3]", ValueKind.Array)]
+        [TestCase("[]", ValueKind.Array)]
+        [TestCase("{}", ValueKind.Object)]
+        public void NonObjectExtrasKind(string extrasJson, ValueKind expected)
+        {
+            var e = DeserializeNodeExtras(extrasJson);
+            Assert.AreEqual(expected, e.Kind);
+        }
+
+        [Test]
+        public void NonObjectExtrasNumber()
+        {
+            var e = DeserializeNodeExtras("42");
+            Assert.AreEqual(ValueKind.Number, e.Kind);
+            Assert.IsTrue(e.RawValue.TryGetInt64(out var value));
+            Assert.AreEqual(42, value);
+        }
+
+        [Test]
+        public void NonObjectExtrasString()
+        {
+            var e = DeserializeNodeExtras(@"""Yadiya""");
+            Assert.AreEqual(ValueKind.String, e.Kind);
+            Assert.AreEqual("Yadiya", e.RawValue.GetString());
+        }
+
+        [Test]
+        public void NonObjectExtrasBoolean()
+        {
+            Assert.IsTrue(DeserializeNodeExtras("true").RawValue.GetBoolean());
+            Assert.IsFalse(DeserializeNodeExtras("false").RawValue.GetBoolean());
+        }
+
+        [Test]
+        public void NonObjectExtrasArray()
+        {
+            var e = DeserializeNodeExtras("[1,2,3]");
+            Assert.AreEqual(ValueKind.Array, e.Kind);
+
+            var raw = e.RawValue;
+            Assert.AreEqual(3, raw.ArrayLength);
+            Assert.IsTrue(raw[1].TryGetInt64(out var second));
+            Assert.AreEqual(2, second);
+        }
+
+        [Test]
+        public void NonObjectExtrasNestedArray()
+        {
+            var e = DeserializeNodeExtras(@"[{""a"":[1,2]},null,3]");
+            Assert.AreEqual(ValueKind.Array, e.Kind);
+
+            var raw = e.RawValue;
+            Assert.AreEqual(3, raw.ArrayLength);
+            Assert.AreEqual(ValueKind.Object, raw[0].Kind);
+            Assert.AreEqual(ValueKind.Null, raw[1].Kind);
+            Assert.AreEqual(2, raw[0]["a"].ArrayLength);
+        }
+
+        [Test]
+        public void NonObjectExtrasDeserializesToUserType()
+        {
+            var e = DeserializeNodeExtras("[1.0,0.5,0.25]");
+            Assert.IsTrue(e.RawValue.TryGetValue(out float[] values));
+            CollectionAssert.AreEqual(new[] { 1.0f, 0.5f, 0.25f }, values);
+        }
+
+        [Test]
+        public void NonObjectExtrasHasNoProperties()
+        {
+            var e = DeserializeNodeExtras("42");
+            Assert.AreEqual(0, e.Count);
+            CollectionAssert.IsEmpty(e.Keys);
+            Assert.IsFalse(e.ContainsKey("anything"));
+            Assert.IsFalse(e.TryGetValue("anything", out int _));
+            foreach (var _ in e)
+            {
+                Assert.Fail("Expected no properties.");
+            }
+        }
+
+        [Test]
+        public void ObjectExtrasKindIsObject()
+        {
+            var e = DeserializeNodeExtras(@"{""intProp"":42}");
+            Assert.AreEqual(ValueKind.Object, e.Kind);
+            Assert.AreEqual(ValueKind.Undefined, e.RawValue.Kind);
+            Assert.AreEqual(1, e.Count);
+        }
+
+        [Test]
+        public void NullExtrasIsNull()
+        {
+            var gltf = JsonSerializer.Deserialize(@"{""nodes"":[{""extras"":null}]}", GltfJsonContext.Default.Root);
+            Assert.IsNull(gltf.Nodes[0].Extras);
+        }
+
+        [Test]
+        public void MeshNonObjectExtras()
+        {
+            var mesh = JsonSerializer.Deserialize(@"{""extras"":99}", GltfJsonContext.Default.Mesh);
+            Assert.IsNotNull(mesh.Extras);
+            Assert.AreEqual(ValueKind.Number, mesh.Extras.Kind);
+            Assert.IsTrue(mesh.Extras.RawValue.TryGetInt64(out var value));
+            Assert.AreEqual(99, value);
+            Assert.IsNull(mesh.Extras.TargetNames);
+        }
+
+        [Test]
+        public void MeshObjectExtrasStillPopulatesTargetNames()
+        {
+            var mesh = JsonSerializer.Deserialize(
+                @"{""extras"":{""targetNames"":[""k1"",""k2""],""custom"":7}}",
+                GltfJsonContext.Default.Mesh);
+
+            Assert.AreEqual(ValueKind.Object, mesh.Extras.Kind);
+            CollectionAssert.AreEqual(new[] { "k1", "k2" }, mesh.Extras.TargetNames);
+            Assert.IsTrue(mesh.Extras.TryGetValue("custom", out int custom));
+            Assert.AreEqual(7, custom);
+        }
+
+        [Test]
+        [TestCase("42")]
+        [TestCase(@"""Yadiya""")]
+        [TestCase("true")]
+        [TestCase("false")]
+        [TestCase("[1,2,3]")]
+        [TestCase("[]")]
+        [TestCase(@"{""a"":1}")]
+        [TestCase("{}")]
+        public void NonObjectExtrasRoundTrip(string extrasJson)
+        {
+            var json = $@"{{""nodes"":[{{""extras"":{extrasJson}}}]}}";
+            var gltf = JsonSerializer.Deserialize(json, GltfJsonContext.Default.Root);
+            Assert.AreEqual(json, JsonSerializer.Serialize(gltf, GltfJsonContext.Default.Root));
+        }
+
+        [Test]
+        public void SetOnNonObjectExtrasDiscardsRawValue()
+        {
+            var e = DeserializeNodeExtras("42");
+            e.Set("a", 1L);
+
+            Assert.AreEqual(ValueKind.Object, e.Kind);
+            Assert.AreEqual(1, e.Count);
+
+            var node = new Node { Extras = e };
+            Assert.AreEqual(
+                @"{""extras"":{""a"":1}}",
+                JsonSerializer.Serialize(node, GltfJsonContext.Default.Node));
+        }
+
+        [Test]
+        public void SetTargetNamesOnNonObjectExtrasDiscardsRawValue()
+        {
+            var mesh = JsonSerializer.Deserialize(@"{""extras"":42}", GltfJsonContext.Default.Mesh);
+            Assert.AreEqual(ValueKind.Number, mesh.Extras.Kind);
+
+            mesh.Extras.TargetNames = new List<string> { "a", "b" };
+
+            Assert.AreEqual(ValueKind.Object, mesh.Extras.Kind);
+            Assert.AreEqual(
+                @"{""extras"":{""targetNames"":[""a"",""b""]}}",
+                JsonSerializer.Serialize(mesh, GltfJsonContext.Default.Mesh));
+        }
+
+        [Test]
+        public void SetOnNonObjectMeshExtrasDiscardsRawValue()
+        {
+            var mesh = JsonSerializer.Deserialize(@"{""extras"":42}", GltfJsonContext.Default.Mesh);
+            mesh.Extras.Set("uuid", "abc");
+
+            Assert.AreEqual(ValueKind.Object, mesh.Extras.Kind);
+            Assert.AreEqual(
+                @"{""extras"":{""uuid"":""abc""}}",
+                JsonSerializer.Serialize(mesh, GltfJsonContext.Default.Mesh));
+        }
+
+        [Test]
+        public void ClearOnNonObjectExtrasDiscardsRawValue()
+        {
+            var e = DeserializeNodeExtras(@"""Yadiya""");
+            e.Clear();
+            Assert.AreEqual(ValueKind.Object, e.Kind);
+            Assert.AreEqual(0, e.Count);
+        }
+
+        [Test]
+        public void ExtrasContainerHasNoSerializedMembers()
+        {
+            // ExtrasConverter reads the JSON object directly rather than delegating to the generated
+            // converter, which is only equivalent while ExtrasContainer declares nothing to
+            // (de-)serialize. A member added without a [JsonIgnore] would silently end up among the
+            // additional properties instead. Use MeshExtrasConverter's delegating approach for a
+            // container that needs declared members.
+            var serialized = typeof(ExtrasContainer)
+                .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                .Where(property => property.GetIndexParameters().Length == 0
+                    && property.GetCustomAttribute<JsonIgnoreAttribute>() == null)
+                .Select(property => property.Name)
+                .ToArray();
+
+            CollectionAssert.IsEmpty(
+                serialized,
+                "ExtrasContainer must not declare serialized members; see ExtrasConverter.");
+        }
+
+        [Test]
+        public void NonObjectExtensionsThrows()
+        {
+            // Unlike extras, extensions must be an object per specification.
+            Assert.Throws<JsonException>(
+                () => JsonSerializer.Deserialize(@"{""extensions"":5}", GltfJsonContext.Default.Node));
         }
 
         class MetaData

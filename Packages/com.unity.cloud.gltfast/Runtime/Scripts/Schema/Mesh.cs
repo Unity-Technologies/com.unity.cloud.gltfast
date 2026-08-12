@@ -25,6 +25,7 @@ namespace Unity.Cloud.Gltfast.Schema
 
         /// <inheritdoc cref="MeshExtras"/>
         [JsonPropertyName("extras")]
+        [JsonConverter(typeof(MeshExtrasConverter))]
         public MeshExtras Extras { get; set; }
 
         /// <summary>

@@ -11,12 +11,24 @@ namespace Unity.Cloud.Gltfast.Schema
     /// Application-specific data for meshes
     /// </summary>
     [MovedFrom(true, sourceNamespace: "GLTFast.Schema", sourceAssembly: "glTFast")]
-    public class MeshExtras : AdditionalPropertyContainer
+    public class MeshExtras : ExtrasContainer
     {
+        List<string> m_TargetNames;
+
         /// <summary>
         /// Morph targets' names
         /// </summary>
+        /// <remarks>Setting this turns the <c>extras</c> into a JSON object, discarding a non-object
+        /// <see cref="ExtrasContainer.RawValue"/>.</remarks>
         [JsonPropertyName("targetNames")]
-        public List<string> TargetNames { get; set; }
+        public List<string> TargetNames
+        {
+            get => m_TargetNames;
+            set
+            {
+                RawValueElement = default;
+                m_TargetNames = value;
+            }
+        }
     }
 }

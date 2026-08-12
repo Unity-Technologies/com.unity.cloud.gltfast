@@ -332,7 +332,7 @@ namespace Unity.Cloud.Gltfast.Tests.JsonParsing
         public void RootExtras()
         {
             var json = JsonSerializer.Serialize(
-                new Root { Extras = new AdditionalPropertyContainer() },
+                new Root { Extras = new ExtrasContainer() },
                 GltfJsonContext.Default.Root);
             Assert.AreEqual(@"{""extras"":{}}", json);
         }
@@ -386,7 +386,7 @@ namespace Unity.Cloud.Gltfast.Tests.JsonParsing
         [Test]
         public void AssetExtras()
         {
-            var json = JsonSerializer.Serialize(new Asset { Extras = new AdditionalPropertyContainer() }, GltfJsonContext.Default.Asset);
+            var json = JsonSerializer.Serialize(new Asset { Extras = new ExtrasContainer() }, GltfJsonContext.Default.Asset);
             Assert.AreEqual(@"{""extras"":{}}", json);
         }
 
@@ -491,7 +491,7 @@ namespace Unity.Cloud.Gltfast.Tests.JsonParsing
         [Test]
         public void AccessorExtras()
         {
-            var json = JsonSerializer.Serialize(new Accessor { Extras = new AdditionalPropertyContainer() }, GltfJsonContext.Default.Accessor);
+            var json = JsonSerializer.Serialize(new Accessor { Extras = new ExtrasContainer() }, GltfJsonContext.Default.Accessor);
             Assert.AreEqual(@"{""extras"":{}}", json);
         }
 
@@ -2318,9 +2318,9 @@ namespace Unity.Cloud.Gltfast.Tests.JsonParsing
         }
 
         [Test]
-        public void AdditionalPropertyContainerDefault()
+        public void ExtrasContainerDefault()
         {
-            var json = JsonSerializer.Serialize(new AdditionalPropertyContainer(), GltfJsonContext.Default.AdditionalPropertyContainer);
+            var json = JsonSerializer.Serialize(new ExtrasContainer(), GltfJsonContext.Default.ExtrasContainer);
             Assert.AreEqual("{}", json);
         }
     }

@@ -86,7 +86,8 @@ namespace Unity.Cloud.Gltfast.Schema
         /// </summary>
         /// <seealso href="https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html#reference-extras"/>
         [JsonPropertyName("extras")]
-        public AdditionalPropertyContainer Extras { get; set; }
+        [JsonConverter(typeof(ExtrasConverter))]
+        public ExtrasContainer Extras { get; set; }
 
         /// <summary>JSON properties without a matching member.</summary>
         [JsonExtensionData, JsonInclude]

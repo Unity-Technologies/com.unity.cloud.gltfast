@@ -44,7 +44,8 @@ namespace Unity.Cloud.Gltfast.Schema
 
         /// <inheritdoc cref="Root.Extras"/>
         [JsonPropertyName("extras")]
-        public AdditionalPropertyContainer Extras { get; set; }
+        [JsonConverter(typeof(ExtrasConverter))]
+        public ExtrasContainer Extras { get; set; }
 
         /// <summary>JSON properties without a matching member.</summary>
         [JsonExtensionData, JsonInclude]

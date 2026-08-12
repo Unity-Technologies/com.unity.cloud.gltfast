@@ -58,6 +58,7 @@ namespace Unity.Cloud.Gltfast.Editor.Tests
             "Unity.Cloud.Gltfast.Schema.CameraExtensions",
             "Unity.Cloud.Gltfast.Schema.CameraOrthographicExtensions",
             "Unity.Cloud.Gltfast.Schema.CameraPerspectiveExtensions",
+            "Unity.Cloud.Gltfast.Schema.ExtrasContainer",
             "Unity.Cloud.Gltfast.Schema.IAdditionalPropertyContainer",
             "Unity.Cloud.Gltfast.Schema.ImageExtensions",
             "Unity.Cloud.Gltfast.Schema.MeshExtensions",

@@ -106,6 +106,33 @@ This is a member rename within an unchanged class, so it's **not** covered by `[
 | `root.Extensions.KHR_lights_punctual` | `root.Extensions.LightsPunctual` |
 | `material.Extensions.KHR_materials_unlit` | `material.Extensions.Unlit` |
 
+### `Extras` typed as `ExtrasContainer`
+
+**Every** schema object's `Extras` property changed from `AdditionalPropertyContainer` to [ExtrasContainer](xref:Unity.Cloud.Gltfast.Schema.ExtrasContainer), which derives from it. `MeshExtras` derives from `ExtrasContainer` as well.
+
+Reads are unaffected, since the derived type converts to the base implicitly. Only construction has to change:
+
+| Before | After |
+| ------ | ----- |
+| `node.Extras = new AdditionalPropertyContainer();` | `node.Extras = new ExtrasContainer();` |
+| `AdditionalPropertyContainer extras = node.Extras;` | unchanged (upcast still works) |
+
+The glTF specification allows `extras` to be any JSON value, not just an object. Such documents used to fail to import with a `JsonException`; they now load. [ExtrasContainer.Kind](xref:Unity.Cloud.Gltfast.Schema.ExtrasContainer.Kind) reports the value kind and [ExtrasContainer.RawValue](xref:Unity.Cloud.Gltfast.Schema.ExtrasContainer.RawValue) provides the value when it is not an object, so code that assumes `extras` is an object should check `Kind` first:
+
+| Before | After |
+| ------ | ----- |
+| `if (node.Extras != null) node.Extras.TryGetValue("key", out string v);` | `if (node.Extras is { Kind: ValueKind.Object }) node.Extras.TryGetValue("key", out string v);` |
+
+`extensions` is unaffected; the specification requires it to be a JSON object.
+
+### `TryGetValue<T>` no longer throws on a failed conversion
+
+`TryGetValue<T>(string, out T)` on [IReadOnlyPropertyContainer](xref:Unity.Cloud.Gltfast.Schema.IReadOnlyPropertyContainer) (and thus on extras and extension containers, and on `AdditionalProperties`) returns `false` when the JSON value cannot be converted to `T`, as its documentation always stated. It used to let the exception escape. Code that wrapped such a call in `try`/`catch` can drop the handler and check the return value instead.
+
+This covers both a value that does not fit `T` and a `T` that cannot be deserialized at all, such as a delegate or an interface. The distinction used to be observable and data-dependent: `TryGetValue<IDisposable>` threw a `JsonException` for a number and a `NotSupportedException` for a JSON object, so the same call reported failure differently depending on the document.
+
+[Value.TryGetValue&lt;T&gt;(out T)](xref:Unity.Cloud.Gltfast.Schema.Value.TryGetValue*), used to convert a whole non-object `extras`, behaves the same way.
+
 ### Async methods carry an `Async` suffix
 
 Asynchronous (`Task`-returning) methods were renamed to end in `Async`, per the .NET naming convention.
