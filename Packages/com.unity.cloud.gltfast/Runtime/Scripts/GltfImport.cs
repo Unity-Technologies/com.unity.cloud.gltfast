@@ -3025,7 +3025,6 @@ namespace Unity.Cloud.Gltfast
                 Profiler.BeginSample("CreateHierarchy");
                 var node = this.Root.Nodes[(int)nodeIndex];
                 node.GetTransform(out var position, out var rotation, out var scale);
-                instantiator.CreateNode(nodeIndex, parentIndex, position, rotation, scale);
 
                 var nodeName = m_NodeNames == null ? node.Name : m_NodeNames[nodeIndex];
                 if (nodeName == null && node.Mesh.HasValue)
@@ -3042,7 +3041,7 @@ namespace Unity.Cloud.Gltfast
                     }
                 }
 
-                instantiator.SetNodeName(nodeIndex, nodeName);
+                instantiator.CreateNode(nodeIndex, parentIndex, position, rotation, scale, nodeName);
                 Profiler.EndSample();
             }
 
@@ -3099,7 +3098,7 @@ namespace Unity.Cloud.Gltfast
 
                         if (meshInstancing == null)
                         {
-                            instantiator.AddPrimitive(
+                            instantiator.AddMesh(
                                 nodeIndex,
                                 meshResultName,
                                 meshResult,
@@ -3139,7 +3138,7 @@ namespace Unity.Cloud.Gltfast
                                 instanceCount = (uint)scales.Value.Length;
                             }
 
-                            instantiator.AddPrimitiveInstanced(
+                            instantiator.AddMeshInstanced(
                                 nodeIndex,
                                 meshResultName,
                                 meshResult,

@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: 2023 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Scripting.APIUpdating;
@@ -41,6 +42,7 @@ namespace Unity.Cloud.Gltfast
         }
 
         /// <inheritdoc />
+        [Obsolete("Use IInstantiator.AddMesh instead.")]
         public override void AddPrimitive(
             uint nodeIndex,
             string meshName,

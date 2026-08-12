@@ -168,6 +168,38 @@ name now fails with CS0506 because the shim that carries it is not `virtual`. An
 compile-time type is one of the four interfaces is not rewritten either, so
 `IDeferAgent agent; agent.BreakPoint();` needs the same manual edit as the declaration does.
 
+### `IInstantiator` mesh and node-name members renamed
+
+Four [IInstantiator](xref:Unity.Cloud.Gltfast.IInstantiator) members are `[Obsolete]`. All four still work — each has a default implementation routing to or from its replacement — so an existing implementation keeps compiling and behaving as before. The importer now calls the new members.
+
+| Before | After |
+|--------|-------|
+| `IInstantiator.AddPrimitive` | [IInstantiator.AddMesh](xref:Unity.Cloud.Gltfast.IInstantiator.AddMesh*) |
+| `IInstantiator.AddPrimitiveInstanced` | [IInstantiator.AddMeshInstanced](xref:Unity.Cloud.Gltfast.IInstantiator.AddMeshInstanced*) |
+| `IInstantiator.CreateNode` without `name`, followed by `IInstantiator.SetNodeName` | [IInstantiator.CreateNode](xref:Unity.Cloud.Gltfast.IInstantiator.CreateNode*) with a `name` parameter |
+
+New signature:
+
+```csharp
+public virtual void CreateNode(
+    uint nodeIndex, uint? parentIndex,
+    double3 position, double4 rotation, double3 scale,
+    string name
+    )
+```
+
+The two renames migrate differently, and the difference decides whether your override is reached at all.
+
+**`CreateNode` is a real virtual member** on [GameObjectInstantiator](xref:Unity.Cloud.Gltfast.GameObjectInstantiator) and [EntityInstantiator](xref:Unity.Cloud.Gltfast.EntityInstantiator). Override it as you would any other; nothing further is required.
+
+**`AddMesh` and `AddMeshInstanced` exist only as default interface members.** Neither class declares them, so a class deriving from one of them must re-declare the interface for its own versions to be reached:
+
+```csharp
+class MyInstantiator : GameObjectInstantiator, IInstantiator
+```
+
+A class's interface map is fixed where the interface is declared. Deriving without re-declaring compiles, but the base implementation keeps being called through an `IInstantiator` reference and your `AddMesh` never runs. Until you migrate, overriding the obsolete `AddPrimitive` and `AddPrimitiveInstanced` continues to work unchanged.
+
 ### Schema enum properties wrapped in `EnumOrRawValue<TEnum>`
 
 Several `Unity.Cloud.Gltfast.Schema` properties that used to be enums or strings are now wrapped in [EnumOrRawValue&lt;TEnum&gt;](xref:Unity.Cloud.Gltfast.Schema.EnumOrRawValue`1) so that values introduced by glTF extensions (and therefore unknown at build time) are preserved through deserialization and serialization.
@@ -375,7 +407,7 @@ Public method parameters that used to take `uint[]` / `string[]` were updated ba
 | ------ | ------ | ----- |
 | [IInstantiator.BeginScene](xref:Unity.Cloud.Gltfast.IInstantiator.BeginScene*) `rootNodeIndices` | `uint[]` | `IReadOnlyList<uint>` |
 | [IInstantiator.EndScene](xref:Unity.Cloud.Gltfast.IInstantiator.EndScene*) `rootNodeIndices` | `uint[]` | `IReadOnlyList<uint>` |
-| [IInstantiator.AddPrimitive](xref:Unity.Cloud.Gltfast.IInstantiator.AddPrimitive*) `joints` | `uint[]` | `IReadOnlyList<uint>` |
+| [IInstantiator.AddMesh](xref:Unity.Cloud.Gltfast.IInstantiator.AddMesh*) `joints` | `uint[]` | `IReadOnlyList<uint>` |
 | `GameObjectInstantiator.MeshAddedDelegate` `joints` | `uint[]` | `IReadOnlyList<uint>` |
 | `IAnimationProcessor.AddMorphTargetWeightCurves` `morphTargetNames` | `string[]` | `IReadOnlyList<string>` |
 

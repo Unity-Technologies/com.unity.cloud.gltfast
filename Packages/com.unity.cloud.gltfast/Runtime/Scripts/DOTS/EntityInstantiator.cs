@@ -22,6 +22,13 @@ using UnityEngine.Rendering;
 
 namespace Unity.Cloud.Gltfast
 {
+    /// <summary>
+    /// Generates an Entity hierarchy from a glTF scene.
+    /// </summary>
+    /// <remarks>
+    /// A derived class must re-declare the interface (<c>class MyInstantiator : EntityInstantiator, IInstantiator</c>)
+    /// for its own <see cref="IInstantiator.AddMesh"/> or <see cref="IInstantiator.AddMeshInstanced"/> to be reached.
+    /// </remarks>
     [MovedFrom(true, sourceNamespace: "GLTFast", sourceAssembly: "glTFast.dots")]
     public class EntityInstantiator : IInstantiator
     {
@@ -175,6 +182,20 @@ namespace Unity.Cloud.Gltfast
             return node;
         }
 
+        /// <inheritdoc />
+        public virtual void CreateNode(
+            uint nodeIndex,
+            uint? parentIndex,
+            double3 position,
+            double4 rotation,
+            double3 scale,
+            string name
+        )
+        {
+            CreateNode(nodeIndex, parentIndex, position, rotation, scale);
+            SetNodeName(nodeIndex, name);
+        }
+
         public void SetNodeName(uint nodeIndex, string name)
         {
 #if UNITY_EDITOR
@@ -183,6 +204,7 @@ namespace Unity.Cloud.Gltfast
         }
 
         /// <inheritdoc />
+        [Obsolete("Use IInstantiator.AddMesh instead.")]
         public virtual void AddPrimitive(
             uint nodeIndex,
             string meshName,
@@ -197,7 +219,7 @@ namespace Unity.Cloud.Gltfast
             {
                 return;
             }
-            Profiler.BeginSample("AddPrimitive");
+            Profiler.BeginSample("AddMesh");
 
             var materials = new Material[meshResult.materialIndices.Length];
             for (var index = 0; index < meshResult.materialIndices.Length; index++)
@@ -264,6 +286,7 @@ namespace Unity.Cloud.Gltfast
         }
 
         /// <inheritdoc />
+        [Obsolete("Use IInstantiator.AddMeshInstanced instead.")]
         public void AddPrimitiveInstanced(
             uint nodeIndex,
             string meshName,
@@ -279,7 +302,7 @@ namespace Unity.Cloud.Gltfast
             {
                 return;
             }
-            Profiler.BeginSample("AddPrimitiveInstanced");
+            Profiler.BeginSample("AddMeshInstanced");
             var materials = new Material[meshResult.materialIndices.Length];
             for (var index = 0; index < meshResult.materialIndices.Length; index++)
             {
