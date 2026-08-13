@@ -4,7 +4,7 @@
 #if DRACO_IS_INSTALLED
 
 using System;
-using Unity.Gltfast.Text.Json.Serialization;
+using Unity.Cloud.Gltfast.Text.Json.Serialization;
 using UnityEngine.Scripting.APIUpdating;
 
 namespace Unity.Cloud.Gltfast.Schema

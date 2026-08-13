@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Text;
 using NUnit.Framework;
 using Unity.Cloud.Gltfast.Schema;
-using Unity.Gltfast.Text.Json;
+using Unity.Cloud.Gltfast.Text.Json;
 
 namespace Unity.Cloud.Gltfast.Tests.JsonParsing
 {

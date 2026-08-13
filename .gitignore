@@ -29,6 +29,10 @@ Projects/**/*.sln
 *.svd
 *.pdb
 
+# .NET dependency manifests (emitted next to source generator DLLs; unused by Roslyn/Unity)
+*.deps.json
+*.deps.json.meta
+
 # Unity3D generated meta files
 *.pidb.meta
 *.pdb.meta

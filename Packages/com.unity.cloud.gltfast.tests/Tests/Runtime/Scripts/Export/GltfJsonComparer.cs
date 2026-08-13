@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using NUnit.Framework;
-using Unity.Gltfast.Text.Json;
+using Unity.Cloud.Gltfast.Text.Json;
 
 namespace Unity.Cloud.Gltfast.Tests.Export
 {

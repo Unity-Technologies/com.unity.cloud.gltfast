@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
+using Unity.Cloud.Gltfast.Text.Json.Serialization;
 using Unity.Collections;
-using Unity.Gltfast.Text.Json.Serialization;
 using UnityEngine.Scripting.APIUpdating;
 
 namespace Unity.Cloud.Gltfast.Schema

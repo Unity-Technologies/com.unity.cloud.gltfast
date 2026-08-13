@@ -4,8 +4,8 @@
 #if UNITY_ANIMATION || GLTFAST_ANIMATION
 
 using System.Collections.Generic;
-using Unity.Gltfast.Text.Json;
-using Unity.Gltfast.Text.Json.Serialization;
+using Unity.Cloud.Gltfast.Text.Json;
+using Unity.Cloud.Gltfast.Text.Json.Serialization;
 using UnityEngine.Scripting.APIUpdating;
 
 namespace Unity.Cloud.Gltfast.Schema

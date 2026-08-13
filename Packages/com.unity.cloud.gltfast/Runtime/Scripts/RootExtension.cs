@@ -3,7 +3,7 @@
 
 using System.IO;
 using Unity.Cloud.Gltfast.Schema;
-using Unity.Gltfast.Text.Json;
+using Unity.Cloud.Gltfast.Text.Json;
 using UnityEngine;
 using UnityEngine.Scripting.APIUpdating;
 

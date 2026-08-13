@@ -25,7 +25,7 @@
     "overrideReferences": true,
     "precompiledReferences": [
         "nunit.framework.dll",
-        "Unity.Gltfast.Text.Json.dll"
+        "Unity.Cloud.Gltfast.Text.Json.dll"
     ],
     "autoReferenced": false,
     "defineConstraints": [

@@ -6,10 +6,10 @@ This package contains third-party software components governed by the license(s)
 
 Component Names:
 
-- [System.Text.Json](https://github.com/dotnet/runtime/tree/main/src/libraries/System.Text.Json) (renamed to *Unity.Gltfast.Text.Json*)
-- [System.IO.Pipelines](https://github.com/dotnet/runtime/blob/v9.0.15/src/libraries/System.IO.Pipelines/src/PACKAGE.md) (renamed to *Unity.Gltfast.IO.Pipelines*)
-- [System.Text.Encodings.Web](https://github.com/dotnet/runtime/blob/v9.0.15/src/libraries/System.Text.Encodings.Web/src/PACKAGE.md) (renamed to *Unity.Gltfast.Text.Encodings.Web*)
-- [System.Runtime.CompilerServices.Unsafe](https://github.com/dotnet/maintenance-packages/blob/main/src/System.Runtime.CompilerServices.Unsafe/src/PACKAGE.md) (renamed to *Unity.Gltfast.Unsafe*)
+- [System.Text.Json](https://github.com/dotnet/runtime/tree/main/src/libraries/System.Text.Json) (renamed to *Unity.Cloud.Gltfast.Text.Json*)
+- [System.IO.Pipelines](https://github.com/dotnet/runtime/blob/v9.0.15/src/libraries/System.IO.Pipelines/src/PACKAGE.md) (renamed to *Unity.Cloud.Gltfast.IO.Pipelines*)
+- [System.Text.Encodings.Web](https://github.com/dotnet/runtime/blob/v9.0.15/src/libraries/System.Text.Encodings.Web/src/PACKAGE.md) (renamed to *Unity.Cloud.Gltfast.Text.Encodings.Web*)
+- [System.Runtime.CompilerServices.Unsafe](https://github.com/dotnet/maintenance-packages/blob/main/src/System.Runtime.CompilerServices.Unsafe/src/PACKAGE.md) (renamed to *Unity.Cloud.Gltfast.Unsafe*)
 
 License Type: The MIT License (MIT)
 

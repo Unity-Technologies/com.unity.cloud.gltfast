@@ -33,7 +33,6 @@ using System.Threading;
 using System;
 using System.Text;
 
-using Unity.Gltfast.Text.Json;
 using Unity.Cloud.Gltfast.Addons;
 using Unity.Cloud.Gltfast.Animations;
 using Unity.Cloud.Gltfast.Jobs;
@@ -41,6 +40,7 @@ using Unity.Cloud.Gltfast.Loading;
 using Unity.Cloud.Gltfast.Logging;
 using Unity.Cloud.Gltfast.Materials;
 using Unity.Cloud.Gltfast.Schema;
+using Unity.Cloud.Gltfast.Text.Json;
 #if MESHOPT_IS_ENABLED
 using Meshoptimizer;
 #endif

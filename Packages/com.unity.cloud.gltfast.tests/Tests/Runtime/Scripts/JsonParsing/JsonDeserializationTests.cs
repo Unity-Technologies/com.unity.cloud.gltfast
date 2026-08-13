@@ -4,7 +4,7 @@
 using System.Text;
 using NUnit.Framework;
 using Unity.Cloud.Gltfast.Schema;
-using Unity.Gltfast.Text.Json;
+using Unity.Cloud.Gltfast.Text.Json;
 using Unity.Mathematics;
 using CameraType = Unity.Cloud.Gltfast.Schema.CameraType;
 using Color = Unity.Cloud.Gltfast.Schema.Color;

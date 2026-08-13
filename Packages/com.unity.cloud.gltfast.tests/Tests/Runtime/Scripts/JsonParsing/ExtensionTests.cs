@@ -4,7 +4,7 @@
 using System;
 using NUnit.Framework;
 using Unity.Cloud.Gltfast.Schema;
-using Unity.Gltfast.Text.Json;
+using Unity.Cloud.Gltfast.Text.Json;
 using UnityEngine;
 using LightType = Unity.Cloud.Gltfast.Schema.LightType;
 

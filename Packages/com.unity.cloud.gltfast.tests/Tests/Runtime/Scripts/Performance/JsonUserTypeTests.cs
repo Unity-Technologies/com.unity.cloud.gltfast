@@ -5,8 +5,8 @@ using System;
 using System.Text;
 using NUnit.Framework;
 using Unity.Cloud.Gltfast.Schema;
+using Unity.Cloud.Gltfast.Text.Json.Serialization;
 using Unity.Collections;
-using Unity.Gltfast.Text.Json.Serialization;
 using Unity.Mathematics;
 using Unity.PerformanceTesting;
 

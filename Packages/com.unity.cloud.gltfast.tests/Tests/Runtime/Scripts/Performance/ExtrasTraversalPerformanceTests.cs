@@ -6,13 +6,12 @@ using System.Collections;
 using System.Globalization;
 using System.IO;
 using System.Text;
-
 using NUnit.Framework;
 using Unity.Cloud.Gltfast.Schema;
 using Unity.Cloud.Gltfast.Tests;
 using Unity.Cloud.Gltfast.Tests.Performance;
+using Unity.Cloud.Gltfast.Text.Json;
 using Unity.Collections;
-using Unity.Gltfast.Text.Json;
 using Unity.PerformanceTesting;
 using UnityEngine.TestTools;
 

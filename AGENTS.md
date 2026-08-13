@@ -24,7 +24,7 @@ This monorepo's main components:
 - Code comments: write none by default. Only add one when the code can't be understood by reading it (hidden constraint, non-obvious invariant, workaround, surprising behavior).
   - Not for design rationale, restating what the code does, or task/fix/caller refs.
   - XML doc comments (`///`) on public API are documentation, not commentary.
-- `Unity.Gltfast.Text.Json` is a copy of `System.Text.Json` version 10 used as a drop-in replacement for JSON deserialization.
+- `Unity.Cloud.Gltfast.Text.Json` is a copy of `System.Text.Json` version 10 used as a drop-in replacement for JSON deserialization.
 
 ### Performance
 

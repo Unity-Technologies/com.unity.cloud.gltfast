@@ -3,7 +3,7 @@
 
 #if MESHOPT_IS_RECENT
 using System;
-using Unity.Gltfast.Text.Json.Serialization;
+using Unity.Cloud.Gltfast.Text.Json.Serialization;
 using UnityEngine.Scripting.APIUpdating;
 
 namespace Unity.Cloud.Gltfast.Schema

@@ -6,9 +6,9 @@ using System.Buffers;
 using System.Buffers.Text;
 using System.Collections.Generic;
 using System.Text;
+using Unity.Cloud.Gltfast.Text.Json;
+using Unity.Cloud.Gltfast.Text.Json.Serialization;
 using Unity.Collections;
-using Unity.Gltfast.Text.Json;
-using Unity.Gltfast.Text.Json.Serialization;
 
 namespace Unity.Cloud.Gltfast.Schema
 {

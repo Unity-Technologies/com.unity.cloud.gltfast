@@ -3,7 +3,7 @@
 
 using NUnit.Framework;
 using Unity.Cloud.Gltfast.Schema;
-using Unity.Gltfast.Text.Json;
+using Unity.Cloud.Gltfast.Text.Json;
 using UnityEngine;
 using Color = Unity.Cloud.Gltfast.Schema.Color;
 using Material = Unity.Cloud.Gltfast.Schema.Material;

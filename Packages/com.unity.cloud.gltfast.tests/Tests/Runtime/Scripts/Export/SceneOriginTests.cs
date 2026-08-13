@@ -8,7 +8,7 @@ using NUnit.Framework;
 using Unity.Cloud.Gltfast.Export;
 using Unity.Cloud.Gltfast.Logging;
 using Unity.Cloud.Gltfast.Schema;
-using Unity.Gltfast.Text.Json;
+using Unity.Cloud.Gltfast.Text.Json;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.TestTools;

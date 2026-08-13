@@ -16,9 +16,9 @@
     "allowUnsafeCode": true,
     "overrideReferences": true,
     "precompiledReferences": [
-        "Unity.Gltfast.Text.Json.dll",
-        "Unity.Gltfast.Text.Encodings.Web.dll",
-        "Unity.Gltfast.Unsafe.dll"
+        "Unity.Cloud.Gltfast.Text.Json.dll",
+        "Unity.Cloud.Gltfast.Text.Encodings.Web.dll",
+        "Unity.Cloud.Gltfast.Unsafe.dll"
     ],
     "autoReferenced": true,
     "defineConstraints": [],

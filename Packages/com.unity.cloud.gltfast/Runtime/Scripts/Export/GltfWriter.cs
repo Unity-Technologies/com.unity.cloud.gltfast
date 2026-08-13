@@ -16,7 +16,7 @@ using Draco.Encode;
 using Unity.Cloud.Gltfast.Schema;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
-using Unity.Gltfast.Text.Json;
+using Unity.Cloud.Gltfast.Text.Json;
 using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
