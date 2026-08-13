@@ -3,7 +3,7 @@
 
 using System;
 using NUnit.Framework;
-using Unity.Cloud.Gltfast.Schema;
+using Unity.Cloud.Gltfast.Objects;
 using Unity.Cloud.Gltfast.Text.Json;
 using UnityEngine;
 
@@ -605,7 +605,7 @@ namespace Unity.Cloud.Gltfast.Tests.JsonParsing
                         out var mozExtensionData)
                     )
                 {
-                    // // TODO: Finalize checking that extension data. Include schema class either here or make it
+                    // // TODO: Finalize checking that extension data. Include glTF object either here or make it
                     // // available generally.
                     // var mozExtension = mozExtensionData.Deserialize(
                     //     MozillaHubsComponentsSourceGenerator.Default.MozillaHubsComponents

@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2024 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
-using Unity.Cloud.Gltfast.Schema;
+using Unity.Cloud.Gltfast.Objects;
 using UnityEngine;
 using UnityEngine.Scripting.APIUpdating;
 using LightType = UnityEngine.LightType;
@@ -46,7 +46,7 @@ namespace Unity.Cloud.Gltfast.Export
             switch (lightType)
             {
                 case LightType.Spot:
-                    light.Type = Schema.LightType.Spot;
+                    light.Type = Objects.LightType.Spot;
                     light.Spot = new SpotLight
                     {
                         OuterConeAngle = uLight.spotAngle * Mathf.Deg2Rad * .5f,
@@ -68,15 +68,15 @@ namespace Unity.Cloud.Gltfast.Export
                     }
                     break;
                 case LightType.Directional:
-                    light.Type = Schema.LightType.Directional;
+                    light.Type = Objects.LightType.Directional;
                     break;
                 case LightType.Point:
-                    light.Type = Schema.LightType.Point;
+                    light.Type = Objects.LightType.Point;
                     break;
                 case LightType.Rectangle:
                 case LightType.Disc:
                 default:
-                    light.Type = Schema.LightType.Spot;
+                    light.Type = Objects.LightType.Spot;
                     light.Spot = new SpotLight
                     {
                         OuterConeAngle = 45 * Mathf.Deg2Rad * .5f,

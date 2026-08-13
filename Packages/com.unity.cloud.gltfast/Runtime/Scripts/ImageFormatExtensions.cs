@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2025 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
-using Unity.Cloud.Gltfast.Schema;
+using Unity.Cloud.Gltfast.Objects;
 
 namespace Unity.Cloud.Gltfast
 {

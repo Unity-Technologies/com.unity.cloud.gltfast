@@ -10,7 +10,7 @@ namespace Unity.Cloud.Gltfast.Export
 {
 
     using Logging;
-    using Schema;
+    using Objects;
 
     /// <inheritdoc cref="IMaterialExport"/>
     [MovedFrom(true, sourceNamespace: "GLTFast.Export", sourceAssembly: "glTFast.Export")]

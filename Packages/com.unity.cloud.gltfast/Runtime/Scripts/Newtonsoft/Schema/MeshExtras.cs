@@ -6,7 +6,7 @@ using UnityEngine.Scripting.APIUpdating;
 
 namespace Unity.Cloud.Gltfast.Newtonsoft.Schema
 {
-    [Obsolete("Use Unity.Cloud.Gltfast.Schema.MeshExtras instead.")]
+    [Obsolete("Use Unity.Cloud.Gltfast.Objects.MeshExtras instead.")]
     [MovedFrom(true, sourceNamespace: "GLTFast.Newtonsoft.Schema", sourceAssembly: "glTFast.Newtonsoft")]
-    public class MeshExtras : Unity.Cloud.Gltfast.Schema.MeshExtras, IJsonObject { }
+    public class MeshExtras : Unity.Cloud.Gltfast.Objects.MeshExtras, IJsonObject { }
 }

@@ -3,7 +3,7 @@
 
 using System;
 using NUnit.Framework;
-using Unity.Cloud.Gltfast.Schema;
+using Unity.Cloud.Gltfast.Objects;
 using UnityEngine;
 
 namespace Unity.Cloud.Gltfast.Tests

@@ -8,9 +8,9 @@ using UnityEngine.Scripting.APIUpdating;
 
 namespace Unity.Cloud.Gltfast.Newtonsoft.Schema
 {
-    [Obsolete("Use Unity.Cloud.Gltfast.Schema.AnimationSampler instead.")]
+    [Obsolete("Use Unity.Cloud.Gltfast.Objects.AnimationSampler instead.")]
     [MovedFrom(true, sourceNamespace: "GLTFast.Newtonsoft.Schema", sourceAssembly: "glTFast.Newtonsoft")]
-    public class AnimationSampler : Unity.Cloud.Gltfast.Schema.AnimationSampler, IJsonObject
+    public class AnimationSampler : Unity.Cloud.Gltfast.Objects.AnimationSampler, IJsonObject
     {
         /// <inheritdoc/>
         public bool TryGetValue<T>(string key, out T value)

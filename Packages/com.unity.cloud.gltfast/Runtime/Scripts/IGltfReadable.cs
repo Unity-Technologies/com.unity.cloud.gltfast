@@ -2,19 +2,19 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
-using Unity.Cloud.Gltfast.Schema;
+using Unity.Cloud.Gltfast.Objects;
 using Unity.Collections;
 using UnityEngine;
 using UnityEngine.Scripting.APIUpdating;
-using Camera = Unity.Cloud.Gltfast.Schema.Camera;
+using Camera = Unity.Cloud.Gltfast.Objects.Camera;
 using Material = UnityEngine.Material;
-using Mesh = Unity.Cloud.Gltfast.Schema.Mesh;
-using Texture = Unity.Cloud.Gltfast.Schema.Texture;
+using Mesh = Unity.Cloud.Gltfast.Objects.Mesh;
+using Texture = Unity.Cloud.Gltfast.Objects.Texture;
 
 namespace Unity.Cloud.Gltfast
 {
     /// <summary>
-    /// Provides read-only access to a glTF (schema and imported Unity resources)
+    /// Provides read-only access to a glTF (glTF objects and imported Unity resources)
     /// </summary>
     [MovedFrom(true, sourceNamespace: "GLTFast", sourceAssembly: "glTFast")]
     public interface IGltfReadable : IMaterialProvider
@@ -97,7 +97,7 @@ namespace Unity.Cloud.Gltfast
         /// </summary>
         /// <param name="index">glTF material index</param>
         /// <returns>De-serialized glTF material</returns>
-        Unity.Cloud.Gltfast.Schema.Material GetSourceMaterial(int index = 0);
+        Unity.Cloud.Gltfast.Objects.Material GetSourceMaterial(int index = 0);
 
         /// <summary>
         /// Get source (de-serialized glTF) mesh.

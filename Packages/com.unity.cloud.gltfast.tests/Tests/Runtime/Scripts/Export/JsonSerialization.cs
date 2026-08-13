@@ -6,10 +6,10 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using NUnit.Framework;
-using Unity.Cloud.Gltfast.Schema;
+using Unity.Cloud.Gltfast.Objects;
 using Unity.Cloud.Gltfast.Text.Json;
 using UnityEngine;
-using Mesh = Unity.Cloud.Gltfast.Schema.Mesh;
+using Mesh = Unity.Cloud.Gltfast.Objects.Mesh;
 
 namespace Unity.Cloud.Gltfast.Tests.Export
 {

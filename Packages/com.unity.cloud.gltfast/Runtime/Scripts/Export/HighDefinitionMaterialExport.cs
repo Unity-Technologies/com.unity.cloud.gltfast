@@ -13,7 +13,7 @@ using UnityEngine.Scripting.APIUpdating;
 namespace Unity.Cloud.Gltfast.Export
 {
 
-    using Schema;
+    using Objects;
 
     [MovedFrom(true, sourceNamespace: "GLTFast.Export", sourceAssembly: "glTFast.Export")]
     public class HighDefinitionMaterialExport : MaterialExportBase

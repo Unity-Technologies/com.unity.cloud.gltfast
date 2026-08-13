@@ -5,10 +5,10 @@
 
 using System;
 using Unity.Cloud.Gltfast.Materials;
-using Unity.Cloud.Gltfast.Schema;
+using Unity.Cloud.Gltfast.Objects;
 using UnityEngine;
 using UnityEngine.Scripting.APIUpdating;
-using GltfMaterial = Unity.Cloud.Gltfast.Schema.Material;
+using GltfMaterial = Unity.Cloud.Gltfast.Objects.Material;
 using Material = UnityEngine.Material;
 
 namespace Unity.Cloud.Gltfast.Export

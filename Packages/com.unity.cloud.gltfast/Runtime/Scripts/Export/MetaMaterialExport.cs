@@ -8,7 +8,7 @@ using UnityEngine;
 namespace Unity.Cloud.Gltfast.Export
 {
     using Logging;
-    using Schema;
+    using Objects;
 
     /// <summary>
     /// Picks a fitting material exporter, based on the used shader.

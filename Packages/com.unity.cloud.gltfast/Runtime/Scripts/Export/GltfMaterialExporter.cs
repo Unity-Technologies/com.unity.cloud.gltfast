@@ -4,7 +4,7 @@
 using System;
 using Unity.Cloud.Gltfast.Logging;
 using Unity.Cloud.Gltfast.Materials;
-using Unity.Cloud.Gltfast.Schema;
+using Unity.Cloud.Gltfast.Objects;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Scripting.APIUpdating;
@@ -22,11 +22,11 @@ namespace Unity.Cloud.Gltfast.Export
         /// <inheritdoc />
         public override bool ConvertMaterial(
             Material unityMaterial,
-            out Unity.Cloud.Gltfast.Schema.Material material,
+            out Unity.Cloud.Gltfast.Objects.Material material,
             IGltfWritable gltf,
             ICodeLogger logger)
         {
-            material = new Unity.Cloud.Gltfast.Schema.Material
+            material = new Unity.Cloud.Gltfast.Objects.Material
             {
                 Name = unityMaterial.name,
                 PbrMetallicRoughness = new PbrMetallicRoughness(),
@@ -71,9 +71,9 @@ namespace Unity.Cloud.Gltfast.Export
         /// <returns>True if material does not do back-face culling. False otherwise.</returns>
         protected abstract bool IsDoubleSided(Material material);
 
-        static Unity.Cloud.Gltfast.Schema.Material HandlePbrMetallicRoughness(
+        static Unity.Cloud.Gltfast.Objects.Material HandlePbrMetallicRoughness(
             IGltfWritable gltf,
-            Unity.Cloud.Gltfast.Schema.Material material,
+            Unity.Cloud.Gltfast.Objects.Material material,
             Material unityMaterial)
         {
             if (TryGetValue(unityMaterial, MaterialProperty.BaseColorTexture, out Texture2D texture2D))
@@ -114,9 +114,9 @@ namespace Unity.Cloud.Gltfast.Export
             return material;
         }
 
-        static Unity.Cloud.Gltfast.Schema.Material HandleMetallicRoughness(
+        static Unity.Cloud.Gltfast.Objects.Material HandleMetallicRoughness(
             IGltfWritable gltf,
-            Unity.Cloud.Gltfast.Schema.Material material,
+            Unity.Cloud.Gltfast.Objects.Material material,
             Material unityMaterial)
         {
             if (TryGetValue(unityMaterial, MaterialProperty.MetallicRoughnessMap, out Texture2D texture2D)
@@ -158,9 +158,9 @@ namespace Unity.Cloud.Gltfast.Export
             return material;
         }
 
-        static Unity.Cloud.Gltfast.Schema.Material HandleNormal(
+        static Unity.Cloud.Gltfast.Objects.Material HandleNormal(
             IGltfWritable gltf,
-            Unity.Cloud.Gltfast.Schema.Material material,
+            Unity.Cloud.Gltfast.Objects.Material material,
             Material unityMaterial)
         {
             if (!TryGetValue(unityMaterial, MaterialProperty.NormalTexture, out Texture2D texture2D))
@@ -200,9 +200,9 @@ namespace Unity.Cloud.Gltfast.Export
             return material;
         }
 
-        static Unity.Cloud.Gltfast.Schema.Material HandleOcclusion(
+        static Unity.Cloud.Gltfast.Objects.Material HandleOcclusion(
             IGltfWritable gltf,
-            Unity.Cloud.Gltfast.Schema.Material material,
+            Unity.Cloud.Gltfast.Objects.Material material,
             Material unityMaterial)
         {
             if (!TryGetValue(unityMaterial, MaterialProperty.OcclusionTexture, out Texture2D texture2D))
@@ -242,9 +242,9 @@ namespace Unity.Cloud.Gltfast.Export
             return material;
         }
 
-        static Unity.Cloud.Gltfast.Schema.Material HandleEmission(
+        static Unity.Cloud.Gltfast.Objects.Material HandleEmission(
             IGltfWritable gltf,
-            Unity.Cloud.Gltfast.Schema.Material material,
+            Unity.Cloud.Gltfast.Objects.Material material,
             Material unityMaterial)
         {
             if (TryGetValue(unityMaterial, MaterialProperty.EmissiveTexture, out Texture2D texture2D))

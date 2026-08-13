@@ -6,9 +6,9 @@ using UnityEngine.Scripting.APIUpdating;
 
 namespace Unity.Cloud.Gltfast.Newtonsoft.Schema
 {
-    [Obsolete("Use Unity.Cloud.Gltfast.Schema.Sampler instead.")]
+    [Obsolete("Use Unity.Cloud.Gltfast.Objects.Sampler instead.")]
     [MovedFrom(true, sourceNamespace: "GLTFast.Newtonsoft.Schema", sourceAssembly: "glTFast.Newtonsoft")]
-    public class Sampler : Unity.Cloud.Gltfast.Schema.Sampler, IJsonObject
+    public class Sampler : Unity.Cloud.Gltfast.Objects.Sampler, IJsonObject
     {
         /// <inheritdoc/>
         public bool TryGetValue<T>(string key, out T value)

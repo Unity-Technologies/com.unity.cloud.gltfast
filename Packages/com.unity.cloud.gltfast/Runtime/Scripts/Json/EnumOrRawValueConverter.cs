@@ -6,7 +6,7 @@ using System.Buffers;
 using Unity.Cloud.Gltfast.Text.Json;
 using Unity.Cloud.Gltfast.Text.Json.Serialization;
 
-namespace Unity.Cloud.Gltfast.Schema
+namespace Unity.Cloud.Gltfast.Objects
 {
 
     abstract class EnumOrRawValueConverter<TEnum> : JsonConverter<EnumOrRawValue<TEnum>> where TEnum : struct, Enum

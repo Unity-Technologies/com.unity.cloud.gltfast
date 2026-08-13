@@ -16,7 +16,7 @@ using UnityEngine.Rendering;
 namespace Unity.Cloud.Gltfast
 {
     using Logging;
-    using Schema;
+    using Objects;
 
     sealed class VertexBufferColors : IDisposable
     {

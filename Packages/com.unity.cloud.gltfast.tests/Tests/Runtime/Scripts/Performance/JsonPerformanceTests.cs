@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
-using Unity.Cloud.Gltfast.Schema;
+using Unity.Cloud.Gltfast.Objects;
 using Unity.Cloud.Gltfast.Text.Json;
 using Unity.Collections;
 using Unity.PerformanceTesting;

@@ -6,9 +6,9 @@ using UnityEngine.Scripting.APIUpdating;
 
 namespace Unity.Cloud.Gltfast.Newtonsoft.Schema
 {
-    [Obsolete("Use Unity.Cloud.Gltfast.Schema.NormalTextureInfo instead.")]
+    [Obsolete("Use Unity.Cloud.Gltfast.Objects.NormalTextureInfo instead.")]
     [MovedFrom(true, sourceNamespace: "GLTFast.Newtonsoft.Schema", sourceAssembly: "glTFast.Newtonsoft")]
-    public class NormalTextureInfo : Unity.Cloud.Gltfast.Schema.NormalTextureInfo, IJsonObject
+    public class NormalTextureInfo : Unity.Cloud.Gltfast.Objects.NormalTextureInfo, IJsonObject
     {
         /// <inheritdoc/>
         public bool TryGetValue<T>(string key, out T value)

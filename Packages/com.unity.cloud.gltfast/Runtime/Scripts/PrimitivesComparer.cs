@@ -5,7 +5,7 @@
 
 using System;
 using System.Collections.Generic;
-using Unity.Cloud.Gltfast.Schema;
+using Unity.Cloud.Gltfast.Objects;
 
 namespace Unity.Cloud.Gltfast
 {

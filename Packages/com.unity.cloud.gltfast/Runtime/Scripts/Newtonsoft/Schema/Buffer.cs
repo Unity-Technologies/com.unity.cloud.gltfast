@@ -6,9 +6,9 @@ using UnityEngine.Scripting.APIUpdating;
 
 namespace Unity.Cloud.Gltfast.Newtonsoft.Schema
 {
-    [Obsolete("Use Unity.Cloud.Gltfast.Schema.Buffer instead.")]
+    [Obsolete("Use Unity.Cloud.Gltfast.Objects.Buffer instead.")]
     [MovedFrom(true, sourceNamespace: "GLTFast.Newtonsoft.Schema", sourceAssembly: "glTFast.Newtonsoft")]
-    public class Buffer : Unity.Cloud.Gltfast.Schema.Buffer, IJsonObject
+    public class Buffer : Unity.Cloud.Gltfast.Objects.Buffer, IJsonObject
     {
         /// <inheritdoc/>
         public bool TryGetValue<T>(string key, out T value)

@@ -4,7 +4,7 @@
 using System;
 using System.Text;
 using NUnit.Framework;
-using Unity.Cloud.Gltfast.Schema;
+using Unity.Cloud.Gltfast.Objects;
 using Unity.Cloud.Gltfast.Text.Json;
 using Unity.Cloud.Gltfast.Text.Json.Serialization;
 
@@ -167,7 +167,7 @@ namespace Unity.Cloud.Gltfast.Tests.JsonParsing
         }
 
         [Test]
-        public void PendingListCollectsAllDataUrisAcrossSchema()
+        public void PendingListCollectsAllDataUrisAcrossGltfObjects()
         {
             var json = Encoding.UTF8.GetBytes(
                 $"{{\"uri\":\"data:application/octet-stream;base64,{k_FourBytePayload}\",\"count\":7}}");

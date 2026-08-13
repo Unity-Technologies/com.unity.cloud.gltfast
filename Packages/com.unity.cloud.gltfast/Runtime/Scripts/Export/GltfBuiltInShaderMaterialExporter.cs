@@ -3,7 +3,7 @@
 
 using System;
 using Unity.Cloud.Gltfast.Materials;
-using Unity.Cloud.Gltfast.Schema;
+using Unity.Cloud.Gltfast.Objects;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Scripting.APIUpdating;

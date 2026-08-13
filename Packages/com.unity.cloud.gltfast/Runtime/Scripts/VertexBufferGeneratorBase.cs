@@ -15,7 +15,7 @@ namespace Unity.Cloud.Gltfast
 {
     using Jobs;
     using Logging;
-    using Schema;
+    using Objects;
 
     abstract class VertexBufferGeneratorBase : IDisposable
     {

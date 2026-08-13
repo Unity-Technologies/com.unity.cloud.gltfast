@@ -5,7 +5,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Unity.Cloud.Gltfast.Logging;
-using Unity.Cloud.Gltfast.Schema;
+using Unity.Cloud.Gltfast.Objects;
 using Unity.Cloud.Gltfast.Vertex;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;

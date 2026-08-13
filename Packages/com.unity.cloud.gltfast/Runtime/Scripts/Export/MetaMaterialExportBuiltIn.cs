@@ -7,7 +7,7 @@ using UnityEngine;
 namespace Unity.Cloud.Gltfast.Export
 {
     using Logging;
-    using Schema;
+    using Objects;
 
     class MetaMaterialExportBuiltIn : IMaterialExport
     {

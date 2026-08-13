@@ -7,12 +7,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using Unity.Cloud.Gltfast.Addons;
-using Unity.Cloud.Gltfast.Schema;
+using Unity.Cloud.Gltfast.Objects;
 using Unity.Collections;
 using Unity.PerformanceTesting;
 using UnityEngine;
 using UnityEngine.Profiling;
-using Texture = Unity.Cloud.Gltfast.Schema.Texture;
+using Texture = Unity.Cloud.Gltfast.Objects.Texture;
 
 namespace Unity.Cloud.Gltfast.Tests
 {

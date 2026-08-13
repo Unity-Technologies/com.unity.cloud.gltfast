@@ -17,7 +17,7 @@ using System.Text;
 using System.Threading.Tasks;
 #if UNITY_EDITOR
 using System.Threading;
-using Unity.Cloud.Gltfast.Schema;
+using Unity.Cloud.Gltfast.Objects;
 using Unity.Cloud.Gltfast.Text.Json;
 using UnityEditor;
 #endif

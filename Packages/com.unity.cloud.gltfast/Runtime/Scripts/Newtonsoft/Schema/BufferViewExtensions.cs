@@ -6,7 +6,7 @@ using UnityEngine.Scripting.APIUpdating;
 
 namespace Unity.Cloud.Gltfast.Newtonsoft.Schema
 {
-    [Obsolete("Use Unity.Cloud.Gltfast.Schema.BufferViewExtensions instead.")]
+    [Obsolete("Use Unity.Cloud.Gltfast.Objects.BufferViewExtensions instead.")]
     [MovedFrom(true, sourceNamespace: "GLTFast.Newtonsoft.Schema", sourceAssembly: "glTFast.Newtonsoft")]
-    public class BufferViewExtensions : Unity.Cloud.Gltfast.Schema.BufferViewExtensions, IJsonObject { }
+    public class BufferViewExtensions : Unity.Cloud.Gltfast.Objects.BufferViewExtensions, IJsonObject { }
 }

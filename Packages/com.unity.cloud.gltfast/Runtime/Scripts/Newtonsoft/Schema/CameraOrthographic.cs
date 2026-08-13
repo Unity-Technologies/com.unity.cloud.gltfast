@@ -6,9 +6,9 @@ using UnityEngine.Scripting.APIUpdating;
 
 namespace Unity.Cloud.Gltfast.Newtonsoft.Schema
 {
-    [Obsolete("Use Unity.Cloud.Gltfast.Schema.CameraOrthographic instead.")]
+    [Obsolete("Use Unity.Cloud.Gltfast.Objects.CameraOrthographic instead.")]
     [MovedFrom(true, sourceNamespace: "GLTFast.Newtonsoft.Schema", sourceAssembly: "glTFast.Newtonsoft")]
-    public class CameraOrthographic : Unity.Cloud.Gltfast.Schema.CameraOrthographic, IJsonObject
+    public class CameraOrthographic : Unity.Cloud.Gltfast.Objects.CameraOrthographic, IJsonObject
     {
         /// <inheritdoc/>
         public bool TryGetValue<T>(string key, out T value)

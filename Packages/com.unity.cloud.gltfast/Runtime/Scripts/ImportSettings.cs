@@ -8,7 +8,7 @@ using UnityEngine.Scripting.APIUpdating;
 namespace Unity.Cloud.Gltfast
 {
 
-    using Schema;
+    using Objects;
 
     /// <summary>
     /// glTF import settings

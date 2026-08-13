@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Unity.Collections;
 using UnityEngine;
 using UnityEngine.Scripting.APIUpdating;
-using Texture = Unity.Cloud.Gltfast.Schema.Texture;
+using Texture = Unity.Cloud.Gltfast.Objects.Texture;
 
 namespace Unity.Cloud.Gltfast
 {

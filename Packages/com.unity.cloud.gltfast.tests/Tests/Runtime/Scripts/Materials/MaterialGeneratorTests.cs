@@ -10,7 +10,7 @@ using NUnit.Framework;
 using Unity.Cloud.Gltfast.Logging;
 using Unity.Cloud.Gltfast.Materials;
 using UnityEngine;
-using GltfMaterial = Unity.Cloud.Gltfast.Schema.Material;
+using GltfMaterial = Unity.Cloud.Gltfast.Objects.Material;
 using Material = UnityEngine.Material;
 
 namespace Unity.Cloud.Gltfast.Tests

@@ -3,7 +3,7 @@
 
 #if GLTFAST_BUILTIN_SHADER_GRAPH
 
-using Unity.Cloud.Gltfast.Schema;
+using Unity.Cloud.Gltfast.Objects;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Scripting.APIUpdating;

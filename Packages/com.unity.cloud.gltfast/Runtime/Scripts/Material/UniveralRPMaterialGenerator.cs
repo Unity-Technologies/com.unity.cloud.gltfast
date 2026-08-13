@@ -5,7 +5,7 @@
 
 using System;
 
-using Unity.Cloud.Gltfast.Schema;
+using Unity.Cloud.Gltfast.Objects;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -15,7 +15,7 @@ using UnityEngine.Rendering.Universal;
 using UnityEngine.Scripting.APIUpdating;
 using Color = UnityEngine.Color;
 using Material = UnityEngine.Material;
-using GltfMaterial = Unity.Cloud.Gltfast.Schema.Material;
+using GltfMaterial = Unity.Cloud.Gltfast.Objects.Material;
 
 namespace Unity.Cloud.Gltfast.Materials
 {

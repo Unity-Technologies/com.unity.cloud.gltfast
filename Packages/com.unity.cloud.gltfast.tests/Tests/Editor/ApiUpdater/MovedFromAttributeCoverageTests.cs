@@ -38,42 +38,49 @@ namespace Unity.Cloud.Gltfast.Editor.Tests
         const string k_NewRootNamespace = "Unity.Cloud.Gltfast";
         const string k_OldRootNamespace = "GLTFast";
 
+        // Namespaces whose last segment was renamed in 7.0 too, so swapping the root prefix does not
+        // yield the 6.x name. New namespace -> pre-7.0 (glTFast 6.x) namespace.
+        static readonly Dictionary<string, string> k_RenamedNamespaces = new(StringComparer.Ordinal)
+        {
+            [k_NewRootNamespace + ".Objects"] = k_OldRootNamespace + ".Schema",
+        };
+
         // Public types introduced after the 7.0 rename. They never existed in glTFast 6.x, so there is
         // no old namespace/assembly to migrate from and they correctly carry no [MovedFrom]. Every other
         // public type must still be annotated, so a genuinely forgotten [MovedFrom] keeps failing the test.
         // Add a new post-rename public type here deliberately.
         static readonly HashSet<string> k_PostRenameTypes = new(StringComparer.Ordinal)
         {
-            "Unity.Cloud.Gltfast.Schema.AccessorExtensions",
-            "Unity.Cloud.Gltfast.Schema.AccessorSparseExtensions",
-            "Unity.Cloud.Gltfast.Schema.AccessorSparseIndicesExtensions",
-            "Unity.Cloud.Gltfast.Schema.AccessorSparseValuesExtensions",
-            "Unity.Cloud.Gltfast.Schema.AdditionalPropertyContainer",
-            "Unity.Cloud.Gltfast.Schema.AnimationChannelExtensions",
-            "Unity.Cloud.Gltfast.Schema.AnimationChannelTargetExtensions",
-            "Unity.Cloud.Gltfast.Schema.AnimationExtensions",
-            "Unity.Cloud.Gltfast.Schema.AnimationSamplerExtensions",
-            "Unity.Cloud.Gltfast.Schema.AssetExtensions",
-            "Unity.Cloud.Gltfast.Schema.BufferExtensions",
-            "Unity.Cloud.Gltfast.Schema.CameraExtensions",
-            "Unity.Cloud.Gltfast.Schema.CameraOrthographicExtensions",
-            "Unity.Cloud.Gltfast.Schema.CameraPerspectiveExtensions",
-            "Unity.Cloud.Gltfast.Schema.ExtrasContainer",
-            "Unity.Cloud.Gltfast.Schema.IAdditionalPropertyContainer",
-            "Unity.Cloud.Gltfast.Schema.ImageExtensions",
-            "Unity.Cloud.Gltfast.Schema.MeshExtensions",
-            "Unity.Cloud.Gltfast.Schema.IPropertyContainer",
-            "Unity.Cloud.Gltfast.Schema.IReadOnlyPropertyContainer",
-            "Unity.Cloud.Gltfast.Schema.PbrMetallicRoughnessExtensions",
-            "Unity.Cloud.Gltfast.Schema.Properties",
-            "Unity.Cloud.Gltfast.Schema.Property",
-            "Unity.Cloud.Gltfast.Schema.PropertyEnumerator",
-            "Unity.Cloud.Gltfast.Schema.ReadOnlyProperties",
-            "Unity.Cloud.Gltfast.Schema.SamplerExtensions",
-            "Unity.Cloud.Gltfast.Schema.SceneExtensions",
-            "Unity.Cloud.Gltfast.Schema.SkinExtensions",
-            "Unity.Cloud.Gltfast.Schema.Value",
-            "Unity.Cloud.Gltfast.Schema.ValueKind",
+            "Unity.Cloud.Gltfast.Objects.AccessorExtensions",
+            "Unity.Cloud.Gltfast.Objects.AccessorSparseExtensions",
+            "Unity.Cloud.Gltfast.Objects.AccessorSparseIndicesExtensions",
+            "Unity.Cloud.Gltfast.Objects.AccessorSparseValuesExtensions",
+            "Unity.Cloud.Gltfast.Objects.AdditionalPropertyContainer",
+            "Unity.Cloud.Gltfast.Objects.AnimationChannelExtensions",
+            "Unity.Cloud.Gltfast.Objects.AnimationChannelTargetExtensions",
+            "Unity.Cloud.Gltfast.Objects.AnimationExtensions",
+            "Unity.Cloud.Gltfast.Objects.AnimationSamplerExtensions",
+            "Unity.Cloud.Gltfast.Objects.AssetExtensions",
+            "Unity.Cloud.Gltfast.Objects.BufferExtensions",
+            "Unity.Cloud.Gltfast.Objects.CameraExtensions",
+            "Unity.Cloud.Gltfast.Objects.CameraOrthographicExtensions",
+            "Unity.Cloud.Gltfast.Objects.CameraPerspectiveExtensions",
+            "Unity.Cloud.Gltfast.Objects.ExtrasContainer",
+            "Unity.Cloud.Gltfast.Objects.IAdditionalPropertyContainer",
+            "Unity.Cloud.Gltfast.Objects.ImageExtensions",
+            "Unity.Cloud.Gltfast.Objects.MeshExtensions",
+            "Unity.Cloud.Gltfast.Objects.IPropertyContainer",
+            "Unity.Cloud.Gltfast.Objects.IReadOnlyPropertyContainer",
+            "Unity.Cloud.Gltfast.Objects.PbrMetallicRoughnessExtensions",
+            "Unity.Cloud.Gltfast.Objects.Properties",
+            "Unity.Cloud.Gltfast.Objects.Property",
+            "Unity.Cloud.Gltfast.Objects.PropertyEnumerator",
+            "Unity.Cloud.Gltfast.Objects.ReadOnlyProperties",
+            "Unity.Cloud.Gltfast.Objects.SamplerExtensions",
+            "Unity.Cloud.Gltfast.Objects.SceneExtensions",
+            "Unity.Cloud.Gltfast.Objects.SkinExtensions",
+            "Unity.Cloud.Gltfast.Objects.Value",
+            "Unity.Cloud.Gltfast.Objects.ValueKind",
         };
 
         static IEnumerable<TestCaseData> PublicShippingTypes()
@@ -140,6 +147,15 @@ namespace Unity.Cloud.Gltfast.Editor.Tests
                 $"{type.FullName}: [MovedFrom] sourceNamespace should be \"{expectedOldNamespace}\".");
             Assert.AreEqual(expectedOldAssembly, source.sourceAssembly,
                 $"{type.FullName}: [MovedFrom] sourceAssembly should be \"{expectedOldAssembly}\".");
+
+            // Every shipping type also changed assembly in 7.0, and the API Updater rejects a [MovedFrom]
+            // that renames a type *and* moves it to another assembly ("cannot be used to request the 'API
+            // Updater' to rename a type *and* move to a new assembly"). So no type may set sourceClassName
+            // in this release: a rename here fails the ScriptUpdater run instead of migrating.
+            Assert.IsNull(source.sourceClassName,
+                $"{type.FullName}: [MovedFrom] must not set sourceClassName. Every type moved assembly in " +
+                "7.0, and the API Updater refuses a combined rename plus assembly move. Renaming this type " +
+                "means giving up auto-migration for it — keep the 6.x name instead.");
         }
 
         // A type belongs to glTFast's public API if it lives under the package's root namespace.
@@ -156,6 +172,8 @@ namespace Unity.Cloud.Gltfast.Editor.Tests
         static string ExpectedOldNamespace(Type type)
         {
             var ns = type.Namespace ?? string.Empty;
+            if (k_RenamedNamespaces.TryGetValue(ns, out var renamed))
+                return renamed;
             if (ns == k_NewRootNamespace)
                 return k_OldRootNamespace;
             if (ns.StartsWith(k_NewRootNamespace + ".", StringComparison.Ordinal))
@@ -163,7 +181,7 @@ namespace Unity.Cloud.Gltfast.Editor.Tests
             return ns;
         }
 
-        static (string sourceNamespace, string sourceAssembly) ReadSource(MovedFromAttribute attribute)
+        static (string sourceNamespace, string sourceAssembly, string sourceClassName) ReadSource(MovedFromAttribute attribute)
         {
             const BindingFlags flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
             var data = typeof(MovedFromAttribute).GetField("data", flags)?.GetValue(attribute);
@@ -173,10 +191,14 @@ namespace Unity.Cloud.Gltfast.Editor.Tests
             var dataType = data.GetType();
             var nameSpaceField = dataType.GetField("nameSpace", flags);
             var assemblyField = dataType.GetField("assembly", flags);
-            if (nameSpaceField == null || assemblyField == null)
+            var classNameField = dataType.GetField("className", flags);
+            if (nameSpaceField == null || assemblyField == null || classNameField == null)
                 throw new InvalidOperationException("ReadSource couldn't read MovedFromAttributeData's fields.");
 
-            return ((string)nameSpaceField.GetValue(data), (string)assemblyField.GetValue(data));
+            return (
+                (string)nameSpaceField.GetValue(data),
+                (string)assemblyField.GetValue(data),
+                (string)classNameField.GetValue(data));
         }
     }
 }

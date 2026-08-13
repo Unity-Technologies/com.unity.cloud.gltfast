@@ -6,7 +6,7 @@ using UnityEngine.Scripting.APIUpdating;
 
 namespace Unity.Cloud.Gltfast.Newtonsoft.Schema
 {
-    [Obsolete("Use Unity.Cloud.Gltfast.Schema.MaterialExtensions instead.")]
+    [Obsolete("Use Unity.Cloud.Gltfast.Objects.MaterialExtensions instead.")]
     [MovedFrom(true, sourceNamespace: "GLTFast.Newtonsoft.Schema", sourceAssembly: "glTFast.Newtonsoft")]
-    public class MaterialExtensions : Unity.Cloud.Gltfast.Schema.MaterialExtensions, IJsonObject { }
+    public class MaterialExtensions : Unity.Cloud.Gltfast.Objects.MaterialExtensions, IJsonObject { }
 }

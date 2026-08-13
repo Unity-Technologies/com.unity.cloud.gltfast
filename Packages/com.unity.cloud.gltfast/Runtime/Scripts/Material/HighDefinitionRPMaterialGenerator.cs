@@ -4,7 +4,7 @@
 #if USING_HDRP
 
 using System;
-using Unity.Cloud.Gltfast.Schema;
+using Unity.Cloud.Gltfast.Objects;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -14,7 +14,7 @@ using UnityEngine.Rendering.HighDefinition;
 using UnityEngine.Scripting.APIUpdating;
 
 using Material = UnityEngine.Material;
-using GltfMaterial = Unity.Cloud.Gltfast.Schema.Material;
+using GltfMaterial = Unity.Cloud.Gltfast.Objects.Material;
 
 namespace Unity.Cloud.Gltfast.Materials
 {
@@ -58,7 +58,7 @@ namespace Unity.Cloud.Gltfast.Materials
             return material;
         }
 
-        protected override void SetDoubleSided(Schema.Material gltfMaterial, Material material)
+        protected override void SetDoubleSided(Objects.Material gltfMaterial, Material material)
         {
             base.SetDoubleSided(gltfMaterial, material);
 
@@ -73,7 +73,7 @@ namespace Unity.Cloud.Gltfast.Materials
             material.SetFloat(CullModeForwardProperty, (int)CullMode.Off);
         }
 
-        protected override void SetAlphaModeMask(Schema.Material gltfMaterial, Material material)
+        protected override void SetAlphaModeMask(Objects.Material gltfMaterial, Material material)
         {
             base.SetAlphaModeMask(gltfMaterial, material);
 
@@ -135,7 +135,7 @@ namespace Unity.Cloud.Gltfast.Materials
             return base.GetMetallicShader(features);
         }
 
-        protected override void SetShaderModeBlend(Schema.Material gltfMaterial, Material material)
+        protected override void SetShaderModeBlend(Objects.Material gltfMaterial, Material material)
         {
 
             material.DisableKeyword(AlphaTestOnKeyword);

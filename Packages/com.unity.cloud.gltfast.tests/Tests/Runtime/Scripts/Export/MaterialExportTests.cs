@@ -5,12 +5,12 @@ using System;
 using NUnit.Framework;
 using Unity.Cloud.Gltfast.Export;
 using Unity.Cloud.Gltfast.Logging;
-using Unity.Cloud.Gltfast.Schema;
+using Unity.Cloud.Gltfast.Objects;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.TestTools.Utils;
 using Color = UnityEngine.Color;
-using GltfMaterial = Unity.Cloud.Gltfast.Schema.Material;
+using GltfMaterial = Unity.Cloud.Gltfast.Objects.Material;
 using Material = UnityEngine.Material;
 
 namespace Unity.Cloud.Gltfast.Tests.Export
@@ -415,7 +415,7 @@ namespace Unity.Cloud.Gltfast.Tests.Export
             string name,
             out GltfWritableMock gltfWriter,
             RenderPipeline renderPipeline,
-            out Schema.Material material
+            out Objects.Material material
             )
         {
             material = ConvertMaterial(name, out gltfWriter, renderPipeline);
@@ -443,7 +443,7 @@ namespace Unity.Cloud.Gltfast.Tests.Export
 
         protected abstract void SetUpExporter();
 
-        Schema.Material ConvertMaterial(
+        Objects.Material ConvertMaterial(
             string name,
             out GltfWritableMock gltfWriter,
             RenderPipeline renderPipeline

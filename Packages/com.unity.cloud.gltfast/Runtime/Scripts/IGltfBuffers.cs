@@ -6,7 +6,7 @@ using UnityEngine;
 namespace Unity.Cloud.Gltfast
 {
 
-    using Schema;
+    using Objects;
 
     interface IGltfBuffers
     {

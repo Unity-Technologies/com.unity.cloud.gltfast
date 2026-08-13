@@ -39,7 +39,7 @@ using Unity.Cloud.Gltfast.Jobs;
 using Unity.Cloud.Gltfast.Loading;
 using Unity.Cloud.Gltfast.Logging;
 using Unity.Cloud.Gltfast.Materials;
-using Unity.Cloud.Gltfast.Schema;
+using Unity.Cloud.Gltfast.Objects;
 using Unity.Cloud.Gltfast.Text.Json;
 #if MESHOPT_IS_ENABLED
 using Meshoptimizer;
@@ -52,13 +52,13 @@ using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Profiling;
 using UnityEngine.Scripting.APIUpdating;
-using Buffer = Unity.Cloud.Gltfast.Schema.Buffer;
-using Camera = Unity.Cloud.Gltfast.Schema.Camera;
+using Buffer = Unity.Cloud.Gltfast.Objects.Buffer;
+using Camera = Unity.Cloud.Gltfast.Objects.Camera;
 using Debug = UnityEngine.Debug;
-using Material = Unity.Cloud.Gltfast.Schema.Material;
-using Mesh = Unity.Cloud.Gltfast.Schema.Mesh;
-using Sampler = Unity.Cloud.Gltfast.Schema.Sampler;
-using Texture = Unity.Cloud.Gltfast.Schema.Texture;
+using Material = Unity.Cloud.Gltfast.Objects.Material;
+using Mesh = Unity.Cloud.Gltfast.Objects.Mesh;
+using Sampler = Unity.Cloud.Gltfast.Objects.Sampler;
+using Texture = Unity.Cloud.Gltfast.Objects.Texture;
 
 namespace Unity.Cloud.Gltfast
 {

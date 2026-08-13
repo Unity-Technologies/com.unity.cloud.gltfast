@@ -13,7 +13,7 @@ using UnityEngine.Scripting.APIUpdating;
 #if DRACO_IS_INSTALLED
 using Draco.Encode;
 #endif
-using Unity.Cloud.Gltfast.Schema;
+using Unity.Cloud.Gltfast.Objects;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Cloud.Gltfast.Text.Json;
@@ -24,15 +24,15 @@ using UnityEngine.Assertions;
 using UnityEngine.Profiling;
 using UnityEngine.Rendering;
 
-using Buffer = Unity.Cloud.Gltfast.Schema.Buffer;
-using Camera = Unity.Cloud.Gltfast.Schema.Camera;
+using Buffer = Unity.Cloud.Gltfast.Objects.Buffer;
+using Camera = Unity.Cloud.Gltfast.Objects.Camera;
 using CameraType = UnityEngine.CameraType;
 using Debug = UnityEngine.Debug;
-using LightType = Unity.Cloud.Gltfast.Schema.LightType;
-using Material = Unity.Cloud.Gltfast.Schema.Material;
-using Mesh = Unity.Cloud.Gltfast.Schema.Mesh;
-using Sampler = Unity.Cloud.Gltfast.Schema.Sampler;
-using Texture = Unity.Cloud.Gltfast.Schema.Texture;
+using LightType = Unity.Cloud.Gltfast.Objects.LightType;
+using Material = Unity.Cloud.Gltfast.Objects.Material;
+using Mesh = Unity.Cloud.Gltfast.Objects.Mesh;
+using Sampler = Unity.Cloud.Gltfast.Objects.Sampler;
+using Texture = Unity.Cloud.Gltfast.Objects.Texture;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -266,7 +266,7 @@ namespace Unity.Cloud.Gltfast.Export
                     aspectRatio = targetTexture.width / (float)targetTexture.height;
                 }
 
-                camera.Type = Schema.CameraType.Orthographic;
+                camera.Type = Objects.CameraType.Orthographic;
                 camera.Orthographic = new CameraOrthographic
                 {
                     Ymag = oSize,
@@ -278,7 +278,7 @@ namespace Unity.Cloud.Gltfast.Export
             }
             else
             {
-                camera.Type = Schema.CameraType.Perspective;
+                camera.Type = Objects.CameraType.Perspective;
                 camera.Perspective = new CameraPerspective
                 {
                     Yfov = uCamera.fieldOfView * Mathf.Deg2Rad,
@@ -813,7 +813,7 @@ namespace Unity.Cloud.Gltfast.Export
             if (m_Lights != null && m_Lights.Count > 0)
             {
                 RegisterExtensionUsage(Extension.LightsPunctual);
-                m_Gltf.Extensions = m_Gltf.Extensions ?? new Schema.RootExtensions();
+                m_Gltf.Extensions = m_Gltf.Extensions ?? new Objects.RootExtensions();
                 m_Gltf.Extensions.LightsPunctual = m_Gltf.Extensions.LightsPunctual ?? new LightsPunctual();
                 m_Gltf.Extensions.LightsPunctual.Lights = m_Lights;
             }

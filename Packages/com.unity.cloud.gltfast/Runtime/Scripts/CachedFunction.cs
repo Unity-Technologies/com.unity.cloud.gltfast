@@ -4,7 +4,7 @@
 using System;
 using AOT;
 using Unity.Burst;
-using Unity.Cloud.Gltfast.Schema;
+using Unity.Cloud.Gltfast.Objects;
 using Unity.Mathematics;
 using UnityEngine;
 

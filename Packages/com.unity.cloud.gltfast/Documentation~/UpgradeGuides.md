@@ -39,6 +39,19 @@ One step is **not** automatic and must be done by hand, **before** you rely on t
 [AsmdefNaming]: https://docs.unity3d.com/Manual/cus-asmdef.html
 [APIUpdater]: https://docs.unity3d.com/Manual/APIUpdater.html
 
+### `Schema` namespace renamed to `Objects`
+
+The one namespace that is **not** a straight prefix swap: `GLTFast.Schema` ⇒ `Unity.Cloud.Gltfast.Objects` (not `…Gltfast.Schema`).
+
+The old name referred to JSON Schema, which glTFast does not use, and it named a description of a shape rather than the objects that hold the data. `Objects` matches the glTF specification's own term for these — a *glTF object* is any object defined by the glTF JSON structure (accessor, node, material, mesh primitive, …).
+
+| Before | After |
+|--------|-------|
+| `using GLTFast.Schema;` | `using Unity.Cloud.Gltfast.Objects;` |
+| `GLTFast.Schema.Material`, `…Node`, `…Root`, `…Accessor`, etc. | `Unity.Cloud.Gltfast.Objects.Material`, `…Node`, `…Root`, `…Accessor`, etc. |
+
+Coming from 6.x this is automatic — the types carry `[MovedFrom]`, so the API Updater rewrites it along with the rest of the rename.
+
 ### Assemblies are no longer auto-referenced
 
 `Unity.Cloud.Gltfast` is now the only glTFast assembly that is auto-referenced. An auto-referenced assembly is one that Unity's [predefined assemblies][PredefinedAssemblies] (`Assembly-CSharp`, `Assembly-CSharp-Editor`, …) reference implicitly — that is, code in a folder without an `.asmdef` can use it without any setup.
@@ -70,15 +83,15 @@ The `Unity.Cloud.Gltfast.Newtonsoft` assembly (previously `GLTFast.Newtonsoft`) 
 |--------|-------|
 | `using Unity.Cloud.Gltfast.Newtonsoft;` | `using Unity.Cloud.Gltfast;` |
 | `Unity.Cloud.Gltfast.Newtonsoft.GltfImport` | `Unity.Cloud.Gltfast.GltfImport` |
-| `using Unity.Cloud.Gltfast.Newtonsoft.Schema;` | `using Unity.Cloud.Gltfast.Schema;` |
-| `Unity.Cloud.Gltfast.Newtonsoft.Schema.Accessor`, `…Asset`, `…Material`, `…Node`, `…Root`, `…Mesh`, etc. | `Unity.Cloud.Gltfast.Schema.Accessor`, `…Asset`, `…Material`, `…Node`, `…Root`, `…Mesh`, etc. |
-| `Unity.Cloud.Gltfast.Newtonsoft.Schema.IJsonObject` interface | `Unity.Cloud.Gltfast.Schema.IPropertyContainer` (on extension/extras objects) or `Unity.Cloud.Gltfast.Schema.IAdditionalPropertyContainer` (on glTF schema objects, reached via its `AdditionalProperties` property) |
+| `using Unity.Cloud.Gltfast.Newtonsoft.Schema;` | `using Unity.Cloud.Gltfast.Objects;` |
+| `Unity.Cloud.Gltfast.Newtonsoft.Schema.Accessor`, `…Asset`, `…Material`, `…Node`, `…Root`, `…Mesh`, etc. | `Unity.Cloud.Gltfast.Objects.Accessor`, `…Asset`, `…Material`, `…Node`, `…Root`, `…Mesh`, etc. |
+| `Unity.Cloud.Gltfast.Newtonsoft.Schema.IJsonObject` interface | `Unity.Cloud.Gltfast.Objects.IPropertyContainer` (on extension/extras objects) or `Unity.Cloud.Gltfast.Objects.IAdditionalPropertyContainer` (on glTF objects, reached via its `AdditionalProperties` property) |
 
 If your assembly definition referenced the old `glTFast.Newtonsoft` assembly by name, rename that reference to `Unity.Cloud.Gltfast.Newtonsoft` first — this keeps the code compiling (and the API Updater working) while you migrate. Once your code no longer uses any `Unity.Cloud.Gltfast.Newtonsoft.*` type, replace the reference with `Unity.Cloud.Gltfast` and remove it entirely.
 
 ### Extension properties renamed from raw glTF extension keys
 
-`*Extensions` schema types (`RootExtensions`, `NodeExtensions`, `MaterialExtensions`, `MeshPrimitiveExtensions`, `BufferViewExtensions`, `TextureExtensions`, `TextureInfoExtensions`) used to expose each glTF extension through a C# member literally named after its glTF extension key (for example `KHR_lights_punctual`). Those members are now regular PascalCase properties; the glTF extension key moved to a `[JsonPropertyName]` attribute used for (de)serialization only.
+`*Extensions` glTF object types (`RootExtensions`, `NodeExtensions`, `MaterialExtensions`, `MeshPrimitiveExtensions`, `BufferViewExtensions`, `TextureExtensions`, `TextureInfoExtensions`) used to expose each glTF extension through a C# member literally named after its glTF extension key (for example `KHR_lights_punctual`). Those members are now regular PascalCase properties; the glTF extension key moved to a `[JsonPropertyName]` attribute used for (de)serialization only.
 
 This is a member rename within an unchanged class, so it's **not** covered by `[MovedFrom]` (which only retargets namespace/assembly-level type moves) or by the API Updater — update these call sites by hand.
 
@@ -108,7 +121,7 @@ This is a member rename within an unchanged class, so it's **not** covered by `[
 
 ### `Extras` typed as `ExtrasContainer`
 
-**Every** schema object's `Extras` property changed from `AdditionalPropertyContainer` to [ExtrasContainer](xref:Unity.Cloud.Gltfast.Schema.ExtrasContainer), which derives from it. `MeshExtras` derives from `ExtrasContainer` as well.
+**Every** glTF object's `Extras` property changed from `AdditionalPropertyContainer` to [ExtrasContainer](xref:Unity.Cloud.Gltfast.Objects.ExtrasContainer), which derives from it. `MeshExtras` derives from `ExtrasContainer` as well.
 
 Reads are unaffected, since the derived type converts to the base implicitly. Only construction has to change:
 
@@ -117,7 +130,7 @@ Reads are unaffected, since the derived type converts to the base implicitly. On
 | `node.Extras = new AdditionalPropertyContainer();` | `node.Extras = new ExtrasContainer();` |
 | `AdditionalPropertyContainer extras = node.Extras;` | unchanged (upcast still works) |
 
-The glTF specification allows `extras` to be any JSON value, not just an object. Such documents used to fail to import with a `JsonException`; they now load. [ExtrasContainer.Kind](xref:Unity.Cloud.Gltfast.Schema.ExtrasContainer.Kind) reports the value kind and [ExtrasContainer.RawValue](xref:Unity.Cloud.Gltfast.Schema.ExtrasContainer.RawValue) provides the value when it is not an object, so code that assumes `extras` is an object should check `Kind` first:
+The glTF specification allows `extras` to be any JSON value, not just an object. Such documents used to fail to import with a `JsonException`; they now load. [ExtrasContainer.Kind](xref:Unity.Cloud.Gltfast.Objects.ExtrasContainer.Kind) reports the value kind and [ExtrasContainer.RawValue](xref:Unity.Cloud.Gltfast.Objects.ExtrasContainer.RawValue) provides the value when it is not an object, so code that assumes `extras` is an object should check `Kind` first:
 
 | Before | After |
 | ------ | ----- |
@@ -127,11 +140,11 @@ The glTF specification allows `extras` to be any JSON value, not just an object.
 
 ### `TryGetValue<T>` no longer throws on a failed conversion
 
-`TryGetValue<T>(string, out T)` on [IReadOnlyPropertyContainer](xref:Unity.Cloud.Gltfast.Schema.IReadOnlyPropertyContainer) (and thus on extras and extension containers, and on `AdditionalProperties`) returns `false` when the JSON value cannot be converted to `T`, as its documentation always stated. It used to let the exception escape. Code that wrapped such a call in `try`/`catch` can drop the handler and check the return value instead.
+`TryGetValue<T>(string, out T)` on [IReadOnlyPropertyContainer](xref:Unity.Cloud.Gltfast.Objects.IReadOnlyPropertyContainer) (and thus on extras and extension containers, and on `AdditionalProperties`) returns `false` when the JSON value cannot be converted to `T`, as its documentation always stated. It used to let the exception escape. Code that wrapped such a call in `try`/`catch` can drop the handler and check the return value instead.
 
 This covers both a value that does not fit `T` and a `T` that cannot be deserialized at all, such as a delegate or an interface. The distinction used to be observable and data-dependent: `TryGetValue<IDisposable>` threw a `JsonException` for a number and a `NotSupportedException` for a JSON object, so the same call reported failure differently depending on the document.
 
-[Value.TryGetValue&lt;T&gt;(out T)](xref:Unity.Cloud.Gltfast.Schema.Value.TryGetValue*), used to convert a whole non-object `extras`, behaves the same way.
+[Value.TryGetValue&lt;T&gt;(out T)](xref:Unity.Cloud.Gltfast.Objects.Value.TryGetValue*), used to convert a whole non-object `extras`, behaves the same way.
 
 ### Async methods carry an `Async` suffix
 
@@ -200,9 +213,9 @@ class MyInstantiator : GameObjectInstantiator, IInstantiator
 
 A class's interface map is fixed where the interface is declared. Deriving without re-declaring compiles, but the base implementation keeps being called through an `IInstantiator` reference and your `AddMesh` never runs. Until you migrate, overriding the obsolete `AddPrimitive` and `AddPrimitiveInstanced` continues to work unchanged.
 
-### Schema enum properties wrapped in `EnumOrRawValue<TEnum>`
+### glTF object enum properties wrapped in `EnumOrRawValue<TEnum>`
 
-Several `Unity.Cloud.Gltfast.Schema` properties that used to be enums or strings are now wrapped in [EnumOrRawValue&lt;TEnum&gt;](xref:Unity.Cloud.Gltfast.Schema.EnumOrRawValue`1) so that values introduced by glTF extensions (and therefore unknown at build time) are preserved through deserialization and serialization.
+Several `Unity.Cloud.Gltfast.Objects` properties that used to be enums or strings are now wrapped in [EnumOrRawValue&lt;TEnum&gt;](xref:Unity.Cloud.Gltfast.Objects.EnumOrRawValue`1) so that values introduced by glTF extensions (and therefore unknown at build time) are preserved through deserialization and serialization.
 
 | Property | Before | After |
 | -------- | ------ | ----- |
@@ -210,7 +223,7 @@ Several `Unity.Cloud.Gltfast.Schema` properties that used to be enums or strings
 | `AnimationChannelTarget.Path` | `AnimationPath` | `EnumOrRawValue<AnimationPath>` |
 | `AnimationSampler.Interpolation` | `Interpolation` | `EnumOrRawValue<Interpolation>` |
 | `Camera.Type` | `CameraType` | `EnumOrRawValue<CameraType>` |
-| [Image.MimeType](xref:Unity.Cloud.Gltfast.Schema.Image.MimeType) | `string` | [EnumOrRawValue&lt;ImageMimeType&gt;](xref:Unity.Cloud.Gltfast.Schema.EnumOrRawValue`1) |
+| [Image.MimeType](xref:Unity.Cloud.Gltfast.Objects.Image.MimeType) | `string` | [EnumOrRawValue&lt;ImageMimeType&gt;](xref:Unity.Cloud.Gltfast.Objects.EnumOrRawValue`1) |
 | `Material.AlphaMode` | `AlphaMode` | `EnumOrRawValue<AlphaMode>` |
 | `LightPunctual.Type` | `LightType` | `EnumOrRawValue<LightType>` |
 | `Material.AlphaMode` | `AlphaMode` | `EnumOrRawValue<AlphaMode>` |
@@ -232,7 +245,7 @@ The legacy `image/ktx` MIME string is no longer mapped to `ImageFormat.Ktx`. Per
 
 #### glTF extension lists
 
-[Root.ExtensionsUsed](xref:Unity.Cloud.Gltfast.Schema.Root.ExtensionsUsed) and [Root.ExtensionsRequired](xref:Unity.Cloud.Gltfast.Schema.Root.ExtensionsRequired) changed from `string[]` to `List<`[EnumOrRawValue&lt;Extension&gt;](xref:Unity.Cloud.Gltfast.Schema.EnumOrRawValue`1)`>`. Recognized extension names deserialize directly into the [Extension](xref:Unity.Cloud.Gltfast.Extension) enum and never allocate a managed `string`; names not known at build time are preserved as UTF-8 bytes in `.RawValue`.
+[Root.ExtensionsUsed](xref:Unity.Cloud.Gltfast.Objects.Root.ExtensionsUsed) and [Root.ExtensionsRequired](xref:Unity.Cloud.Gltfast.Objects.Root.ExtensionsRequired) changed from `string[]` to `List<`[EnumOrRawValue&lt;Extension&gt;](xref:Unity.Cloud.Gltfast.Objects.EnumOrRawValue`1)`>`. Recognized extension names deserialize directly into the [Extension](xref:Unity.Cloud.Gltfast.Extension) enum and never allocate a managed `string`; names not known at build time are preserved as UTF-8 bytes in `.RawValue`.
 
 Membership checks via the implicit enum conversion:
 
@@ -257,11 +270,11 @@ Constructing from code (e.g. for export):
 | ------ | ----- |
 | `root.ExtensionsUsed = new[] { "KHR_materials_unlit" };` | `root.ExtensionsUsed = new List<EnumOrRawValue<Extension>> { Extension.MaterialsUnlit };` (uses implicit enum conversion) |
 
-### Schema index properties wrapped in `int?`
+### glTF object index properties wrapped in `int?`
 
-**Every** schema property that holds an index into a root-level array changed from `int` to `int?`. An absent value is `null`; the legacy `-1` sentinel is gone. This holds whether or not the glTF specification marks the property as required, so an extension that relaxes a requirement needs no API change.
+**Every** glTF object property that holds an index into a root-level array changed from `int` to `int?`. An absent value is `null`; the legacy `-1` sentinel is gone. This holds whether or not the glTF specification marks the property as required, so an extension that relaxes a requirement needs no API change.
 
-Size and count properties are **not** nullable: [Accessor.Count](xref:Unity.Cloud.Gltfast.Schema.Accessor.Count), `AccessorSparse.Count`, [BufferView.ByteLength](xref:Unity.Cloud.Gltfast.Schema.BufferView.ByteLength) and [Buffer.ByteLength](xref:Unity.Cloud.Gltfast.Schema.Buffer.ByteLength) keep `int`/`long`. The specification requires them to be at least `1`, so `0` denotes an absent property.
+Size and count properties are **not** nullable: [Accessor.Count](xref:Unity.Cloud.Gltfast.Objects.Accessor.Count), `AccessorSparse.Count`, [BufferView.ByteLength](xref:Unity.Cloud.Gltfast.Objects.BufferView.ByteLength) and [Buffer.ByteLength](xref:Unity.Cloud.Gltfast.Objects.Buffer.ByteLength) keep `int`/`long`. The specification requires them to be at least `1`, so `0` denotes an absent property.
 
 This applies to (non-exhaustive — see the changelog for the full list):
 
@@ -304,7 +317,7 @@ JSON serialization omits the property when `null`. Existing code that left a pro
 
 | Member | Before | After |
 | ------ | ------ | ----- |
-| [Texture.GetImageIndex](xref:Unity.Cloud.Gltfast.Schema.Texture.GetImageIndex) | `int` | `int?` |
+| [Texture.GetImageIndex](xref:Unity.Cloud.Gltfast.Objects.Texture.GetImageIndex) | `int` | `int?` |
 | `MeshPrimitive.GetMaterialIndex` | `int` | `int?` |
 | `IMaterialsVariantsSlot.GetMaterialIndex` | `int` | `int?` |
 | `MeshResult.materialIndices` | `int[]` | `int?[]` |
@@ -314,7 +327,7 @@ Custom implementations of [IMaterialsVariantsSlot](xref:Unity.Cloud.Gltfast.IMat
 
 ### `IBufferView` is internal
 
-`Unity.Cloud.Gltfast.Schema.IBufferView` is no longer public. No public member accepted or returned it, so an implementation could not be handed to *glTFast* anyway. Code that merely reads [BufferView](xref:Unity.Cloud.Gltfast.Schema.BufferView) or the `EXT_meshopt_compression` extension object is unaffected; remove any `IBufferView` implementation or reference.
+`Unity.Cloud.Gltfast.Objects.IBufferView` is no longer public. No public member accepted or returned it, so an implementation could not be handed to *glTFast* anyway. Code that merely reads [BufferView](xref:Unity.Cloud.Gltfast.Objects.BufferView) or the `EXT_meshopt_compression` extension object is unaffected; remove any `IBufferView` implementation or reference.
 
 ### `uint` → `int` for sparse accessor `BufferView`
 
@@ -326,7 +339,7 @@ Custom implementations of [IMaterialsVariantsSlot](xref:Unity.Cloud.Gltfast.IMat
 
 ### `Buffer.ByteLength` typed as `long`
 
-[Buffer.ByteLength](xref:Unity.Cloud.Gltfast.Schema.Buffer.ByteLength) changed from `uint` to `long`, a first step toward eventual `>4 GB` buffer support. It does not by itself enable buffers above `int.MaxValue`. Assignments from `Stream.Length` (already `long`) drop the `(uint)` cast; comparisons against `int` widen automatically:
+[Buffer.ByteLength](xref:Unity.Cloud.Gltfast.Objects.Buffer.ByteLength) changed from `uint` to `long`, a first step toward eventual `>4 GB` buffer support. It does not by itself enable buffers above `int.MaxValue`. Assignments from `Stream.Length` (already `long`) drop the `(uint)` cast; comparisons against `int` widen automatically:
 
 | Before | After |
 | ------ | ----- |
@@ -335,7 +348,7 @@ Custom implementations of [IMaterialsVariantsSlot](xref:Unity.Cloud.Gltfast.IMat
 
 ### `BufferView.Target` typed as `BufferViewTarget`
 
-[BufferView.Target](xref:Unity.Cloud.Gltfast.Schema.BufferView.Target) is now [BufferViewTarget](xref:Unity.Cloud.Gltfast.Schema.BufferViewTarget) instead of `int`. The enum members carry the WebGL constants, and `BufferViewTarget.Undefined` (value `0`) represents the absent target. Comparisons against the raw integer no longer compile; use the enum members directly.
+[BufferView.Target](xref:Unity.Cloud.Gltfast.Objects.BufferView.Target) is now [BufferViewTarget](xref:Unity.Cloud.Gltfast.Objects.BufferViewTarget) instead of `int`. The enum members carry the WebGL constants, and `BufferViewTarget.Undefined` (value `0`) represents the absent target. Comparisons against the raw integer no longer compile; use the enum members directly.
 
 | Before | After |
 | ------ | ----- |
@@ -346,7 +359,7 @@ Custom implementations of [IMaterialsVariantsSlot](xref:Unity.Cloud.Gltfast.IMat
 
 ### `Attributes` indexed channels
 
-[Attributes](xref:Unity.Cloud.Gltfast.Schema.Attributes) replaces the per-index properties with per-family `List<int?>` collections. Bounds-checked index access is provided by extension methods on [AttributesExtensions](xref:Unity.Cloud.Gltfast.Schema.AttributesExtensions); unrecognized JSON properties (extensions, application-specific semantics) are captured via `[JsonExtensionData]` and exposed through [IAdditionalPropertyContainer.AdditionalProperties](xref:Unity.Cloud.Gltfast.Schema.IAdditionalPropertyContainer.AdditionalProperties).
+[Attributes](xref:Unity.Cloud.Gltfast.Objects.Attributes) replaces the per-index properties with per-family `List<int?>` collections. Bounds-checked index access is provided by extension methods on [AttributesExtensions](xref:Unity.Cloud.Gltfast.Objects.AttributesExtensions); unrecognized JSON properties (extensions, application-specific semantics) are captured via `[JsonExtensionData]` and exposed through [IAdditionalPropertyContainer.AdditionalProperties](xref:Unity.Cloud.Gltfast.Objects.IAdditionalPropertyContainer.AdditionalProperties).
 
 | Property | Before | After |
 | -------- | ------ | ----- |
@@ -367,20 +380,20 @@ The `Get…` extensions return `null` past the end of the underlying list. The `
 
 Helper method `Attributes.GetTexCoordsCount()` was moved to `AttributesExtensions` and `Attributes.TryGetAllUVAccessors` declared obsolete.
 
-### Schema collection properties moved from `T[]` to `List<T>`
+### glTF object collection properties moved from `T[]` to `List<T>`
 
-Variable-length collection properties on `Unity.Cloud.Gltfast.Schema` types are now `List<T>` instead of `T[]`, completing the migration started with `Root.Accessors`, `Root.Materials`, `Mesh.Primitives`, etc.
+Variable-length collection properties on `Unity.Cloud.Gltfast.Objects` types are now `List<T>` instead of `T[]`, completing the migration started with `Root.Accessors`, `Root.Materials`, `Mesh.Primitives`, etc.
 
 | Property | Before | After |
 | -------- | ------ | ----- |
-| [LightsPunctual.Lights](xref:Unity.Cloud.Gltfast.Schema.LightsPunctual.Lights) | `LightPunctual[]` | `List<LightPunctual>` |
+| [LightsPunctual.Lights](xref:Unity.Cloud.Gltfast.Objects.LightsPunctual.Lights) | `LightPunctual[]` | `List<LightPunctual>` |
 | `MaterialVariantsMapping.Variants` | `int[]` | `List<int>` |
 | `MeshExtras.TargetNames` | `string[]` | `List<string>` |
-| [MeshPrimitive.Targets](xref:Unity.Cloud.Gltfast.Schema.MeshPrimitive.Targets) | `MorphTarget[]` | `List<MorphTarget>` |
-| [Node.Children](xref:Unity.Cloud.Gltfast.Schema.Node.Children) | `uint[]` | `List<uint>` |
-| [Root.Buffers](xref:Unity.Cloud.Gltfast.Schema.Root.Buffers) | `Buffer[]` | `List<Buffer>` |
-| [Scene.Nodes](xref:Unity.Cloud.Gltfast.Schema.Scene.Nodes) | `uint[]` | `List<uint>` |
-| [Skin.Joints](xref:Unity.Cloud.Gltfast.Schema.Skin.Joints) | `uint[]` | `List<uint>` |
+| [MeshPrimitive.Targets](xref:Unity.Cloud.Gltfast.Objects.MeshPrimitive.Targets) | `MorphTarget[]` | `List<MorphTarget>` |
+| [Node.Children](xref:Unity.Cloud.Gltfast.Objects.Node.Children) | `uint[]` | `List<uint>` |
+| [Root.Buffers](xref:Unity.Cloud.Gltfast.Objects.Root.Buffers) | `Buffer[]` | `List<Buffer>` |
+| [Scene.Nodes](xref:Unity.Cloud.Gltfast.Objects.Scene.Nodes) | `uint[]` | `List<uint>` |
+| [Skin.Joints](xref:Unity.Cloud.Gltfast.Objects.Skin.Joints) | `uint[]` | `List<uint>` |
 
 Reading is mostly unchanged — indexing (`[i]`) and `foreach` work the same, but `.Length` becomes `.Count`:
 
@@ -411,7 +424,7 @@ Public method parameters that used to take `uint[]` / `string[]` were updated ba
 | `GameObjectInstantiator.MeshAddedDelegate` `joints` | `uint[]` | `IReadOnlyList<uint>` |
 | `IAnimationProcessor.AddMorphTargetWeightCurves` `morphTargetNames` | `string[]` | `IReadOnlyList<string>` |
 
-**Adopted inputs** (stored in the schema and serialized later) take `List<uint>`. Ownership of the list transfers to the writer — the caller must not mutate it after the call. The `uint[]` `AddMeshToNode` overload was removed in 7.0; the `AddNode`/`AddScene` `uint[]` overloads remain but are `[Obsolete]`. Pass a `List<uint>` you will not modify further.
+**Adopted inputs** (stored in the glTF objects and serialized later) take `List<uint>`. Ownership of the list transfers to the writer — the caller must not mutate it after the call. The `uint[]` `AddMeshToNode` overload was removed in 7.0; the `AddNode`/`AddScene` `uint[]` overloads remain but are `[Obsolete]`. Pass a `List<uint>` you will not modify further.
 
 | Member | Before | After |
 | ------ | ------ | ----- |
@@ -434,7 +447,7 @@ Custom subclasses or implementations of these interfaces and delegates need to u
 
 ### `Accessor.Min`/`Accessor.Max` typed as `List<double>`
 
-[Accessor.Min](xref:Unity.Cloud.Gltfast.Schema.Accessor.Min) and [Accessor.Max](xref:Unity.Cloud.Gltfast.Schema.Accessor.Max) changed from `float[]` to `List<double>`. The wider element type preserves the precision of accessors whose component type is `5130` (double, introduced by the forthcoming glTF 2.1 specification) and avoids a lossy round-trip for values that exceed `float` precision.
+[Accessor.Min](xref:Unity.Cloud.Gltfast.Objects.Accessor.Min) and [Accessor.Max](xref:Unity.Cloud.Gltfast.Objects.Accessor.Max) changed from `float[]` to `List<double>`. The wider element type preserves the precision of accessors whose component type is `5130` (double, introduced by the forthcoming glTF 2.1 specification) and avoids a lossy round-trip for values that exceed `float` precision.
 
 | Before | After |
 | ------ | ----- |
@@ -448,10 +461,10 @@ The node transform properties changed from `double[]` to nullable `Unity.Mathema
 
 | Property | Before | After |
 | -------- | ------ | ----- |
-| [Node.Translation](xref:Unity.Cloud.Gltfast.Schema.Node.Translation) | `double[]` (length 3) | `double3?` |
-| [Node.Scale](xref:Unity.Cloud.Gltfast.Schema.Node.Scale) | `double[]` (length 3) | `double3?` |
-| [Node.Rotation](xref:Unity.Cloud.Gltfast.Schema.Node.Rotation) | `double[]` (length 4, `x, y, z, w`) | `double4?` |
-| [Node.Matrix](xref:Unity.Cloud.Gltfast.Schema.Node.Matrix) | `double[]` (length 16, column-major) | `double4x4?` |
+| [Node.Translation](xref:Unity.Cloud.Gltfast.Objects.Node.Translation) | `double[]` (length 3) | `double3?` |
+| [Node.Scale](xref:Unity.Cloud.Gltfast.Objects.Node.Scale) | `double[]` (length 3) | `double3?` |
+| [Node.Rotation](xref:Unity.Cloud.Gltfast.Objects.Node.Rotation) | `double[]` (length 4, `x, y, z, w`) | `double4?` |
+| [Node.Matrix](xref:Unity.Cloud.Gltfast.Objects.Node.Matrix) | `double[]` (length 16, column-major) | `double4x4?` |
 
 | Before | After |
 | ------ | ----- |
@@ -462,7 +475,7 @@ The node transform properties changed from `double[]` to nullable `Unity.Mathema
 
 ### `TextureTransform` offset/scale typed as `float2` nullable
 
-[TextureTransform.Offset](xref:Unity.Cloud.Gltfast.Schema.TextureTransform.Offset) and [TextureTransform.Scale](xref:Unity.Cloud.Gltfast.Schema.TextureTransform.Scale) changed from `float[]` (length 2) to nullable `Unity.Mathematics.float2`.
+[TextureTransform.Offset](xref:Unity.Cloud.Gltfast.Objects.TextureTransform.Offset) and [TextureTransform.Scale](xref:Unity.Cloud.Gltfast.Objects.TextureTransform.Scale) changed from `float[]` (length 2) to nullable `Unity.Mathematics.float2`.
 
 | Before | After |
 | ------ | ----- |
@@ -471,20 +484,20 @@ The node transform properties changed from `double[]` to nullable `Unity.Mathema
 
 ### `Sampler` nested enums promoted to top-level
 
-`Sampler.MagFilterMode`, `Sampler.MinFilterMode` and `Sampler.WrapMode` used to be nested inside the [Sampler](xref:Unity.Cloud.Gltfast.Schema.Sampler) class. They are now top-level enums in the `Unity.Cloud.Gltfast.Schema` namespace, matching every other glTF schema enum (`AlphaMode`, `CameraType`, `PrimitiveMode`, …). Qualified references and `using` aliases must drop the `Sampler.` prefix.
+`Sampler.MagFilterMode`, `Sampler.MinFilterMode` and `Sampler.WrapMode` used to be nested inside the [Sampler](xref:Unity.Cloud.Gltfast.Objects.Sampler) class. They are now top-level enums in the `Unity.Cloud.Gltfast.Objects` namespace, matching every other glTF enum (`AlphaMode`, `CameraType`, `PrimitiveMode`, …). Qualified references and `using` aliases must drop the `Sampler.` prefix.
 
 | Before | After |
 | ------ | ----- |
 | `Sampler.MagFilterMode` | `MagFilterMode` |
 | `Sampler.MinFilterMode` | `MinFilterMode` |
 | `Sampler.WrapMode` | `WrapMode` |
-| `using MagFilterMode = Unity.Cloud.Gltfast.Schema.Sampler.MagFilterMode;` | `using MagFilterMode = Unity.Cloud.Gltfast.Schema.MagFilterMode;` (and likewise for `MinFilterMode`/`WrapMode`) |
+| `using MagFilterMode = Unity.Cloud.Gltfast.Objects.Sampler.MagFilterMode;` | `using MagFilterMode = Unity.Cloud.Gltfast.Objects.MagFilterMode;` (and likewise for `MinFilterMode`/`WrapMode`) |
 
 Enum member names and underlying values are unchanged, so assignments such as `sampler.MagFilter = MagFilterMode.Linear;` keep working with the import already in scope.
 
 ### `Asset.Name` removed
 
-[Asset](xref:Unity.Cloud.Gltfast.Schema.Asset) no longer derives from `NamedObject` and therefore no longer carries a `Name` property. The glTF 2.0 specification's `asset` object is not a "child of root" property and does not define a `name` field. Any code reading or writing `asset.Name` must be removed.
+[Asset](xref:Unity.Cloud.Gltfast.Objects.Asset) no longer derives from `NamedObject` and therefore no longer carries a `Name` property. The glTF 2.0 specification's `asset` object is not a "child of root" property and does not define a `name` field. Any code reading or writing `asset.Name` must be removed.
 
 | Before | After |
 | ------ | ----- |
@@ -500,7 +513,7 @@ The redundant `Unity.Cloud.Gltfast.Export.ImageFormat` enum was removed and merg
 | `Unity.Cloud.Gltfast.Export.ImageFormat` | [Unity.Cloud.Gltfast.ImageFormat](xref:Unity.Cloud.Gltfast.ImageFormat) |
 | `ImageFormat.Jpg` | `ImageFormat.Jpeg` |
 
-[Export.ImageExportBase.MimeType](xref:Unity.Cloud.Gltfast.Export.ImageExportBase.MimeType) changed from `string` to [ImageMimeType](xref:Unity.Cloud.Gltfast.Schema.ImageMimeType). Custom subclasses overriding the property must return the enum directly.
+[Export.ImageExportBase.MimeType](xref:Unity.Cloud.Gltfast.Export.ImageExportBase.MimeType) changed from `string` to [ImageMimeType](xref:Unity.Cloud.Gltfast.Objects.ImageMimeType). Custom subclasses overriding the property must return the enum directly.
 
 | Before | After |
 | ------ | ----- |
@@ -524,11 +537,11 @@ No shim is offered: this is a deliberate hard break in a major version, and the 
 
 ### Exported JSON is no longer byte-identical
 
-The hand-written `Unity.Cloud.Gltfast.Schema.JsonWriter` and the per-type `GltfSerialize` methods are gone; export now runs through `System.Text.Json` via the source-generated `GltfJsonContext`. The resulting glTF JSON is functionally equivalent and continues to round-trip through the importer, but the bytes are not identical to previous releases:
+The hand-written `Unity.Cloud.Gltfast.Objects.JsonWriter` and the per-type `GltfSerialize` methods are gone; export now runs through `System.Text.Json` via the source-generated `GltfJsonContext`. The resulting glTF JSON is functionally equivalent and continues to round-trip through the importer, but the bytes are not identical to previous releases:
 
-- **Property order** follows the C# field declaration order on each `Unity.Cloud.Gltfast.Schema` class instead of the order baked into the old `GltfSerialize` methods.
+- **Property order** follows the C# field declaration order on each `Unity.Cloud.Gltfast.Objects` class instead of the order baked into the old `GltfSerialize` methods.
 - **Floating-point formatting** uses System.Text.Json's shortest-round-trip representation (e.g. `0.1` instead of `0.10000000149011612`).
-- **Default-value omission** is governed by `JsonIgnoreCondition.WhenWritingDefault` plus the `*Serialized` helper properties on schema types, rather than ad-hoc `if (value != default)` checks. A handful of fields that previously fell back to a project-default (e.g. `Sampler.MagFilter`/`MinFilter` was silently dropped when `Linear`) are now serialized whenever they're explicitly set.
+- **Default-value omission** is governed by `JsonIgnoreCondition.WhenWritingDefault` plus the `*Serialized` helper properties on glTF object types, rather than ad-hoc `if (value != default)` checks. A handful of fields that previously fell back to a project-default (e.g. `Sampler.MagFilter`/`MinFilter` was silently dropped when `Linear`) are now serialized whenever they're explicitly set.
 
 Diff-based comparison or hash-based caching of exported `.gltf` files needs to be re-baselined.
 
@@ -573,7 +586,7 @@ Removed with no public replacement. Code relying on its element-type punning (a 
 
 Use Unity 2021.3.46f1 or newer only.
 
-*GltfAnimation* was renamed to [Animation](xref:Unity.Cloud.Gltfast.Schema.Animation).
+*GltfAnimation* was renamed to [Animation](xref:Unity.Cloud.Gltfast.Objects.Animation).
 
 ## Unity Fork
 

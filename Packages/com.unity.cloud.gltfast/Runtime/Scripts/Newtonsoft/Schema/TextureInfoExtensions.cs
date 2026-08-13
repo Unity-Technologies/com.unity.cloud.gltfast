@@ -6,7 +6,7 @@ using UnityEngine.Scripting.APIUpdating;
 
 namespace Unity.Cloud.Gltfast.Newtonsoft.Schema
 {
-    [Obsolete("Use Unity.Cloud.Gltfast.Schema.TextureInfoExtensions instead.")]
+    [Obsolete("Use Unity.Cloud.Gltfast.Objects.TextureInfoExtensions instead.")]
     [MovedFrom(true, sourceNamespace: "GLTFast.Newtonsoft.Schema", sourceAssembly: "glTFast.Newtonsoft")]
-    public class TextureInfoExtensions : Unity.Cloud.Gltfast.Schema.TextureInfoExtensions, IJsonObject { }
+    public class TextureInfoExtensions : Unity.Cloud.Gltfast.Objects.TextureInfoExtensions, IJsonObject { }
 }

@@ -5,7 +5,7 @@ using System;
 using Unity.Cloud.Gltfast.Text.Json.Serialization;
 using UnityEngine;
 
-namespace Unity.Cloud.Gltfast.Schema
+namespace Unity.Cloud.Gltfast.Objects
 {
     [JsonSourceGenerationOptions(DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault)]
     [JsonSerializable(typeof(Root))]

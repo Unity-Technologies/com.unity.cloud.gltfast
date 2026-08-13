@@ -8,9 +8,9 @@ using UnityEngine.Scripting.APIUpdating;
 
 namespace Unity.Cloud.Gltfast.Newtonsoft.Schema
 {
-    [Obsolete("Use Unity.Cloud.Gltfast.Schema.AnimationChannelTarget instead.")]
+    [Obsolete("Use Unity.Cloud.Gltfast.Objects.AnimationChannelTarget instead.")]
     [MovedFrom(true, sourceNamespace: "GLTFast.Newtonsoft.Schema", sourceAssembly: "glTFast.Newtonsoft")]
-    public class AnimationChannelTarget : Unity.Cloud.Gltfast.Schema.AnimationChannelTarget, IJsonObject
+    public class AnimationChannelTarget : Unity.Cloud.Gltfast.Objects.AnimationChannelTarget, IJsonObject
     {
         /// <inheritdoc/>
         public bool TryGetValue<T>(string key, out T value)

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using NUnit.Framework;
 using Unity.Cloud.Gltfast.Export;
 using Unity.Cloud.Gltfast.Logging;
-using Unity.Cloud.Gltfast.Schema;
+using Unity.Cloud.Gltfast.Objects;
 using Unity.Cloud.Gltfast.Text.Json;
 using Unity.Mathematics;
 using UnityEngine;

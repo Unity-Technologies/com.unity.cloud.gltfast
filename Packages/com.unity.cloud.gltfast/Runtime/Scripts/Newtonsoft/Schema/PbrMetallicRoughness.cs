@@ -6,9 +6,9 @@ using UnityEngine.Scripting.APIUpdating;
 
 namespace Unity.Cloud.Gltfast.Newtonsoft.Schema
 {
-    [Obsolete("Use Unity.Cloud.Gltfast.Schema.PbrMetallicRoughness instead.")]
+    [Obsolete("Use Unity.Cloud.Gltfast.Objects.PbrMetallicRoughness instead.")]
     [MovedFrom(true, sourceNamespace: "GLTFast.Newtonsoft.Schema", sourceAssembly: "glTFast.Newtonsoft")]
-    public class PbrMetallicRoughness : Unity.Cloud.Gltfast.Schema.PbrMetallicRoughness, IJsonObject
+    public class PbrMetallicRoughness : Unity.Cloud.Gltfast.Objects.PbrMetallicRoughness, IJsonObject
     {
         /// <inheritdoc/>
         public bool TryGetValue<T>(string key, out T value)

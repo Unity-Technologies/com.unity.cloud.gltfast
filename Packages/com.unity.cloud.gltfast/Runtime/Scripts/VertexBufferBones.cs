@@ -4,7 +4,7 @@
 using System;
 using Unity.Cloud.Gltfast.Jobs;
 using Unity.Cloud.Gltfast.Logging;
-using Unity.Cloud.Gltfast.Schema;
+using Unity.Cloud.Gltfast.Objects;
 using Unity.Cloud.Gltfast.Vertex;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;

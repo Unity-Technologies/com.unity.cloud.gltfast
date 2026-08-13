@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using Unity.Cloud.Gltfast.Text.Json;
 using Unity.Cloud.Gltfast.Text.Json.Serialization;
 
-namespace Unity.Cloud.Gltfast.Schema
+namespace Unity.Cloud.Gltfast.Objects
 {
     class ExtensionListConverter : JsonConverter<List<EnumOrRawValue<Extension>>>
     {

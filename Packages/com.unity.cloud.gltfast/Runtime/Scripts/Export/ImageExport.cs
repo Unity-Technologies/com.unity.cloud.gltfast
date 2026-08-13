@@ -3,7 +3,7 @@
 
 using System;
 using System.IO;
-using Unity.Cloud.Gltfast.Schema;
+using Unity.Cloud.Gltfast.Objects;
 using UnityEngine;
 using UnityEngine.Experimental.Rendering;
 using Material = UnityEngine.Material;

@@ -7,7 +7,7 @@ using Unity.Cloud.Gltfast.Text.Json;
 using Unity.Cloud.Gltfast.Text.Json.Serialization;
 using Unity.Cloud.Gltfast.Text.Json.Serialization.Metadata;
 
-namespace Unity.Cloud.Gltfast.Schema
+namespace Unity.Cloud.Gltfast.Objects
 {
     /// <summary>
     /// De-/serializes <c>extras</c>, which the glTF specification allows to be any JSON value.

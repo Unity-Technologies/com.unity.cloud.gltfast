@@ -2,11 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using NUnit.Framework;
-using Unity.Cloud.Gltfast.Schema;
+using Unity.Cloud.Gltfast.Objects;
 using Unity.Cloud.Gltfast.Text.Json;
 using UnityEngine;
-using Color = Unity.Cloud.Gltfast.Schema.Color;
-using Material = Unity.Cloud.Gltfast.Schema.Material;
+using Color = Unity.Cloud.Gltfast.Objects.Color;
+using Material = Unity.Cloud.Gltfast.Objects.Material;
 
 namespace Unity.Cloud.Gltfast.Tests.JsonParsing
 {

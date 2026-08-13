@@ -8,13 +8,13 @@ using System.Text.RegularExpressions;
 using NUnit.Framework;
 using Unity.Cloud.Gltfast.Documentation.Examples;
 using Unity.Cloud.Gltfast.Export;
-using Unity.Cloud.Gltfast.Schema;
+using Unity.Cloud.Gltfast.Objects;
 using Unity.Cloud.Gltfast.Tests;
 using Unity.Cloud.Gltfast.Tests.Import;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.TestTools;
-using Buffer = Unity.Cloud.Gltfast.Schema.Buffer;
+using Buffer = Unity.Cloud.Gltfast.Objects.Buffer;
 
 namespace Unity.Cloud.Gltfast.Documentation.Examples.Tests
 {
@@ -143,11 +143,11 @@ namespace Unity.Cloud.Gltfast.Documentation.Examples.Tests
         {
             var root = new Root { Buffers = new List<Buffer> { new() { ByteLength = 8 } } };
 
-            Assert.AreSame(root.Buffers[0], SchemaAccess.GetBuffer(root, new BufferView { Buffer = 0 }));
-            Assert.IsNull(SchemaAccess.GetBuffer(root, new BufferView()), "Absent index");
-            Assert.IsNull(SchemaAccess.GetBuffer(root, new BufferView { Buffer = 1 }), "Out of range");
-            Assert.IsNull(SchemaAccess.GetBuffer(root, new BufferView { Buffer = -1 }), "Negative");
-            Assert.IsNull(SchemaAccess.GetBuffer(new Root(), new BufferView { Buffer = 0 }), "No buffers");
+            Assert.AreSame(root.Buffers[0], GltfObjectAccess.GetBuffer(root, new BufferView { Buffer = 0 }));
+            Assert.IsNull(GltfObjectAccess.GetBuffer(root, new BufferView()), "Absent index");
+            Assert.IsNull(GltfObjectAccess.GetBuffer(root, new BufferView { Buffer = 1 }), "Out of range");
+            Assert.IsNull(GltfObjectAccess.GetBuffer(root, new BufferView { Buffer = -1 }), "Negative");
+            Assert.IsNull(GltfObjectAccess.GetBuffer(new Root(), new BufferView { Buffer = 0 }), "No buffers");
         }
 
         [UnityTest]
@@ -165,7 +165,7 @@ namespace Unity.Cloud.Gltfast.Documentation.Examples.Tests
             yield return AsyncWrapper.WaitForTask(task);
             Assert.IsTrue(task.Result, "Import failed.");
 
-            Assert.AreEqual(expected, SchemaAccess.TryGetWeights(gltf.Root.Nodes[0], out var weights));
+            Assert.AreEqual(expected, GltfObjectAccess.TryGetWeights(gltf.Root.Nodes[0], out var weights));
             if (expected)
             {
                 CollectionAssert.AreEqual(expectedWeights, weights);

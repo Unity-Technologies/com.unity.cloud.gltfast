@@ -8,13 +8,13 @@
 #endif
 
 using System;
-using Unity.Cloud.Gltfast.Schema;
+using Unity.Cloud.Gltfast.Objects;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Scripting.APIUpdating;
 using Color = UnityEngine.Color;
-using Material = Unity.Cloud.Gltfast.Schema.Material;
+using Material = Unity.Cloud.Gltfast.Objects.Material;
 #if USING_URP
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;

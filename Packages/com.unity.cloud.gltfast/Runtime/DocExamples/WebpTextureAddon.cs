@@ -5,10 +5,10 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Unity.Cloud.Gltfast.Addons;
-using Unity.Cloud.Gltfast.Schema;
+using Unity.Cloud.Gltfast.Objects;
 using Unity.Collections;
 using UnityEngine;
-using Texture = Unity.Cloud.Gltfast.Schema.Texture;
+using Texture = Unity.Cloud.Gltfast.Objects.Texture;
 
 namespace Unity.Cloud.Gltfast.Documentation.Examples
 {

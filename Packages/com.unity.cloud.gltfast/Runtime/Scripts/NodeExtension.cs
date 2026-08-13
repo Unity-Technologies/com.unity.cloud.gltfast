@@ -7,7 +7,7 @@ using UnityEngine.Scripting.APIUpdating;
 namespace Unity.Cloud.Gltfast
 {
 
-    using Schema;
+    using Objects;
 
     /// <summary>
     /// Extension methods for <see cref="Node"/>

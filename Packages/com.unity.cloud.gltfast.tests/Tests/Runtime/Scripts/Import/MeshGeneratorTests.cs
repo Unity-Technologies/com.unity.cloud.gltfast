@@ -9,15 +9,15 @@ using System.Threading;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using Unity.Cloud.Gltfast.Logging;
-using Unity.Cloud.Gltfast.Schema;
+using Unity.Cloud.Gltfast.Objects;
 using Unity.Collections;
 using UnityEngine;
 using UnityEngine.TestTools;
-using Camera = Unity.Cloud.Gltfast.Schema.Camera;
-using GltfMaterial = Unity.Cloud.Gltfast.Schema.Material;
+using Camera = Unity.Cloud.Gltfast.Objects.Camera;
+using GltfMaterial = Unity.Cloud.Gltfast.Objects.Material;
 using Material = UnityEngine.Material;
-using Mesh = Unity.Cloud.Gltfast.Schema.Mesh;
-using Texture = Unity.Cloud.Gltfast.Schema.Texture;
+using Mesh = Unity.Cloud.Gltfast.Objects.Mesh;
+using Texture = Unity.Cloud.Gltfast.Objects.Texture;
 
 namespace Unity.Cloud.Gltfast.Tests.Import
 {

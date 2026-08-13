@@ -3,7 +3,7 @@
 
 using System;
 using System.Collections.Generic;
-using Unity.Cloud.Gltfast.Schema;
+using Unity.Cloud.Gltfast.Objects;
 using Unity.Collections;
 
 namespace Unity.Cloud.Gltfast.Tests

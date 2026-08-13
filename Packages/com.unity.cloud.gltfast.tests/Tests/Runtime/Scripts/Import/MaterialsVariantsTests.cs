@@ -4,7 +4,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
-using Unity.Cloud.Gltfast.Schema;
+using Unity.Cloud.Gltfast.Objects;
 using UnityEngine;
 using UnityEngine.TestTools;
 using Material = UnityEngine.Material;

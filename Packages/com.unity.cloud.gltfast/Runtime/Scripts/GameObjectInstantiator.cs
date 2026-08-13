@@ -3,7 +3,7 @@
 
 using System;
 using System.Collections.Generic;
-using Unity.Cloud.Gltfast.Schema;
+using Unity.Cloud.Gltfast.Objects;
 using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
@@ -13,8 +13,8 @@ using UnityEngine.Scripting.APIUpdating;
 using Animation = UnityEngine.Animation;
 #endif
 using Camera = UnityEngine.Camera;
-using CameraType = Unity.Cloud.Gltfast.Schema.CameraType;
-using LightType = Unity.Cloud.Gltfast.Schema.LightType;
+using CameraType = Unity.Cloud.Gltfast.Objects.CameraType;
+using LightType = Unity.Cloud.Gltfast.Objects.LightType;
 using Material = UnityEngine.Material;
 using Mesh = UnityEngine.Mesh;
 

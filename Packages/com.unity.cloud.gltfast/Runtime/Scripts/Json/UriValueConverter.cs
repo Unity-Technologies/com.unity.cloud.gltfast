@@ -10,7 +10,7 @@ using Unity.Cloud.Gltfast.Text.Json;
 using Unity.Cloud.Gltfast.Text.Json.Serialization;
 using Unity.Collections;
 
-namespace Unity.Cloud.Gltfast.Schema
+namespace Unity.Cloud.Gltfast.Objects
 {
     /// <summary>
     /// Reads a glTF URI string token into a <see cref="UriValue"/>.

@@ -4,7 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using Unity.Cloud.Gltfast.Schema;
+using Unity.Cloud.Gltfast.Objects;
 using Unity.Cloud.Gltfast.Text.Json;
 
 namespace Unity.Cloud.Gltfast
@@ -122,7 +122,7 @@ namespace Unity.Cloud.Gltfast
             if (x.ExtensionData != null)
             {
                 // XOR to keep the contribution order-independent — Dictionary
-                // iteration order isn't part of the schema's identity.
+                // iteration order isn't part of the glTF object's identity.
                 var extHash = 0;
                 foreach (var pair in x.ExtensionData)
                 {

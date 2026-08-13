@@ -7,7 +7,7 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using NUnit.Framework;
-using Unity.Cloud.Gltfast.Schema;
+using Unity.Cloud.Gltfast.Objects;
 using Unity.Cloud.Gltfast.Tests;
 using Unity.Cloud.Gltfast.Tests.Performance;
 using Unity.Cloud.Gltfast.Text.Json;

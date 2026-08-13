@@ -4,7 +4,7 @@
 using System;
 using Unity.Cloud.Gltfast.Logging;
 using Unity.Cloud.Gltfast.Materials;
-using Unity.Cloud.Gltfast.Schema;
+using Unity.Cloud.Gltfast.Objects;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Scripting.APIUpdating;
@@ -22,13 +22,13 @@ namespace Unity.Cloud.Gltfast.Export
         /// <inheritdoc />
         public bool ConvertMaterial(
             Material unityMaterial,
-            out Unity.Cloud.Gltfast.Schema.Material material,
+            out Unity.Cloud.Gltfast.Objects.Material material,
             IGltfWritable gltf,
             ICodeLogger logger)
         {
             gltf.RegisterExtensionUsage(Extension.MaterialsUnlit);
 
-            material = new Unity.Cloud.Gltfast.Schema.Material
+            material = new Unity.Cloud.Gltfast.Objects.Material
             {
                 Name = unityMaterial.name,
                 Extensions = new MaterialExtensions
@@ -47,9 +47,9 @@ namespace Unity.Cloud.Gltfast.Export
             return true;
         }
 
-        static Unity.Cloud.Gltfast.Schema.Material HandlePbrMetallicRoughness(
+        static Unity.Cloud.Gltfast.Objects.Material HandlePbrMetallicRoughness(
             IGltfWritable gltf,
-            Unity.Cloud.Gltfast.Schema.Material material,
+            Unity.Cloud.Gltfast.Objects.Material material,
             Material unityMaterial)
         {
             if (GltfMaterialExporter.TryGetValue(unityMaterial, MaterialProperty.BaseColorTexture, out Texture2D texture2D))

@@ -9,7 +9,7 @@ namespace Unity.Cloud.Gltfast.Documentation.Examples
     using System.Threading.Tasks;
     using Unity.Cloud.Gltfast;
     using Unity.Cloud.Gltfast.Addons;
-    using Unity.Cloud.Gltfast.Schema;
+    using Unity.Cloud.Gltfast.Objects;
     using UnityEngine;
 
     class CustomGltfImport : MonoBehaviour

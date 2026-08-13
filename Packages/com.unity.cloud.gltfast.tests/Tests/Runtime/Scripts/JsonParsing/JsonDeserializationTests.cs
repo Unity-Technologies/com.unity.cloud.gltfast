@@ -3,12 +3,12 @@
 
 using System.Text;
 using NUnit.Framework;
-using Unity.Cloud.Gltfast.Schema;
+using Unity.Cloud.Gltfast.Objects;
 using Unity.Cloud.Gltfast.Text.Json;
 using Unity.Mathematics;
-using CameraType = Unity.Cloud.Gltfast.Schema.CameraType;
-using Color = Unity.Cloud.Gltfast.Schema.Color;
-using LightType = Unity.Cloud.Gltfast.Schema.LightType;
+using CameraType = Unity.Cloud.Gltfast.Objects.CameraType;
+using Color = Unity.Cloud.Gltfast.Objects.Color;
+using LightType = Unity.Cloud.Gltfast.Objects.LightType;
 
 namespace Unity.Cloud.Gltfast.Tests.JsonParsing
 {

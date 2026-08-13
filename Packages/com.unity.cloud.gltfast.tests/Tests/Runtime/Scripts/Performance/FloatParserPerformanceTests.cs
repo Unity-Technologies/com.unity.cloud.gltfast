@@ -3,7 +3,7 @@
 
 using System.Text;
 using NUnit.Framework;
-using Unity.Cloud.Gltfast.Schema;
+using Unity.Cloud.Gltfast.Objects;
 using Unity.Mathematics;
 using Unity.PerformanceTesting;
 

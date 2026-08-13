@@ -6,9 +6,9 @@ using UnityEngine.Scripting.APIUpdating;
 
 namespace Unity.Cloud.Gltfast.Newtonsoft.Schema
 {
-    [Obsolete("Use Unity.Cloud.Gltfast.Schema.AccessorSparseIndices instead.")]
+    [Obsolete("Use Unity.Cloud.Gltfast.Objects.AccessorSparseIndices instead.")]
     [MovedFrom(true, sourceNamespace: "GLTFast.Newtonsoft.Schema", sourceAssembly: "glTFast.Newtonsoft")]
-    public class AccessorSparseIndices : Unity.Cloud.Gltfast.Schema.AccessorSparseIndices, IJsonObject
+    public class AccessorSparseIndices : Unity.Cloud.Gltfast.Objects.AccessorSparseIndices, IJsonObject
     {
         /// <inheritdoc/>
         public bool TryGetValue<T>(string key, out T value)

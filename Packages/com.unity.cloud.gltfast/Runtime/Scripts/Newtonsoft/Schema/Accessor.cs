@@ -6,9 +6,9 @@ using UnityEngine.Scripting.APIUpdating;
 
 namespace Unity.Cloud.Gltfast.Newtonsoft.Schema
 {
-    [Obsolete("Use Unity.Cloud.Gltfast.Schema.Accessor instead.")]
+    [Obsolete("Use Unity.Cloud.Gltfast.Objects.Accessor instead.")]
     [MovedFrom(true, sourceNamespace: "GLTFast.Newtonsoft.Schema", sourceAssembly: "glTFast.Newtonsoft")]
-    public class Accessor : Unity.Cloud.Gltfast.Schema.Accessor, IJsonObject
+    public class Accessor : Unity.Cloud.Gltfast.Objects.Accessor, IJsonObject
     {
         /// <inheritdoc/>
         public bool TryGetValue<T>(string key, out T value)

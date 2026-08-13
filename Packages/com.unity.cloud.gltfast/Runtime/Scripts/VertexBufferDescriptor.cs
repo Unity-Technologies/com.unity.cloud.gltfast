@@ -3,7 +3,7 @@
 
 #nullable enable
 using System;
-using Unity.Cloud.Gltfast.Schema;
+using Unity.Cloud.Gltfast.Objects;
 
 namespace Unity.Cloud.Gltfast
 {

@@ -4,7 +4,7 @@
 using System;
 using Unity.Cloud.Gltfast.Text.Json;
 
-namespace Unity.Cloud.Gltfast.Schema
+namespace Unity.Cloud.Gltfast.Objects
 {
     /// <summary>Shared <see cref="JsonSerializerOptions"/> for (de)serializing
     /// additional-property values.</summary>

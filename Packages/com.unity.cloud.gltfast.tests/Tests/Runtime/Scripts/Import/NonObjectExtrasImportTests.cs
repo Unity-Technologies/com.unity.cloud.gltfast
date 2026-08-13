@@ -5,7 +5,7 @@ using System.Collections;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using Unity.Cloud.Gltfast.Logging;
-using Unity.Cloud.Gltfast.Schema;
+using Unity.Cloud.Gltfast.Objects;
 using UnityEngine.TestTools;
 
 namespace Unity.Cloud.Gltfast.Tests.Import

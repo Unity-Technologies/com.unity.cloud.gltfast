@@ -3,10 +3,10 @@
 
 using System;
 using NUnit.Framework;
-using Unity.Cloud.Gltfast.Schema;
+using Unity.Cloud.Gltfast.Objects;
 using Unity.Cloud.Gltfast.Text.Json;
 using UnityEngine;
-using LightType = Unity.Cloud.Gltfast.Schema.LightType;
+using LightType = Unity.Cloud.Gltfast.Objects.LightType;
 
 namespace Unity.Cloud.Gltfast.Tests.JsonParsing
 {

@@ -4,16 +4,16 @@
 using System.Collections.Generic;
 using System.Text;
 using NUnit.Framework;
-using Unity.Cloud.Gltfast.Schema;
+using Unity.Cloud.Gltfast.Objects;
 using Unity.Cloud.Gltfast.Text.Json;
 using Unity.Mathematics;
-using Camera = Unity.Cloud.Gltfast.Schema.Camera;
-using CameraType = Unity.Cloud.Gltfast.Schema.CameraType;
-using Color = Unity.Cloud.Gltfast.Schema.Color;
-using LightType = Unity.Cloud.Gltfast.Schema.LightType;
-using Material = Unity.Cloud.Gltfast.Schema.Material;
-using Mesh = Unity.Cloud.Gltfast.Schema.Mesh;
-using Texture = Unity.Cloud.Gltfast.Schema.Texture;
+using Camera = Unity.Cloud.Gltfast.Objects.Camera;
+using CameraType = Unity.Cloud.Gltfast.Objects.CameraType;
+using Color = Unity.Cloud.Gltfast.Objects.Color;
+using LightType = Unity.Cloud.Gltfast.Objects.LightType;
+using Material = Unity.Cloud.Gltfast.Objects.Material;
+using Mesh = Unity.Cloud.Gltfast.Objects.Mesh;
+using Texture = Unity.Cloud.Gltfast.Objects.Texture;
 
 namespace Unity.Cloud.Gltfast.Tests.JsonParsing
 {
@@ -120,9 +120,9 @@ namespace Unity.Cloud.Gltfast.Tests.JsonParsing
         }
 
         [Test]
-        [TestCase(null, Schema.BufferViewTarget.Undefined)]
-        [TestCase(34962, Schema.BufferViewTarget.ArrayBuffer)]
-        [TestCase(34963, Schema.BufferViewTarget.ElementArrayBuffer)]
+        [TestCase(null, Objects.BufferViewTarget.Undefined)]
+        [TestCase(34962, Objects.BufferViewTarget.ArrayBuffer)]
+        [TestCase(34963, Objects.BufferViewTarget.ElementArrayBuffer)]
         public void BufferViewTarget(int? expected, BufferViewTarget value)
         {
             var obj = new BufferView { Target = value };
@@ -206,7 +206,7 @@ namespace Unity.Cloud.Gltfast.Tests.JsonParsing
         public void RootBuffers()
         {
             var json = JsonSerializer.Serialize(
-                new Root { Buffers = new List<Schema.Buffer> { new() { ByteLength = 8 } } },
+                new Root { Buffers = new List<Objects.Buffer> { new() { ByteLength = 8 } } },
                 GltfJsonContext.Default.Root);
             Assert.AreEqual(@"{""buffers"":[{""byteLength"":8}]}", json);
         }
@@ -393,7 +393,7 @@ namespace Unity.Cloud.Gltfast.Tests.JsonParsing
         [Test]
         public void AssetExtensions()
         {
-            var json = JsonSerializer.Serialize(new Asset { Extensions = new Schema.AssetExtensions() }, GltfJsonContext.Default.Asset);
+            var json = JsonSerializer.Serialize(new Asset { Extensions = new Objects.AssetExtensions() }, GltfJsonContext.Default.Asset);
             Assert.AreEqual(@"{""extensions"":{}}", json);
         }
 
@@ -498,7 +498,7 @@ namespace Unity.Cloud.Gltfast.Tests.JsonParsing
         [Test]
         public void AccessorExtensions()
         {
-            var json = JsonSerializer.Serialize(new Accessor { Extensions = new Schema.AccessorExtensions() }, GltfJsonContext.Default.Accessor);
+            var json = JsonSerializer.Serialize(new Accessor { Extensions = new Objects.AccessorExtensions() }, GltfJsonContext.Default.Accessor);
             Assert.AreEqual(@"{""extensions"":{}}", json);
         }
 
@@ -731,28 +731,28 @@ namespace Unity.Cloud.Gltfast.Tests.JsonParsing
         [Test]
         public void BufferDefault()
         {
-            var json = JsonSerializer.Serialize(new Schema.Buffer(), GltfJsonContext.Default.Buffer);
+            var json = JsonSerializer.Serialize(new Objects.Buffer(), GltfJsonContext.Default.Buffer);
             Assert.AreEqual("{}", json);
         }
 
         [Test]
         public void BufferName()
         {
-            var json = JsonSerializer.Serialize(new Schema.Buffer { Name = "b" }, GltfJsonContext.Default.Buffer);
+            var json = JsonSerializer.Serialize(new Objects.Buffer { Name = "b" }, GltfJsonContext.Default.Buffer);
             Assert.AreEqual(@"{""name"":""b""}", json);
         }
 
         [Test]
         public void BufferByteLength()
         {
-            var json = JsonSerializer.Serialize(new Schema.Buffer { ByteLength = 256 }, GltfJsonContext.Default.Buffer);
+            var json = JsonSerializer.Serialize(new Objects.Buffer { ByteLength = 256 }, GltfJsonContext.Default.Buffer);
             Assert.AreEqual(@"{""byteLength"":256}", json);
         }
 
         [Test]
         public void BufferUri()
         {
-            var json = JsonSerializer.Serialize(new Schema.Buffer { Uri = new UriValue("data.bin") }, GltfJsonContext.Default.Buffer);
+            var json = JsonSerializer.Serialize(new Objects.Buffer { Uri = new UriValue("data.bin") }, GltfJsonContext.Default.Buffer);
             Assert.AreEqual(@"{""uri"":""data.bin""}", json);
         }
 

@@ -5,7 +5,7 @@ using System;
 using Unity.Cloud.Gltfast.Text.Json;
 using Unity.Cloud.Gltfast.Text.Json.Serialization;
 
-namespace Unity.Cloud.Gltfast.Schema
+namespace Unity.Cloud.Gltfast.Objects
 {
     class ColorAlphaConverter : JsonConverter<ColorAlpha>
     {

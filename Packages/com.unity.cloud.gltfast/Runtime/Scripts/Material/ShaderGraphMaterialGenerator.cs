@@ -10,16 +10,16 @@
 using System;
 
 using Unity.Cloud.Gltfast.Logging;
-using Unity.Cloud.Gltfast.Schema;
+using Unity.Cloud.Gltfast.Objects;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Scripting.APIUpdating;
-using Color = Unity.Cloud.Gltfast.Schema.Color;
+using Color = Unity.Cloud.Gltfast.Objects.Color;
 using Material = UnityEngine.Material;
-using GltfMaterial = Unity.Cloud.Gltfast.Schema.Material;
+using GltfMaterial = Unity.Cloud.Gltfast.Objects.Material;
 
 namespace Unity.Cloud.Gltfast.Materials
 {

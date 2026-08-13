@@ -7,7 +7,7 @@
 
 #if GLTFAST_BUILTIN_RP || UNITY_EDITOR
 
-using Unity.Cloud.Gltfast.Schema;
+using Unity.Cloud.Gltfast.Objects;
 using UnityEngine.Scripting.APIUpdating;
 using UnityEngine;
 #if UNITY_EDITOR
@@ -190,7 +190,7 @@ namespace Unity.Cloud.Gltfast.Materials
 
         /// <inheritdoc />
         public override Material GenerateMaterial(
-            Schema.Material gltfMaterial,
+            Objects.Material gltfMaterial,
             IGltfReadable gltf,
             bool pointsSupport = false
         )
@@ -238,7 +238,7 @@ namespace Unity.Cloud.Gltfast.Materials
             if (gltfMaterial.Extensions != null)
             {
                 // Specular glossiness
-                Schema.PbrSpecularGlossiness specGloss = gltfMaterial.Extensions.PbrSpecularGlossiness;
+                Objects.PbrSpecularGlossiness specGloss = gltfMaterial.Extensions.PbrSpecularGlossiness;
                 if (specGloss != null)
                 {
                     baseColorLinear = specGloss.DiffuseFactor;
@@ -385,7 +385,7 @@ namespace Unity.Cloud.Gltfast.Materials
 
             material.SetVector(MaterialProperty.BaseColor, baseColorLinear.gamma);
 
-            if (gltfMaterial.EmissiveFactor != Schema.Color.Black)
+            if (gltfMaterial.EmissiveFactor != Objects.Color.Black)
             {
                 material.SetColor(MaterialProperty.EmissiveFactor, gltfMaterial.EmissiveFactor);
                 material.EnableKeyword(k_EmissionKeyword);
@@ -418,7 +418,7 @@ namespace Unity.Cloud.Gltfast.Materials
         /// </summary>
         /// <param name="material">Target material</param>
         /// <param name="gltfMaterial">Source material</param>
-        static void SetAlphaModeMask(Material material, Schema.Material gltfMaterial)
+        static void SetAlphaModeMask(Material material, Objects.Material gltfMaterial)
         {
             SetAlphaModeMask(material, gltfMaterial.AlphaCutoff);
         }

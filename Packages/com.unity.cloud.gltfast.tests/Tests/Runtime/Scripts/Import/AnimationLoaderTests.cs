@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using Unity.Cloud.Gltfast.Addons;
 using Unity.Cloud.Gltfast.Animations;
-using Unity.Cloud.Gltfast.Schema;
+using Unity.Cloud.Gltfast.Objects;
 using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;

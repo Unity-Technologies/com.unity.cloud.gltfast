@@ -6,9 +6,9 @@ using UnityEngine.Scripting.APIUpdating;
 
 namespace Unity.Cloud.Gltfast.Newtonsoft.Schema
 {
-    [Obsolete("Use Unity.Cloud.Gltfast.Schema.Mesh instead.")]
+    [Obsolete("Use Unity.Cloud.Gltfast.Objects.Mesh instead.")]
     [MovedFrom(true, sourceNamespace: "GLTFast.Newtonsoft.Schema", sourceAssembly: "glTFast.Newtonsoft")]
-    public class Mesh : Unity.Cloud.Gltfast.Schema.Mesh, IJsonObject
+    public class Mesh : Unity.Cloud.Gltfast.Objects.Mesh, IJsonObject
     {
         /// <inheritdoc/>
         public bool TryGetValue<T>(string key, out T value)

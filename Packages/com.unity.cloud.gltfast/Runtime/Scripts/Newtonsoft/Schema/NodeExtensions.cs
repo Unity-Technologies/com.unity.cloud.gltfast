@@ -6,7 +6,7 @@ using UnityEngine.Scripting.APIUpdating;
 
 namespace Unity.Cloud.Gltfast.Newtonsoft.Schema
 {
-    [Obsolete("Use Unity.Cloud.Gltfast.Schema.NodeExtensions instead.")]
+    [Obsolete("Use Unity.Cloud.Gltfast.Objects.NodeExtensions instead.")]
     [MovedFrom(true, sourceNamespace: "GLTFast.Newtonsoft.Schema", sourceAssembly: "glTFast.Newtonsoft")]
-    public class NodeExtensions : Unity.Cloud.Gltfast.Schema.NodeExtensions, IJsonObject { }
+    public class NodeExtensions : Unity.Cloud.Gltfast.Objects.NodeExtensions, IJsonObject { }
 }

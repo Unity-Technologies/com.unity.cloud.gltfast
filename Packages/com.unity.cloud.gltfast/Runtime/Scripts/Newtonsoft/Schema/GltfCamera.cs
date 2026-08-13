@@ -6,9 +6,9 @@ using UnityEngine.Scripting.APIUpdating;
 
 namespace Unity.Cloud.Gltfast.Newtonsoft.Schema
 {
-    [Obsolete("Use Unity.Cloud.Gltfast.Schema.Camera instead.")]
+    [Obsolete("Use Unity.Cloud.Gltfast.Objects.Camera instead.")]
     [MovedFrom(true, sourceNamespace: "GLTFast.Newtonsoft.Schema", sourceAssembly: "glTFast.Newtonsoft")]
-    public class Camera : Unity.Cloud.Gltfast.Schema.Camera, IJsonObject
+    public class Camera : Unity.Cloud.Gltfast.Objects.Camera, IJsonObject
     {
         /// <inheritdoc/>
         public bool TryGetValue<T>(string key, out T value)

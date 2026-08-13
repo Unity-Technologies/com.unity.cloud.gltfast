@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
-using Unity.Cloud.Gltfast.Schema;
+using Unity.Cloud.Gltfast.Objects;
 using UnityEngine;
-using Texture = Unity.Cloud.Gltfast.Schema.Texture;
+using Texture = Unity.Cloud.Gltfast.Objects.Texture;
 
 namespace Unity.Cloud.Gltfast.Export
 {

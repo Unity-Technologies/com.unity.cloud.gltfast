@@ -7,7 +7,7 @@ using UnityEngine.Scripting.APIUpdating;
 namespace Unity.Cloud.Gltfast.Materials
 {
     using Logging;
-    using Schema;
+    using Objects;
 
     /// <summary>
     /// Provides a mechanism to convert glTF materials into Unity Materials
