@@ -101,6 +101,12 @@ namespace Unity.Cloud.Gltfast
         /// </summary>
         const uint k_CopyBufferSize = 81_920;
 
+        /// <summary>
+        /// Initial capacity of the buffer that glTF JSON of unknown length is read into. Small enough to not
+        /// waste memory on the many small glTF documents, since the buffer's capacity doubles when exceeded.
+        /// </summary>
+        const int k_JsonBufferInitialCapacity = 4_096;
+
         const string k_PrimitiveName = "Primitive";
 
         static readonly HashSet<Extension> k_SupportedExtensions = new HashSet<Extension> {
@@ -569,46 +575,44 @@ namespace Unity.Cloud.Gltfast
                 glbHeader.CopyTo(mem);
                 mem = mem[glbHeader.Length..];
 
-#if GLTFAST_THREADS
-                var predictedTime = length / (float)k_MemCopySpeed;
-                if (DeferAgent.ShouldDefer(predictedTime))
-                {
-                    try
-                    {
-                        await Task.Run(() => CopyStreamToMemory(stream, mem), cancellationToken);
-                    }
-                    catch (OperationCanceledException)
-                    {
-                        cancellationToken.ThrowIfCancellationRequestedWithTracking();
-                    }
-                }
-                else
-#endif // GLTFAST_THREADS
-                {
-                    await CopyStreamToMemoryAsync(stream, mem);
-                }
+                await CopyStreamToMemoryDeferredAsync(stream, mem, cancellationToken);
 
                 var result = await LoadGltfBinaryInternal(data.AsReadOnly(), uri, importSettings, cancellationToken);
                 return result;
             }
-            var reader = new StreamReader(stream);
-            string json;
+
             if (stream.CanSeek)
             {
-                stream.Seek(initialStreamPosition, SeekOrigin.Begin);
-                json = await reader.ReadToEndAsync();
-            }
-            else
-            {
-                // TODO: String concat likely leads to another copy in memory and bad performance.
-                json = Encoding.UTF8.GetString(firstBytes) + await reader.ReadToEndAsync();
+                var jsonLength = stream.Length - initialStreamPosition;
+                if (jsonLength > int.MaxValue)
+                {
+                    Logger?.Error("glTF JSON exceeds 2GB limit.");
+                    return false;
+                }
+
+                using var data = new NativeArray<byte>(
+                    (int)jsonLength, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
+                using var manager = new NativeMemoryManager<byte>(data);
+                var mem = manager.Memory;
+                firstBytes.CopyTo(mem);
+
+                await CopyStreamToMemoryDeferredAsync(stream, mem[firstBytes.Length..], cancellationToken);
+
+                cancellationToken.ThrowIfCancellationRequestedWithTracking();
+
+                return await LoadGltfJsonInternal(data.AsReadOnly(), uri, importSettings, cancellationToken);
             }
 
-            reader.Dispose();
+            // The length is unknown, so the buffer has to grow while reading.
+            using var json = new NativeList<byte>(k_JsonBufferInitialCapacity, Allocator.Persistent);
+            json.Resize(firstBytes.Length, NativeArrayOptions.UninitializedMemory);
+            firstBytes.CopyTo(json.AsArray().AsSpan());
+
+            await CopyStreamToListAsync(stream, json, cancellationToken);
 
             cancellationToken.ThrowIfCancellationRequestedWithTracking();
 
-            return await LoadGltfJsonAsync(json, uri, importSettings, cancellationToken);
+            return await LoadGltfJsonInternal(json.AsArray().AsReadOnly(), uri, importSettings, cancellationToken);
         }
 
         [Obsolete("LoadGltfJson has been renamed to LoadGltfJsonAsync. (UnityUpgradable) -> LoadGltfJsonAsync(*)", true)]
@@ -1236,6 +1240,71 @@ namespace Unity.Cloud.Gltfast
             Profiler.EndSample();
         }
 
+        async ValueTask CopyStreamToMemoryDeferredAsync(
+            Stream source,
+            Memory<byte> destination,
+            CancellationToken cancellationToken
+            )
+        {
+#if GLTFAST_THREADS
+            var predictedTime = destination.Length / (float)k_MemCopySpeed;
+            if (DeferAgent.ShouldDefer(predictedTime))
+            {
+                try
+                {
+                    await Task.Run(() => CopyStreamToMemory(source, destination), cancellationToken);
+                }
+                catch (OperationCanceledException)
+                {
+                    cancellationToken.ThrowIfCancellationRequestedWithTracking();
+                }
+                return;
+            }
+#endif // GLTFAST_THREADS
+            await CopyStreamToMemoryAsync(source, destination);
+        }
+
+        async ValueTask CopyStreamToListAsync(
+            Stream source,
+            NativeList<byte> destination,
+            CancellationToken cancellationToken
+            )
+        {
+            using var chunk = new NativeArray<byte>(
+                (int)k_CopyBufferSize, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
+            using var manager = new NativeMemoryManager<byte>(chunk);
+            var mem = manager.Memory;
+
+            while (true)
+            {
+                int read;
+                try
+                {
+                    read = await source.ReadAsync(mem, cancellationToken);
+                }
+                catch (OperationCanceledException)
+                {
+                    cancellationToken.ThrowIfCancellationRequestedWithTracking();
+                    throw;
+                }
+
+                if (read == 0)
+                {
+                    break;
+                }
+
+                Profiler.BeginSample("CopyStreamToListAsync");
+                destination.AddRange(chunk.GetSubArray(0, read));
+                Profiler.EndSample();
+
+                // Reads that complete synchronously (e.g. from a MemoryStream) never yield on their own.
+                if (DeferAgent.ShouldDefer(read / (float)k_MemCopySpeed))
+                {
+                    await Task.Yield();
+                }
+            }
+        }
+
         async ValueTask CopyStreamToMemoryAsync(Stream source, Memory<byte> destination)
         {
             Profiler.BeginSample("CopyStreamToMemoryAsync");
@@ -1720,10 +1789,17 @@ namespace Unity.Cloud.Gltfast
 
         async Task<bool> LoadGltf(NativeArray<byte>.ReadOnly json, CancellationToken cancellationToken)
         {
-            var success = await ParseJsonAndLoadBuffers(json, cancellationToken);
+            // System.Text.Json does not accept a byte order mark.
+            var offset = StartsWithUtf8Bom(json) ? 3 : 0;
+            var success = await ParseJsonAndLoadBuffers(json, cancellationToken, offset);
             if (success)
                 LoadImages(cancellationToken);
             return success;
+        }
+
+        static bool StartsWithUtf8Bom(NativeArray<byte>.ReadOnly json)
+        {
+            return json.Length >= 3 && json[0] == 0xEF && json[1] == 0xBB && json[2] == 0xBF;
         }
 
         void LoadImages(CancellationToken cancellationToken)

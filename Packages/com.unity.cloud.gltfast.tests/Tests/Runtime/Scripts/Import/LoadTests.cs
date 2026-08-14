@@ -8,6 +8,7 @@
 using System;
 using System.Collections;
 using System.IO;
+using System.Text;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using UnityEngine;
@@ -166,6 +167,80 @@ namespace Unity.Cloud.Gltfast.Tests.Import
                         "glb exceeds 2GB limit."
                     )
                 });
+        }
+
+        [UnityTest]
+        public IEnumerator LoadStreamJsonNonSeekable()
+        {
+            // Larger than the stream copy buffer, so the growing buffer is exercised.
+            var copyright = new string('©', 100_000);
+            var json = Encoding.UTF8.GetBytes($@"{{""asset"":{{""version"":""2.0"",""copyright"":""{copyright}""}}}}");
+            var task = LoadStreamJson(new NonSeekableStream(new MemoryStream(json)), copyright);
+            yield return Utils.WaitForTask(task);
+        }
+
+        [UnityTest]
+        public IEnumerator LoadStreamJsonByteOrderMark()
+        {
+            const string copyright = "© 2026 Unity Technologies and the glTFast authors.";
+            var stream = new MemoryStream();
+            var preamble = Encoding.UTF8.GetPreamble();
+            stream.Write(preamble, 0, preamble.Length);
+            var json = Encoding.UTF8.GetBytes($@"{{""asset"":{{""version"":""2.0"",""copyright"":""{copyright}""}}}}");
+            stream.Write(json, 0, json.Length);
+            stream.Seek(0, SeekOrigin.Begin);
+
+            var task = LoadStreamJson(stream, copyright);
+            yield return Utils.WaitForTask(task);
+        }
+
+        static async Task LoadStreamJson(Stream stream, string expectedCopyright)
+        {
+            var logger = new CollectingLogger();
+            using var gltf = new GltfImport(deferAgent: new UninterruptedDeferAgent(), logger: logger);
+            var success = await gltf.LoadStreamAsync(stream);
+            stream.Dispose();
+            LoggerTest.AssertLogger(logger);
+            Assert.IsTrue(success);
+            Assert.AreEqual(expectedCopyright, gltf.Root.Asset.Copyright);
+        }
+
+        class NonSeekableStream : Stream
+        {
+            readonly Stream m_Stream;
+
+            public NonSeekableStream(Stream stream) => m_Stream = stream;
+
+            public override bool CanRead => m_Stream.CanRead;
+            public override bool CanSeek => false;
+            public override bool CanWrite => false;
+            public override long Length => throw new NotSupportedException();
+
+            public override long Position
+            {
+                get => throw new NotSupportedException();
+                set => throw new NotSupportedException();
+            }
+
+            public override void Flush() { }
+
+            public override int Read(byte[] buffer, int offset, int count) =>
+                m_Stream.Read(buffer, offset, count);
+
+            public override long Seek(long offset, SeekOrigin origin) => throw new NotSupportedException();
+            public override void SetLength(long value) => throw new NotSupportedException();
+
+            public override void Write(byte[] buffer, int offset, int count) =>
+                throw new NotSupportedException();
+
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing)
+                {
+                    m_Stream.Dispose();
+                }
+                base.Dispose(disposing);
+            }
         }
 
         static async Task LoadInternal(

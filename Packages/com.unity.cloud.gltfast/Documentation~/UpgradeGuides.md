@@ -504,6 +504,10 @@ Enum member names and underlying values are unchanged, so assignments such as `s
 | `root.Asset.Name = "Hero";` | Code must be removed |
 | `var name = root.Asset.Name;` | Code must be removed |
 
+### glTF JSON streams have to be UTF-8 encoded
+
+[GltfImport.LoadStreamAsync](xref:Unity.Cloud.Gltfast.GltfImport.LoadStreamAsync*) reads glTF JSON as UTF-8, like all other loading methods do. Before it decoded the stream via `StreamReader`, which detected and transcoded other encodings (e.g. UTF-16). The glTF 2.0 specification requires JSON to be UTF-8 encoded, so re-encode assets that are not. A leading UTF-8 byte order mark is still tolerated.
+
 ### Export image format and MIME type
 
 The redundant `Unity.Cloud.Gltfast.Export.ImageFormat` enum was removed and merged into the canonical [Unity.Cloud.Gltfast.ImageFormat](xref:Unity.Cloud.Gltfast.ImageFormat). The enum value `Jpg` was renamed to `Jpeg` to match.

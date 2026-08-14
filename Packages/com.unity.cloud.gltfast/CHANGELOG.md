@@ -45,6 +45,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Refactored [GltfImport](xref:Unity.Cloud.Gltfast.GltfImport). It does not inherit from a generic base class anymore and does not allow specifying members' types.
   - Refactored and simplified the JSON serialization classes (namespace `Unity.Cloud.Gltfast.Objects`).
   - (Performance) glTF JSON is de-serialized straight from its UTF-8 source buffer, so converting it to a UTF-16 string (and back) is not required anymore. This reduces managed memory allocation by three times the glTF JSON size.
+  - [GltfImport.LoadStreamAsync](xref:Unity.Cloud.Gltfast.GltfImport.LoadStreamAsync*) reads glTF JSON into a native buffer as well, instead of decoding it into a UTF-16 string. A leading UTF-8 byte order mark is skipped, but JSON in other encodings (e.g. UTF-16) is not supported anymore (see the [Upgrade Guide](xref:doc-upgrade-guides)).
 - `EnumOrRawValue<TEnum>` (de-)serialization matches enum values directly on UTF-8 data, avoiding managed allocations and exception-based control flow on the fast path.
 - Refactored JSON serialization classes (in namespace `Unity.Cloud.Gltfast.Objects`).
   - Major refactor to align them closer with Microsoft's framework design guidelines and `System.Text.Json` best-practices.
