@@ -42,6 +42,67 @@ namespace Unity.Cloud.Gltfast.Documentation.Examples.Tests
         }
 
         [UnityTest]
+        public IEnumerator LoadGltfFromNativeArray()
+        {
+            var component = new GameObject()
+                .AddComponent<LoadGltfFromMemory>();
+            Assert.NotNull(component);
+
+            var path = TestGltfGenerator.GetAssetPath(TestGltfGenerator.Asset.CylinderWithMaterial);
+#if UNITY_ANDROID && !UNITY_EDITOR
+            // On Android streaming assets are packed in a jar file and cannot be accessed via file stream directly.
+            // So we copy the file to a temporary location first.
+            var copyTask = GltfBinaryTests.CopyToTempFile(path);
+            yield return AsyncWrapper.WaitForTask(copyTask);
+            path = copyTask.Result;
+#endif
+            var task = component.LoadGltfFromNativeArray(path);
+            yield return AsyncWrapper.WaitForTask(task);
+            Object.Destroy(component.gameObject);
+        }
+
+        [UnityTest]
+        public IEnumerator LoadGltfFromNativeArrayInvalid()
+        {
+#if !ENABLE_UNITY_COLLECTIONS_CHECKS
+            // Without safety checks the sample reads deallocated memory, which may corrupt memory or crash.
+            Assert.Ignore("Requires collections safety checks to detect the sample's use after dispose.");
+#endif
+            var component = new GameObject()
+                .AddComponent<LoadGltfFromMemory>();
+            Assert.NotNull(component);
+
+            var path = TestGltfGenerator.GetAssetPath(TestGltfGenerator.Asset.CylinderWithMaterial, GltfFormat.Binary);
+#if UNITY_ANDROID && !UNITY_EDITOR
+            // On Android streaming assets are packed in a jar file and cannot be accessed via file stream directly.
+            // So we copy the file to a temporary location first.
+            var copyTask = GltfBinaryTests.CopyToTempFile(path);
+            yield return AsyncWrapper.WaitForTask(copyTask);
+            path = copyTask.Result;
+#endif
+            var task = component.LoadGltfFromNativeArrayInvalid(path);
+            while (!task.IsCompleted)
+            {
+                yield return null;
+            }
+
+            // The sample disposes of the data while loading is in progress, so the outcome is undefined by
+            // design. Whether the disposal is observed depends on timing: small glTFs complete before the load
+            // task yields for the first time. Both outcomes are accepted, but nothing else is.
+            if (task.IsFaulted)
+            {
+                var exception = task.Exception!.GetBaseException();
+                Debug.Log($"Use after dispose was detected: {exception.Message}");
+                Assert.IsTrue(
+                    exception is System.ObjectDisposedException or System.InvalidOperationException,
+                    $"Unexpected exception type {exception.GetType().Name}: {exception.Message}"
+                    );
+            }
+
+            Object.Destroy(component.gameObject);
+        }
+
+        [UnityTest]
         public IEnumerator LoadViaComponent()
         {
             var component = new GameObject()

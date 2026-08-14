@@ -11,6 +11,7 @@ namespace Unity.Cloud.Gltfast.Documentation.Examples
 
     using System;
     using Unity.Cloud.Gltfast;
+    using Unity.Collections;
     using UnityEngine;
 
     class LoadGltfFromMemory : MonoBehaviour
@@ -31,6 +32,37 @@ namespace Unity.Cloud.Gltfast.Documentation.Examples
             }
         }
         #endregion
+
+        public async Task LoadGltfFromNativeArray(string filePath)
+        {
+            #region LoadGltfFromNativeArray
+            var data = new NativeArray<byte>(await File.ReadAllBytesAsync(filePath), Allocator.Persistent);
+            var gltf = new GltfImport();
+            var success = await gltf.LoadAsync(data.AsReadOnly(), new Uri(filePath));
+
+            // Loading completed, so the data is not accessed anymore and can be disposed of.
+            data.Dispose();
+
+            if (success)
+            {
+                await gltf.InstantiateMainSceneAsync(transform);
+            }
+            #endregion
+        }
+
+        public async Task LoadGltfFromNativeArrayInvalid(string filePath)
+        {
+            #region LoadGltfFromNativeArrayInvalid
+            var data = new NativeArray<byte>(await File.ReadAllBytesAsync(filePath), Allocator.Persistent);
+            var gltf = new GltfImport();
+            var loadTask = gltf.LoadAsync(data.AsReadOnly(), new Uri(filePath));
+
+            // Invalid: Loading is still in progress and reads from the data.
+            data.Dispose();
+
+            await loadTask;
+            #endregion
+        }
 
         public void LoadViaComponent()
         {

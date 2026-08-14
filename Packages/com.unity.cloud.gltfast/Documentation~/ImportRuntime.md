@@ -45,6 +45,17 @@ Both the loading and instantiation methods return a boolean value indicating if 
 > [!TIP]
 > Provide the original URI of glTF-binary file as `uri` parameter to [LoadAsync][GltfImportLoad], so that it is able to resolve relative URIs in non-self-contained glTFs.
 
+### Example: Load from NativeArray
+
+> [!IMPORTANT]
+> The buffer you pass to [LoadAsync][GltfImportLoad] is not copied. It has to stay allocated and unmodified until the returned `Task` completed, because glTFast reads from it throughout loading, potentially from worker threads. When loading from a [NativeArray&lt;byte&gt;.ReadOnly][NativeArrayReadOnly], you keep ownership of the underlying [NativeArray&lt;byte&gt;][NativeArray] and thus have to dispose of it *after* awaiting.
+
+[!code-cs [load-gltf-from-native-array](../Runtime/DocExamples/LoadGltfFromMemory.cs#LoadGltfFromNativeArray)]
+
+Disposing of the data earlier results in undefined behavior (a safety check exception in the Unity Editor, invalid reads otherwise). Do **not** do this:
+
+[!code-cs [load-gltf-from-native-array-invalid](../Runtime/DocExamples/LoadGltfFromMemory.cs#LoadGltfFromNativeArrayInvalid)]
+
 ## Customize loading behavior
 
 Loading via script allows you to:
@@ -214,6 +225,8 @@ When you no longer need a loaded instance of a glTF scene you might want to remo
 [InstantiationSettings]: xref:Unity.Cloud.Gltfast.InstantiationSettings
 [Khronos]: https://www.khronos.org
 [LogMessages]: xref:Unity.Cloud.Gltfast.Logging.LogMessages
+[NativeArray]: xref:Unity.Collections.NativeArray`1
+[NativeArrayReadOnly]: xref:Unity.Collections.NativeArray`1.ReadOnly
 [GameObjectSceneInstance]: xref:Unity.Cloud.Gltfast.GameObjectSceneInstance
 [SceneObjectCreation]: xref:Unity.Cloud.Gltfast.SceneObjectCreation
 [Stream]: xref:System.IO.Stream

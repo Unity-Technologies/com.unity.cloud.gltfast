@@ -395,6 +395,11 @@ namespace Unity.Cloud.Gltfast
         /// <param name="cancellationToken">Token to submit cancellation requests. The default value is None.</param>
         /// <returns>True if loading was mainly successful and no critical error occurred, false otherwise</returns>
         /// <exception cref="OperationCanceledException">Thrown when cancelled before completion.</exception>
+        /// <remarks>
+        /// <paramref name="data"/> is not copied. It has to stay unmodified until the returned
+        /// <see cref="Task{TResult}"/> completed, since glTFast reads from it throughout loading,
+        /// potentially from worker threads.
+        /// </remarks>
         public async Task<bool> LoadAsync(
             byte[] data,
             Uri uri = null,
@@ -433,6 +438,13 @@ namespace Unity.Cloud.Gltfast
         /// <param name="cancellationToken">Token to submit cancellation requests. The default value is None.</param>
         /// <returns>True if loading was mainly successful and no critical error occurred, false otherwise</returns>
         /// <exception cref="OperationCanceledException">Thrown when cancelled before completion.</exception>
+        /// <remarks>
+        /// <paramref name="data"/> is not copied. The caller keeps ownership of it and has to keep it
+        /// allocated and unmodified until the returned <see cref="Task{TResult}"/> completed. glTFast reads
+        /// from it throughout loading, potentially from worker threads. Disposing the underlying
+        /// <see cref="NativeArray{T}"/> before that results in undefined behavior (a safety check
+        /// exception in the Unity Editor, invalid reads otherwise).
+        /// </remarks>
         public async Task<bool> LoadAsync(
             NativeArray<byte>.ReadOnly data,
             Uri uri = null,
@@ -447,10 +459,7 @@ namespace Unity.Cloud.Gltfast
 
             cancellationToken.ThrowIfCancellationRequestedWithTracking();
 
-            // Fallback interpreting data as string
-            // TODO: ToArray does another, slow memcpy! Find a better solution.
-            var json = Encoding.UTF8.GetString(data.ToArray(), 0, data.Length);
-            return await LoadGltfJsonAsync(json, uri, importSettings, cancellationToken);
+            return await LoadGltfJsonInternal(data, uri, importSettings, cancellationToken);
         }
 
         [Obsolete("LoadFile has been renamed to LoadFileAsync. (UnityUpgradable) -> LoadFileAsync(*)", true)]
@@ -1307,6 +1316,43 @@ namespace Unity.Cloud.Gltfast
                 Logger?.Info(LogCode.OperationCanceled, e.Message);
                 if (m_VolatileDisposables?.Contains(download) is false)
                     download?.Dispose();
+                await DisposeTextureLoadTasks();
+                throw;
+            }
+            finally
+            {
+                if (!success)
+                {
+                    await DisposeTextureLoadTasks();
+                }
+                DisposeVolatileData();
+            }
+
+            LoadingError = !success;
+            LoadingDone = true;
+            return success;
+        }
+
+        async Task<bool> LoadGltfJsonInternal(
+            NativeArray<byte>.ReadOnly jsonUTF8,
+            Uri uri = null,
+            ImportSettings importSettings = null,
+            CancellationToken cancellationToken = default
+        )
+        {
+            var success = false;
+            try
+            {
+                m_Settings = importSettings ?? new ImportSettings();
+                BaseUri = UriHelper.GetBaseUri(uri);
+                success =
+                    await LoadGltf(jsonUTF8, cancellationToken)
+                    && await LoadContent(cancellationToken)
+                    && await Prepare(cancellationToken);
+            }
+            catch (OperationCanceledException e)
+            {
+                Logger?.Info(LogCode.OperationCanceled, e.Message);
                 await DisposeTextureLoadTasks();
                 throw;
             }
