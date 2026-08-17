@@ -3,14 +3,12 @@
 
 using System;
 using Unity.Cloud.Gltfast.Text.Json.Serialization;
-using UnityEngine.Scripting.APIUpdating;
 
 namespace Unity.Cloud.Gltfast.Objects
 {
     /// <summary>
     /// Per-instance attributes collection
     /// </summary>
-    [MovedFrom(true, sourceNamespace: "GLTFast.Schema", sourceAssembly: "glTFast")]
     public class InstancesAttributes
     {
         /// <summary>

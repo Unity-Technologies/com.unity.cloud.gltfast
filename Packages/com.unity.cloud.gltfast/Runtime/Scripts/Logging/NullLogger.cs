@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using UnityEngine;
-using UnityEngine.Scripting.APIUpdating;
 
 namespace Unity.Cloud.Gltfast.Logging
 {
@@ -13,7 +12,6 @@ namespace Unity.Cloud.Gltfast.Logging
     /// </summary>
     /// <seealso cref="ConsoleLogger"/>
     /// <seealso cref="CollectingLogger"/>
-    [MovedFrom(true, sourceNamespace: "GLTFast.Logging", sourceAssembly: "glTFast")]
     public sealed class NullLogger : ICodeLogger
     {
         /// <summary>

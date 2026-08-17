@@ -29,6 +29,11 @@
     ],
     "versionDefines": [
         {
+            "name": "com.unity.modules.animation",
+            "expression": "",
+            "define": "UNITY_ANIMATION"
+        },
+        {
             "name": "com.unity.formats.gltf.validator",
             "expression": "0.2.0-preview.1",
             "define": "GLTF_VALIDATOR"

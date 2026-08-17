@@ -4,14 +4,12 @@
 using System;
 using Unity.Cloud.Gltfast.Text.Json.Serialization;
 using Unity.Mathematics;
-using UnityEngine.Scripting.APIUpdating;
 
 namespace Unity.Cloud.Gltfast.Objects
 {
     /// <summary>
     /// Linear RGB color without alpha channel.
     /// </summary>
-    [MovedFrom(true, sourceNamespace: "GLTFast.Schema", sourceAssembly: "glTFast")]
     public struct Color : IEquatable<Color>
     {
         /// <summary>Red component.</summary>

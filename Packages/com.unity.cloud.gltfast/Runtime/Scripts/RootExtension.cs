@@ -5,14 +5,12 @@ using System.IO;
 using Unity.Cloud.Gltfast.Objects;
 using Unity.Cloud.Gltfast.Text.Json;
 using UnityEngine;
-using UnityEngine.Scripting.APIUpdating;
 
 namespace Unity.Cloud.Gltfast
 {
     /// <summary>
     /// Extension methods for <see cref="Root"/>
     /// </summary>
-    [MovedFrom(true, sourceNamespace: "GLTFast", sourceAssembly: "glTFast")]
     public static class RootExtension
     {
         /// <summary>

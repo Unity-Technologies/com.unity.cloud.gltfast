@@ -5,7 +5,6 @@
 
 using System;
 using Unity.Cloud.Gltfast.Text.Json.Serialization;
-using UnityEngine.Scripting.APIUpdating;
 
 namespace Unity.Cloud.Gltfast.Objects
 {
@@ -18,7 +17,6 @@ namespace Unity.Cloud.Gltfast.Objects
     /// where w is the scalar. For the "scale" property, the values are the scaling factors along the X, Y, and Z axes.
     /// </remarks>
     [JsonConverter(typeof(JsonStringEnumConverter<AnimationPath>))]
-    [MovedFrom(true, sourceNamespace: "GLTFast.Schema", sourceAssembly: "glTFast")]
     public enum AnimationPath
     {
         /// <summary>Undefined</summary>

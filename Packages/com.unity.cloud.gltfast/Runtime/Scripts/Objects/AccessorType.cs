@@ -3,7 +3,6 @@
 
 using System;
 using Unity.Cloud.Gltfast.Text.Json.Serialization;
-using UnityEngine.Scripting.APIUpdating;
 
 namespace Unity.Cloud.Gltfast.Objects
 {
@@ -12,7 +11,6 @@ namespace Unity.Cloud.Gltfast.Objects
     /// </summary>
     /// <seealso href="https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html#_accessor_type"/>
     [JsonConverter(typeof(JsonStringEnumConverter<AccessorType>))]
-    [MovedFrom(true, sourceNamespace: "GLTFast.Schema", sourceAssembly: "glTFast")]
     public enum AccessorType : byte
     {
         /// <summary>Undefined</summary>

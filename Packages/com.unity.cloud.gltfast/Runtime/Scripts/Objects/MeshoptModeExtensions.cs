@@ -5,11 +5,9 @@
 
 using System;
 using Meshoptimizer;
-using UnityEngine.Scripting.APIUpdating;
 
 namespace Unity.Cloud.Gltfast.Objects
 {
-    [MovedFrom(true, sourceNamespace: "GLTFast.Schema", sourceAssembly: "glTFast")]
     public static class MeshoptModeExtensions
     {
         public static Mode ToMeshoptimizerMode(this MeshoptMode mode)

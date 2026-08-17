@@ -2,14 +2,12 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
-using UnityEngine.Scripting.APIUpdating;
 
 namespace Unity.Cloud.Gltfast.Objects
 {
     /// <summary>
     /// Mode defines the type of buffer to decode
     /// </summary>
-    [MovedFrom(true, sourceNamespace: "GLTFast.Schema", sourceAssembly: "glTFast")]
     public enum MeshoptMode
     {
         /// <summary>

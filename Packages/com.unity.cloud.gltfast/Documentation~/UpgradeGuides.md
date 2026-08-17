@@ -52,6 +52,25 @@ The old name referred to JSON Schema, which glTFast does not use, and it named a
 
 Coming from 6.x this is automatic — the types carry `[MovedFrom]`, so the API Updater rewrites it along with the rest of the rename.
 
+#### Types that were renamed as well as moved
+
+The API Updater rewrites a type that moved to a new assembly, but not one that was renamed at the same time. These twelve therefore need a manual find-and-replace; their 7.0 names all live in `Unity.Cloud.Gltfast.Objects`.
+
+| glTFast 6.x | 7.0 |
+| ----------- | --- |
+| `GLTFast.Schema.GltfAccessorAttributeType` | `AccessorType` |
+| `GLTFast.Schema.GltfComponentType` | `AccessorDataType` |
+| `GLTFast.Schema.DrawMode` | `PrimitiveMode` |
+| `GLTFast.Schema.InterpolationType` | `Interpolation` |
+| `GLTFast.Schema.Camera.Type` | `CameraType` |
+| `GLTFast.Schema.LightPunctual.Type` | `LightType` |
+| `GLTFast.Schema.AnimationChannel.Path` | `AnimationPath` |
+| `GLTFast.Schema.MeshGpuInstancing.Attributes` | `InstancesAttributes` |
+| `GLTFast.Schema.Material.AlphaMode` | `AlphaMode` |
+| `GLTFast.Schema.Sampler.MagFilterMode` | `MagFilterMode` |
+| `GLTFast.Schema.Sampler.MinFilterMode` | `MinFilterMode` |
+| `GLTFast.Schema.Sampler.WrapMode` | `WrapMode` |
+
 ### Assemblies are no longer auto-referenced
 
 `Unity.Cloud.Gltfast` is now the only glTFast assembly that is auto-referenced. An auto-referenced assembly is one that Unity's [predefined assemblies][PredefinedAssemblies] (`Assembly-CSharp`, `Assembly-CSharp-Editor`, …) reference implicitly — that is, code in a folder without an `.asmdef` can use it without any setup.
@@ -85,7 +104,7 @@ The `Unity.Cloud.Gltfast.Newtonsoft` assembly (previously `GLTFast.Newtonsoft`) 
 | `Unity.Cloud.Gltfast.Newtonsoft.GltfImport` | `Unity.Cloud.Gltfast.GltfImport` |
 | `using Unity.Cloud.Gltfast.Newtonsoft.Schema;` | `using Unity.Cloud.Gltfast.Objects;` |
 | `Unity.Cloud.Gltfast.Newtonsoft.Schema.Accessor`, `…Asset`, `…Material`, `…Node`, `…Root`, `…Mesh`, etc. | `Unity.Cloud.Gltfast.Objects.Accessor`, `…Asset`, `…Material`, `…Node`, `…Root`, `…Mesh`, etc. |
-| `Unity.Cloud.Gltfast.Newtonsoft.Schema.IJsonObject` interface | `Unity.Cloud.Gltfast.Objects.IPropertyContainer` (on extension/extras objects) or `Unity.Cloud.Gltfast.Objects.IAdditionalPropertyContainer` (on glTF objects, reached via its `AdditionalProperties` property) |
+| `Unity.Cloud.Gltfast.Newtonsoft.Schema.IJsonObject` interface | `Unity.Cloud.Gltfast.Objects.IPropertyContainer` (on extension/extras objects) or the `AdditionalProperties` property (on glTF objects) |
 
 If your assembly definition referenced the old `glTFast.Newtonsoft` assembly by name, rename that reference to `Unity.Cloud.Gltfast.Newtonsoft` first — this keeps the code compiling (and the API Updater working) while you migrate. Once your code no longer uses any `Unity.Cloud.Gltfast.Newtonsoft.*` type, replace the reference with `Unity.Cloud.Gltfast` and remove it entirely.
 
@@ -359,7 +378,7 @@ Custom implementations of [IMaterialsVariantsSlot](xref:Unity.Cloud.Gltfast.IMat
 
 ### `Attributes` indexed channels
 
-[Attributes](xref:Unity.Cloud.Gltfast.Objects.Attributes) replaces the per-index properties with per-family `List<int?>` collections. Bounds-checked index access is provided by extension methods on [AttributesExtensions](xref:Unity.Cloud.Gltfast.Objects.AttributesExtensions); unrecognized JSON properties (extensions, application-specific semantics) are captured via `[JsonExtensionData]` and exposed through [IAdditionalPropertyContainer.AdditionalProperties](xref:Unity.Cloud.Gltfast.Objects.IAdditionalPropertyContainer.AdditionalProperties).
+[Attributes](xref:Unity.Cloud.Gltfast.Objects.Attributes) replaces the per-index properties with per-family `List<int?>` collections. Bounds-checked index access is provided by extension methods on [AttributesExtensions](xref:Unity.Cloud.Gltfast.Objects.AttributesExtensions); unrecognized JSON properties (extensions, application-specific semantics) are captured via `[JsonExtensionData]` and exposed through the `AdditionalProperties` property.
 
 | Property | Before | After |
 | -------- | ------ | ----- |
@@ -367,7 +386,7 @@ Custom implementations of [IMaterialsVariantsSlot](xref:Unity.Cloud.Gltfast.IMat
 | `COLOR_0` | single `int` (`COLOR_0` only) | `List<int?> Colors` + `GetColor(n)`/`SetColor(n, v)` extensions (round-trip `COLOR_n` for any `n`) |
 | `JOINTS_0` | single `int` (`JOINTS_0` only) | `List<int?> Joints` + `GetJoint(n)`/`SetJoint(n, v)` extensions |
 | `WEIGHTS_0` | single `int` (`WEIGHTS_0` only) | `List<int?> Weights` + `GetWeight(n)`/`SetWeight(n, v)` extensions |
-| (unrepresentable: `_TEMPERATURE` etc.) | silently dropped | reached through `attrs.AdditionalProperties.TryGetValue<T>("_TEMPERATURE", out var v)` (`Attributes` implements `IAdditionalPropertyContainer`) |
+| (unrepresentable: `_TEMPERATURE` etc.) | silently dropped | reached through `attrs.AdditionalProperties.TryGetValue<T>("_TEMPERATURE", out var v)` |
 
 The `Get…` extensions return `null` past the end of the underlying list. The `Set…` extensions lazily allocate and null-pad as needed. Iterate the underlying list directly for bulk operations.
 

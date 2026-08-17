@@ -4,7 +4,6 @@
 using System;
 using Unity.Cloud.Gltfast.Text.Json.Serialization;
 using Unity.Collections;
-using UnityEngine.Scripting.APIUpdating;
 
 namespace Unity.Cloud.Gltfast.Objects
 {
@@ -20,7 +19,6 @@ namespace Unity.Cloud.Gltfast.Objects
     /// and <see cref="Root"/> forward <see cref="IDisposable.Dispose"/> calls automatically.
     /// </remarks>
     [JsonConverter(typeof(UriValueConverter))]
-    [MovedFrom(true, sourceNamespace: "GLTFast.Schema", sourceAssembly: "glTFast")]
     public sealed class UriValue : IDisposable
     {
         enum UriState : byte

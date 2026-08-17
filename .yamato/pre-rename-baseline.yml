@@ -1,0 +1,31 @@
+# Hand-authored (not Recipe-generated).
+# Fails when the committed PreRenameTypes.txt no longer matches origin/develop, so a type forward-ported
+# from 6.x cannot land without the baseline moving in the same pull request.
+pre_rename_baseline:
+  name: Pre-Rename Type Baseline
+  agent:
+    image: package-ci/ubuntu-22.04:v4
+    type: Unity::VM
+    flavor: b1.large
+  triggers:
+    expression: pull_request.target eq "preview" AND pull_request.source match ".*develop.*"
+  commands:
+  - name: Verify the 6.x type baseline
+    command: Tools/CI/pre-rename-baseline.sh verify
+
+# Comment "api-baseline" on any pull request to get the regenerated file as an artifact to commit.
+pre_rename_baseline_generate:
+  name: Pre-Rename Type Baseline [Generate]
+  agent:
+    image: package-ci/ubuntu-22.04:v4
+    type: Unity::VM
+    flavor: b1.large
+  triggers:
+    expression: pull_request.comment eq "api-baseline"
+  commands:
+  - name: Generate the 6.x type baseline
+    command: Tools/CI/pre-rename-baseline.sh generate PreRenameTypes.txt
+  artifacts:
+    pre_rename_types:
+      paths:
+      - PreRenameTypes.txt

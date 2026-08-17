@@ -9,7 +9,7 @@ namespace Unity.Cloud.Gltfast.Newtonsoft.Schema
     /// <summary>
     /// Represents a JSON object, containing key-value properties of arbitrary type.
     /// </summary>
-    [Obsolete("Use IAdditionalPropertyContainer.AdditionalProperties.TryGetValue (on glTF JSON objects) or IPropertyContainer.TryGetValue (on extensions/extras) instead.")]
+    [Obsolete("Use the AdditionalProperties property (on glTF JSON objects) or IPropertyContainer.TryGetValue (on extensions/extras) instead.")]
     [MovedFrom(true, sourceNamespace: "GLTFast.Newtonsoft.Schema", sourceAssembly: "glTFast.Newtonsoft")]
     public interface IJsonObject
     {

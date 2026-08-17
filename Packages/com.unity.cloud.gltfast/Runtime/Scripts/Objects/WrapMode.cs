@@ -2,14 +2,12 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
-using UnityEngine.Scripting.APIUpdating;
 
 namespace Unity.Cloud.Gltfast.Objects
 {
     /// <summary>
     /// Texture wrap mode.
     /// </summary>
-    [MovedFrom(true, sourceNamespace: "GLTFast.Schema", sourceAssembly: "glTFast")]
     public enum WrapMode
     {
         /// <summary>Undefined</summary>

@@ -3,7 +3,6 @@
 
 using System;
 using Unity.Cloud.Gltfast.Text.Json.Serialization;
-using UnityEngine.Scripting.APIUpdating;
 
 namespace Unity.Cloud.Gltfast.Objects
 {
@@ -12,7 +11,6 @@ namespace Unity.Cloud.Gltfast.Objects
     /// </summary>
     /// <seealso href="https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html#_animation_sampler_interpolation"/>
     [JsonConverter(typeof(JsonStringEnumConverter<Interpolation>))]
-    [MovedFrom(true, sourceNamespace: "GLTFast.Schema", sourceAssembly: "glTFast")]
     public enum Interpolation
     {
         /// <summary>The animated values are linearly interpolated between keyframes.</summary>

@@ -3,7 +3,6 @@
 
 using System;
 using System.Diagnostics;
-using UnityEngine.Scripting.APIUpdating;
 
 namespace Unity.Cloud.Gltfast.Objects
 {
@@ -14,7 +13,6 @@ namespace Unity.Cloud.Gltfast.Objects
     /// </summary>
     /// <typeparam name="TEnum">Enum type the string is deserialized to.</typeparam>
     [DebuggerDisplay("{ToString(),nq}")]
-    [MovedFrom(true, sourceNamespace: "GLTFast.Schema", sourceAssembly: "glTFast")]
     public readonly struct EnumOrRawValue<TEnum> : IEquatable<TEnum>, IEquatable<EnumOrRawValue<TEnum>> where TEnum : struct, Enum
     {
         /// <summary>Enum value</summary>

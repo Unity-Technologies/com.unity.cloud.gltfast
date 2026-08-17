@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using Unity.Cloud.Gltfast.Text.Json.Serialization;
-using UnityEngine.Scripting.APIUpdating;
 
 namespace Unity.Cloud.Gltfast.Objects
 {
@@ -17,7 +16,6 @@ namespace Unity.Cloud.Gltfast.Objects
     /// "absent <c>mimeType</c>" and "explicitly <c>Unknown</c>" is safe.
     /// </remarks>
     [JsonConverter(typeof(JsonStringEnumConverter<ImageMimeType>))]
-    [MovedFrom(true, sourceNamespace: "GLTFast.Schema", sourceAssembly: "glTFast")]
     public enum ImageMimeType
     {
         /// <summary>MIME type not specified or unrecognized.</summary>

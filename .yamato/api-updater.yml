@@ -8,23 +8,13 @@ api_updater:
     type: Unity::VM
     flavor: b1.large
   commands:
-  # Install + editor-download + run share one block: Yamato runs each command in a fresh shell, so
-  # the PATH the CLI installer sets would not survive into a later step (see code_format_recipes).
+  # One block: Yamato runs each command in a fresh shell, so the PATH the CLI installer sets would not
+  # survive into a later step (see code_format_recipes).
   - name: Verify API Updater migration
     command: |-
       set -eu
 
-      # 1) Install the Unity CLI
-      # TODO: Remove the beta channel once the CLI is stable and available on the default channel.
-      curl -fsSL https://public-cdn.cloud.unity3d.com/hub/prod/cli/install.sh | UNITY_CLI_CHANNEL=beta bash
-      export PATH="$HOME/.local/bin:$HOME/.unity/bin:/usr/local/bin:$PATH"
-      hash -r
-      unity --version
+      . Tools/CI/unity-cli.sh
+      install_unity_editor Projects/ApiUpdaterMigration
 
-      # 2) Download the exact Editor version the project targets
-      EDITOR_VERSION="$(sed -n 's/^m_EditorVersion: //p' Projects/ApiUpdaterMigration/ProjectSettings/ProjectVersion.txt)"
-      echo "Installing Unity Editor ${EDITOR_VERSION}"
-      unity install "${EDITOR_VERSION}"
-
-      # 3) Run the revertable migration check (drives `unity run … -- -accept-apiupdate`)
       Projects/ApiUpdaterMigration/Tools/verify-apiupdater.sh
