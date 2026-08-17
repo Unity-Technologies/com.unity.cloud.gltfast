@@ -41,7 +41,7 @@ package_pack_-_cloud_gltfast:
     WRENCH_LOCALAPV_URL: https://artifactory.prd.it.unity3d.com/artifactory/stevedore-unity-internal/wrench-localapv/1-3-15_84f461813aada1be64b3885e7b9464e7f92445674e81d708813ac0bdf2c90408.zip
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 3.6.1.0
+    Wrench: 3.7.0.0
 
 # Pack Unity glTFast Development Tools
 package_pack_-_cloud_gltfast_devtools:
@@ -67,7 +67,7 @@ package_pack_-_cloud_gltfast_devtools:
     WRENCH_LOCALAPV_URL: https://artifactory.prd.it.unity3d.com/artifactory/stevedore-unity-internal/wrench-localapv/1-3-15_84f461813aada1be64b3885e7b9464e7f92445674e81d708813ac0bdf2c90408.zip
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 3.6.1.0
+    Wrench: 3.7.0.0
 
 # Pack Unity glTFast Tests
 package_pack_-_cloud_gltfast_tests:
@@ -93,5 +93,5 @@ package_pack_-_cloud_gltfast_tests:
     WRENCH_LOCALAPV_URL: https://artifactory.prd.it.unity3d.com/artifactory/stevedore-unity-internal/wrench-localapv/1-3-15_84f461813aada1be64b3885e7b9464e7f92445674e81d708813ac0bdf2c90408.zip
   metadata:
     Job Maintainers: '#rm-packageworks'
-    Wrench: 3.6.1.0
+    Wrench: 3.7.0.0
 
