@@ -2229,7 +2229,7 @@ namespace GLTFast
             return m_Buffers[bufferIndex].ToStrided<T>(totalOffset, count, byteStride);
         }
 
-        async Task<NativeArray<byte>.ReadOnly> GetBufferViewAsync(
+        async ValueTask<NativeArray<byte>.ReadOnly> GetBufferViewAsync(
             IBufferView bufferView,
             int offset = 0,
             int length = 0

@@ -1378,7 +1378,7 @@ namespace GLTFast.Export
             }
         }
 
-        async Task<int> BakeMeshIndices(IMeshData meshData, UnityEngine.Mesh uMesh, MeshTopology? topology, bool sync)
+        async ValueTask<int> BakeMeshIndices(IMeshData meshData, UnityEngine.Mesh uMesh, MeshTopology? topology, bool sync)
         {
             NativeArray<byte> indices;
             if (uMesh.indexFormat == IndexFormat.UInt16)
@@ -1553,7 +1553,7 @@ namespace GLTFast.Export
             }
         }
 
-        async Task<int> WriteBindPosesToBuffer(Matrix4x4[] bindposes, bool sync)
+        async ValueTask<int> WriteBindPosesToBuffer(Matrix4x4[] bindposes, bool sync)
         {
             var bufferViewId = -1;
 #pragma warning disable CS0618 // Type or member is obsolete
