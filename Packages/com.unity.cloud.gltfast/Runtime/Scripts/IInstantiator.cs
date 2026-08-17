@@ -43,49 +43,19 @@ namespace Unity.Cloud.Gltfast
 #endif
 
         /// <summary>
-        /// Called for every Node in the glTF file
-        /// </summary>
-        /// <param name="nodeIndex">Index of node. Serves as identifier.</param>
-        /// <param name="parentIndex">Index of the parent's node. If it's null,
-        /// the node's a root-level node</param>
-        /// <param name="position">Node's local position in hierarchy</param>
-        /// <param name="rotation">Node's local rotation in hierarchy</param>
-        /// <param name="scale">Node's local scale in hierarchy</param>
-        [Obsolete("Implement the CreateNode overload that takes a name instead.")]
-        void CreateNode(
-            uint nodeIndex,
-            uint? parentIndex,
-            double3 position,
-            double4 rotation,
-            double3 scale
-            )
-        { }
-
-        /// <summary>
-        /// Sets the name of a node.
-        /// If a node has no name it falls back to the first valid mesh name.
-        /// Null otherwise.
-        /// </summary>
-        /// <param name="nodeIndex">Index of the node to be named.</param>
-        /// <param name="name">Valid name or null</param>
-        [Obsolete("Implement the CreateNode overload that takes a name instead.")]
-        void SetNodeName(uint nodeIndex, string name) { }
-
-        /// <summary>
         /// Called for every Node in the glTF file.
         /// </summary>
-        /// <remarks>
-        /// All three of this method, the name-less <see cref="CreateNode(uint,uint?,double3,double4,double3)"/>
-        /// overload and <see cref="SetNodeName"/> have default implementations, so an implementation that
-        /// overrides none of them compiles but creates no nodes.
-        /// </remarks>
         /// <param name="nodeIndex">Index of node. Serves as identifier.</param>
         /// <param name="parentIndex">Index of the parent's node. If it's null,
         /// the node's a root-level node</param>
         /// <param name="position">Node's local position in hierarchy</param>
         /// <param name="rotation">Node's local rotation in hierarchy</param>
         /// <param name="scale">Node's local scale in hierarchy</param>
-        /// <param name="name">Node's name. Falls back to the first valid mesh name. Null otherwise.</param>
+        /// <param name="name">Node's name, or null when the glTF node has none.</param>
+        /// <remarks>Null only reaches this method with <see cref="NameImportMethod.Original"/>, where naming an
+        /// unnamed node is the implementation's choice. <see cref="NameImportMethod.OriginalUnique"/> supplies a
+        /// synthesized hierarchy-unique name instead, which has to be applied verbatim for animations to bind.
+        /// </remarks>
         void CreateNode(
             uint nodeIndex,
             uint? parentIndex,
@@ -93,13 +63,7 @@ namespace Unity.Cloud.Gltfast
             double4 rotation,
             double3 scale,
             string name
-            )
-        {
-#pragma warning disable 618
-            CreateNode(nodeIndex, parentIndex, position, rotation, scale);
-            SetNodeName(nodeIndex, name);
-#pragma warning restore 618
-        }
+            );
 
         /// <summary>
         /// Adds a Mesh/MeshResult to a Node for rendering purpose.

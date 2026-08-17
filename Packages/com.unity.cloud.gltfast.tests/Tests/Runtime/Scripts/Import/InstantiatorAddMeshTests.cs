@@ -185,11 +185,10 @@ namespace Unity.Cloud.Gltfast.Tests.Import
                 uint? parentIndex,
                 double3 position,
                 double4 rotation,
-                double3 scale
+                double3 scale,
+                string name
             )
             { }
-
-            public void SetNodeName(uint nodeIndex, string name) { }
 
             public void AddCamera(uint nodeIndex, uint cameraIndex) { }
 

@@ -1,8 +1,6 @@
 // SPDX-FileCopyrightText: 2026 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
-#if !UNITY_ENTITIES_GRAPHICS
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -12,6 +10,10 @@ using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.TestTools;
+#if UNITY_ENTITIES_GRAPHICS && UNITY_EDITOR
+using Unity.Entities;
+using Unity.Transforms;
+#endif
 using Object = UnityEngine.Object;
 
 namespace Unity.Cloud.Gltfast.Tests.Import
@@ -170,14 +172,6 @@ namespace Unity.Cloud.Gltfast.Tests.Import
         }
 
         [UnityTest]
-        public IEnumerator LegacyImplementationStillGetsNamed()
-        {
-            var task = RecordedFirstNodeName(new LegacyInstantiator(), SingleMeshGltf("MyNode", null));
-            yield return AsyncWrapper.WaitForTask(task);
-            Assert.AreEqual("MyNode", task.Result);
-        }
-
-        [UnityTest]
         public IEnumerator NewOverloadAloneGetsNamed()
         {
             var task = RecordedFirstNodeName(new NamedCreateNodeInstantiator(), SingleMeshGltf("MyNode", null));
@@ -186,14 +180,11 @@ namespace Unity.Cloud.Gltfast.Tests.Import
         }
 
         [UnityTest]
-        public IEnumerator LegacyAndNewImplementationsAgree()
+        public IEnumerator UnnamedNodeReachesImplementationAsNull()
         {
-            var gltfJson = SingleMeshGltf(null, "MyMesh");
-            var legacy = RecordedFirstNodeName(new LegacyInstantiator(), gltfJson);
-            yield return AsyncWrapper.WaitForTask(legacy);
-            var modern = RecordedFirstNodeName(new NamedCreateNodeInstantiator(), gltfJson);
-            yield return AsyncWrapper.WaitForTask(modern);
-            Assert.AreEqual(legacy.Result, modern.Result);
+            var task = RecordedFirstNodeName(new NamedCreateNodeInstantiator(), SingleMeshGltf(null, "MyMesh"));
+            yield return AsyncWrapper.WaitForTask(task);
+            Assert.IsNull(task.Result);
         }
 
         [UnityTest]
@@ -203,6 +194,81 @@ namespace Unity.Cloud.Gltfast.Tests.Import
             yield return AsyncWrapper.WaitForTask(task);
             Assert.AreEqual("MyNode", task.Result.overriddenName);
             Assert.AreEqual("MyNode", task.Result.nodeName);
+        }
+
+        [UnityTest]
+        public IEnumerator NodeCreatedReportsPlaceholderForUnnamedNode()
+        {
+            var task = NodeCreatedName(SingleMeshGltf(null, "MyMesh"));
+            yield return AsyncWrapper.WaitForTask(task);
+            Assert.AreEqual("Node-0", task.Result.atEvent, "the mesh name is only known once meshes are assigned");
+            Assert.AreEqual("MyMesh", task.Result.afterwards);
+        }
+
+        static async Task<(string atEvent, string afterwards)> NodeCreatedName(string gltfJson)
+        {
+            using var gltf = await LoadGltf(gltfJson);
+
+            var parent = new GameObject();
+            try
+            {
+                var instantiator = new GameObjectInstantiator(gltf, parent.transform);
+                string atEvent = null;
+                instantiator.NodeCreated += (_, gameObject) => atEvent ??= gameObject.name;
+                Assert.IsTrue(await gltf.InstantiateMainSceneAsync(instantiator));
+                return (atEvent, parent.transform.GetChild(0).name);
+            }
+            finally
+            {
+                Object.Destroy(parent);
+            }
+        }
+
+        [UnityTest]
+        public IEnumerator OverriddenFallbackNamesUnnamedNode()
+        {
+            var task = InstantiateFirstNode(
+                SingleMeshGltf(null, "MyMesh"),
+                (gltf, parent) => new FallbackOverridingInstantiator(gltf, parent));
+            yield return AsyncWrapper.WaitForTask(task);
+            Assert.AreEqual("Custom-MyMesh", task.Result.nodeName);
+            Assert.AreEqual(1, task.Result.instantiator.CallCount);
+        }
+
+        [UnityTest]
+        public IEnumerator OverriddenFallbackSkipsNamedNode()
+        {
+            var task = InstantiateFirstNode(
+                SingleMeshGltf("MyNode", "MyMesh"),
+                (gltf, parent) => new FallbackOverridingInstantiator(gltf, parent));
+            yield return AsyncWrapper.WaitForTask(task);
+            Assert.AreEqual("MyNode", task.Result.nodeName);
+            Assert.AreEqual(0, task.Result.instantiator.CallCount);
+        }
+
+        [UnityTest]
+        public IEnumerator OverriddenFallbackRunsOnceWhenInstanced()
+        {
+            var task = InstantiateFirstNode(
+                InstancedMeshGltf("MyMesh"),
+                (gltf, parent) => new FallbackOverridingInstantiator(gltf, parent));
+            yield return AsyncWrapper.WaitForTask(task);
+            Assert.AreEqual("Custom-MyMesh", task.Result.nodeName);
+            Assert.AreEqual(1, task.Result.instantiator.CallCount);
+        }
+
+        class FallbackOverridingInstantiator : GameObjectInstantiator
+        {
+            public FallbackOverridingInstantiator(IGltfReadable gltf, Transform parent)
+                : base(gltf, parent) { }
+
+            public int CallCount { get; private set; }
+
+            protected override void SetFallbackNodeName(uint nodeIndex, string meshName)
+            {
+                CallCount++;
+                base.SetFallbackNodeName(nodeIndex, "Custom-" + meshName);
+            }
         }
 
         class NameOverridingInstantiator : GameObjectInstantiator
@@ -270,21 +336,6 @@ namespace Unity.Cloud.Gltfast.Tests.Import
             public void EndScene(IReadOnlyList<uint> rootNodeIndices) { }
         }
 
-        // Implements the pre-6.20 pair only; the interface's default CreateNode overload has to route to it.
-        class LegacyInstantiator : NameRecordingInstantiator, IInstantiator
-        {
-            public void CreateNode(
-                uint nodeIndex,
-                uint? parentIndex,
-                double3 position,
-                double4 rotation,
-                double3 scale
-                )
-            { }
-
-            public void SetNodeName(uint nodeIndex, string name) => Record(nodeIndex, name);
-        }
-
         // Implements the named overload only, as an implementation written against 7.0 would.
         class NamedCreateNodeInstantiator : NameRecordingInstantiator, IInstantiator
         {
@@ -298,7 +349,163 @@ namespace Unity.Cloud.Gltfast.Tests.Import
                 )
                 => Record(nodeIndex, name);
         }
+
+#if UNITY_ENTITIES_GRAPHICS && UNITY_EDITOR
+        static Task<string> InstantiateFirstEntityName(string nodeName, string meshName)
+            => InstantiateFirstEntityNameFromJson(SingleMeshGltf(nodeName, meshName), null);
+
+        static async Task<string> InstantiateFirstEntityNameFromJson(
+            string gltfJson,
+            InstantiationSettings settings
+            )
+            => (await InstantiateFirstEntity(gltfJson, settings)).nodeName;
+
+        static async Task<(NodeCapturingEntityInstantiator instantiator, string nodeName)> InstantiateFirstEntity(
+            string gltfJson,
+            InstantiationSettings settings
+            )
+        {
+            using var gltf = await LoadGltf(gltfJson);
+
+            var world = World.DefaultGameObjectInjectionWorld;
+            var sceneRoot = EntityUtils.CreateSceneRootEntity(world);
+            var entityManager = world.EntityManager;
+            try
+            {
+                var instantiator = new NodeCapturingEntityInstantiator(gltf, sceneRoot, settings);
+                Assert.IsTrue(await gltf.InstantiateMainSceneAsync(instantiator));
+                return (instantiator, entityManager.GetName(instantiator.FirstNode));
+            }
+            finally
+            {
+                DestroyHierarchy(sceneRoot, entityManager);
+            }
+        }
+
+        // Not EntityUtils.DestroyChildren: that is [BurstCompile]d, and compiling it surfaces any unrelated
+        // assembly-resolution failure in the project as a test-failing error log. Also destroys the root.
+        static void DestroyHierarchy(Entity root, EntityManager entityManager)
+        {
+            if (entityManager.HasComponent<Child>(root))
+            {
+                var children = entityManager.GetBuffer<Child>(root);
+                var toDestroy = new NativeArray<Entity>(children.Length, Allocator.Temp);
+                for (var i = 0; i < children.Length; i++)
+                {
+                    toDestroy[i] = children[i].Value;
+                }
+                entityManager.DestroyEntity(toDestroy);
+                toDestroy.Dispose();
+            }
+            entityManager.DestroyEntity(root);
+        }
+
+        [UnityTest]
+        public IEnumerator EntityExplicitNodeName()
+        {
+            var task = InstantiateFirstEntityName("MyNode", "MyMesh");
+            yield return AsyncWrapper.WaitForTask(task);
+            Assert.AreEqual("MyNode", task.Result);
+        }
+
+        [UnityTest]
+        public IEnumerator EntityFallsBackToMeshName()
+        {
+            var task = InstantiateFirstEntityName(null, "MyMesh");
+            yield return AsyncWrapper.WaitForTask(task);
+            Assert.AreEqual("MyMesh", task.Result);
+        }
+
+        [UnityTest]
+        public IEnumerator EntityFallsBackToNodeIndex()
+        {
+            var task = InstantiateFirstEntityName(null, null);
+            yield return AsyncWrapper.WaitForTask(task);
+            Assert.AreEqual("Node-0", task.Result);
+        }
+
+        [UnityTest]
+        public IEnumerator EntityFallsBackToMeshNameWhenMeshMaskedOut()
+        {
+            var settings = new InstantiationSettings { Mask = ComponentType.All & ~ComponentType.Mesh };
+            var task = InstantiateFirstEntityNameFromJson(SingleMeshGltf(null, "MyMesh"), settings);
+            yield return AsyncWrapper.WaitForTask(task);
+            Assert.AreEqual("MyMesh", task.Result);
+        }
+
+        [UnityTest]
+        public IEnumerator EntityFallsBackToMeshNameWhenInstanced()
+        {
+            var task = InstantiateFirstEntityNameFromJson(InstancedMeshGltf("MyMesh"), null);
+            yield return AsyncWrapper.WaitForTask(task);
+            Assert.AreEqual("MyMesh", task.Result);
+        }
+
+        [UnityTest]
+        public IEnumerator EntityOverriddenFallbackRunsOnceForUnnamedNode()
+        {
+            var task = InstantiateFirstEntity(SingleMeshGltf(null, "MyMesh"), null);
+            yield return AsyncWrapper.WaitForTask(task);
+            Assert.AreEqual("MyMesh", task.Result.nodeName);
+            Assert.AreEqual(1, task.Result.instantiator.FallbackCalls);
+        }
+
+        [UnityTest]
+        public IEnumerator EntityOverriddenFallbackSkipsNamedNode()
+        {
+            var task = InstantiateFirstEntity(SingleMeshGltf("MyNode", "MyMesh"), null);
+            yield return AsyncWrapper.WaitForTask(task);
+            Assert.AreEqual("MyNode", task.Result.nodeName);
+            Assert.AreEqual(0, task.Result.instantiator.FallbackCalls);
+        }
+
+        [UnityTest]
+        public IEnumerator EntityOverriddenFallbackRunsOnceWhenInstanced()
+        {
+            var task = InstantiateFirstEntity(InstancedMeshGltf("MyMesh"), null);
+            yield return AsyncWrapper.WaitForTask(task);
+            Assert.AreEqual("MyMesh", task.Result.nodeName);
+            Assert.AreEqual(1, task.Result.instantiator.FallbackCalls);
+        }
+
+        class NodeCapturingEntityInstantiator : EntityInstantiator
+        {
+            bool m_Captured;
+
+            public Entity FirstNode { get; private set; }
+
+            public int FallbackCalls { get; private set; }
+
+            protected override void SetFallbackNodeName(uint nodeIndex, string meshName)
+            {
+                FallbackCalls++;
+                base.SetFallbackNodeName(nodeIndex, meshName);
+            }
+
+            public NodeCapturingEntityInstantiator(
+                IGltfReadable gltf,
+                Entity parent,
+                InstantiationSettings settings
+                )
+                : base(gltf, parent, settings: settings) { }
+
+            public override void CreateNode(
+                uint nodeIndex,
+                uint? parentIndex,
+                double3 position,
+                double4 rotation,
+                double3 scale,
+                string name
+                )
+            {
+                base.CreateNode(nodeIndex, parentIndex, position, rotation, scale, name);
+                if (!m_Captured)
+                {
+                    FirstNode = m_Nodes[nodeIndex];
+                    m_Captured = true;
+                }
+            }
+        }
+#endif // UNITY_ENTITIES_GRAPHICS && UNITY_EDITOR
     }
 }
-
-#endif

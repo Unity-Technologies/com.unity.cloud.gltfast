@@ -53,6 +53,7 @@ namespace Unity.Cloud.Gltfast
         EntityManager m_EntityManager;
         EntityArchetype m_NodeArchetype;
         EntityArchetype m_SceneArchetype;
+        NodeNameFallback m_NameFallback;
 
         List<Entity> m_Entities;
 
@@ -85,6 +86,7 @@ namespace Unity.Cloud.Gltfast
             Profiler.BeginSample("BeginScene");
             m_Entities = new List<Entity>();
             m_Nodes = new Dictionary<uint, Entity>();
+            m_NameFallback = new NodeNameFallback();
             m_EntityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
             m_NodeArchetype = m_EntityManager.CreateArchetype(
                 typeof(Disabled),
@@ -129,20 +131,6 @@ namespace Unity.Cloud.Gltfast
             }
         }
 #endif // UNITY_ANIMATION
-
-        /// <inheritdoc />
-        public void CreateNode(
-            uint nodeIndex,
-            uint? parentIndex,
-            double3 position,
-            double4 rotation,
-            double3 scale
-        )
-        {
-            var parent = new Parent { Value = parentIndex.HasValue ? m_Nodes[parentIndex.Value] : m_Parent };
-            var node = CreateNodeInternal(parent, position, rotation, scale);
-            m_Nodes[nodeIndex] = node;
-        }
 
         Entity CreateNodeInternal(
             Parent parent,
@@ -192,14 +180,39 @@ namespace Unity.Cloud.Gltfast
             string name
         )
         {
-            CreateNode(nodeIndex, parentIndex, position, rotation, scale);
-            SetNodeName(nodeIndex, name);
+            var parent = new Parent { Value = parentIndex.HasValue ? m_Nodes[parentIndex.Value] : m_Parent };
+            var node = CreateNodeInternal(parent, position, rotation, scale);
+            m_Nodes[nodeIndex] = node;
+            if (name == null)
+            {
+                m_NameFallback.MarkUnnamed(nodeIndex);
+            }
+#if UNITY_EDITOR
+            m_EntityManager.SetName(node, name ?? NodeNameFallback.DefaultName(nodeIndex));
+#endif
         }
 
-        public void SetNodeName(uint nodeIndex, string name)
+        /// <summary>Applies the mesh-name fallback to a node, if it is still unnamed and the mesh carries a name.</summary>
+        /// <param name="nodeIndex">Index of the node.</param>
+        /// <param name="meshResult">The mesh being assigned to it.</param>
+        protected void ApplyMeshNameFallback(uint nodeIndex, MeshResult meshResult)
+        {
+            if (m_NameFallback.TryTake(nodeIndex, meshResult, out var meshName))
+            {
+                SetFallbackNodeName(nodeIndex, meshName);
+            }
+        }
+
+        /// <summary>Names a node the glTF left unnamed, once, with the first non-empty name among its meshes.</summary>
+        /// <remarks>Not called when no mesh supplies a name; the <c>Node-{index}</c> placeholder stands instead.</remarks>
+        /// <remarks>Entity names exist in the Editor only, so this implementation does nothing in a player build.
+        /// An override that stores the name elsewhere still runs.</remarks>
+        /// <param name="nodeIndex">Index of the node to name.</param>
+        /// <param name="meshName">The resolved fallback name.</param>
+        protected virtual void SetFallbackNodeName(uint nodeIndex, string meshName)
         {
 #if UNITY_EDITOR
-            m_EntityManager.SetName(m_Nodes[nodeIndex], name ?? $"Node-{nodeIndex}");
+            m_EntityManager.SetName(m_Nodes[nodeIndex], meshName);
 #endif
         }
 
@@ -215,6 +228,8 @@ namespace Unity.Cloud.Gltfast
             int meshNumeration = 0
         )
         {
+            ApplyMeshNameFallback(nodeIndex, meshResult);
+
             if ((m_Settings.Mask & ComponentType.Mesh) == 0)
             {
                 return;
@@ -298,6 +313,8 @@ namespace Unity.Cloud.Gltfast
             int meshNumeration = 0
         )
         {
+            ApplyMeshNameFallback(nodeIndex, meshResult);
+
             if ((m_Settings.Mask & ComponentType.Mesh) == 0)
             {
                 return;
@@ -416,6 +433,8 @@ namespace Unity.Cloud.Gltfast
         public virtual void EndScene(IReadOnlyList<uint> rootNodeIndices)
         {
             Profiler.BeginSample("EndScene");
+
+            m_NameFallback?.Release();
 
             if (m_Entities.Count > 0)
             {

@@ -200,15 +200,15 @@ name now fails with CS0506 because the shim that carries it is not `virtual`. An
 compile-time type is one of the four interfaces is not rewritten either, so
 `IDeferAgent agent; agent.BreakPoint();` needs the same manual edit as the declaration does.
 
-### `IInstantiator` mesh and node-name members renamed
+### `IInstantiator` mesh and node-name members renamed or removed
 
-Four [IInstantiator](xref:Unity.Cloud.Gltfast.IInstantiator) members are `[Obsolete]`. All four still work — each has a default implementation routing to or from its replacement — so an existing implementation keeps compiling and behaving as before. The importer now calls the new members.
+Four [IInstantiator](xref:Unity.Cloud.Gltfast.IInstantiator) members were renamed. `AddPrimitive` and `AddPrimitiveInstanced` are `[Obsolete]` and still work, each routing to its replacement. The previously obsolete node-naming pair is **removed**: implement the named [CreateNode](xref:Unity.Cloud.Gltfast.IInstantiator.CreateNode*), which no longer has a default implementation.
 
 | Before | After |
 |--------|-------|
 | `IInstantiator.AddPrimitive` | [IInstantiator.AddMesh](xref:Unity.Cloud.Gltfast.IInstantiator.AddMesh*) |
 | `IInstantiator.AddPrimitiveInstanced` | [IInstantiator.AddMeshInstanced](xref:Unity.Cloud.Gltfast.IInstantiator.AddMeshInstanced*) |
-| `IInstantiator.CreateNode` without `name`, followed by `IInstantiator.SetNodeName` | [IInstantiator.CreateNode](xref:Unity.Cloud.Gltfast.IInstantiator.CreateNode*) with a `name` parameter |
+| `IInstantiator.CreateNode` without `name`, followed by `IInstantiator.SetNodeName` (both removed) | [IInstantiator.CreateNode](xref:Unity.Cloud.Gltfast.IInstantiator.CreateNode*) with a `name` parameter |
 
 New signature:
 
@@ -231,6 +231,20 @@ class MyInstantiator : GameObjectInstantiator, IInstantiator
 ```
 
 A class's interface map is fixed where the interface is declared. Deriving without re-declaring compiles, but the base implementation keeps being called through an `IInstantiator` reference and your `AddMesh` never runs. Until you migrate, overriding the obsolete `AddPrimitive` and `AddPrimitiveInstanced` continues to work unchanged.
+
+#### Naming an unnamed node is now the instantiator's policy
+
+`name` is null for a node the glTF does not name — previously `GltfImport` resolved the mesh-name fallback before calling. Both shipped instantiators keep the old visible result: such a node takes its first valid mesh name, else `Node-{index}`. Because the mesh name is only known once meshes are assigned, they apply it when the importer adds a mesh rather than in `CreateNode`.
+
+`name` is only null with [NameImportMethod.Original](xref:Unity.Cloud.Gltfast.NameImportMethod). [OriginalUnique](xref:Unity.Cloud.Gltfast.NameImportMethod) — the Editor importer's default, and forced for any glTF carrying animations — supplies a synthesized hierarchy-unique name instead, which an implementation has to apply verbatim or animations stop binding.
+
+A subclass overriding `CreateNode` must pass the name it wants **into** `base.CreateNode`: a name assigned after that call is replaced by the mesh-name fallback. Passing a non-null name suppresses the fallback entirely.
+
+The shipped fallback runs from `AddPrimitive`/`AddPrimitiveInstanced`. A subclass that bypasses those — by overriding either without calling `base`, or by re-declaring `IInstantiator` and implementing `AddMesh`/`AddMeshInstanced` — takes over the naming of unnamed nodes as well.
+
+`GameObjectInstantiator.SetNodeName` and `EntityInstantiator.SetNodeName` are removed along with the interface members. An override that only renamed the node moves into `CreateNode`; one that derived the name from the node's mesh overrides `protected virtual SetFallbackNodeName(uint, string)` instead, which both classes call for an unnamed node once a mesh supplies a name. Code that *called* `SetNodeName` renames the `GameObject` or `Entity` after instantiation finishes — a rename from a `NodeCreated` handler survives only for a node the glTF named, since the fallback overwrites it when the mesh arrives.
+
+[GameObjectInstantiator.NodeCreated](xref:Unity.Cloud.Gltfast.GameObjectInstantiator) now reports a node under the name `CreateNode` received, or the `Node-{index}` placeholder where the name still comes from a mesh — the importer creates the whole hierarchy before assigning any mesh. Previously the event preceded naming entirely, so every node arrived under Unity's default GameObject name. To observe a mesh-derived name, read it after instantiation completes or override `SetFallbackNodeName`.
 
 ### glTF object enum properties wrapped in `EnumOrRawValue<TEnum>`
 

@@ -13,10 +13,10 @@ namespace Unity.Cloud.Gltfast
     public enum NameImportMethod
     {
         /// <summary>
-        /// Use original node names.
-        /// Fallback to mesh's name (if present)
-        /// Fallback to "Node_&lt;index&gt;" as last resort.
+        /// Use original node names, passing null to <see cref="IInstantiator.CreateNode"/> for a node without one.
         /// </summary>
+        /// <remarks>Both shipped instantiators then fall back to the first valid mesh name, else "Node-&lt;index&gt;",
+        /// but a custom <see cref="IInstantiator"/> owns that choice.</remarks>
         Original,
         /// <summary>
         /// Identical to <see cref="Original">Original</see>, but

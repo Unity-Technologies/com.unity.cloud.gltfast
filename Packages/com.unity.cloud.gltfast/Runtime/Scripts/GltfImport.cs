@@ -3017,7 +3017,7 @@ namespace Unity.Cloud.Gltfast
 
             if (string.IsNullOrWhiteSpace(name))
             {
-                name = $"Node-{index}";
+                name = NodeNameFallback.DefaultName(index);
             }
 
             if (excludeNames != null)
@@ -3149,20 +3149,6 @@ namespace Unity.Cloud.Gltfast
                 node.GetTransform(out var position, out var rotation, out var scale);
 
                 var nodeName = m_NodeNames == null ? node.Name : m_NodeNames[nodeIndex];
-                if (nodeName == null && node.Mesh.HasValue)
-                {
-                    // Fallback name for Node is first valid Mesh name
-                    foreach (var meshAssignment in m_MeshAssignments.Values(node.Mesh.Value))
-                    {
-                        var mesh = meshAssignment.mesh;
-                        if (!string.IsNullOrEmpty(mesh.name))
-                        {
-                            nodeName = mesh.name;
-                            break;
-                        }
-                    }
-                }
-
                 instantiator.CreateNode(nodeIndex, parentIndex, position, rotation, scale, nodeName);
                 Profiler.EndSample();
             }

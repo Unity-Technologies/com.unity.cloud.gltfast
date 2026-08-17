@@ -68,6 +68,8 @@ namespace Unity.Cloud.Gltfast
         /// </summary>
         protected Dictionary<uint, GameObject> m_Nodes;
 
+        NodeNameFallback m_NameFallback;
+
         List<IMaterialsVariantsSlotInstance> m_InstanceSlots;
 
         /// <summary>
@@ -112,6 +114,7 @@ namespace Unity.Cloud.Gltfast
             Profiler.BeginSample("BeginScene");
 
             m_Nodes = new Dictionary<uint, GameObject>();
+            m_NameFallback = new NodeNameFallback();
             SceneInstance = new GameObjectSceneInstance();
 
             GameObject sceneGameObject;
@@ -172,31 +175,6 @@ namespace Unity.Cloud.Gltfast
 #endif // UNITY_ANIMATION
 
         /// <inheritdoc />
-        public void CreateNode(
-            uint nodeIndex,
-            uint? parentIndex,
-            double3 position,
-            double4 rotation,
-            double3 scale
-        )
-        {
-            var go = new GameObject();
-            // Deactivate root-level nodes, so half-loaded scenes won't render.
-            go.SetActive(parentIndex.HasValue);
-            go.transform.localScale = scale.ToVector3();
-            go.transform.localPosition = position.ToVector3();
-            go.transform.localRotation = rotation.ToUnityEngineQuaternion();
-            go.layer = m_Settings.Layer;
-            m_Nodes[nodeIndex] = go;
-
-            go.transform.SetParent(
-                parentIndex.HasValue ? m_Nodes[parentIndex.Value].transform : SceneTransform,
-                false);
-
-            NodeCreated?.Invoke(nodeIndex, go);
-        }
-
-        /// <inheritdoc />
         public virtual void CreateNode(
             uint nodeIndex,
             uint? parentIndex,
@@ -206,14 +184,45 @@ namespace Unity.Cloud.Gltfast
             string name
         )
         {
-            CreateNode(nodeIndex, parentIndex, position, rotation, scale);
-            SetNodeName(nodeIndex, name);
+            var go = new GameObject(name ?? NodeNameFallback.DefaultName(nodeIndex));
+            // Deactivate root-level nodes, so half-loaded scenes won't render.
+            go.SetActive(parentIndex.HasValue);
+            go.transform.localScale = scale.ToVector3();
+            go.transform.localPosition = position.ToVector3();
+            go.transform.localRotation = rotation.ToUnityEngineQuaternion();
+            go.layer = m_Settings.Layer;
+            m_Nodes[nodeIndex] = go;
+
+            if (name == null)
+            {
+                m_NameFallback.MarkUnnamed(nodeIndex);
+            }
+
+            go.transform.SetParent(
+                parentIndex.HasValue ? m_Nodes[parentIndex.Value].transform : SceneTransform,
+                false);
+
+            NodeCreated?.Invoke(nodeIndex, go);
         }
 
-        /// <inheritdoc />
-        public virtual void SetNodeName(uint nodeIndex, string name)
+        /// <summary>Applies the mesh-name fallback to a node, if it is still unnamed and the mesh carries a name.</summary>
+        /// <param name="nodeIndex">Index of the node.</param>
+        /// <param name="meshResult">The mesh being assigned to it.</param>
+        protected void ApplyMeshNameFallback(uint nodeIndex, MeshResult meshResult)
         {
-            m_Nodes[nodeIndex].name = name ?? $"Node-{nodeIndex}";
+            if (m_NameFallback.TryTake(nodeIndex, meshResult, out var meshName))
+            {
+                SetFallbackNodeName(nodeIndex, meshName);
+            }
+        }
+
+        /// <summary>Names a node the glTF left unnamed, once, with the first non-empty name among its meshes.</summary>
+        /// <remarks>Not called when no mesh supplies a name; the <c>Node-{index}</c> placeholder stands instead.</remarks>
+        /// <param name="nodeIndex">Index of the node to name.</param>
+        /// <param name="meshName">The resolved fallback name.</param>
+        protected virtual void SetFallbackNodeName(uint nodeIndex, string meshName)
+        {
+            m_Nodes[nodeIndex].name = meshName;
         }
 
         /// <inheritdoc />
@@ -228,6 +237,8 @@ namespace Unity.Cloud.Gltfast
             int meshNumeration = 0
         )
         {
+            ApplyMeshNameFallback(nodeIndex, meshResult);
+
             if ((m_Settings.Mask & ComponentType.Mesh) == 0)
             {
                 return;
@@ -330,6 +341,8 @@ namespace Unity.Cloud.Gltfast
             int meshNumeration = 0
         )
         {
+            ApplyMeshNameFallback(nodeIndex, meshResult);
+
             if ((m_Settings.Mask & ComponentType.Mesh) == 0)
             {
                 return;
@@ -565,6 +578,8 @@ namespace Unity.Cloud.Gltfast
         public virtual void EndScene(IReadOnlyList<uint> rootNodeIndices)
         {
             Profiler.BeginSample("EndScene");
+
+            m_NameFallback?.Release();
 
             if (m_InstanceSlots != null)
             {
