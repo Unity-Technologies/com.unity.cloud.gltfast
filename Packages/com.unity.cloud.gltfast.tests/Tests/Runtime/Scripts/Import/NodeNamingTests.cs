@@ -306,7 +306,7 @@ namespace Unity.Cloud.Gltfast.Tests.Import
             public void AddAnimation(AnimationClip[] animationClips) { }
 #endif
 
-            public void AddPrimitive(
+            public void AddMesh(
                 uint nodeIndex,
                 string meshName,
                 MeshResult meshResult,
@@ -317,7 +317,7 @@ namespace Unity.Cloud.Gltfast.Tests.Import
                 )
             { }
 
-            public void AddPrimitiveInstanced(
+            public void AddMeshInstanced(
                 uint nodeIndex,
                 string meshName,
                 MeshResult meshResult,

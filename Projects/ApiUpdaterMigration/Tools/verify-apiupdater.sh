@@ -52,12 +52,15 @@ fi
 grep -q 'Unity\.Cloud\.Gltfast' <<<"$code_only" \
   || { echo "FAIL: no Unity.Cloud.Gltfast references found; the updater may not have run."; exit 1; }
 
-# 5) assert the 6.x method names picked up their Async suffix, which rides on the
-#    [Obsolete("(UnityUpgradable) -> ...Async(*)")] shims rather than on [MovedFrom]
+# 5) assert the renamed 6.x method names were rewritten, which rides on the
+#    [Obsolete("(UnityUpgradable) -> ...(*)")] shims rather than on [MovedFrom].
+#    The EntityInstantiator shims are not reachable here: this project carries no Entities
+#    package, so UNITY_ENTITIES_GRAPHICS is off and that file is disabled text.
 legacy='Load|LoadFile|LoadStream|LoadGltfJson|SaveToFileAndDispose|SaveToStreamAndDispose'
 legacy="$legacy|Instantiate|InstantiateScene|Request|RequestTexture|BreakPoint"
+legacy="$legacy|AddPrimitive|AddPrimitiveInstanced"
 if grep -qE "\.($legacy)\(" <<<"$code_only"; then
-  echo "FAIL: un-suffixed method call(s) survived the API Updater:"
+  echo "FAIL: old method name(s) survived the API Updater:"
   grep -nE "\.($legacy)\(" <<<"$code_only"
   exit 1
 fi
@@ -65,7 +68,7 @@ fi
 #    at the wrong overload's name still passes step 5 — only a per-name count catches that.
 expected="LoadAsync:4 LoadFileAsync:1 LoadStreamAsync:1 LoadGltfJsonAsync:1
 SaveToFileAndDisposeAsync:3 SaveToStreamAndDisposeAsync:3 InstantiateAsync:1 InstantiateSceneAsync:2
-RequestAsync:2 RequestTextureAsync:2 BreakPointAsync:4"
+RequestAsync:2 RequestTextureAsync:2 BreakPointAsync:4 AddMesh:1 AddMeshInstanced:1"
 for pair in $expected; do
   name="${pair%%:*}"; want="${pair##*:}"
   got="$(grep -oE "\.${name}\(|[^.]\b${name}\(" <<<"$code_only" | wc -l | tr -d ' ')"
@@ -75,4 +78,4 @@ for pair in $expected; do
   fi
 done
 
-echo "PASS: source migrated to Unity.Cloud.Gltfast and Async-suffixed method names."
+echo "PASS: source migrated to Unity.Cloud.Gltfast and renamed method names."

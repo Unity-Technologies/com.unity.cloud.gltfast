@@ -202,7 +202,7 @@ compile-time type is one of the four interfaces is not rewritten either, so
 
 ### `IInstantiator` mesh and node-name members renamed or removed
 
-Four [IInstantiator](xref:Unity.Cloud.Gltfast.IInstantiator) members were renamed. `AddPrimitive` and `AddPrimitiveInstanced` are `[Obsolete]` and still work, each routing to its replacement. The previously obsolete node-naming pair is **removed**: implement the named [CreateNode](xref:Unity.Cloud.Gltfast.IInstantiator.CreateNode*), which no longer has a default implementation.
+Four [IInstantiator](xref:Unity.Cloud.Gltfast.IInstantiator) members are removed. `AddPrimitive` and `AddPrimitiveInstanced` are replaced by [AddMesh](xref:Unity.Cloud.Gltfast.IInstantiator.AddMesh*) and [AddMeshInstanced](xref:Unity.Cloud.Gltfast.IInstantiator.AddMeshInstanced*), the node-naming pair by the named [CreateNode](xref:Unity.Cloud.Gltfast.IInstantiator.CreateNode*). None of the replacements has a default implementation, so an implementation must declare each one directly.
 
 | Before | After |
 |--------|-------|
@@ -210,7 +210,11 @@ Four [IInstantiator](xref:Unity.Cloud.Gltfast.IInstantiator) members were rename
 | `IInstantiator.AddPrimitiveInstanced` | [IInstantiator.AddMeshInstanced](xref:Unity.Cloud.Gltfast.IInstantiator.AddMeshInstanced*) |
 | `IInstantiator.CreateNode` without `name`, followed by `IInstantiator.SetNodeName` (both removed) | [IInstantiator.CreateNode](xref:Unity.Cloud.Gltfast.IInstantiator.CreateNode*) with a `name` parameter |
 
-New signature:
+Both mesh members were deprecated during 6.x development, where `AddMesh` and `AddMeshInstanced` were default interface members relaying to them, but the deprecation had not shipped as of 6.19, so upgrading from that version or earlier gives you no prior obsolete warning. On the concrete instantiators the old names survive as `[Obsolete]` compile **errors** that the API Updater rewrites, so a call site whose compile-time type is one of those classes is migrated for you. Two cases are not: a member you **declare** — an interface implementation, or an `override`, which a shim cannot carry — and a call through an `IInstantiator`-typed reference, because the interface carries no shim. Rename those by hand. A declared `AddPrimitive` gets no obsolete diagnostic at all, only CS0535 for the two members it now leaves unimplemented.
+
+`AddMesh` and `AddMeshInstanced` are now plain interface members, declared `virtual` on [GameObjectInstantiator](xref:Unity.Cloud.Gltfast.GameObjectInstantiator) and [EntityInstantiator](xref:Unity.Cloud.Gltfast.EntityInstantiator). `GameObjectBoundsInstantiator` overrides `AddMesh` and inherits `AddMeshInstanced`. Deriving no longer requires re-declaring `IInstantiator` for your override to be reached.
+
+`CreateNode`'s new signature:
 
 ```csharp
 public virtual void CreateNode(
@@ -220,17 +224,7 @@ public virtual void CreateNode(
     )
 ```
 
-The two renames migrate differently, and the difference decides whether your override is reached at all.
-
-**`CreateNode` is a real virtual member** on [GameObjectInstantiator](xref:Unity.Cloud.Gltfast.GameObjectInstantiator) and [EntityInstantiator](xref:Unity.Cloud.Gltfast.EntityInstantiator). Override it as you would any other; nothing further is required.
-
-**`AddMesh` and `AddMeshInstanced` exist only as default interface members.** Neither class declares them, so a class deriving from one of them must re-declare the interface for its own versions to be reached:
-
-```csharp
-class MyInstantiator : GameObjectInstantiator, IInstantiator
-```
-
-A class's interface map is fixed where the interface is declared. Deriving without re-declaring compiles, but the base implementation keeps being called through an `IInstantiator` reference and your `AddMesh` never runs. Until you migrate, overriding the obsolete `AddPrimitive` and `AddPrimitiveInstanced` continues to work unchanged.
+`CreateNode` is a real virtual member on `GameObjectInstantiator` and `EntityInstantiator`. Override it as you would any other; nothing further is required.
 
 #### Naming an unnamed node is now the instantiator's policy
 
@@ -240,7 +234,7 @@ A class's interface map is fixed where the interface is declared. Deriving witho
 
 A subclass overriding `CreateNode` must pass the name it wants **into** `base.CreateNode`: a name assigned after that call is replaced by the mesh-name fallback. Passing a non-null name suppresses the fallback entirely.
 
-The shipped fallback runs from `AddPrimitive`/`AddPrimitiveInstanced`. A subclass that bypasses those — by overriding either without calling `base`, or by re-declaring `IInstantiator` and implementing `AddMesh`/`AddMeshInstanced` — takes over the naming of unnamed nodes as well.
+The shipped fallback runs from `AddMesh`/`AddMeshInstanced`. A subclass that overrides either without calling `base` takes over the naming of unnamed nodes as well.
 
 `GameObjectInstantiator.SetNodeName` and `EntityInstantiator.SetNodeName` are removed along with the interface members. An override that only renamed the node moves into `CreateNode`; one that derived the name from the node's mesh overrides `protected virtual SetFallbackNodeName(uint, string)` instead, which both classes call for an unnamed node once a mesh supplies a name. Code that *called* `SetNodeName` renames the `GameObject` or `Entity` after instantiation finishes — a rename from a `NodeCreated` handler survives only for a node the glTF named, since the fallback overwrites it when the mesh arrives.
 

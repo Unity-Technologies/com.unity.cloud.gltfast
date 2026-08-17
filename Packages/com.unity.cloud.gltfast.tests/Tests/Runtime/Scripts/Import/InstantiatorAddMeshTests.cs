@@ -1,7 +1,6 @@
 // SPDX-FileCopyrightText: 2026 Unity Technologies and the glTFast authors
 // SPDX-License-Identifier: Apache-2.0
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -51,34 +50,12 @@ namespace Unity.Cloud.Gltfast.Tests.Import
             var task = InstantiateInternal(instantiator, k_TriangleGltf);
             yield return AsyncWrapper.WaitForTask(task);
             Assert.AreEqual(1, instantiator.MeshCount);
-            Assert.AreEqual(0, instantiator.PrimitiveCount);
-        }
-
-        [UnityTest]
-        public IEnumerator ImplementingAddPrimitiveReceivesMesh()
-        {
-            var instantiator = new AddPrimitiveInstantiator();
-            var task = InstantiateInternal(instantiator, k_TriangleGltf);
-            yield return AsyncWrapper.WaitForTask(task);
-            Assert.AreEqual(1, instantiator.MeshCount);
         }
 
         [UnityTest]
         public IEnumerator ImplementingAddMeshInstancedReceivesInstancedMesh()
         {
             var instantiator = new AddMeshInstantiator();
-            var task = InstantiateInternal(instantiator, k_InstancedTriangleGltf);
-            yield return AsyncWrapper.WaitForTask(task);
-            Assert.AreEqual(0, instantiator.MeshCount);
-            Assert.AreEqual(1, instantiator.InstancedMeshCount);
-            Assert.AreEqual(2, instantiator.InstanceCount);
-            Assert.AreEqual(0, instantiator.InstancedPrimitiveCount);
-        }
-
-        [UnityTest]
-        public IEnumerator ImplementingAddPrimitiveInstancedReceivesInstancedMesh()
-        {
-            var instantiator = new AddPrimitiveInstantiator();
             var task = InstantiateInternal(instantiator, k_InstancedTriangleGltf);
             yield return AsyncWrapper.WaitForTask(task);
             Assert.AreEqual(0, instantiator.MeshCount);
@@ -174,8 +151,6 @@ namespace Unity.Cloud.Gltfast.Tests.Import
             Assert.IsTrue(await import.InstantiateSceneAsync(instantiator));
         }
 
-        // Must not declare IInstantiator: a class's interface map is fixed where the interface is declared, so
-        // deriving classes' mesh members would not be reached through an IInstantiator reference.
         abstract class StubInstantiator
         {
             public void BeginScene(string name, IReadOnlyList<uint> rootNodeIndices) { }
@@ -206,8 +181,6 @@ namespace Unity.Cloud.Gltfast.Tests.Import
             public int MeshCount { get; private set; }
             public int InstancedMeshCount { get; private set; }
             public uint InstanceCount { get; private set; }
-            public int PrimitiveCount { get; private set; }
-            public int InstancedPrimitiveCount { get; private set; }
 
             public void AddMesh(
                 uint nodeIndex,
@@ -220,61 +193,6 @@ namespace Unity.Cloud.Gltfast.Tests.Import
             ) => MeshCount++;
 
             public void AddMeshInstanced(
-                uint nodeIndex,
-                string meshName,
-                MeshResult meshResult,
-                uint instanceCount,
-                NativeArray<Vector3>? positions,
-                NativeArray<Quaternion>? rotations,
-                NativeArray<Vector3>? scales,
-                int meshNumeration = 0
-            )
-            {
-                InstancedMeshCount++;
-                InstanceCount = instanceCount;
-            }
-
-            [Obsolete("Use AddMesh instead.")]
-            public void AddPrimitive(
-                uint nodeIndex,
-                string meshName,
-                MeshResult meshResult,
-                IReadOnlyList<uint> joints = null,
-                uint? rootJoint = null,
-                IReadOnlyList<float> morphTargetWeights = null,
-                int meshNumeration = 0
-            ) => PrimitiveCount++;
-
-            [Obsolete("Use AddMeshInstanced instead.")]
-            public void AddPrimitiveInstanced(
-                uint nodeIndex,
-                string meshName,
-                MeshResult meshResult,
-                uint instanceCount,
-                NativeArray<Vector3>? positions,
-                NativeArray<Quaternion>? rotations,
-                NativeArray<Vector3>? scales,
-                int meshNumeration = 0
-            ) => InstancedPrimitiveCount++;
-        }
-
-        class AddPrimitiveInstantiator : StubInstantiator, IInstantiator
-        {
-            public int MeshCount { get; private set; }
-            public int InstancedMeshCount { get; private set; }
-            public uint InstanceCount { get; private set; }
-
-            public void AddPrimitive(
-                uint nodeIndex,
-                string meshName,
-                MeshResult meshResult,
-                IReadOnlyList<uint> joints = null,
-                uint? rootJoint = null,
-                IReadOnlyList<float> morphTargetWeights = null,
-                int meshNumeration = 0
-            ) => MeshCount++;
-
-            public void AddPrimitiveInstanced(
                 uint nodeIndex,
                 string meshName,
                 MeshResult meshResult,

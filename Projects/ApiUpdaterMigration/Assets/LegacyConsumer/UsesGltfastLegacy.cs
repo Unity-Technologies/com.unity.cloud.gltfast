@@ -10,8 +10,8 @@
 //   - core assembly (glTFast -> Unity.Cloud.Gltfast): GltfImport, RenderPipeline
 //   - core sub-namespaces:  GLTFast.Schema, GLTFast.Logging, GLTFast.Materials
 //   - Export assembly (glTFast.Export -> Unity.Cloud.Gltfast.Export): GameObjectExport, ExportSettings
-//   - Task-returning methods that gained an Async suffix, which ride on
-//     [Obsolete("(UnityUpgradable) -> ...")] shims instead of [MovedFrom]
+//   - methods carrying [Obsolete("(UnityUpgradable) -> ...")] shims instead of [MovedFrom]:
+//     the Async suffix, and the instantiator's AddMesh/AddMeshInstanced
 // Both `using`-reachable unqualified names and fully-qualified references are used on purpose.
 
 using UnityEngine;
@@ -31,6 +31,7 @@ namespace ApiUpdaterMigration
         GameObjectExport m_Export;
         GltfWriter m_Writer;
         GltfAsset m_Asset;
+        GameObjectInstantiator m_Instantiator;
         DefaultDownloadProvider m_DownloadProvider;
         CustomHeaderDownloadProvider m_HeaderDownloadProvider;
         TimeBudgetPerFrameDeferAgent m_DeferAgent;
@@ -72,12 +73,15 @@ namespace ApiUpdaterMigration
             _ = m_DeferAgent.BreakPoint(0.1f);
             _ = m_UninterruptedDeferAgent.BreakPoint();
             _ = m_UninterruptedDeferAgent.BreakPoint(0.1f);
+            m_Instantiator.AddPrimitive(0, "mesh", default);
+            m_Instantiator.AddPrimitiveInstanced(0, "mesh", default, 1, null, null, null);
 
             // touch the fields so nothing is flagged as unused
             System.GC.KeepAlive(m_Import);
             System.GC.KeepAlive(m_Logger);
             System.GC.KeepAlive(m_Export);
             System.GC.KeepAlive(m_Root);
+            System.GC.KeepAlive(m_Instantiator);
             System.GC.KeepAlive(m_Settings);
             _ = baseColor;
         }

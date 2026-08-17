@@ -25,10 +25,6 @@ namespace Unity.Cloud.Gltfast
     /// <summary>
     /// Generates an Entity hierarchy from a glTF scene.
     /// </summary>
-    /// <remarks>
-    /// A derived class must re-declare the interface (<c>class MyInstantiator : EntityInstantiator, IInstantiator</c>)
-    /// for its own <see cref="IInstantiator.AddMesh"/> or <see cref="IInstantiator.AddMeshInstanced"/> to be reached.
-    /// </remarks>
     [MovedFrom(true, sourceNamespace: "GLTFast", sourceAssembly: "glTFast.dots")]
     public class EntityInstantiator : IInstantiator
     {
@@ -216,9 +212,19 @@ namespace Unity.Cloud.Gltfast
 #endif
         }
 
+        [Obsolete("AddPrimitive has been renamed to AddMesh. (UnityUpgradable) -> AddMesh(*)", true)]
+        public void AddPrimitive(
+            uint nodeIndex,
+            string meshName,
+            MeshResult meshResult,
+            IReadOnlyList<uint> joints = null,
+            uint? rootJoint = null,
+            IReadOnlyList<float> morphTargetWeights = null,
+            int meshNumeration = 0
+        ) => AddMesh(nodeIndex, meshName, meshResult, joints, rootJoint, morphTargetWeights, meshNumeration);
+
         /// <inheritdoc />
-        [Obsolete("Use IInstantiator.AddMesh instead.")]
-        public virtual void AddPrimitive(
+        public virtual void AddMesh(
             uint nodeIndex,
             string meshName,
             MeshResult meshResult,
@@ -300,9 +306,20 @@ namespace Unity.Cloud.Gltfast
             Profiler.EndSample();
         }
 
-        /// <inheritdoc />
-        [Obsolete("Use IInstantiator.AddMeshInstanced instead.")]
+        [Obsolete("AddPrimitiveInstanced has been renamed to AddMeshInstanced. (UnityUpgradable) -> AddMeshInstanced(*)", true)]
         public void AddPrimitiveInstanced(
+            uint nodeIndex,
+            string meshName,
+            MeshResult meshResult,
+            uint instanceCount,
+            NativeArray<Vector3>? positions,
+            NativeArray<Quaternion>? rotations,
+            NativeArray<Vector3>? scales,
+            int meshNumeration = 0
+        ) => AddMeshInstanced(nodeIndex, meshName, meshResult, instanceCount, positions, rotations, scales, meshNumeration);
+
+        /// <inheritdoc />
+        public virtual void AddMeshInstanced(
             uint nodeIndex,
             string meshName,
             MeshResult meshResult,

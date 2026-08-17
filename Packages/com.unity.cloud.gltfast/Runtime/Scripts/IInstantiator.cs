@@ -77,27 +77,7 @@ namespace Unity.Cloud.Gltfast
         /// <param name="meshNumeration">Per glTF mesh <see cref="MeshResult"/> numeration. A glTF mesh is converted
         /// into one or more MeshResults which are numbered consecutively. <see cref="AddMesh"/> is called once
         /// for each of those MeshResults.</param>
-        /// <remarks>This is the method the importer calls, so implementing it is preferred, but implementors still
-        /// have to declare the obsolete <see cref="AddPrimitive"/> until it is removed.</remarks>
-        public void AddMesh(
-            uint nodeIndex,
-            string meshName,
-            MeshResult meshResult,
-            IReadOnlyList<uint> joints = null,
-            uint? rootJoint = null,
-            IReadOnlyList<float> morphTargetWeights = null,
-            int meshNumeration = 0
-        )
-        {
-#pragma warning disable 618
-            AddPrimitive(nodeIndex, meshName, meshResult, joints, rootJoint, morphTargetWeights, meshNumeration);
-#pragma warning restore 618
-        }
-
-        /// <summary>Obsolete predecessor of <see cref="AddMesh"/>.</summary>
-        /// <inheritdoc cref="AddMesh"/>
-        [Obsolete("Use AddMesh instead.")]
-        void AddPrimitive(
+        void AddMesh(
             uint nodeIndex,
             string meshName,
             MeshResult meshResult,
@@ -123,28 +103,7 @@ namespace Unity.Cloud.Gltfast
         /// <param name="meshNumeration">Per glTF mesh <see cref="MeshResult"/> numeration. A glTF mesh is converted
         /// into one or more MeshResults which are numbered consecutively. <see cref="AddMeshInstanced"/> is called
         /// once for each of those MeshResults.</param>
-        /// <remarks>This is the method the importer calls, so implementing it is preferred, but implementors still
-        /// have to declare the obsolete <see cref="AddPrimitiveInstanced"/> until it is removed.</remarks>
-        public void AddMeshInstanced(
-            uint nodeIndex,
-            string meshName,
-            MeshResult meshResult,
-            uint instanceCount,
-            NativeArray<Vector3>? positions,
-            NativeArray<Quaternion>? rotations,
-            NativeArray<Vector3>? scales,
-            int meshNumeration = 0
-        )
-        {
-#pragma warning disable 618
-            AddPrimitiveInstanced(nodeIndex, meshName, meshResult, instanceCount, positions, rotations, scales, meshNumeration);
-#pragma warning restore 618
-        }
-
-        /// <summary>Obsolete predecessor of <see cref="AddMeshInstanced"/>.</summary>
-        /// <inheritdoc cref="AddMeshInstanced"/>
-        [Obsolete("Use AddMeshInstanced instead.")]
-        void AddPrimitiveInstanced(
+        void AddMeshInstanced(
             uint nodeIndex,
             string meshName,
             MeshResult meshResult,

@@ -40,6 +40,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Renamed the `Schema` namespace to `Objects`, so `GLTFast.Schema` became `Unity.Cloud.Gltfast.Objects` (not `Unity.Cloud.Gltfast.Schema`). These types are glTF objects, the glTF specification's own term for them, and not a JSON Schema, which glTFast does not use. Migration from 6.x is automatic, except for the types that were also renamed (see the [Upgrade Guide](xref:doc-upgrade-guides)).
 - `Unity.Cloud.Gltfast.Dots` is no longer auto-referenced. Assemblies using the DOTS import API have to reference it explicitly. Code in predefined assemblies (e.g. `Assembly-CSharp`) needs to be moved into an assembly definition that references it.
 - Asynchronous (`Task`-returning) methods were renamed to end in `Async` (see the [upgrade guide](xref:doc-upgrade-guides)). Calls to the renamed class methods are rewritten by the API Updater; interface members, and members you override or implement yourself, need a manual rename.
+- `IInstantiator.AddPrimitive` and `AddPrimitiveInstanced` were renamed to [AddMesh](xref:Unity.Cloud.Gltfast.IInstantiator.AddMesh*) and [AddMeshInstanced](xref:Unity.Cloud.Gltfast.IInstantiator.AddMeshInstanced*) (see the [upgrade guide](xref:doc-upgrade-guides)). Calls typed to a concrete instantiator are rewritten by the API Updater; the interface members, and members you override or implement yourself, need a manual rename.
 - Public entry points accepting an [ICodeLogger](xref:Unity.Cloud.Gltfast.Logging.ICodeLogger) now default to Unity's Console when `null` is passed (was silent).
 - JSON serialization and de-serialization are performed by [System.Text.Json](https://www.nuget.org/packages/system.text.json/) (or `Unity.Cloud.Gltfast.Text.Json`, a copy of it to avoid assembly conflicts).
   - (Export) Replaced the hand-written `JsonWriter`/`Root.GltfSerialize` writers with `JsonSerializer.Serialize` driven by the source-generated `GltfJsonContext`. Exported JSON is functionally equivalent but not byte-identical to previous releases.
@@ -136,12 +137,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `MeshResult.materialIndices` is now `int?[]` (was `int[]`).
   - `IGltfBuffers.GetBufferView` and `IGltfBuffers.GetAccessorAndData` `byteStride` out parameter is now `int?` (was `int`).
 - Node transforms (translation, rotation, scale or matrix) are now in double precision throughout the API.
-- `IInstantiator.AddPrimitive` parameter `morphTargetWeights` is now of type `IReadOnlyList<float>` (was float[]).
+- `IInstantiator.AddMesh` parameter `morphTargetWeights` is now of type `IReadOnlyList<float>` (was float[]).
 - `GameObjectInstantiator.MeshAddedDelegate` parameter `morphTargetWeights` is now of type `IReadOnlyList<float>` (was float[]).
 - API signature changes following the glTF object array⇒List conversion.
   - [IInstantiator.BeginScene](xref:Unity.Cloud.Gltfast.IInstantiator.BeginScene*) `rootNodeIndices` is `IReadOnlyList<uint>` (was `uint[]`).
   - [IInstantiator.EndScene](xref:Unity.Cloud.Gltfast.IInstantiator.EndScene*) `rootNodeIndices` is `IReadOnlyList<uint>` (was `uint[]`).
-  - [IInstantiator.AddPrimitive](xref:Unity.Cloud.Gltfast.IInstantiator.AddPrimitive*) `joints` is `IReadOnlyList<uint>` (was `uint[]`).
+  - [IInstantiator.AddMesh](xref:Unity.Cloud.Gltfast.IInstantiator.AddMesh*) `joints` is `IReadOnlyList<uint>` (was `uint[]`).
   - `GameObjectInstantiator.MeshAddedDelegate` parameter `joints` is `IReadOnlyList<uint>` (was `uint[]`).
   - [IGltfWritable.AddNode](xref:Unity.Cloud.Gltfast.Export.IGltfWritable.AddNode*) `children` is `List<uint>` (was `uint[]`; ownership is transferred).
   - [IGltfWritable.AddScene](xref:Unity.Cloud.Gltfast.Export.IGltfWritable.AddScene*) `nodes` is `List<uint>` (was `uint[]`; ownership is transferred).
@@ -184,10 +185,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - (Export) `MaterialExportBase.AddImageExport`. Use [MaterialExport.TryAddImageExport](xref:GLTFast.Export.MaterialExport.TryAddImageExport*) instead.
 - The un-suffixed names of `Task`-returning **interface** members, which carry no shim on the declaring type: `IDeferAgent.BreakPoint` (both overloads), `IDownloadProvider.Request`/`RequestTexture`, `ITextureImageLoader.LoadImage` and `IGltfWritable.SaveToFileAndDispose`/`SaveToStreamAndDispose`. Implement the `Async`-suffixed member instead.
 - `IInstantiator.CreateNode` without a `name` parameter and `IInstantiator.SetNodeName`, plus their implementations on [GameObjectInstantiator](xref:Unity.Cloud.Gltfast.GameObjectInstantiator) and [EntityInstantiator](xref:Unity.Cloud.Gltfast.EntityInstantiator) — including the overridable `GameObjectInstantiator.SetNodeName`. Override the [CreateNode](xref:Unity.Cloud.Gltfast.IInstantiator.CreateNode*) overload that receives the name instead; it no longer has a default implementation.
+- `IInstantiator.AddPrimitive` and `IInstantiator.AddPrimitiveInstanced`. [AddMesh](xref:Unity.Cloud.Gltfast.IInstantiator.AddMesh*) and [AddMeshInstanced](xref:Unity.Cloud.Gltfast.IInstantiator.AddMeshInstanced*) are now plain interface members, so an implementation must declare them directly; the default bodies that relayed to the obsolete pair are gone. The deprecation had not shipped as of 6.19; see the upgrade guide.
 
 ### Deprecated
 - (Export) `Root.GltfSerialize(StreamWriter)` is obsolete. Use [Root.Serialize(Stream)](xref:Unity.Cloud.Gltfast.Objects.Root.Serialize*) instead.
 - The un-suffixed names of the renamed `Task`-returning class methods (`GltfImport.Load`/`LoadFile`/`LoadStream`/`LoadGltfJson`, `GltfAssetBase.Load`/`Instantiate`/`InstantiateScene`, `GameObjectExport` and `GltfWriter` `SaveToFileAndDispose`/`SaveToStreamAndDispose`, `DefaultDownloadProvider`/`CustomHeaderDownloadProvider` `Request`/`RequestTexture`, and the defer agents' `BreakPoint`). They are compile **errors**, not warnings, and exist so the API Updater can rewrite call sites to the `Async` name.
+- `GameObjectInstantiator.AddPrimitive`/`AddPrimitiveInstanced` and the `EntityInstantiator` pair, on the same terms: compile **errors** that let the API Updater rewrite call sites to `AddMesh`/`AddMeshInstanced`. They cannot be overridden, so an implementation that overrode them has to be renamed by hand — including `GameObjectBoundsInstantiator`, which inherits the shims for call sites but whose own `AddPrimitive` override is gone.
 
 ### Security
 
