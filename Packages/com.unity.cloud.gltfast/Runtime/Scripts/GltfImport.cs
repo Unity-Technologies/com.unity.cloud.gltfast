@@ -1350,24 +1350,12 @@ namespace Unity.Cloud.Gltfast
 
                 if (success)
                 {
-                    var gltfBinary = download.IsBinary ?? UriHelper.IsGltfBinary(url);
-
                     m_VolatileDisposables ??= new List<IDisposable>();
-                    NativeArray<byte>.ReadOnly data;
-                    if (download is INativeDownload nativeDownload)
-                    {
-                        data = nativeDownload.NativeData;
-                    }
-                    else
-                    {
-                        var managedNativeArray = new ReadOnlyNativeArrayFromManagedArray<byte>(download.Data);
-                        m_VolatileDisposables.Add(managedNativeArray);
-                        data = managedNativeArray.Array.AsNativeArrayReadOnly();
-                    }
+                    var data = download.Data;
 
                     m_VolatileDisposables.Add(download);
 
-                    success = gltfBinary ?? false
+                    success = GltfGlobals.IsGltfBinary(data)
                         ? await LoadGltfBinaryBuffer(data, cancellationToken)
                         : await LoadGltf(data, cancellationToken);
 
@@ -2089,17 +2077,8 @@ namespace Unity.Cloud.Gltfast
                 Profiler.BeginSample("GetData");
 
                 m_VolatileDisposables ??= new List<IDisposable>();
-                if (download is INativeDownload nativeDownload)
-                {
-                    var wrapper = new ReadOnlyNativeArrayFromNativeArray<byte>(nativeDownload.NativeData);
-                    m_Buffers[index] = wrapper.Array;
-                }
-                else
-                {
-                    var wrapper = new ReadOnlyNativeArrayFromManagedArray<byte>(download.Data);
-                    m_Buffers[index] = wrapper.Array;
-                    m_VolatileDisposables.Add(wrapper);
-                }
+                var wrapper = new ReadOnlyNativeArrayFromNativeArray<byte>(download.Data);
+                m_Buffers[index] = wrapper.Array;
 
                 m_VolatileDisposables.Add(download);
 

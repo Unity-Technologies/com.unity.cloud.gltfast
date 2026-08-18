@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Unity.Collections;
 using UnityEngine;
 using UnityEngine.Networking;
-using UnityEngine.Profiling;
 using UnityEngine.Scripting.APIUpdating;
 
 namespace Unity.Cloud.Gltfast.Loading
@@ -61,11 +60,8 @@ namespace Unity.Cloud.Gltfast.Loading
     /// Default <see cref="IDownload"/> implementation that loads URIs via <see cref="UnityWebRequest"/>
     /// </summary>
     [MovedFrom(true, sourceNamespace: "GLTFast.Loading", sourceAssembly: "glTFast")]
-    public class AwaitableDownload : IDownload, INativeDownload
+    public class AwaitableDownload : IDownload
     {
-        const string k_MimeTypeGltfBinary = "model/gltf-binary";
-        const string k_MimeTypeGltf = "model/gltf+json";
-
         /// <summary>
         /// <see cref="UnityWebRequest"/> that is used for the download
         /// </summary>
@@ -118,49 +114,8 @@ namespace Unity.Cloud.Gltfast.Loading
         /// </summary>
         public string Error => m_Request == null ? "Request disposed" : m_Request.error;
 
-        /// <summary>
-        /// Downloaded data as byte array
-        /// </summary>
-        public byte[] Data
-        {
-            get
-            {
-                Profiler.BeginSample("AwaitableDownload.Data");
-                var result = m_Request?.downloadHandler.data;
-                Profiler.EndSample();
-                return result;
-            }
-        }
-
         /// <inheritdoc />
-        public NativeArray<byte>.ReadOnly NativeData => m_Request?.downloadHandler.nativeData ?? default;
-
-        /// <summary>
-        /// Downloaded data as string
-        /// </summary>
-        public string Text => m_Request?.downloadHandler.text;
-
-        /// <summary>
-        /// True if the requested download is a glTF-Binary file.
-        /// False if it is a regular JSON-based glTF file.
-        /// Null if the type could not be determined.
-        /// </summary>
-        public bool? IsBinary
-        {
-            get
-            {
-                if (Success)
-                {
-                    string contentType = m_Request.GetResponseHeader("Content-Type");
-                    if (contentType == k_MimeTypeGltfBinary)
-                        return true;
-                    if (contentType == k_MimeTypeGltf)
-                        return false;
-                }
-
-                return GltfGlobals.IsGltfBinary(NativeData);
-            }
-        }
+        public NativeArray<byte>.ReadOnly Data => m_Request?.downloadHandler.nativeData ?? default;
 
         /// <summary>
         /// Releases previously allocated resources.

@@ -45,19 +45,20 @@ namespace Unity.Cloud.Gltfast.Editor
 #pragma warning restore 1998
     }
 
-    class SyncFileLoader : IDownload, INativeDownload
+    class SyncFileLoader : IDownload
     {
         ReadOnlyNativeArrayFromManagedArray<byte> m_ManagedNativeArray;
+        byte[] m_FileBytes;
 
         public SyncFileLoader(Uri url)
         {
             var path = url.OriginalString;
             if (File.Exists(path))
             {
-                Data = File.ReadAllBytes(path);
+                m_FileBytes = File.ReadAllBytes(path);
                 // TODO: Is there a better way to load a file into a NativeArray, like AsyncReadManager?
-                m_ManagedNativeArray = new ReadOnlyNativeArrayFromManagedArray<byte>(Data);
-                NativeData = m_ManagedNativeArray.Array.AsNativeArrayReadOnly();
+                m_ManagedNativeArray = new ReadOnlyNativeArrayFromManagedArray<byte>(m_FileBytes);
+                Data = m_ManagedNativeArray.Array.AsNativeArrayReadOnly();
             }
             else
             {
@@ -69,26 +70,11 @@ namespace Unity.Cloud.Gltfast.Editor
         public bool MoveNext() { return false; }
         public void Reset() { }
 
-        public virtual bool Success => Data != null;
+        public virtual bool Success => m_FileBytes != null;
 
         public string Error { get; protected set; }
-        public byte[] Data { get; private set; }
 
-        public NativeArray<byte>.ReadOnly NativeData { get; private set; }
-
-        public string Text => Data != null ? System.Text.Encoding.UTF8.GetString(Data) : null;
-
-        public bool? IsBinary
-        {
-            get
-            {
-                if (Success)
-                {
-                    return GltfGlobals.IsGltfBinary(NativeData);
-                }
-                return null;
-            }
-        }
+        public NativeArray<byte>.ReadOnly Data { get; private set; }
 
         public void Dispose()
         {
@@ -102,8 +88,8 @@ namespace Unity.Cloud.Gltfast.Editor
             {
                 m_ManagedNativeArray?.Dispose();
                 m_ManagedNativeArray = null;
-                Data = null;
-                NativeData = default;
+                m_FileBytes = null;
+                Data = default;
             }
         }
     }

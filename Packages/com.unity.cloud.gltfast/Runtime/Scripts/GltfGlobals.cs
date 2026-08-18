@@ -48,6 +48,10 @@ namespace Unity.Cloud.Gltfast
         /// <returns>True if the data is a glTF-Binary, false otherwise</returns>
         public static bool IsGltfBinary(byte[] data)
         {
+            if (data == null || data.Length < 4)
+            {
+                return false;
+            }
             var magic = BitConverter.ToUInt32(data, 0);
             return magic == GltfBinaryMagic;
         }
@@ -59,6 +63,10 @@ namespace Unity.Cloud.Gltfast
         /// <returns>True if the data is a glTF-Binary, false otherwise</returns>
         public static bool IsGltfBinary(NativeArray<byte>.ReadOnly data)
         {
+            if (data.Length < 4)
+            {
+                return false;
+            }
             var magic = data[0] | (uint)data[1] << 8 | (uint)data[2] << 16 | (uint)data[3] << 24;
             return magic == GltfBinaryMagic;
         }

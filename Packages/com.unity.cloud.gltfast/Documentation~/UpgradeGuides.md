@@ -356,6 +356,51 @@ Custom implementations of [IMaterialsVariantsSlot](xref:Unity.Cloud.Gltfast.IMat
 
 `Unity.Cloud.Gltfast.Objects.IBufferView` is no longer public. No public member accepted or returned it, so an implementation could not be handed to *glTFast* anyway. Code that merely reads [BufferView](xref:Unity.Cloud.Gltfast.Objects.BufferView) or the `EXT_meshopt_compression` extension object is unaffected; remove any `IBufferView` implementation or reference.
 
+### `IDownload` reduced to `Success`, `Error` and a native `Data`
+
+`Unity.Cloud.Gltfast.Loading.INativeDownload` is removed and its payload member folded into [IDownload](xref:Unity.Cloud.Gltfast.Loading.IDownload) as `Data`. It was only ever a temporary stand-in, because changing `IDownload` is a breaking change; 7.0 is where that happens. `Text` and `IsBinary` are removed at the same time, leaving:
+
+```csharp
+public interface IDownload : IDisposable
+{
+    bool Success { get; }
+    string Error { get; }
+    NativeArray<byte>.ReadOnly Data { get; }
+}
+```
+
+| Before | After |
+| ------ | ----- |
+| `byte[] Data { get; }` | `NativeArray<byte>.ReadOnly Data { get; }` |
+| `NativeArray<byte>.ReadOnly NativeData { get; }` (on `INativeDownload`) | folded into `Data` |
+| `string Text { get; }` | removed |
+| `bool? IsBinary { get; }` | removed |
+
+`Data` keeps its name but changes type, so both implementations and callers fail to compile rather than silently misbehaving. The old `byte[] Data` and `Text` allocated a fresh managed copy of the payload on every access; downloads never copy into managed or pinned memory now.
+
+Implementations that already implemented `INativeDownload` rename `NativeData` to `Data`, drop the interface from their declaration, and delete their old `byte[] Data`, `Text` and `IsBinary`:
+
+| Before | After |
+| ------ | ----- |
+| `class MyDownload : IDownload, INativeDownload` | `class MyDownload : IDownload` |
+
+Implementations that only ever provided managed bytes have to provide the payload natively:
+
+- Downloads backed by [UnityWebRequest](xref:UnityEngine.Networking.UnityWebRequest) should return `downloadHandler.nativeData`, which is a view into the request's own native buffer and copies nothing. This is what [AwaitableDownload](xref:Unity.Cloud.Gltfast.Loading.AwaitableDownload) does.
+- Downloads that can only produce a `byte[]` have to allocate a `NativeArray<byte>` (for example with `Allocator.Persistent`), copy into it, expose `Data` as its `AsReadOnly()` and dispose it in `Dispose()`. The payload has to stay valid until the download is disposed.
+
+If you relied on the managed `Data` or on `Text` on your own download type, keep them as members of your class under a different name &mdash; they are simply no longer part of the interface contract.
+
+### glTF-binary detection is content-based
+
+`IDownload.IsBinary` is gone. Import decides whether a downloaded payload is glTF-binary or glTF JSON by checking the `glTF` magic bytes via [GltfGlobals.IsGltfBinary](xref:Unity.Cloud.Gltfast.GltfGlobals.IsGltfBinary*), rather than asking the download for a verdict derived from the HTTP `Content-Type` response header, with a URI file-extension fallback.
+
+Inspecting the payload is essentially free once it is available as a native `Data`, and the file's own content is more trustworthy than a mislabeled server response or a misleading file extension. The other entry points ([GltfImport.LoadAsync](xref:Unity.Cloud.Gltfast.GltfImport.LoadAsync*) taking a `NativeArray<byte>.ReadOnly`, and stream loading) already detected by content, so URI downloads now behave the same way.
+
+Practical consequence: a `.gltf` URL served as `model/gltf-binary`, or a `.glb` file containing JSON, is imported according to what it actually contains. Custom [IDownload](xref:Unity.Cloud.Gltfast.Loading.IDownload) implementations no longer need to determine or report the type at all.
+
+[UriHelper.IsGltfBinary](xref:Unity.Cloud.Gltfast.UriHelper.IsGltfBinary*) is unchanged and still public for callers who want a URI-based guess before any data is available.
+
 ### `uint` → `int` for sparse accessor `BufferView`
 
 `AccessorSparseIndices.BufferView` and `AccessorSparseValues.BufferView` changed from `uint` to `int?`. Indexing call sites can drop the `(int)` cast:

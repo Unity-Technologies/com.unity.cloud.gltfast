@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System;
+using Unity.Collections;
 using UnityEngine;
 using UnityEngine.Scripting.APIUpdating;
 
@@ -25,19 +26,8 @@ namespace Unity.Cloud.Gltfast.Loading
         string Error { get; }
 
         /// <summary>
-        /// Resulting data as managed byte array.
+        /// Resulting data as NativeArray (does not allocate memory).
         /// </summary>
-        byte[] Data { get; }
-
-        /// <summary>
-        /// Resulting data as text
-        /// </summary>
-        string Text { get; }
-
-        /// <summary>
-        /// True if the result is a glTF-binary, false if it is not.
-        /// No value if determining the glTF type was not possible or failed.
-        /// </summary>
-        bool? IsBinary { get; }
+        NativeArray<byte>.ReadOnly Data { get; }
     }
 }

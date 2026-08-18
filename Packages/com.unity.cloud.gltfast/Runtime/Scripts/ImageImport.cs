@@ -133,12 +133,7 @@ namespace Unity.Cloud.Gltfast
 
             if (download.Success)
             {
-                if (download is INativeDownload nativeDownload)
-                {
-                    return new ReadOnlyData(nativeDownload.NativeData, download);
-                }
-                var data = new ReadOnlyNativeArrayFromManagedArray<byte>(download.Data);
-                return new ReadOnlyData(data.Array.AsNativeArrayReadOnly(), data);
+                return new ReadOnlyData(download.Data, download);
             }
 
             context.Logger?.Error(LogCode.TextureDownloadFailed, download.Error, uri.ToString());
