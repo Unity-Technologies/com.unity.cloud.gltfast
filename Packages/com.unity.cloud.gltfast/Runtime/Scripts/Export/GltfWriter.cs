@@ -1371,7 +1371,7 @@ namespace Unity.Cloud.Gltfast.Export
             }
         }
 
-        async Task<int> BakeMeshIndices(IMeshData meshData, UnityEngine.Mesh uMesh, MeshTopology? topology, bool sync)
+        async ValueTask<int> BakeMeshIndices(IMeshData meshData, UnityEngine.Mesh uMesh, MeshTopology? topology, bool sync)
         {
             NativeArray<byte> indices;
             if (uMesh.indexFormat == IndexFormat.UInt16)
@@ -1546,7 +1546,7 @@ namespace Unity.Cloud.Gltfast.Export
             }
         }
 
-        async Task<int> WriteBindPosesToBuffer(Matrix4x4[] bindposes, bool sync)
+        async ValueTask<int> WriteBindPosesToBuffer(Matrix4x4[] bindposes, bool sync)
         {
             var bufferViewId = -1;
             var nativeBindPoses = new ManagedNativeArray<Matrix4x4, float4x4>(bindposes);

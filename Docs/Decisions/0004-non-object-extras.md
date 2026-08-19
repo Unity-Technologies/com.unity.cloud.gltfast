@@ -1,8 +1,8 @@
-# 0003 - Non-object `extras`
+# 0004 - Non-object `extras`
 
 - **Status**: Accepted. Lands with the implementing change.
 - **Date**: 2026-08-10
-- **Affects**: `Unity.Cloud.Gltfast.Schema` (7.0, `preview`). Supersedes the `Extras` paragraph of `0002-dedicated-extension-container-types.md`.
+- **Affects**: `Unity.Cloud.Gltfast.Schema` (7.0, `preview`). Supersedes the `Extras` paragraph of `0003-dedicated-extension-container-types.md`.
 
 ## Context
 
@@ -87,7 +87,7 @@ Semantics settled here:
 
 - glTF 2.0 [`extras.schema.json`](https://github.com/KhronosGroup/glTF/blob/main/specification/2.0/schema/extras.schema.json) and [specification, extras](https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html#reference-extras) — MAY be any type, SHOULD be an object
 - glTF-Validator [`ISSUES.md`](https://github.com/KhronosGroup/glTF-Validator/blob/main/ISSUES.md) — `NON_OBJECT_EXTRAS`, severity *Information*
-- `0001-nullable-gltf-index-properties.md` — "schema is a permissive projection of the JSON"
-- `0002-dedicated-extension-container-types.md` — the `Extensions` counterpart; its `Extras` paragraph is superseded here
+- `0002-nullable-gltf-index-properties.md` — "schema is a permissive projection of the JSON"
+- `0003-dedicated-extension-container-types.md` — the `Extensions` counterpart; its `Extras` paragraph is superseded here
 - `Runtime/Scripts/Json/ExtrasConverter.cs`, `Runtime/Scripts/Schema/ExtrasContainer.cs`
 - `Runtime/Scripts/Json/AttributesConverter.cs` — the in-repo precedent for `JsonElement.ParseValue` + `WriteTo`

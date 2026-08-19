@@ -1,4 +1,4 @@
-# 0002 - Dedicated extension container types on every schema object
+# 0003 - Dedicated extension container types on every schema object
 
 - **Status**: Accepted. Lands with the implementing change.
 - **Date**: 2026-08-10
@@ -47,7 +47,7 @@ Timing is the point: 7.0 is already a breaking release, so the 19 signature chan
 
 ## References
 
-- `0001-nullable-gltf-index-properties.md` — the "schema is a permissive projection of the JSON" principle these containers implement
+- `0002-nullable-gltf-index-properties.md` — the "schema is a permissive projection of the JSON" principle these containers implement
 - glTF 2.0 [specification, extensions](https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html#specifying-extensions) — any glTF object may carry `extensions`
 - `Runtime/Scripts/Schema/AdditionalPropertyContainer.cs` — base class
 - `Runtime/Scripts/Json/GltfJsonContext.cs` — source generation discovers the types by walking from `Root`, so no registration is needed

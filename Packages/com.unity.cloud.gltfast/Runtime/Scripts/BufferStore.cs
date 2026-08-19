@@ -391,7 +391,7 @@ namespace Unity.Cloud.Gltfast
             return m_Buffers[bufferIndex].ToStrided<T>(totalOffset, count, byteStride);
         }
 
-        public async Task<NativeArray<byte>.ReadOnly> GetBufferViewAsync(
+        public async ValueTask<NativeArray<byte>.ReadOnly> GetBufferViewAsync(
             IBufferView bufferView,
             int offset = 0,
             int length = 0

@@ -29,14 +29,14 @@ namespace Unity.Cloud.Gltfast.Export
             return m_MeshData.GetSubMesh(subMesh).indexCount;
         }
 
-        public Task<NativeArray<TIndex>> GetIndexDataAsync(bool sync)
+        public ValueTask<NativeArray<TIndex>> GetIndexDataAsync(bool sync)
         {
-            return Task.FromResult(m_MeshData.GetIndexData<TIndex>());
+            return new ValueTask<NativeArray<TIndex>>(m_MeshData.GetIndexData<TIndex>());
         }
 
-        public Task<NativeArray<byte>> GetVertexDataAsync(int stream, bool sync)
+        public ValueTask<NativeArray<byte>> GetVertexDataAsync(int stream, bool sync)
         {
-            return Task.FromResult(m_MeshData.GetVertexData<byte>(stream));
+            return new ValueTask<NativeArray<byte>>(m_MeshData.GetVertexData<byte>(stream));
         }
     }
 }

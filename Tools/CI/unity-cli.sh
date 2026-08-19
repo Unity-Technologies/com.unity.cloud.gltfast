@@ -10,6 +10,13 @@ unity --version
 install_unity_editor()
 {
     version="$(sed -n 's/^m_EditorVersion: //p' "$1/ProjectSettings/ProjectVersion.txt")"
+    # `unity editors info` queries the release catalog, not local installs, so it succeeds for versions that are absent.
+    if unity editors list --installed --format tsv --no-banner \
+        | awk -F'\t' -v v="${version}" 'NR > 1 && $1 == v { found = 1 } END { exit !found }'
+    then
+        echo "Unity Editor ${version} is already installed"
+        return 0
+    fi
     echo "Installing Unity Editor ${version}"
     unity install "${version}"
 }

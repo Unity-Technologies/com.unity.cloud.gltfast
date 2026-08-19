@@ -115,7 +115,7 @@ namespace Unity.Cloud.Gltfast
             return await loader.LoadImageAsync(data.Data, linear, readable, generateMipMaps, cancellationToken);
         }
 
-        internal static async Task<IReadOnlyDisposableData> LoadDataAsync(
+        internal static async ValueTask<IReadOnlyDisposableData> LoadDataAsync(
             ImportContext context,
             Uri uri,
             CancellationToken cancellationToken

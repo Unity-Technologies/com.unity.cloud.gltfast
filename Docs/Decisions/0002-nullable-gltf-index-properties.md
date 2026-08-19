@@ -1,4 +1,4 @@
-# 0001 - Nullable glTF index properties
+# 0002 - Nullable glTF index properties
 
 - **Status**: Accepted. Lands with the implementing change.
 - **Date**: 2026-08-06

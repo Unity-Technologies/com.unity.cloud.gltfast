@@ -15,7 +15,7 @@ using Unity.Collections;
 using Unity.PerformanceTesting;
 using UnityEngine.TestTools;
 
-namespace GLTFast.Tests.Performance
+namespace Unity.Cloud.Gltfast.Tests.Performance
 {
     /// <summary>
     /// Benchmarks the step that happens *after* JSON deserialization: walking

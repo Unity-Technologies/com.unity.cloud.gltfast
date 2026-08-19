@@ -1,4 +1,4 @@
-# 0004 - "glTF object" terminology, `Schema` namespace renamed to `Objects`
+# 0005 - "glTF object" terminology, `Schema` namespace renamed to `Objects`
 
 - **Status**: Accepted. Lands with the implementing change.
 - **Date**: 2026-08-11
@@ -52,4 +52,4 @@ Timing is the point, as in `0002`: 7.0 already renamed the root namespace, so th
 
 - `CONTEXT.md` — glossary; **glTF object** and the terms it borders on
 - glTF 2.0 [specification, Technical Terminology](https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html#technical-terminology) — defines each concept as "An object describing…"
-- `0002-dedicated-extension-container-types.md` — the `*Extensions` suffix overload it records is now pinned in `CONTEXT.md`
+- `0003-dedicated-extension-container-types.md` — the `*Extensions` suffix overload it records is now pinned in `CONTEXT.md`
