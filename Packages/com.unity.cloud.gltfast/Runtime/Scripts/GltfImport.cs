@@ -147,12 +147,9 @@ namespace Unity.Cloud.Gltfast
 
         ImportSettings m_Settings;
 
-        ReadOnlyNativeArray<byte>[] m_Buffers;
+        BufferStore m_BufferStore;
         List<IDisposable> m_VolatileDisposables;
 
-        GlbBinChunk[] m_BinChunks;
-
-        Dictionary<int, Task<bool>> m_BufferLoadTasks;
         Dictionary<int, Task<ImageResult>> m_TextureLoadTasks;
 
         IDisposable[] m_AccessorData;
@@ -175,16 +172,6 @@ namespace Unity.Cloud.Gltfast
         /// <summary>Key: texture index; Value: new image index</summary>
         Dictionary<int, int> m_TextureImageOverrides;
         HashSet<int> m_NonFlippedYTextureIndices;
-
-        /// optional glTF-binary buffer
-        /// https://github.com/KhronosGroup/glTF/tree/master/specification/2.0#binary-buffer
-        GlbBinChunk? m_GlbBinChunk;
-
-#if MESHOPT_IS_ENABLED
-        Dictionary<int, NativeArray<byte>> m_MeshoptBufferViews;
-        NativeArray<int> m_MeshoptReturnValues;
-        JobHandle m_MeshoptJobHandle;
-#endif
 
         /// <summary>
         /// Material IDs of materials that require points topology support.
@@ -270,6 +257,8 @@ namespace Unity.Cloud.Gltfast
                 logger is NullLogger ? null : (logger ?? ConsoleLogger.Instance),
                 deferAgent
                 );
+
+            m_BufferStore = new BufferStore(m_Context, TrackVolatileDisposable);
 
             ImportAddonRegistry.InjectAllAddons(this);
         }
@@ -1176,7 +1165,7 @@ namespace Unity.Cloud.Gltfast
             if (GltfIndex.TryGetElement(Root.BufferViews, image.BufferView, out var bufferView))
             {
                 return new ReadOnlyData(
-                    await GetBufferViewAsync(bufferView),
+                    await m_BufferStore.GetBufferViewAsync(bufferView),
                     null
                     );
             }
@@ -1466,14 +1455,14 @@ namespace Unity.Cloud.Gltfast
         async Task<bool> LoadContent(CancellationToken cancellationToken)
         {
 
-            var success = await WaitForBufferDownloads(cancellationToken);
+            var success = await m_BufferStore.WaitForBufferDownloads(cancellationToken);
 
             cancellationToken.ThrowIfCancellationRequestedWithTracking();
 
 #if MESHOPT_IS_ENABLED
             if (success)
             {
-                MeshoptDecode();
+                m_BufferStore.MeshoptDecode();
             }
 #endif
             return success;
@@ -1592,93 +1581,16 @@ namespace Unity.Cloud.Gltfast
                 return false;
             }
 
-            if (Root.Buffers != null)
-            {
-                var bufferCount = Root.Buffers.Count;
-                if (bufferCount > 0)
-                {
-                    m_Buffers = new ReadOnlyNativeArray<byte>[bufferCount];
-                    m_BinChunks = new GlbBinChunk[bufferCount];
-                }
-
-                for (var i = 0; i < bufferCount; i++)
-                {
-                    cancellationToken.ThrowIfCancellationRequestedWithTracking();
-
-                    var buffer = Root.Buffers[i];
-                    if (buffer.Uri != null)
-                    {
-                        m_BufferLoadTasks ??= new Dictionary<int, Task<bool>>();
-                        if (buffer.Uri.IsData || buffer.Uri.IsFailed)
-                        {
-                            Logger?.Warning(LogCode.EmbedSlow);
-                            m_BufferLoadTasks[i] = LoadBufferFromDataUri(i, buffer, cancellationToken);
-                        }
-                        else
-                        {
-                            m_BufferLoadTasks[i] = LoadBufferFromUriAsync(
-                                i, UriHelper.GetUriString(buffer.Uri.AsString(), BaseUri));
-                        }
-                    }
-                }
-            }
+            m_BufferStore.Initialize(Root, BaseUri);
+            m_BufferStore.StartBufferLoads(cancellationToken);
 
             return true;
         }
 
-#pragma warning disable CS1998 // async method lacking 'await' is intentional: this stays a Task to match LoadBufferFromUriAsync.
-        async Task<bool> LoadBufferFromDataUri(int bufferIndex, Buffer buffer, CancellationToken cancellationToken)
-#pragma warning restore CS1998
+        void TrackVolatileDisposable(IDisposable disposable)
         {
-            cancellationToken.ThrowIfCancellationRequestedWithTracking();
-
-            if (buffer.Uri.IsFailed)
-            {
-                Logger?.Error(LogCode.EmbedBufferLoadFailed);
-                return false;
-            }
-
-            var mimeType = buffer.Uri.MimeType;
-            if (!mimeType.StartsWith("application/", StringComparison.Ordinal)
-                || !(
-                    mimeType.AsSpan(12).SequenceEqual("octet-stream")
-                    || mimeType.AsSpan(12).SequenceEqual("gltf-buffer")
-                    )
-                )
-            {
-                Logger?.Error(
-                    LogCode.BufferDataUriUnexpectedMimeType,
-                    bufferIndex.ToString(),
-                    mimeType
-                    );
-                return false;
-            }
-
-            if (!buffer.Uri.TryGetData(out var data))
-            {
-                Logger?.Error(LogCode.EmbedBufferLoadFailed);
-                return false;
-            }
-
-            if (data.Length < buffer.ByteLength)
-            {
-                Logger?.Error(
-                    LogCode.BufferContentUndersized,
-                    bufferIndex.ToString(),
-                    buffer.ByteLength.ToString(),
-                    data.Length.ToString()
-                    );
-                return false;
-            }
-
-            // The UriValue (already tracked via m_VolatileDisposables from ParseJsonAndLoadBuffers
-            // draining the converter's pending list) retains ownership of the NativeArray.
-            m_Buffers[bufferIndex] = new ReadOnlyNativeArray<byte>(data);
-            if (bufferIndex != 0 || !m_GlbBinChunk.HasValue)
-            {
-                m_BinChunks[bufferIndex] = new GlbBinChunk(0, (uint)m_Buffers[bufferIndex].Length);
-            }
-            return true;
+            m_VolatileDisposables ??= new List<IDisposable>();
+            m_VolatileDisposables.Add(disposable);
         }
 
         /// <summary>
@@ -2051,51 +1963,6 @@ namespace Unity.Cloud.Gltfast
             }
         }
 
-        async Task<bool> WaitForBufferDownloads(CancellationToken cancellationToken)
-        {
-            if (m_BufferLoadTasks != null)
-            {
-                foreach (var loadTaskPair in m_BufferLoadTasks)
-                {
-                    cancellationToken.ThrowIfCancellationRequestedWithTracking();
-                    if (!await loadTaskPair.Value)
-                    {
-                        return false;
-                    }
-                }
-            }
-
-            return true;
-        }
-
-        async Task<bool> LoadBufferFromUriAsync(int index, Uri uri)
-        {
-            var request = m_Context.DownloadProvider.RequestAsync(uri);
-            var download = await request;
-            if (download.Success)
-            {
-                Profiler.BeginSample("GetData");
-
-                m_VolatileDisposables ??= new List<IDisposable>();
-                var wrapper = new ReadOnlyNativeArrayFromNativeArray<byte>(download.Data);
-                m_Buffers[index] = wrapper.Array;
-
-                m_VolatileDisposables.Add(download);
-
-                Profiler.EndSample();
-
-                if (index != 0 || !m_GlbBinChunk.HasValue)
-                {
-                    m_BinChunks[index] = new GlbBinChunk(0, (uint)m_Buffers[index].Length);
-                }
-
-                return true;
-            }
-
-            Logger?.Error(LogCode.BufferLoadFailed, download.Error, index.ToString());
-            return false;
-        }
-
         async Task<bool> LoadGltfBinaryBuffer(
             NativeArray<byte>.ReadOnly bytes,
             CancellationToken cancellationToken
@@ -2153,8 +2020,7 @@ namespace Unity.Cloud.Gltfast
 
                 if (chType == (uint)ChunkFormat.Binary)
                 {
-                    Assert.IsFalse(m_GlbBinChunk.HasValue); // There can only be one binary chunk
-                    m_GlbBinChunk = new GlbBinChunk(index, chLength);
+                    m_BufferStore.SetGlbBinChunk(new GlbBinChunk(index, chLength));
                 }
                 else if (chType == (uint)ChunkFormat.Json)
                 {
@@ -2187,19 +2053,9 @@ namespace Unity.Cloud.Gltfast
                 return false;
             }
 
-            if (m_GlbBinChunk.HasValue && m_BinChunks != null)
-            {
-                m_BinChunks[0] = m_GlbBinChunk.Value;
-                var wrapper = new ReadOnlyNativeArrayFromNativeArray<byte>(bytes);
-                m_Buffers[0] = wrapper.Array;
-            }
+            m_BufferStore.AssignGlbBinChunk(bytes);
             LoadImages(cancellationToken);
             return true;
-        }
-
-        ReadOnlyNativeArray<byte> GetBuffer(int index)
-        {
-            return m_Buffers[index];
         }
 
         ReadOnlyNativeArray<byte> IGltfBuffers.GetBufferView(
@@ -2209,29 +2065,8 @@ namespace Unity.Cloud.Gltfast
             int length
             )
         {
-            var bufferView = Root.BufferViews[bufferViewIndex];
-#if MESHOPT_IS_ENABLED
-            if (bufferView.Extensions?.ExtMeshoptCompression != null)
-            {
-                byteStride = bufferView.Extensions.ExtMeshoptCompression.ByteStride;
-                var entireBuffer = m_MeshoptBufferViews[bufferViewIndex];
-                if (offset == 0 && length <= 0)
-                {
-                    return new ReadOnlyNativeArray<byte>(entireBuffer);
-                }
-                Assert.IsTrue(offset >= 0);
-                if (length <= 0)
-                {
-                    length = entireBuffer.Length - offset;
-                }
-                Assert.IsTrue(offset + length <= entireBuffer.Length);
-                return new ReadOnlyNativeArray<byte>(entireBuffer.GetSubArray(offset, length));
-            }
-#endif
-            byteStride = bufferView.ByteStride;
-            return GetBufferView(bufferView, offset, length);
+            return m_BufferStore.GetBufferView(bufferViewIndex, out byteStride, offset, length);
         }
-
 
         ReadOnlyNativeArray<T> IGltfBuffers.GetAccessorData<T>(
             int bufferViewIndex,
@@ -2239,22 +2074,7 @@ namespace Unity.Cloud.Gltfast
             int offset
             )
         {
-            var bufferView = Root.BufferViews[bufferViewIndex];
-#if MESHOPT_IS_ENABLED
-            if (bufferView.Extensions?.ExtMeshoptCompression != null)
-            {
-                var fullSlice = m_MeshoptBufferViews[bufferViewIndex];
-                if (offset == 0 && (count <= 0 || count * UnsafeUtility.SizeOf(typeof(T)) == fullSlice.Length))
-                {
-                    return new ReadOnlyNativeArray<byte>(fullSlice).Reinterpret<T>();
-                }
-                Assert.IsTrue(offset >= 0);
-                Assert.IsTrue(count > 0);
-                Assert.IsTrue(offset + count * UnsafeUtility.SizeOf(typeof(T)) <= fullSlice.Length);
-                return new ReadOnlyNativeArray<byte>(fullSlice).GetSubArray(offset, count).Reinterpret<T>();
-            }
-#endif
-            return GetAccessorData<T>(bufferView, count, offset);
+            return m_BufferStore.GetAccessorData<T>(bufferViewIndex, count, offset);
         }
 
         ReadOnlyNativeStridedArray<T> IGltfBuffers.GetStridedAccessorData<T>(
@@ -2263,196 +2083,8 @@ namespace Unity.Cloud.Gltfast
             int offset
         )
         {
-            var bufferView = Root.BufferViews[bufferViewIndex];
-#if MESHOPT_IS_ENABLED
-            if (bufferView.Extensions?.ExtMeshoptCompression != null)
-            {
-                unsafe
-                {
-                    var fullSlice = m_MeshoptBufferViews[bufferViewIndex];
-#if ENABLE_UNITY_COLLECTIONS_CHECKS
-                    var safety = NativeArrayUnsafeUtility.GetAtomicSafetyHandle(fullSlice);
-#endif
-                    return new ReadOnlyNativeStridedArray<T>(
-                        fullSlice.GetUnsafeReadOnlyPtr(),
-                        fullSlice.Length,
-                        offset,
-                        count,
-                        bufferView.ByteStride ?? 0
-#if ENABLE_UNITY_COLLECTIONS_CHECKS
-                        , ref safety
-#endif
-                        );
-                }
-            }
-#endif
-            return GetStridedAccessorData<T>(bufferView, count, offset);
+            return m_BufferStore.GetStridedAccessorData<T>(bufferViewIndex, count, offset);
         }
-
-        ReadOnlyNativeArray<T> GetAccessorData<T>(
-            IBufferView bufferView,
-            int count,
-            int offset = 0
-        ) where T : unmanaged
-        {
-            Assert.IsTrue(offset >= 0);
-            if (!GltfIndex.TryGetIndex(bufferView.Buffer, m_Buffers?.Length ?? 0, out var bufferIndex))
-            {
-                return default;
-            }
-            Assert.IsTrue(m_Buffers[bufferIndex].IsCreated);
-            var chunk = m_BinChunks[bufferIndex];
-            var totalOffset = chunk.Start + bufferView.ByteOffset + offset;
-            Assert.IsTrue(bufferView.ByteOffset + offset <= chunk.Length);
-            return m_Buffers[bufferIndex].GetSubArray(totalOffset, count * UnsafeUtility.SizeOf<T>()).Reinterpret<T>();
-        }
-
-        ReadOnlyNativeStridedArray<T> GetStridedAccessorData<T>(
-            IBufferView bufferView,
-            int count,
-            int offset = 0
-        ) where T : unmanaged
-        {
-            Assert.IsTrue(offset >= 0);
-            if (!GltfIndex.TryGetIndex(bufferView.Buffer, m_Buffers?.Length ?? 0, out var bufferIndex))
-            {
-                return default;
-            }
-            Assert.IsTrue(m_Buffers[bufferIndex].IsCreated);
-            var chunk = m_BinChunks[bufferIndex];
-            var totalOffset = chunk.Start + bufferView.ByteOffset + offset;
-            Assert.IsTrue(bufferView.ByteOffset + offset <= chunk.Length);
-            var byteStride = bufferView.ByteStride ?? UnsafeUtility.SizeOf(typeof(T));
-            return m_Buffers[bufferIndex].ToStrided<T>(totalOffset, count, byteStride);
-        }
-
-        async Task<NativeArray<byte>.ReadOnly> GetBufferViewAsync(
-            IBufferView bufferView,
-            int offset = 0,
-            int length = 0
-            )
-        {
-            if (!GltfIndex.TryGetIndex(bufferView.Buffer, m_Buffers?.Length ?? 0, out var bufferIndex))
-            {
-                return default;
-            }
-            if (!m_Buffers[bufferIndex].IsCreated)
-            {
-                var download = m_BufferLoadTasks?[bufferIndex];
-                if (download != null)
-                {
-                    return await download
-                        ? GetBufferView(bufferView, offset, length).AsNativeArrayReadOnly()
-                        : default;
-                }
-            }
-
-            return GetBufferView(bufferView, offset, length).AsNativeArrayReadOnly();
-        }
-
-        ReadOnlyNativeArray<byte> GetBufferView(
-            IBufferView bufferView,
-            int offset = 0,
-            int length = 0
-            )
-        {
-            Assert.IsTrue(offset >= 0);
-            if (length <= 0)
-            {
-                length = bufferView.ByteLength - offset;
-            }
-            Assert.IsTrue(offset + length <= bufferView.ByteLength);
-
-            if (!GltfIndex.TryGetIndex(bufferView.Buffer, m_Buffers?.Length ?? 0, out var bufferIndex))
-            {
-                return default;
-            }
-            Assert.IsTrue(m_Buffers[bufferIndex].IsCreated);
-
-            var chunk = m_BinChunks[bufferIndex];
-            var nativeBuffer = m_Buffers[bufferIndex];
-            var totalOffset = chunk.Start + bufferView.ByteOffset + offset;
-            Assert.IsTrue(bufferView.ByteOffset + offset <= chunk.Length);
-            Assert.IsTrue(totalOffset + length <= nativeBuffer.Length);
-            return m_Buffers[bufferIndex].GetSubArray(totalOffset, length);
-        }
-
-#if MESHOPT_IS_ENABLED
-        void MeshoptDecode()
-        {
-            if (Root.BufferViews != null)
-            {
-                List<JobHandle> jobHandlesList = null;
-                for (var i = 0; i < Root.BufferViews.Count; i++)
-                {
-                    var bufferView = Root.BufferViews[i];
-                    if (bufferView.Extensions?.ExtMeshoptCompression != null)
-                    {
-                        var meshopt = bufferView.Extensions.ExtMeshoptCompression;
-                        if (jobHandlesList == null)
-                        {
-                            m_MeshoptBufferViews = new Dictionary<int, NativeArray<byte>>();
-                            jobHandlesList = new List<JobHandle>(Root.BufferViews.Count);
-                            m_MeshoptReturnValues = new NativeArray<int>(Root.BufferViews.Count, Allocator.TempJob);
-                        }
-
-                        if (!meshopt.ByteStride.HasValue)
-                        {
-                            Logger?.Error(LogCode.TypeUnsupported, "Meshopt", "Missing byteStride");
-                            continue;
-                        }
-
-                        var byteStride = meshopt.ByteStride.Value;
-
-                        var arr = new NativeArray<byte>(meshopt.Count * byteStride, Allocator.Persistent);
-
-                        var origBufferView = GetBufferView(meshopt);
-
-                        var jobHandle = Decode.DecodeGltfBuffer(
-                            m_MeshoptReturnValues.GetSubArray(i, 1),
-                            arr,
-                            meshopt.Count,
-                            byteStride,
-                            origBufferView.AsNativeArrayReadOnly(),
-                            meshopt.Mode.ToMeshoptimizerMode(),
-                            meshopt.Filter.ToMeshoptimizerFilter()
-                        );
-                        jobHandlesList.Add(jobHandle);
-                        m_MeshoptBufferViews[i] = arr;
-                    }
-                }
-
-                if (jobHandlesList != null)
-                {
-                    using (var jobHandles = new NativeArray<JobHandle>(jobHandlesList.ToArray(), Allocator.Temp))
-                    {
-                        m_MeshoptJobHandle = JobHandle.CombineDependencies(jobHandles);
-                    }
-                }
-            }
-        }
-
-        async Task<bool> WaitForMeshoptDecode()
-        {
-            var success = true;
-            if (m_MeshoptBufferViews != null)
-            {
-                while (!m_MeshoptJobHandle.IsCompleted)
-                {
-                    await Task.Yield();
-                }
-                m_MeshoptJobHandle.Complete();
-
-                foreach (var returnValue in m_MeshoptReturnValues)
-                {
-                    success &= returnValue == 0;
-                }
-                m_MeshoptReturnValues.Dispose();
-            }
-            return success;
-        }
-
-#endif // MESHOPT_IS_ENABLED
 
         async Task<bool> Prepare(CancellationToken cancellationToken)
         {
@@ -2463,7 +2095,7 @@ namespace Unity.Cloud.Gltfast
             var success = true;
 
 #if MESHOPT_IS_ENABLED
-            success = await WaitForMeshoptDecode();
+            success = await m_BufferStore.WaitForMeshoptDecode();
             if (!success) return false;
 #endif
 
@@ -3039,8 +2671,7 @@ namespace Unity.Cloud.Gltfast
         /// </summary>
         void DisposeVolatileData()
         {
-            m_Buffers = null;
-            m_BinChunks = null;
+            m_BufferStore?.Dispose();
 
             if (m_VolatileDisposables != null)
             {
@@ -3051,30 +2682,12 @@ namespace Unity.Cloud.Gltfast
                 m_VolatileDisposables = null;
             }
 
-            m_BufferLoadTasks = null;
-
             m_AccessorUsage = null;
 
             m_TextureLoadTasks = null;
             m_TextureImageOverrides = null;
 
-            m_GlbBinChunk = null;
             m_MaterialPointsSupport = null;
-
-#if MESHOPT_IS_ENABLED
-            if (m_MeshoptBufferViews != null)
-            {
-                foreach (var nativeBuffer in m_MeshoptBufferViews.Values)
-                {
-                    nativeBuffer.Dispose();
-                }
-                m_MeshoptBufferViews = null;
-            }
-            if (m_MeshoptReturnValues.IsCreated)
-            {
-                m_MeshoptReturnValues.Dispose();
-            }
-#endif
         }
 
         void AddDataInstanceApplierFactory(IDataInstanceApplierFactory factory)
@@ -4116,31 +3729,7 @@ namespace Unity.Cloud.Gltfast
                 byteStride = 0;
                 return;
             }
-            var bufferView = Root.BufferViews[bufferViewIndex];
-#if MESHOPT_IS_ENABLED
-            var meshopt = bufferView.Extensions?.ExtMeshoptCompression;
-            if (meshopt != null)
-            {
-                byteStride = meshopt.ByteStride;
-                data = (byte*)m_MeshoptBufferViews[bufferViewIndex].GetUnsafeReadOnlyPtr() + accessor.ByteOffset;
-            }
-            else
-#endif
-            {
-                byteStride = bufferView.ByteStride;
-                if (!GltfIndex.TryGetIndex(bufferView.Buffer, m_Buffers?.Length ?? 0, out var bufferIndex))
-                {
-                    data = null;
-                    return;
-                }
-                var buffer = GetBuffer(bufferIndex);
-                data = (byte*)buffer.GetUnsafeReadOnlyPtr()
-                    + (accessor.ByteOffset + bufferView.ByteOffset + m_BinChunks[bufferIndex].Start);
-            }
-
-            // // Alternative that uses NativeArray/Slice
-            // var bufferViewData = GetBufferView(bufferView);
-            // data =  (byte*)bufferViewData.GetUnsafeReadOnlyPtr() + accessor.byteOffset;
+            m_BufferStore.TryGetBufferViewPointer(bufferViewIndex, accessor.ByteOffset, out data, out byteStride);
         }
 
         /// <summary>
@@ -4159,25 +3748,7 @@ namespace Unity.Cloud.Gltfast
                 data = null;
                 return;
             }
-            var bufferView = Root.BufferViews[bufferViewIndex];
-#if MESHOPT_IS_ENABLED
-            var meshopt = bufferView.Extensions?.ExtMeshoptCompression;
-            if (meshopt != null)
-            {
-                data = (byte*)m_MeshoptBufferViews[bufferViewIndex].GetUnsafeReadOnlyPtr() + sparseIndices.ByteOffset;
-            }
-            else
-#endif
-            {
-                if (!GltfIndex.TryGetIndex(bufferView.Buffer, m_Buffers?.Length ?? 0, out var bufferIndex))
-                {
-                    data = null;
-                    return;
-                }
-                var buffer = GetBuffer(bufferIndex);
-                data = (byte*)buffer.GetUnsafeReadOnlyPtr()
-                    + (sparseIndices.ByteOffset + bufferView.ByteOffset + m_BinChunks[bufferIndex].Start);
-            }
+            m_BufferStore.TryGetBufferViewPointer(bufferViewIndex, sparseIndices.ByteOffset, out data, out _);
         }
 
         /// <summary>
@@ -4196,25 +3767,7 @@ namespace Unity.Cloud.Gltfast
                 data = null;
                 return;
             }
-            var bufferView = Root.BufferViews[bufferViewIndex];
-#if MESHOPT_IS_ENABLED
-            var meshopt = bufferView.Extensions?.ExtMeshoptCompression;
-            if (meshopt != null)
-            {
-                data = (byte*)m_MeshoptBufferViews[bufferViewIndex].GetUnsafeReadOnlyPtr() + sparseValues.ByteOffset;
-            }
-            else
-#endif
-            {
-                if (!GltfIndex.TryGetIndex(bufferView.Buffer, m_Buffers?.Length ?? 0, out var bufferIndex))
-                {
-                    data = null;
-                    return;
-                }
-                var buffer = GetBuffer(bufferIndex);
-                data = (byte*)buffer.GetUnsafeReadOnlyPtr()
-                    + (sparseValues.ByteOffset + bufferView.ByteOffset + m_BinChunks[bufferIndex].Start);
-            }
+            m_BufferStore.TryGetBufferViewPointer(bufferViewIndex, sparseValues.ByteOffset, out data, out _);
         }
 
 
