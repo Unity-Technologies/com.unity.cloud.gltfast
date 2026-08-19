@@ -8,7 +8,6 @@ using System.IO;
 using System.Threading.Tasks;
 using GLTFast.Logging;
 using GLTFast.Tests.Export;
-using GLTFast.Tests.Import;
 using NUnit.Framework;
 using Unity.Mathematics;
 #if UNITY_EDITOR
@@ -22,22 +21,8 @@ using UnityEngine.TestTools.Graphics;
 namespace GLTFast.Tests.Graphics
 {
     [Category("Graphics")]
-    [CodeBasedGraphicsTest("Assets/ReferenceImages")]
     class ImportGraphicsTests : IPrebuildSetup
     {
-        enum ViewType
-        {
-            Top,
-            Bottom,
-            Left,
-            Right,
-            Front,
-            Back,
-            Perspective
-        }
-
-        const string k_DefaultReferenceImageName = "DefaultReferenceImage.png";
-
         public Bounds Bounds { get; private set; }
         static int s_FramesToWait;
 
@@ -49,56 +34,19 @@ namespace GLTFast.Tests.Graphics
             s_FramesToWait = 2;
         }
 
-        [GltfTestCase("glTF-Graphic-Tests-Assets", 2, testPrefix: "gfx-Top-")]
-        public IEnumerator TopView(GltfTestCaseSet testCaseSet, GltfTestCase testCase)
+        [GltfGraphicsTest("glTF-Graphic-Tests-Assets", 2)]
+        public IEnumerator Import(GltfGraphicsTestCase testCase)
         {
-            yield return AsyncWrapper.WaitForTask(RunTestCaseAsync(testCaseSet, testCase, ViewType.Top));
+            yield return AsyncWrapper.WaitForTask(RunTestCaseAsync(testCase));
         }
 
-        [GltfTestCase("glTF-Graphic-Tests-Assets", 2, testPrefix: "gfx-Bottom-")]
-        public IEnumerator BottomView(GltfTestCaseSet testCaseSet, GltfTestCase testCase)
+        [GltfGraphicsTest("glTF-test-models", 1, @"AlphaColorSpace\.gltf$", ViewType.Front)]
+        public IEnumerator AlphaColorSpace(GltfGraphicsTestCase testCase)
         {
-            yield return AsyncWrapper.WaitForTask(RunTestCaseAsync(testCaseSet, testCase, ViewType.Bottom));
+            yield return AsyncWrapper.WaitForTask(RunTestCaseAsync(testCase));
         }
 
-        [GltfTestCase("glTF-Graphic-Tests-Assets", 2, testPrefix: "gfx-Left-")]
-        public IEnumerator LeftView(GltfTestCaseSet testCaseSet, GltfTestCase testCase)
-        {
-            yield return AsyncWrapper.WaitForTask(RunTestCaseAsync(testCaseSet, testCase, ViewType.Left));
-        }
-
-        [GltfTestCase("glTF-Graphic-Tests-Assets", 2, testPrefix: "gfx-Right-")]
-
-        public IEnumerator RightView(GltfTestCaseSet testCaseSet, GltfTestCase testCase)
-        {
-            yield return AsyncWrapper.WaitForTask(RunTestCaseAsync(testCaseSet, testCase, ViewType.Right));
-        }
-
-        [GltfTestCase("glTF-Graphic-Tests-Assets", 2, testPrefix: "gfx-Front-")]
-        public IEnumerator FrontView(GltfTestCaseSet testCaseSet, GltfTestCase testCase)
-        {
-            yield return AsyncWrapper.WaitForTask(RunTestCaseAsync(testCaseSet, testCase, ViewType.Front));
-        }
-
-        [GltfTestCase("glTF-Graphic-Tests-Assets", 2, testPrefix: "gfx-Back-")]
-        public IEnumerator BackView(GltfTestCaseSet testCaseSet, GltfTestCase testCase)
-        {
-            yield return AsyncWrapper.WaitForTask(RunTestCaseAsync(testCaseSet, testCase, ViewType.Back));
-        }
-
-        [GltfTestCase("glTF-Graphic-Tests-Assets", 2, testPrefix: "gfx-Perspective-")]
-        public IEnumerator PerspectiveView(GltfTestCaseSet testCaseSet, GltfTestCase testCase)
-        {
-            yield return AsyncWrapper.WaitForTask(RunTestCaseAsync(testCaseSet, testCase, ViewType.Perspective));
-        }
-
-        [GltfTestCase("glTF-test-models", 1, includeFilter: "AlphaColorSpace\\.gltf$", testPrefix: "gfx-Front-")]
-        public IEnumerator AlphaColorSpace(GltfTestCaseSet testCaseSet, GltfTestCase testCase)
-        {
-            yield return AsyncWrapper.WaitForTask(RunTestCaseAsync(testCaseSet, testCase, ViewType.Front));
-        }
-
-        async Task RunTestCaseAsync(GltfTestCaseSet testCaseSet, GltfTestCase testCase, ViewType view)
+        async Task RunTestCaseAsync(GltfGraphicsTestCase testCase)
         {
 #if UNITY_ENTITIES_GRAPHICS
             Assert.Ignore("Graphics tests are not implemented with Entities.");
@@ -109,18 +57,20 @@ namespace GLTFast.Tests.Graphics
                 s_FramesToWait--;
             }
 
+            var gltfTestCase = testCase.GltfTestCase;
+
             // Create GameObject root for imported glTF scene
             var rootGameObject = new GameObject("GLTF Object");
             var deferAgent = new UninterruptedDeferAgent();
             var loadLogger = new CollectingLogger();
 
             // Build the file path
-            var filePath = Path.Combine(testCaseSet.RootPath, testCase.relativeUri);
+            var filePath = Path.Combine(testCase.TestCaseSet.RootPath, gltfTestCase.relativeUri);
             using var gltfImport = new GltfImport(deferAgent: deferAgent, logger: loadLogger);
             var loadSuccess = await gltfImport.Load(filePath);
 
             // Validate loading process
-            if (loadSuccess == testCase.expectLoadFail)
+            if (loadSuccess == gltfTestCase.expectLoadFail)
             {
                 throw new AssertionException(loadSuccess
                     ? "glTF import unexpectedly succeeded while failure was expected."
@@ -142,14 +92,12 @@ namespace GLTFast.Tests.Graphics
             SetBounds(instantiator);
 
             // Add and configure a main camera
-            var cameraGameObject = CreateAndConfigureCamera(rootGameObject, view);
+            var cameraGameObject = CreateAndConfigureCamera(rootGameObject, testCase.View);
             ImageAssert.AreEqual(
-                LoadReferenceImage("gfx-" + view + "-" + testCase),
-                cameraGameObject.GetComponent<Camera>(), settings: new ImageComparisonSettings
-                {
-                    AverageCorrectnessThreshold = 0.0015f,
-                    PerPixelCorrectnessThreshold = 0.00015f
-                });
+                testCase.ReferenceImage.Image,
+                cameraGameObject.GetComponent<Camera>(),
+                new ImageComparisonSettings { AverageCorrectnessThreshold = 5e-4f },
+                testCase.ReferenceImage.LoadMessage);
         }
 
         void SetBounds(GameObjectBoundsInstantiator instantiator)
@@ -203,21 +151,6 @@ namespace GLTFast.Tests.Graphics
             camera.transform.LookAt(centerPosition);
             FrameObject(Bounds, camera);
             return cameraGameObject;
-        }
-
-        /// <summary>
-        /// Loads a reference image to compare the rendered output.
-        /// </summary>
-        static Texture2D LoadReferenceImage(string filename)
-        {
-            const string baseReferencePath = "Assets/ReferenceImages/";
-            var referenceImage = new Texture2D(1, 1);
-            var referenceImagePath = Path.Combine(baseReferencePath, $"{filename}.png");
-            var imageBytes = File.Exists(referenceImagePath)
-                ? File.ReadAllBytes(referenceImagePath)
-                : File.ReadAllBytes(Path.Combine(baseReferencePath, k_DefaultReferenceImageName));
-            referenceImage.LoadImage(imageBytes);
-            return referenceImage;
         }
 
         void FrameObject(Bounds bounds, Camera camera)

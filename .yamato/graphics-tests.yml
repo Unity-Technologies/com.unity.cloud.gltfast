@@ -7,7 +7,7 @@ graphics_win:
   commands:
     - gsudo choco install unity-downloader-cli -y -s https://artifactory.prd.it.unity3d.com/artifactory/api/nuget/unity-choco-local
     - unity-downloader-cli -u 6000.0 -c Editor --wait --fast
-    - UnifiedTestRunner.exe  --editor-location=.Editor --suite=playmode --category=Graphic --testproject="./Projects/glTFast-Test" --artifacts_path=test-results
+    - UnifiedTestRunner.exe  --editor-location=.Editor --suite=playmode --category=Graphics --testproject="./Projects/glTFast-Test" --artifacts_path=test-results
   artifacts:
     logs:
       paths:
@@ -23,7 +23,7 @@ graphics_mac:
     - command: unity-downloader-cli -u 6000.0 -c editor --path .Editor --fast
       timeout: 10
       retries: 3
-    - command: 'UnifiedTestRunner --testproject=./Projects/glTFast-Test --editor-location=.Editor --artifacts_path=test-results --suite=Playmode --category=Graphic'
+    - command: 'UnifiedTestRunner --testproject=./Projects/glTFast-Test --editor-location=.Editor --artifacts_path=test-results --suite=Playmode --category=Graphics'
       timeout: 60
       retries: 1
   artifacts:
