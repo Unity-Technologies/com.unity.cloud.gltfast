@@ -32,6 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [IsTextureYFlipped](xref:GLTFast.GltfImportBase.IsTextureYFlipped(System.Int32)) returns correct value when multiple textures reference one image.
 - (Export) Exceptions thrown during synchronous mesh export (`BakeMesh` / `BakeMeshDraco`) are now surfaced instead of being silently swallowed by unobserved tasks.
 - (Documentation) Updated the features' animation section to reflect that Playables support was removed and to list animation import into custom animation systems via add-ons.
+- (Performance) Removed unnecessary texture file read during Editor imports.
 
 ### Removed
 

@@ -49,6 +49,8 @@ namespace GLTFast.Editor
     {
         ReadOnlyNativeArrayFromManagedArray<byte> m_ManagedNativeArray;
 
+        protected SyncFileLoader() { }
+
         public SyncFileLoader(Uri url)
         {
             var path = url.OriginalString;
@@ -116,7 +118,6 @@ namespace GLTFast.Editor
         public override bool Success => Texture != null;
 
         public SyncTextureLoader(Uri url)
-            : base(url)
         {
             Texture = AssetDatabase.LoadAssetAtPath<Texture2D>(url.OriginalString);
             if (Texture == null)
