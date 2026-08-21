@@ -81,6 +81,34 @@ The async `LoadAsync` method can be awaited and followed up by custom behavior.
 
 [!code-cs [instantiation](../Runtime/DocExamples/LoadGltfFromMemory.cs#Instantiation)]
 
+### Reading Buffer Data
+
+[`IGltfBufferData`][IGltfBufferData] provides read access to a glTF asset's buffer view and accessor data, for example to run your own analysis or feed a Burst job.
+
+Buffer data comes with a lease: the import keeps its buffers alive until every lease is disposed. Buffer data only exists while an import is running, so the entry point is the [`IBufferDataConsumer`][IBufferDataConsumer] add-on hook, which is called once every buffer is loaded and before the import converts that data into Unity resources.
+
+[!code-cs [buffer-data-addon](../Runtime/DocExamples/BufferDataAccess.cs#PositionSumAddon)]
+
+Inject the add-on before loading:
+
+[!code-cs [read-buffer-data](../Runtime/DocExamples/BufferDataAccess.cs#ReadBufferDataDuringImport)]
+
+The lease handed to the hook is disposed as soon as the hook returns. To keep reading after the import finished, lease your own via [`GltfImport.LeaseBufferData`][LeaseBufferData] and dispose it when done:
+
+[!code-cs [retain-buffer-data](../Runtime/DocExamples/BufferDataAccess.cs#RetainBufferDataBeyondImport)]
+
+Data is provided in glTF's own coordinate system and value range. No conversion, normalization or coordinate flip is applied — use `ComponentType`, `Type` and `Normalized` on the [`Accessor`][Accessor] to interpret it. Sparse accessors are not provided.
+
+Use it from the main thread. The containers it provides may be read from C# jobs and from threads of your own, for as long as the lease has not been disposed. The hook is called on the main thread and has to return on it, so schedule jobs or start threads in between when the work is heavy.
+
+Add-ons implementing the hook are invoked in unspecified order and potentially concurrently, so do not assume yours is the only one running, or that it runs before or after another. The glTF asset is read-only there: allocate and create resources of your own freely, but do not modify the [`Root`][Root], any glTF object or any buffer data.
+
+[IGltfBufferData]: xref:Unity.Cloud.Gltfast.IGltfBufferData
+[IBufferDataConsumer]: xref:Unity.Cloud.Gltfast.Addons.IBufferDataConsumer
+[LeaseBufferData]: xref:Unity.Cloud.Gltfast.GltfImport.LeaseBufferData*
+[Root]: xref:Unity.Cloud.Gltfast.Objects.Root
+[Accessor]: xref:Unity.Cloud.Gltfast.Objects.Accessor
+
 ### Instantiation
 
 Creating actual GameObjects (or Entities) from the imported data (nodes, meshes, materials) is called instantiation.

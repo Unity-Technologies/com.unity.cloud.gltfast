@@ -199,6 +199,24 @@ namespace Unity.Cloud.Gltfast.Documentation.Examples.Tests
             Object.Destroy(go);
         }
 
+        [UnityTest]
+        public IEnumerator SumPositions()
+        {
+            var path = TestGltfGenerator.GetAssetPath(TestGltfGenerator.Asset.CylinderWithMaterial);
+            var task = BufferDataAccess.SumPositionsAsync(path);
+            yield return AsyncWrapper.WaitForTask(task);
+            Assert.AreNotEqual(Vector3.zero, task.Result, "No vertex positions were read.");
+        }
+
+        [UnityTest]
+        public IEnumerator BufferViewSizeAfterImport()
+        {
+            var path = TestGltfGenerator.GetAssetPath(TestGltfGenerator.Asset.CylinderWithMaterial);
+            var task = BufferDataAccess.BufferViewSizeAfterImportAsync(path, 0);
+            yield return AsyncWrapper.WaitForTask(task);
+            Assert.Greater(task.Result, 0, "Retained lease provided no data after the import.");
+        }
+
         [Test]
         public void GetBuffer()
         {

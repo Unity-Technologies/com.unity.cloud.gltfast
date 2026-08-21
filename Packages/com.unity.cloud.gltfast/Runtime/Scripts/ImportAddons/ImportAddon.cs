@@ -20,9 +20,9 @@ namespace Unity.Cloud.Gltfast.Addons
     }
 
     /// <summary>
-    /// Extension base class.
+    /// Import add-on base class that creates a typed import add-on instance.
     /// </summary>
-    /// <typeparam name="TInstance">Type of the addon instance, that that is constructed per <see cref="GltfImport"/>.</typeparam>
+    /// <typeparam name="TInstance">Type of the add-on instance that is constructed per <see cref="GltfImport"/>.</typeparam>
     [MovedFrom(true, sourceNamespace: "GLTFast.Addons", sourceAssembly: "glTFast")]
     public abstract class ImportAddon<TInstance> : ImportAddon
         where TInstance : ImportAddonInstance, new()

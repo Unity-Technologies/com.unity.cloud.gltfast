@@ -21,13 +21,6 @@ namespace Unity.Cloud.Gltfast
             int length = 0
             );
 
-        ReadOnlyNativeArray<T> GetAccessorData<T>(
-            int bufferViewIndex,
-            int count,
-            int offset = 0
-        )
-            where T : unmanaged;
-
         ReadOnlyNativeStridedArray<T> GetStridedAccessorData<T>(
             int bufferViewIndex,
             int count,

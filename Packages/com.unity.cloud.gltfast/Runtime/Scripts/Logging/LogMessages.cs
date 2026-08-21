@@ -278,6 +278,10 @@ namespace Unity.Cloud.Gltfast.Logging
         RequiredPropertyMissing,
         /// <summary>An index does not address an existing element.</summary>
         IndexOutOfRange,
+        /// <summary>Buffer data leases were still open when the glTF import was disposed.</summary>
+        BufferDataForceDisposed,
+        /// <summary>Could not provide data of a bufferView.</summary>
+        BufferViewAccessFailed,
     }
 
     /// <summary>
@@ -291,6 +295,8 @@ namespace Unity.Cloud.Gltfast.Logging
 
         static readonly Dictionary<LogCode, string> k_FullMessages = new Dictionary<LogCode, string>() {
             { LogCode.AccessorAccessFailed, "Could not provide data for accessor {0}" },
+            { LogCode.BufferDataForceDisposed, "{0} buffer data lease(s) were still open when the glTF import was disposed. Their data is released now; further reads throw." },
+            { LogCode.BufferViewAccessFailed, "Could not provide data for bufferView {0}" },
             { LogCode.RequiredPropertyMissing, "Required property {0} is missing" },
             { LogCode.IndexOutOfRange, "Index {1} in property {0} does not address an existing element" },
             { LogCode.AccessorAttributeTypeUnknown, "Unknown accessor type" },

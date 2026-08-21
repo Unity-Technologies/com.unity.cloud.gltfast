@@ -62,3 +62,16 @@ _Avoid_: unknown property, custom property, extra
 A glTF object's reference to another glTF object, given as its position in the corresponding `Root` array.
 Absent when `null`; there is no sentinel value.
 _Avoid_: id, handle, reference, pointer
+
+**Import add-on**:
+A component extending an import with behavior glTFast does not provide itself, most often support for
+a glTF extension. The registered `ImportAddon` creates one `ImportAddonInstance` per `GltfImport`, and
+that instance is what implements the hook interfaces the import calls.
+_Avoid_: extension (here that is a **glTF extension**), plug-in, Unity's meaning of "add-on" (an
+installable package)
+
+**Lease**:
+A claim on a glTF asset's buffer memory, which the import keeps alive for as long as at least
+one lease has not been disposed. An `IGltfBufferData` *is* the lease, so disposing it is what ends
+the claim.
+_Avoid_: reference count (leases are counted, buffers are not), pin, handle, subscription

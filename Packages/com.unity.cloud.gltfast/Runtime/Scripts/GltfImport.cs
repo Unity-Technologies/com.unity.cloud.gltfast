@@ -149,6 +149,7 @@ namespace Unity.Cloud.Gltfast
 
         BufferStore m_BufferStore;
         List<IDisposable> m_VolatileDisposables;
+        List<IDisposable> m_BufferMemoryOwners;
 
         Dictionary<int, Task<ImageResult>> m_TextureLoadTasks;
 
@@ -258,7 +259,7 @@ namespace Unity.Cloud.Gltfast
                 deferAgent
                 );
 
-            m_BufferStore = new BufferStore(m_Context, TrackVolatileDisposable);
+            m_BufferStore = new BufferStore(m_Context, TrackBufferMemoryOwner, DisposeVolatileMemoryOwners);
 
             ImportAddonRegistry.InjectAllAddons(this);
         }
@@ -403,8 +404,7 @@ namespace Unity.Cloud.Gltfast
         )
         {
             var managedNativeArray = new ReadOnlyNativeArrayFromManagedArray<byte>(data);
-            m_VolatileDisposables ??= new List<IDisposable>();
-            m_VolatileDisposables.Add(managedNativeArray);
+            TrackBufferMemoryOwner(managedNativeArray);
             return await LoadAsync(
                 managedNativeArray.Array.AsNativeArrayReadOnly(),
                 uri,
@@ -788,6 +788,8 @@ namespace Unity.Cloud.Gltfast
         {
             DisposeRequiredForInstantiationData();
 
+            m_BufferStore?.ForceDispose();
+
             m_Addons?.Dispose();
 
             m_NodeNames = null;
@@ -1130,30 +1132,6 @@ namespace Unity.Cloud.Gltfast
             return result;
         }
 
-        /// <inheritdoc />
-        [Obsolete("This is going to be removed and replaced with an improved way to access accessors' data in a future release.")]
-        public NativeArray<byte>.ReadOnly GetAccessor(int accessorIndex)
-        {
-            return GetAccessorData(accessorIndex);
-        }
-
-        /// <inheritdoc />
-        [Obsolete("This is going to be removed and replaced with an improved way to access accessors' data in a future release.")]
-        public NativeArray<byte>.ReadOnly GetAccessorData(int accessorIndex)
-        {
-            if (!GltfIndex.TryGetElement(Root?.Accessors, accessorIndex, out var accessor)
-                || accessor.BufferView is not { } bufferViewIndex)
-            {
-                return default;
-            }
-            return ((IGltfBuffers)this).GetBufferView(
-                bufferViewIndex,
-                out _,
-                accessor.ByteOffset,
-                accessor.ByteSize
-                ).AsNativeArrayReadOnly();
-        }
-
         /// <summary>
         /// Loads an image's data, regardless of source type (URI, bufferView, data URI).
         /// </summary>
@@ -1339,10 +1317,9 @@ namespace Unity.Cloud.Gltfast
 
                 if (success)
                 {
-                    m_VolatileDisposables ??= new List<IDisposable>();
                     var data = download.Data;
 
-                    m_VolatileDisposables.Add(download);
+                    TrackBufferMemoryOwner(download);
 
                     success = GltfGlobals.IsGltfBinary(data)
                         ? await LoadGltfBinaryBuffer(data, cancellationToken)
@@ -1360,7 +1337,7 @@ namespace Unity.Cloud.Gltfast
             catch (OperationCanceledException e)
             {
                 Logger?.Info(LogCode.OperationCanceled, e.Message);
-                if (m_VolatileDisposables?.Contains(download) is false)
+                if (m_BufferMemoryOwners?.Contains(download) is false)
                     download?.Dispose();
                 await DisposeTextureLoadTasks();
                 throw;
@@ -1468,11 +1445,48 @@ namespace Unity.Cloud.Gltfast
             return success;
         }
 
+        async Task<bool> InvokeBufferDataConsumers(CancellationToken cancellationToken)
+        {
+            var addons = m_Addons?.SubCollection<IBufferDataConsumer>();
+            if (addons == null)
+            {
+                return true;
+            }
+
+            using var bufferData = m_BufferStore.AcquireLease();
+            foreach (var addon in addons)
+            {
+                if (!await addon.ConsumeBufferDataAsync(bufferData, cancellationToken))
+                {
+                    return false;
+                }
+                cancellationToken.ThrowIfCancellationRequestedWithTracking();
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Acquires read access to the glTF asset's buffer data.
+        /// </summary>
+        /// <remarks>
+        /// The returned lease keeps the buffer memory alive until it is disposed, so dispose it as
+        /// soon as the data is no longer needed. Buffer data only exists from the moment a glTF's
+        /// buffers were loaded; a lease taken before or after that reports
+        /// <see cref="BufferAccessStatus.BufferUnavailable"/> on every request.
+        /// </remarks>
+        /// <returns>Read access to the asset's buffer data.</returns>
+        public IGltfBufferData LeaseBufferData()
+        {
+            return m_BufferStore.AcquireLease();
+        }
+
         /// <summary>
         /// De-serializes a UTF-8 encoded glTF JSON string and returns the glTF root object along
         /// with the list of decoded data URI <see cref="UriValue"/>s produced by the converter.
         /// Ownership of those entries transfers to the caller, which must add them to a disposal
-        /// container (e.g. <c>m_VolatileDisposables</c>) or dispose them directly.
+        /// container (<c>m_BufferMemoryOwners</c> for buffer data URIs, <c>m_VolatileDisposables</c>
+        /// otherwise) or dispose them directly.
         /// </summary>
         /// <param name="json">glTF JSON (UTF-8 encoded)</param>
         /// <returns>De-serialized glTF root object paired with the converter's pending list.</returns>
@@ -1555,10 +1569,16 @@ namespace Unity.Cloud.Gltfast
 
             if (pending != null && pending.Count > 0)
             {
-                m_VolatileDisposables ??= new List<IDisposable>(pending.Count);
                 foreach (var uri in pending)
                 {
-                    m_VolatileDisposables.Add(uri);
+                    if (IsBufferUri(uri))
+                    {
+                        TrackBufferMemoryOwner(uri);
+                    }
+                    else
+                    {
+                        TrackVolatileDisposable(uri);
+                    }
                 }
             }
 
@@ -1591,6 +1611,32 @@ namespace Unity.Cloud.Gltfast
         {
             m_VolatileDisposables ??= new List<IDisposable>();
             m_VolatileDisposables.Add(disposable);
+        }
+
+        /// <summary>
+        /// Registers an object that owns memory a glTF buffer views into. Those are released only
+        /// once no <see cref="IGltfBufferData"/> holds a lease anymore.
+        /// </summary>
+        void TrackBufferMemoryOwner(IDisposable disposable)
+        {
+            m_BufferMemoryOwners ??= new List<IDisposable>();
+            m_BufferMemoryOwners.Add(disposable);
+        }
+
+        bool IsBufferUri(UriValue uri)
+        {
+            if (Root?.Buffers == null)
+            {
+                return false;
+            }
+            foreach (var buffer in Root.Buffers)
+            {
+                if (ReferenceEquals(buffer.Uri, uri))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         /// <summary>
@@ -2065,16 +2111,19 @@ namespace Unity.Cloud.Gltfast
             int length
             )
         {
-            return m_BufferStore.GetBufferView(bufferViewIndex, out byteStride, offset, length);
-        }
-
-        ReadOnlyNativeArray<T> IGltfBuffers.GetAccessorData<T>(
-            int bufferViewIndex,
-            int count,
-            int offset
-            )
-        {
-            return m_BufferStore.GetAccessorData<T>(bufferViewIndex, count, offset);
+            var status = m_BufferStore.TryGetBufferView(
+                bufferViewIndex,
+                out var data,
+                out byteStride,
+                offset,
+                length
+                );
+            if (status == BufferAccessStatus.Success)
+            {
+                return data;
+            }
+            Logger?.Error(LogCode.BufferViewAccessFailed, bufferViewIndex.ToString());
+            return default;
         }
 
         ReadOnlyNativeStridedArray<T> IGltfBuffers.GetStridedAccessorData<T>(
@@ -2083,21 +2132,25 @@ namespace Unity.Cloud.Gltfast
             int offset
         )
         {
-            return m_BufferStore.GetStridedAccessorData<T>(bufferViewIndex, count, offset);
+            var status = m_BufferStore.TryGetStridedAccessorData<T>(bufferViewIndex, count, out var data, offset);
+            if (status == BufferAccessStatus.Success)
+            {
+                return data;
+            }
+            Logger?.Error(LogCode.BufferViewAccessFailed, bufferViewIndex.ToString());
+            return default;
         }
 
         async Task<bool> Prepare(CancellationToken cancellationToken)
         {
             m_Resources = new List<UnityEngine.Object>();
 
-            // RedundantAssignment potentially becomes necessary when MESHOPT_IS_ENABLED is not defined
-            // ReSharper disable once RedundantAssignment
-            var success = true;
-
 #if MESHOPT_IS_ENABLED
-            success = await m_BufferStore.WaitForMeshoptDecode();
-            if (!success) return false;
+            if (!await m_BufferStore.WaitForMeshoptDecode()) return false;
 #endif
+
+            var success = await InvokeBufferDataConsumers(cancellationToken);
+            if (!success) return false;
 
             if (Root.Accessors != null)
             {
@@ -2671,7 +2724,7 @@ namespace Unity.Cloud.Gltfast
         /// </summary>
         void DisposeVolatileData()
         {
-            m_BufferStore?.Dispose();
+            m_BufferStore?.RequestDispose();
 
             if (m_VolatileDisposables != null)
             {
@@ -2688,6 +2741,19 @@ namespace Unity.Cloud.Gltfast
             m_TextureImageOverrides = null;
 
             m_MaterialPointsSupport = null;
+        }
+
+        void DisposeVolatileMemoryOwners()
+        {
+            if (m_BufferMemoryOwners == null)
+            {
+                return;
+            }
+            foreach (var disposable in m_BufferMemoryOwners)
+            {
+                disposable?.Dispose();
+            }
+            m_BufferMemoryOwners = null;
         }
 
         void AddDataInstanceApplierFactory(IDataInstanceApplierFactory factory)
@@ -3517,18 +3583,25 @@ namespace Unity.Cloud.Gltfast
                     }
                     else
                     {
-                        var accessorData = ((IGltfBuffers)this).GetAccessorData<float3>(
-                            accessor.BufferView.Value,
-                            accessor.Count,
-                            accessor.ByteOffset
-                        );
-                        var job = new MemCopyJob
+                        if (m_BufferStore.TryGetAccessorData<float3>(
+                                accessor.BufferView.Value,
+                                accessor.Count,
+                                out var accessorData,
+                                accessor.ByteOffset) == BufferAccessStatus.Success)
                         {
-                            input = (float*)accessorData.GetUnsafeReadOnlyPtr(),
-                            bufferSize = accessor.Count * 12,
-                            result = (float*)vectors.GetUnsafePtr()
-                        };
-                        jobHandle = job.Schedule();
+                            var job = new MemCopyJob
+                            {
+                                input = (float*)accessorData.GetUnsafeReadOnlyPtr(),
+                                bufferSize = accessor.Count * 12,
+                                result = (float*)vectors.GetUnsafePtr()
+                            };
+                            jobHandle = job.Schedule();
+                        }
+                        else
+                        {
+                            Logger?.Error(LogCode.AccessorAccessFailed, accessorIndex.ToString());
+                            jobHandle = null;
+                        }
                     }
                     break;
                 }
@@ -3723,13 +3796,12 @@ namespace Unity.Cloud.Gltfast
             int index, out Accessor accessor, out void* data, out int? byteStride)
         {
             if (!GltfIndex.TryGetElement(Root.Accessors, index, out accessor)
-                || !GltfIndex.TryGetIndex(accessor.BufferView, Root.BufferViews?.Count ?? 0, out var bufferViewIndex))
+                || !GltfIndex.TryGetIndex(accessor.BufferView, Root.BufferViews?.Count ?? 0, out var bufferViewIndex)
+                || !m_BufferStore.TryGetBufferViewPointer(bufferViewIndex, accessor.ByteOffset, out data, out byteStride))
             {
                 data = null;
                 byteStride = 0;
-                return;
             }
-            m_BufferStore.TryGetBufferViewPointer(bufferViewIndex, accessor.ByteOffset, out data, out byteStride);
         }
 
         /// <summary>
@@ -3737,7 +3809,7 @@ namespace Unity.Cloud.Gltfast
         /// </summary>
         /// <param name="sparseIndices">glTF sparse indices accessor</param>
         /// <param name="data">Pointer to accessor's data in memory</param>
-        public unsafe void GetAccessorSparseIndices(AccessorSparseIndices sparseIndices, out void* data)
+        unsafe void IGltfBuffers.GetAccessorSparseIndices(AccessorSparseIndices sparseIndices, out void* data)
         {
             if (!GltfIndex.TryGetIndex(sparseIndices.BufferView, Root.BufferViews?.Count ?? 0, out var bufferViewIndex))
             {
@@ -3748,7 +3820,13 @@ namespace Unity.Cloud.Gltfast
                 data = null;
                 return;
             }
-            m_BufferStore.TryGetBufferViewPointer(bufferViewIndex, sparseIndices.ByteOffset, out data, out _);
+
+            if (!m_BufferStore.TryGetBufferViewPointer(bufferViewIndex, sparseIndices.ByteOffset, out data, out _))
+            {
+                Logger?.Error(
+                    LogCode.BufferViewAccessFailed, GltfIndex.Describe(sparseIndices.BufferView));
+                data = null;
+            }
         }
 
         /// <summary>
@@ -3756,7 +3834,7 @@ namespace Unity.Cloud.Gltfast
         /// </summary>
         /// <param name="sparseValues">glTF sparse values accessor</param>
         /// <param name="data">Pointer to accessor's data in memory</param>
-        public unsafe void GetAccessorSparseValues(AccessorSparseValues sparseValues, out void* data)
+        unsafe void IGltfBuffers.GetAccessorSparseValues(AccessorSparseValues sparseValues, out void* data)
         {
             if (!GltfIndex.TryGetIndex(sparseValues.BufferView, Root.BufferViews?.Count ?? 0, out var bufferViewIndex))
             {
@@ -3767,7 +3845,13 @@ namespace Unity.Cloud.Gltfast
                 data = null;
                 return;
             }
-            m_BufferStore.TryGetBufferViewPointer(bufferViewIndex, sparseValues.ByteOffset, out data, out _);
+
+            if (!m_BufferStore.TryGetBufferViewPointer(bufferViewIndex, sparseValues.ByteOffset, out data, out _))
+            {
+                Logger?.Error(
+                    LogCode.BufferViewAccessFailed, GltfIndex.Describe(sparseValues.BufferView));
+                data = null;
+            }
         }
 
 
