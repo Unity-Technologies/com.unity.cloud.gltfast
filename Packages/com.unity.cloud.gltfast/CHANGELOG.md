@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - (Documentation) Improved installation instructions.
 - (Test) Updated tests dependency Graphics Test Framework (com.unity.testframework.graphics) to 9.0.0-pre.25.
 - (Test) Graphics tests generate their test cases via the Graphics Test Framework, so reference images are resolved by the framework (including per-platform overrides) and failures are inspectable in the Graphics Tests window. The per-view test methods collapsed into a single parameterized one.
+- (Import) (Performance) The Editor's glTF importer reads glTF, buffer and image files straight into native memory via [AsyncReadManager](xref:Unity.IO.LowLevel.Unsafe.AsyncReadManager). It previously read each file into a managed `byte[]` that stayed pinned for the duration of the import.
 
 ### Fixed
 - Corrected invalid `cref` references in XML documentation comments (parameters, type parameters and a stale method reference) that produced warnings during documentation generation.
