@@ -44,8 +44,8 @@
         "Win11Arm": [],
         "Win11GPU": []
       },
-      "InternalOnly": true,
-      "NeverPublish": true,
+      "InternalOnly": false,
+      "NeverPublish": false,
       "MaxEditorVersion": "",
       "coverageEnabled": false,
       "coverageCommands": [

@@ -30,7 +30,7 @@ public class GltfastSettings : AnnotatedSettingsBase
             new PackageOptions
             {
                 PackJobOptions = new PackJobOptions { AlwaysGenerate = false },
-                ReleaseOptions = new ReleaseOptions { IsReleasing = false, InternalOnly = true, NeverPublish = true },
+                ReleaseOptions = new ReleaseOptions { IsReleasing = false },
             }
         }
     };
