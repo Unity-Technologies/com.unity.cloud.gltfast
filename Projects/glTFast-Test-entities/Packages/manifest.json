@@ -12,7 +12,7 @@
     "com.unity.meshopt.decompress": "0.2.0-exp.1",
     "com.unity.pipeline": "0.5.0-exp.1",
     "com.unity.render-pipelines.universal": "17.0.4",
-    "com.unity.testframework.graphics": "9.0.0-pre.25",
+    "com.unity.testframework.graphics": "9.0.0-pre.26",
     "com.unity.modules.animation": "1.0.0",
     "com.unity.modules.imageconversion": "1.0.0",
     "com.unity.modules.physics": "1.0.0"
