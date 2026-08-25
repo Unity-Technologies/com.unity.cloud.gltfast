@@ -67,7 +67,7 @@ namespace Unity.Cloud.Gltfast
     /// feed it to an <see cref="IInstantiator"/> for instantiation.
     /// </summary>
     [MovedFrom(true, sourceNamespace: "GLTFast", sourceAssembly: "glTFast")]
-    public class GltfImport : IGltfReadable, IGltfBuffers, IGltfAccessors, IDisposable
+    public class GltfImport : IGltfReadable, IGltfAccessors, IDisposable
     {
         /// <summary>
         /// Default value for a C# Job's innerloopBatchCount parameter.
@@ -2104,43 +2104,6 @@ namespace Unity.Cloud.Gltfast
             return true;
         }
 
-        ReadOnlyNativeArray<byte> IGltfBuffers.GetBufferView(
-            int bufferViewIndex,
-            out int? byteStride,
-            int offset,
-            int length
-            )
-        {
-            var status = m_BufferStore.TryGetBufferView(
-                bufferViewIndex,
-                out var data,
-                out byteStride,
-                offset,
-                length
-                );
-            if (status == BufferAccessStatus.Success)
-            {
-                return data;
-            }
-            Logger?.Error(LogCode.BufferViewAccessFailed, bufferViewIndex.ToString());
-            return default;
-        }
-
-        ReadOnlyNativeStridedArray<T> IGltfBuffers.GetStridedAccessorData<T>(
-            int bufferViewIndex,
-            int count,
-            int offset
-        )
-        {
-            var status = m_BufferStore.TryGetStridedAccessorData<T>(bufferViewIndex, count, out var data, offset);
-            if (status == BufferAccessStatus.Success)
-            {
-                return data;
-            }
-            Logger?.Error(LogCode.BufferViewAccessFailed, bufferViewIndex.ToString());
-            return default;
-        }
-
         async Task<bool> Prepare(CancellationToken cancellationToken)
         {
             m_Resources = new List<UnityEngine.Object>();
@@ -3323,29 +3286,25 @@ namespace Unity.Cloud.Gltfast
                     {
                         // TODO: Maybe use Matrix4x4[], since Mesh.bindposes only accepts C# arrays.
                         GetMatricesJob(i, out var matrices, out var jh);
-                        tmpList.Add(jh.Value);
-                        m_AccessorData[i] = matrices;
+                        success &= StoreAccessorData(i, matrices, jh, tmpList);
                         break;
                     }
                     case AccessorType.Vector3 when (m_AccessorUsage[i] & AccessorUsage.Translation) != 0:
                     {
                         GetVector3Job(i, out var data, out var jh, true);
-                        tmpList.Add(jh.Value);
-                        m_AccessorData[i] = data;
+                        success &= StoreAccessorData(i, data, jh, tmpList);
                         break;
                     }
                     case AccessorType.Vector4 when (m_AccessorUsage[i] & AccessorUsage.Rotation) != 0:
                     {
                         GetVector4Job(i, out var data, out var jh);
-                        tmpList.Add(jh.Value);
-                        m_AccessorData[i] = data;
+                        success &= StoreAccessorData(i, data, jh, tmpList);
                         break;
                     }
                     case AccessorType.Vector3 when (m_AccessorUsage[i] & AccessorUsage.Scale) != 0:
                     {
                         GetVector3Job(i, out var data, out var jh, false);
-                        tmpList.Add(jh.Value);
-                        m_AccessorData[i] = data;
+                        success &= StoreAccessorData(i, data, jh, tmpList);
                         break;
                     }
 #if UNITY_ANIMATION
@@ -3456,13 +3415,13 @@ namespace Unity.Cloud.Gltfast
             if (primitives[0].IsDracoCompressed)
             {
                 generator = new DracoMeshGenerator(
-                    primitives, morphTargetNames, mesh.Name, this, this, DeferAgent, Logger);
+                    primitives, morphTargetNames, mesh.Name, this, m_BufferStore, DeferAgent, Logger);
             }
             else
 #endif
             {
                 generator = new MeshGenerator(
-                    primitives, subMeshes, morphTargetNames, mesh.Name, this, this, DeferAgent, Logger);
+                    primitives, subMeshes, morphTargetNames, mesh.Name, this, m_BufferStore, DeferAgent, Logger);
             }
 
             var meshOrder = new MeshOrder(generator);
@@ -3504,21 +3463,62 @@ namespace Unity.Cloud.Gltfast
             }
         }
 
+        // The conversion job methods report failure by returning no job handle, and differ in
+        // whether they allocated the result before failing. Storing only a created array keeps a
+        // failed-before-allocation result from being disposed as if it held memory, and a
+        // failed-after-allocation one from leaking.
+        /// <returns>False if the conversion could not be scheduled.</returns>
+        bool StoreAccessorData<T>(
+            int accessorIndex,
+            NativeArray<T> data,
+            JobHandle? jobHandle,
+            ICollection<JobHandle> jobHandles
+            )
+            where T : unmanaged
+        {
+            if (data.IsCreated)
+            {
+                m_AccessorData[accessorIndex] = data;
+            }
+            if (!jobHandle.HasValue)
+            {
+                return false;
+            }
+            jobHandles.Add(jobHandle.Value);
+            return true;
+        }
+
         void GetMatricesJob(int accessorIndex, out NativeArray<float4x4> matrices, out JobHandle? jobHandle)
         {
-            Profiler.BeginSample("GetMatricesJob");
             // index
             var accessor = Root.Accessors[accessorIndex];
-            var accessorData = ((IGltfBuffers)this).GetBufferView(
-                accessor.BufferView.Value,
+            if (!GltfIndex.TryGetIndex(accessor.BufferView, Root.BufferViews.Count, out var bufferViewIndex))
+            {
+                Logger?.Error(
+                    LogCode.IndexOutOfRange,
+                    "accessor.bufferView",
+                    GltfIndex.Describe(accessor.BufferView));
+                matrices = default;
+                jobHandle = null;
+                return;
+            }
+            var status = m_BufferStore.TryGetBufferView(
+                bufferViewIndex,
+                out var accessorData,
                 out _,
                 accessor.ByteOffset,
                 accessor.ByteSize
                 );
 
-            Profiler.BeginSample("Alloc");
+            if (status != BufferAccessStatus.Success)
+            {
+                Logger?.Error(LogCode.AccessorAccessFailed, accessorIndex.ToString());
+                matrices = default;
+                jobHandle = null;
+                return;
+            }
+
             matrices = new NativeArray<float4x4>(accessor.Count, Allocator.Persistent);
-            Profiler.EndSample();
 
             Assert.AreEqual(accessor.Type.Value, AccessorType.Matrix4x4);
             //Assert.AreEqual(accessor.count * GetLength(accessor.typeEnum) * 4 , (int) chunk.length);
@@ -3527,7 +3527,6 @@ namespace Unity.Cloud.Gltfast
                 Logger?.Error(LogCode.SparseAccessor, "Matrix");
             }
 
-            Profiler.BeginSample("CreateJob");
             switch (accessor.ComponentType)
             {
                 case AccessorDataType.Float:
@@ -3543,18 +3542,12 @@ namespace Unity.Cloud.Gltfast
                     jobHandle = null;
                     break;
             }
-            Profiler.EndSample();
-            Profiler.EndSample();
         }
 
         unsafe void GetVector3Job(int accessorIndex, out NativeArray<float3> vectors, out JobHandle? jobHandle, bool flip)
         {
-            Profiler.BeginSample("GetVector3Job");
             var accessor = Root.Accessors[accessorIndex];
-
-            Profiler.BeginSample("Alloc");
             vectors = new NativeArray<float3>(accessor.Count, Allocator.Persistent);
-            Profiler.EndSample();
 
             Assert.AreEqual(accessor.Type.Value, AccessorType.Vector3);
             if (accessor.IsSparse)
@@ -3562,24 +3555,41 @@ namespace Unity.Cloud.Gltfast
                 Logger?.Error(LogCode.SparseAccessor, "Vector3");
             }
 
-            Profiler.BeginSample("CreateJob");
+            if (!GltfIndex.TryGetIndex(accessor.BufferView, Root.BufferViews.Count, out var bufferViewIndex))
+            {
+                Logger?.Error(
+                    LogCode.IndexOutOfRange,
+                    "accessor.bufferView",
+                    GltfIndex.Describe(accessor.BufferView));
+                jobHandle = null;
+                return;
+            }
+
             switch (accessor.ComponentType)
             {
                 case AccessorDataType.Float:
                 {
                     if (flip)
                     {
-                        var accessorData = ((IGltfBuffers)this).GetStridedAccessorData<float3>(
-                            accessor.BufferView.Value,
+                        if (m_BufferStore.TryGetStridedAccessorData<float3>(
+                            bufferViewIndex,
                             accessor.Count,
+                            out var accessorData,
                             accessor.ByteOffset
-                        );
-                        var job = new ConvertVector3FloatToFloatJob
+                            ) == BufferAccessStatus.Success)
                         {
-                            input = accessorData,
-                            result = vectors
-                        };
-                        jobHandle = job.Schedule(accessor.Count, DefaultBatchCount);
+                            var job = new ConvertVector3FloatToFloatJob
+                            {
+                                input = accessorData,
+                                result = vectors
+                            };
+                            jobHandle = job.Schedule(accessor.Count, DefaultBatchCount);
+                        }
+                        else
+                        {
+                            Logger?.Error(LogCode.AccessorAccessFailed, accessorIndex.ToString());
+                            jobHandle = null;
+                        }
                     }
                     else
                     {
@@ -3610,25 +3620,14 @@ namespace Unity.Cloud.Gltfast
                     jobHandle = null;
                     break;
             }
-            Profiler.EndSample();
-            Profiler.EndSample();
         }
 
         void GetVector4Job(int accessorIndex, out NativeArray<quaternion> vectors, out JobHandle? jobHandle)
         {
-            Profiler.BeginSample("GetVector4Job");
             // index
             var accessor = Root.Accessors[accessorIndex];
-            var accessorData = ((IGltfBuffers)this).GetBufferView(
-                accessor.BufferView.Value,
-                out _,
-                accessor.ByteOffset,
-                accessor.ByteSize
-                );
-
-            Profiler.BeginSample("Alloc");
-            vectors = new NativeArray<quaternion>(accessor.Count, Allocator.Persistent);
-            Profiler.EndSample();
+            vectors = default;
+            jobHandle = null;
 
             Assert.AreEqual(accessor.Type.Value, AccessorType.Vector4);
             if (accessor.IsSparse)
@@ -3636,61 +3635,124 @@ namespace Unity.Cloud.Gltfast
                 Logger?.Error(LogCode.SparseAccessor, "Vector4");
             }
 
-            Profiler.BeginSample("CreateJob");
+            if (!GltfIndex.TryGetIndex(accessor.BufferView, Root.BufferViews?.Count ?? 0, out var bufferViewIndex))
+            {
+                Logger?.Error(
+                    LogCode.IndexOutOfRange,
+                    "accessor.bufferView",
+                    GltfIndex.Describe(accessor.BufferView));
+                return;
+            }
+
+            if (accessor.Count < 0)
+            {
+                Logger?.Error(LogCode.AccessorAccessFailed, accessorIndex.ToString());
+                return;
+            }
+
+            vectors = new NativeArray<quaternion>(accessor.Count, Allocator.Persistent);
+
             switch (accessor.ComponentType)
             {
                 case AccessorDataType.Float:
                 {
-                    var job = new ConvertRotationsFloatToFloatJob
+                    if (m_BufferStore.TryGetAccessorData<float4>(
+                            bufferViewIndex,
+                            accessor.Count,
+                            out var accessorData,
+                            accessor.ByteOffset
+                        ) == BufferAccessStatus.Success)
                     {
-                        input = accessorData.Reinterpret<float4>().AsNativeArrayReadOnly(),
-                        result = vectors
-                    };
-                    jobHandle = job.Schedule(accessor.Count, DefaultBatchCount);
+                        var job = new ConvertRotationsFloatToFloatJob
+                        {
+                            input = accessorData.AsNativeArrayReadOnly(),
+                            result = vectors
+                        };
+                        jobHandle = job.Schedule(accessor.Count, DefaultBatchCount);
+                    }
+                    else
+                    {
+                        Logger?.Error(LogCode.AccessorAccessFailed, accessorIndex.ToString());
+                    }
                     break;
                 }
                 case AccessorDataType.Short:
                 {
-                    var job = new ConvertRotationsInt16ToFloatJob
+                    if (m_BufferStore.TryGetAccessorData<short4>(
+                            bufferViewIndex,
+                            accessor.Count,
+                            out var accessorData,
+                            accessor.ByteOffset
+                        ) == BufferAccessStatus.Success)
                     {
-                        input = accessorData.Reinterpret<short4>().AsNativeArrayReadOnly(),
-                        result = vectors
-                    };
-                    jobHandle = job.Schedule(accessor.Count, DefaultBatchCount);
+                        var job = new ConvertRotationsInt16ToFloatJob
+                        {
+                            input = accessorData.Reinterpret<short4>().AsNativeArrayReadOnly(),
+                            result = vectors
+                        };
+                        jobHandle = job.Schedule(accessor.Count, DefaultBatchCount);
+                    }
+                    else
+                    {
+                        Logger?.Error(LogCode.AccessorAccessFailed, accessorIndex.ToString());
+                    }
                     break;
                 }
                 case AccessorDataType.Byte:
                 {
-                    var job = new ConvertRotationsInt8ToFloatJob
+                    if (m_BufferStore.TryGetAccessorData<sbyte4>(
+                            bufferViewIndex,
+                            accessor.Count,
+                            out var accessorData,
+                            accessor.ByteOffset
+                        ) == BufferAccessStatus.Success)
                     {
-                        input = accessorData.Reinterpret<sbyte4>().AsNativeArrayReadOnly(),
-                        result = vectors
-                    };
-                    jobHandle = job.Schedule(accessor.Count, DefaultBatchCount);
+                        var job = new ConvertRotationsInt8ToFloatJob
+                        {
+                            input = accessorData.Reinterpret<sbyte4>().AsNativeArrayReadOnly(),
+                            result = vectors
+                        };
+                        jobHandle = job.Schedule(accessor.Count, DefaultBatchCount);
+                    }
+                    else
+                    {
+                        Logger?.Error(LogCode.AccessorAccessFailed, accessorIndex.ToString());
+                    }
                     break;
                 }
                 default:
                     Logger?.Error(LogCode.IndexFormatInvalid, accessor.ComponentType.ToString());
-                    jobHandle = null;
                     break;
             }
-            Profiler.EndSample();
-            Profiler.EndSample();
+
+            if (!jobHandle.HasValue)
+            {
+                // No job was scheduled, so nothing will ever fill the result.
+                vectors.Dispose();
+                vectors = default;
+            }
         }
 
 #if UNITY_ANIMATION
         unsafe void GetScalarJob(int accessorIndex, out NativeArray<float>? scalars, out JobHandle? jobHandle)
         {
-            Profiler.BeginSample("GetScalarJob");
             scalars = null;
             jobHandle = null;
             var accessor = Root.Accessors[accessorIndex];
-            var accessorData = ((IGltfBuffers)this).GetBufferView(
+
+            var status = m_BufferStore.TryGetBufferView(
                 accessor.BufferView.Value,
+                out var accessorData,
                 out _,
                 accessor.ByteOffset,
                 accessor.ByteSize
-                );
+            );
+
+            if (status != BufferAccessStatus.Success)
+            {
+                Logger?.Error(LogCode.AccessorAccessFailed, accessorIndex.ToString());
+                return;
+            }
 
             Assert.AreEqual(accessor.Type.Value, AccessorType.Scalar);
             if (accessor.IsSparse)
@@ -3700,7 +3762,6 @@ namespace Unity.Cloud.Gltfast
 
             if (accessor.ComponentType == AccessorDataType.Float)
             {
-                Profiler.BeginSample("CopyAnimationTimes");
                 var bufferTimes = accessorData
                     .Reinterpret<float>()
                     .GetSubArray(0, accessor.Count);
@@ -3715,13 +3776,10 @@ namespace Unity.Cloud.Gltfast
                     };
                     jobHandle = job.Schedule();
                 }
-                Profiler.EndSample();
             }
             else if (accessor.Normalized)
             {
-                Profiler.BeginSample("Alloc");
                 scalars = new NativeArray<float>(accessor.Count, Allocator.Persistent);
-                Profiler.EndSample();
 
                 switch (accessor.ComponentType)
                 {
@@ -3775,84 +3833,9 @@ namespace Unity.Cloud.Gltfast
                 // Non-normalized
                 Logger?.Error(LogCode.AnimationFormatInvalid, accessor.ComponentType.ToString());
             }
-            Profiler.EndSample();
         }
 
 #endif // UNITY_ANIMATION
-
-        Accessor IGltfBuffers.GetAccessor(int index)
-        {
-            return GltfIndex.TryGetElement(Root.Accessors, index, out var accessor) ? accessor : null;
-        }
-
-        /// <summary>
-        /// Get glTF accessor and its raw data
-        /// </summary>
-        /// <param name="index">glTF accessor index</param>
-        /// <param name="accessor">De-serialized glTF accessor</param>
-        /// <param name="data">Pointer to accessor's data in memory</param>
-        /// <param name="byteStride">Element byte stride</param>
-        unsafe void IGltfBuffers.GetAccessorAndData(
-            int index, out Accessor accessor, out void* data, out int? byteStride)
-        {
-            if (!GltfIndex.TryGetElement(Root.Accessors, index, out accessor)
-                || !GltfIndex.TryGetIndex(accessor.BufferView, Root.BufferViews?.Count ?? 0, out var bufferViewIndex)
-                || !m_BufferStore.TryGetBufferViewPointer(bufferViewIndex, accessor.ByteOffset, out data, out byteStride))
-            {
-                data = null;
-                byteStride = 0;
-            }
-        }
-
-        /// <summary>
-        /// Get sparse indices raw data
-        /// </summary>
-        /// <param name="sparseIndices">glTF sparse indices accessor</param>
-        /// <param name="data">Pointer to accessor's data in memory</param>
-        unsafe void IGltfBuffers.GetAccessorSparseIndices(AccessorSparseIndices sparseIndices, out void* data)
-        {
-            if (!GltfIndex.TryGetIndex(sparseIndices.BufferView, Root.BufferViews?.Count ?? 0, out var bufferViewIndex))
-            {
-                Logger?.Error(
-                    sparseIndices.BufferView.HasValue ? LogCode.IndexOutOfRange : LogCode.RequiredPropertyMissing,
-                    "accessor.sparse.indices.bufferView",
-                    GltfIndex.Describe(sparseIndices.BufferView));
-                data = null;
-                return;
-            }
-
-            if (!m_BufferStore.TryGetBufferViewPointer(bufferViewIndex, sparseIndices.ByteOffset, out data, out _))
-            {
-                Logger?.Error(
-                    LogCode.BufferViewAccessFailed, GltfIndex.Describe(sparseIndices.BufferView));
-                data = null;
-            }
-        }
-
-        /// <summary>
-        /// Get sparse value raw data
-        /// </summary>
-        /// <param name="sparseValues">glTF sparse values accessor</param>
-        /// <param name="data">Pointer to accessor's data in memory</param>
-        unsafe void IGltfBuffers.GetAccessorSparseValues(AccessorSparseValues sparseValues, out void* data)
-        {
-            if (!GltfIndex.TryGetIndex(sparseValues.BufferView, Root.BufferViews?.Count ?? 0, out var bufferViewIndex))
-            {
-                Logger?.Error(
-                    sparseValues.BufferView.HasValue ? LogCode.IndexOutOfRange : LogCode.RequiredPropertyMissing,
-                    "accessor.sparse.values.bufferView",
-                    GltfIndex.Describe(sparseValues.BufferView));
-                data = null;
-                return;
-            }
-
-            if (!m_BufferStore.TryGetBufferViewPointer(bufferViewIndex, sparseValues.ByteOffset, out data, out _))
-            {
-                Logger?.Error(
-                    LogCode.BufferViewAccessFailed, GltfIndex.Describe(sparseValues.BufferView));
-                data = null;
-            }
-        }
 
 
 #if UNITY_EDITOR

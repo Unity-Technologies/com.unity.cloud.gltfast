@@ -31,7 +31,7 @@ namespace Unity.Cloud.Gltfast
             int offset,
             int[] uvAccessorIndices,
             NativeArray<JobHandle> handles,
-            IGltfBuffers buffers
+            BufferStore buffers
             );
         public abstract void AddDescriptors(VertexAttributeDescriptor[] dst, ref int offset, int stream);
         public abstract void ApplyOnMesh(
@@ -67,7 +67,7 @@ namespace Unity.Cloud.Gltfast
             int offset,
             int[] uvAccessorIndices,
             NativeArray<JobHandle> handles,
-            IGltfBuffers buffers
+            BufferStore buffers
             )
         {
             Profiler.BeginSample("ScheduleVertexUVJobs");

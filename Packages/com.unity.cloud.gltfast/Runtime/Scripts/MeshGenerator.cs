@@ -43,7 +43,7 @@ namespace Unity.Cloud.Gltfast
             IReadOnlyList<string> morphTargetNames,
             string meshName,
             IGltfReadable gltf,
-            IGltfBuffers buffers,
+            BufferStore buffers,
             IDeferAgent deferAgent,
             ICodeLogger logger
         )
@@ -60,7 +60,7 @@ namespace Unity.Cloud.Gltfast
 
         bool CreateVertexGenerator(
             IGltfReadable gltf,
-            IGltfBuffers buffers,
+            BufferStore buffers,
             ICodeLogger logger,
             out bool hasNormals,
             out bool hasTangents
@@ -179,7 +179,7 @@ namespace Unity.Cloud.Gltfast
             IReadOnlyList<string> morphTargetNames,
             bool hasNormals,
             bool hasTangents,
-            IGltfBuffers buffers,
+            BufferStore buffers,
             IDeferAgent deferAgent,
             ICodeLogger logger
             )
@@ -195,12 +195,13 @@ namespace Unity.Cloud.Gltfast
                     hasNormals,
                     hasTangents,
                     buffers,
-                    deferAgent
+                    deferAgent,
+                    logger
                 );
             }
         }
 
-        async Task<Mesh> GenerateMesh(IGltfBuffers buffers, ICodeLogger logger)
+        async Task<Mesh> GenerateMesh(BufferStore buffers, ICodeLogger logger)
         {
             if (!await m_VertexData.CreateVertexBufferAsync())
                 return null;
@@ -272,12 +273,19 @@ namespace Unity.Cloud.Gltfast
 
                     m_Indices.Allocate(subMeshIndex, indexCount);
 
-                    var accessorData = buffers.GetBufferView(
+                    var status = buffers.TryGetBufferView(
                         accessor.BufferView.Value,
+                        out var accessorData,
                         out _,
                         accessor.ByteOffset,
                         accessor.ByteSize
                     );
+
+                    if (status != BufferAccessStatus.Success)
+                    {
+                        logger?.Error(LogCode.AccessorAccessFailed, GltfIndex.Describe(primitive.Indices));
+                        continue;
+                    }
 
                     Assert.AreEqual(accessor.Type.Value, AccessorType.Scalar);
                     if (accessor.IsSparse)
@@ -424,7 +432,8 @@ namespace Unity.Cloud.Gltfast
                     vertexOffset,
                     subMesh,
                     morphTargetIndex,
-                    morphTarget
+                    morphTarget,
+                    logger
                 );
                 if (!success)
                 {

@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using Unity.Cloud.Gltfast.Logging;
 using Unity.Cloud.Gltfast.Objects;
 using Unity.Collections;
 using Unity.Jobs;
@@ -19,7 +20,7 @@ namespace Unity.Cloud.Gltfast
     class MorphTargetsGenerator
     {
         readonly IReadOnlyList<string> m_MorphTargetNames;
-        readonly IGltfBuffers m_Buffers;
+        readonly BufferStore m_Buffers;
         readonly IDeferAgent m_DeferAgent;
 
         MorphTargetGenerator[] m_Contexts;
@@ -32,8 +33,9 @@ namespace Unity.Cloud.Gltfast
             IReadOnlyList<string> morphTargetNames,
             bool hasNormals,
             bool hasTangents,
-            IGltfBuffers buffers,
-            IDeferAgent deferAgent
+            BufferStore buffers,
+            IDeferAgent deferAgent,
+            ICodeLogger logger
             )
         {
             m_MorphTargetNames = morphTargetNames;
@@ -52,14 +54,16 @@ namespace Unity.Cloud.Gltfast
             int offset,
             int subMesh,
             int morphTargetIndex,
-            MorphTarget morphTarget
+            MorphTarget morphTarget,
+            ICodeLogger logger
             )
         {
             var morphTargetGenerator = m_Contexts[morphTargetIndex];
             var jobHandle = morphTargetGenerator.ScheduleMorphTargetJobs(
                 morphTarget,
                 offset,
-                m_Buffers
+                m_Buffers,
+                logger
                 );
             if (jobHandle.HasValue)
             {
@@ -123,7 +127,8 @@ namespace Unity.Cloud.Gltfast
         public unsafe JobHandle? ScheduleMorphTargetJobs(
             MorphTarget morphTarget,
             int offset,
-            IGltfBuffers buffers
+            BufferStore buffers,
+            ICodeLogger logger
         )
         {
             Profiler.BeginSample("ScheduleMorphTargetJobs");
@@ -162,24 +167,35 @@ namespace Unity.Cloud.Gltfast
             var handles = new NativeArray<JobHandle>(jobCount, VertexBufferGeneratorBase.defaultAllocator);
             var handleIndex = 0;
 
-            if (!SchedulePositionsJobs(offset, buffers, posData, posAcc, handles, ref handleIndex))
+            if (!SchedulePositionsJobs(
+                    offset, buffers, posData, morphTarget.Position.Value,
+                    posAcc, handles, ref handleIndex, logger)
+               )
+            {
                 return null;
+            }
 
             if (nrmAcc != null
                 && !ScheduleNormalsJobs(
                     offset,
                     buffers,
+                    morphTarget.Normal.Value,
                     nrmAcc,
                     nrmInput,
                     nrmInputByteStride,
                     handles,
-                    ref handleIndex))
+                    ref handleIndex,
+                    logger)
+                )
             {
                 return null;
             }
 
             if (tanAcc != null
-                && !ScheduleTangentsJobs(offset, buffers, tanAcc, tanInput, tanInputByteStride, handles, handleIndex))
+                && !ScheduleTangentsJobs(
+                    offset, buffers, morphTarget.Tangent.Value, tanAcc, tanInput, tanInputByteStride,
+                    handles, handleIndex, logger)
+                )
             {
                 return null;
             }
@@ -192,11 +208,13 @@ namespace Unity.Cloud.Gltfast
 
         unsafe bool SchedulePositionsJobs(
             int offset,
-            IGltfBuffers buffers,
+            BufferStore buffers,
             void* posData,
+            int accessorIndex,
             Accessor posAcc,
             NativeArray<JobHandle> handles,
-            ref int handleIndex
+            ref int handleIndex,
+            ICodeLogger logger
             )
         {
             fixed (void* dest = &m_Positions[offset])
@@ -206,9 +224,11 @@ namespace Unity.Cloud.Gltfast
                 {
                     h = VertexBufferGeneratorBase.GetVector3Job(
                         buffers,
+                        accessorIndex,
                         posAcc,
                         (float3*)dest,
                         12,
+                        logger,
                         posAcc.Normalized,
                         false // positional data never needs to be normalized
                     );
@@ -256,12 +276,14 @@ namespace Unity.Cloud.Gltfast
 
         unsafe bool ScheduleNormalsJobs(
             int offset,
-            IGltfBuffers buffers,
+            BufferStore buffers,
+            int normalsIndex,
             Accessor nrmAcc,
             void* nrmInput,
             int? nrmInputByteStride,
             NativeArray<JobHandle> handles,
-            ref int handleIndex
+            ref int handleIndex,
+            ICodeLogger logger
             )
         {
             fixed (void* dest = &(m_Normals[offset]))
@@ -271,9 +293,11 @@ namespace Unity.Cloud.Gltfast
                 {
                     h = VertexBufferGeneratorBase.GetVector3Job(
                         buffers,
+                        normalsIndex,
                         nrmAcc,
                         (float3*)dest,
                         12,
+                        logger,
                         nrmAcc.Normalized,
                         false // morph target normals are deltas -> don't normalize
                     );
@@ -321,12 +345,14 @@ namespace Unity.Cloud.Gltfast
 
         unsafe bool ScheduleTangentsJobs(
             int offset,
-            IGltfBuffers buffers,
+            BufferStore buffers,
+            int tangentsIndex,
             Accessor tanAcc,
             void* tanInput,
             int? tanInputByteStride,
             NativeArray<JobHandle> handles,
-            int handleIndex
+            int handleIndex,
+            ICodeLogger logger
             )
         {
             fixed (void* dest = &(m_Tangents[offset]))
@@ -336,9 +362,11 @@ namespace Unity.Cloud.Gltfast
                 {
                     h = VertexBufferGeneratorBase.GetVector3Job(
                         buffers,
+                        tangentsIndex,
                         tanAcc,
                         (float3*)dest,
                         12,
+                        logger,
                         tanAcc.Normalized,
                         false // morph target tangents are deltas -> don't normalize
                     );

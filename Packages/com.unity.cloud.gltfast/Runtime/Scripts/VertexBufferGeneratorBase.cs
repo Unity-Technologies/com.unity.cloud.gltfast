@@ -32,10 +32,10 @@ namespace Unity.Cloud.Gltfast
         public bool calculateTangents = false;
 
         protected VertexAttributeDescriptor[] m_Descriptors;
-        protected IGltfBuffers m_Buffers;
+        protected BufferStore m_Buffers;
         protected ICodeLogger m_Logger;
 
-        protected VertexBufferGeneratorBase(int primitiveCount, IGltfBuffers buffers, ICodeLogger logger)
+        protected VertexBufferGeneratorBase(int primitiveCount, BufferStore buffers, ICodeLogger logger)
         {
             m_Attributes = new Attributes[primitiveCount];
             m_Buffers = buffers;
@@ -71,10 +71,12 @@ namespace Unity.Cloud.Gltfast
         /// <param name="ensureUnitLength">If true, normalized values will be scaled to have unit length again (only if <see cref="normalized"/>is true)</param>
         /// <returns></returns>
         public static unsafe JobHandle? GetVector3Job(
-            IGltfBuffers buffers,
+            BufferStore buffers,
+            int accessorIndex,
             Accessor accessor,
             float3* output,
             int outputByteStride,
+            ICodeLogger logger,
             bool normalized = false,
             bool ensureUnitLength = true
         )
@@ -85,29 +87,15 @@ namespace Unity.Cloud.Gltfast
             if (!accessor.BufferView.HasValue) return null;
             if (accessor.ComponentType == AccessorDataType.Float)
             {
-                var input = buffers.GetStridedAccessorData<float3>(
-                    accessor.BufferView.Value,
-                    accessor.Count,
-                    accessor.ByteOffset
-                );
-                var job = new ConvertVector3FloatToFloatInterleavedJob
+                if (buffers.TryGetStridedAccessorData<float3>(
+                        accessor.BufferView.Value,
+                        accessor.Count,
+                        out var input,
+                        accessor.ByteOffset
+                        ) == BufferAccessStatus.Success
+                    )
                 {
-                    input = input,
-                    outputByteStride = outputByteStride,
-                    result = output
-                };
-                jobHandle = job.ScheduleBatch(accessor.Count, GltfImport.DefaultBatchCount);
-            }
-            else if (accessor.ComponentType == AccessorDataType.UnsignedShort)
-            {
-                var input = buffers.GetStridedAccessorData<ushort3>(
-                    accessor.BufferView.Value,
-                    accessor.Count,
-                    accessor.ByteOffset
-                );
-                if (normalized)
-                {
-                    var job = new ConvertPositionsUInt16ToFloatInterleavedNormalizedJob
+                    var job = new ConvertVector3FloatToFloatInterleavedJob
                     {
                         input = input,
                         outputByteStride = outputByteStride,
@@ -117,38 +105,84 @@ namespace Unity.Cloud.Gltfast
                 }
                 else
                 {
-                    var job = new ConvertPositionsUInt16ToFloatInterleavedJob
+                    logger?.Error(LogCode.AccessorAccessFailed, accessorIndex.ToString());
+                    jobHandle = null;
+                }
+            }
+            else if (accessor.ComponentType == AccessorDataType.UnsignedShort)
+            {
+                if (buffers.TryGetStridedAccessorData<ushort3>(
+                        accessor.BufferView.Value,
+                        accessor.Count,
+                        out var input,
+                        accessor.ByteOffset
+                    ) == BufferAccessStatus.Success
+                   )
+                {
+                    if (normalized)
                     {
-                        input = input,
-                        outputByteStride = outputByteStride,
-                        result = output
-                    };
-                    jobHandle = job.ScheduleBatch(accessor.Count, GltfImport.DefaultBatchCount);
+                        var job = new ConvertPositionsUInt16ToFloatInterleavedNormalizedJob
+                        {
+                            input = input,
+                            outputByteStride = outputByteStride,
+                            result = output
+                        };
+                        jobHandle = job.ScheduleBatch(accessor.Count, GltfImport.DefaultBatchCount);
+                    }
+                    else
+                    {
+                        var job = new ConvertPositionsUInt16ToFloatInterleavedJob
+                        {
+                            input = input,
+                            outputByteStride = outputByteStride,
+                            result = output
+                        };
+                        jobHandle = job.ScheduleBatch(accessor.Count, GltfImport.DefaultBatchCount);
+                    }
+                }
+                else
+                {
+                    logger?.Error(LogCode.AccessorAccessFailed, accessorIndex.ToString());
+                    jobHandle = null;
                 }
             }
             else if (accessor.ComponentType == AccessorDataType.Short)
             {
-                var input = buffers.GetStridedAccessorData<short3>(
-                    accessor.BufferView.Value,
-                    accessor.Count,
-                    accessor.ByteOffset
-                );
-                if (normalized)
+                if (buffers.TryGetStridedAccessorData<short3>(
+                        accessor.BufferView.Value,
+                        accessor.Count,
+                        out var input,
+                        accessor.ByteOffset
+                    ) == BufferAccessStatus.Success
+                   )
                 {
-                    if (ensureUnitLength)
+                    if (normalized)
                     {
-                        // TODO: test. did not have test files
-                        var job = new ConvertNormalsInt16ToFloatInterleavedNormalizedJob
+                        if (ensureUnitLength)
                         {
-                            input = input,
-                            outputByteStride = outputByteStride,
-                            result = output
-                        };
-                        jobHandle = job.ScheduleBatch(accessor.Count, GltfImport.DefaultBatchCount);
+                            // TODO: test. did not have test files
+                            var job = new ConvertNormalsInt16ToFloatInterleavedNormalizedJob
+                            {
+                                input = input,
+                                outputByteStride = outputByteStride,
+                                result = output
+                            };
+                            jobHandle = job.ScheduleBatch(accessor.Count, GltfImport.DefaultBatchCount);
+                        }
+                        else
+                        {
+                            var job = new ConvertVector3Int16ToFloatInterleavedNormalizedJob
+                            {
+                                input = input,
+                                outputByteStride = outputByteStride,
+                                result = output
+                            };
+                            jobHandle = job.ScheduleBatch(accessor.Count, GltfImport.DefaultBatchCount);
+                        }
                     }
                     else
                     {
-                        var job = new ConvertVector3Int16ToFloatInterleavedNormalizedJob
+                        var job = new ConvertPositionsInt16ToFloatInterleavedJob
                         {
                             input = input,
                             outputByteStride = outputByteStride,
@@ -159,27 +193,75 @@ namespace Unity.Cloud.Gltfast
                 }
                 else
                 {
-                    var job = new ConvertPositionsInt16ToFloatInterleavedJob
-                    {
-                        input = input,
-                        outputByteStride = outputByteStride,
-                        result = output
-                    };
-                    jobHandle = job.ScheduleBatch(accessor.Count, GltfImport.DefaultBatchCount);
+                    logger?.Error(LogCode.AccessorAccessFailed, accessorIndex.ToString());
+                    jobHandle = null;
                 }
             }
             else if (accessor.ComponentType == AccessorDataType.Byte)
             {
-                var input = buffers.GetStridedAccessorData<sbyte3>(
-                    accessor.BufferView.Value,
-                    accessor.Count,
-                    accessor.ByteOffset
-                );
-                if (normalized)
+                if (buffers.TryGetStridedAccessorData<sbyte3>(
+                        accessor.BufferView.Value,
+                        accessor.Count,
+                        out var input,
+                        accessor.ByteOffset
+                    ) == BufferAccessStatus.Success
+                   )
                 {
-                    if (ensureUnitLength)
+                    if (normalized)
                     {
-                        var job = new ConvertNormalsInt8ToFloatInterleavedNormalizedJob
+                        if (ensureUnitLength)
+                        {
+                            var job = new ConvertNormalsInt8ToFloatInterleavedNormalizedJob
+                            {
+                                input = input,
+                                outputByteStride = outputByteStride,
+                                result = output
+                            };
+                            jobHandle = job.ScheduleBatch(accessor.Count, GltfImport.DefaultBatchCount);
+                        }
+                        else
+                        {
+                            var job = new ConvertVector3Int8ToFloatInterleavedNormalizedJob()
+                            {
+                                input = input,
+                                outputByteStride = outputByteStride,
+                                result = output
+                            };
+                            jobHandle = job.ScheduleBatch(accessor.Count, GltfImport.DefaultBatchCount);
+                        }
+                    }
+                    else
+                    {
+                        // TODO: test positions. did not have test files
+                        var job = new ConvertPositionsInt8ToFloatInterleavedJob
+                        {
+                            input = input,
+                            outputByteStride = outputByteStride,
+                            result = output
+                        };
+                        jobHandle = job.ScheduleBatch(accessor.Count, GltfImport.DefaultBatchCount);
+                    }
+                }
+                else
+                {
+                    logger?.Error(LogCode.AccessorAccessFailed, accessorIndex.ToString());
+                    jobHandle = null;
+                }
+            }
+            else if (accessor.ComponentType == AccessorDataType.UnsignedByte)
+            {
+                if (buffers.TryGetStridedAccessorData<byte3>(
+                        accessor.BufferView.Value,
+                        accessor.Count,
+                        out var input,
+                        accessor.ByteOffset
+                    ) == BufferAccessStatus.Success
+                   )
+                {
+                    // TODO: test. did not have test files
+                    if (normalized)
+                    {
+                        var job = new ConvertPositionsUInt8ToFloatInterleavedNormalizedJob
                         {
                             input = input,
                             outputByteStride = outputByteStride,
@@ -189,7 +271,7 @@ namespace Unity.Cloud.Gltfast
                     }
                     else
                     {
-                        var job = new ConvertVector3Int8ToFloatInterleavedNormalizedJob()
+                        var job = new ConvertPositionsUInt8ToFloatInterleavedJob
                         {
                             input = input,
                             outputByteStride = outputByteStride,
@@ -200,48 +282,13 @@ namespace Unity.Cloud.Gltfast
                 }
                 else
                 {
-                    // TODO: test positions. did not have test files
-                    var job = new ConvertPositionsInt8ToFloatInterleavedJob
-                    {
-                        input = input,
-                        outputByteStride = outputByteStride,
-                        result = output
-                    };
-                    jobHandle = job.ScheduleBatch(accessor.Count, GltfImport.DefaultBatchCount);
-                }
-            }
-            else if (accessor.ComponentType == AccessorDataType.UnsignedByte)
-            {
-                var input = buffers.GetStridedAccessorData<byte3>(
-                    accessor.BufferView.Value,
-                    accessor.Count,
-                    accessor.ByteOffset
-                );
-                // TODO: test. did not have test files
-                if (normalized)
-                {
-                    var job = new ConvertPositionsUInt8ToFloatInterleavedNormalizedJob
-                    {
-                        input = input,
-                        outputByteStride = outputByteStride,
-                        result = output
-                    };
-                    jobHandle = job.ScheduleBatch(accessor.Count, GltfImport.DefaultBatchCount);
-                }
-                else
-                {
-                    var job = new ConvertPositionsUInt8ToFloatInterleavedJob
-                    {
-                        input = input,
-                        outputByteStride = outputByteStride,
-                        result = output
-                    };
-                    jobHandle = job.ScheduleBatch(accessor.Count, GltfImport.DefaultBatchCount);
+                    logger?.Error(LogCode.AccessorAccessFailed, accessorIndex.ToString());
+                    jobHandle = null;
                 }
             }
             else
             {
-                Debug.LogError("Unknown componentType");
+                logger?.Error($"Unknown componentType {accessor.ComponentType}");
                 jobHandle = null;
             }
             Profiler.EndSample();

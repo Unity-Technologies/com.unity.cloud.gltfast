@@ -34,7 +34,7 @@ namespace Unity.Cloud.Gltfast
             IReadOnlyList<string> morphTargetNames,
             string meshName,
             IGltfReadable gltf,
-            IGltfBuffers buffers,
+            BufferStore buffers,
             IDeferAgent deferAgent,
             ICodeLogger logger
             )
@@ -101,7 +101,8 @@ namespace Unity.Cloud.Gltfast
                     vertexCount,
                     morphTargets,
                     buffers,
-                    deferAgent
+                    deferAgent,
+                    logger
                     );
             }
 
@@ -114,8 +115,9 @@ namespace Unity.Cloud.Gltfast
             int[] vertexIntervals,
             int vertexCount,
             List<MorphTarget> morphTargets,
-            IGltfBuffers buffers,
-            IDeferAgent deferAgent
+            BufferStore buffers,
+            IDeferAgent deferAgent,
+            ICodeLogger logger
             )
         {
             m_MorphTargetsGenerator = new MorphTargetsGenerator(
@@ -126,7 +128,9 @@ namespace Unity.Cloud.Gltfast
                 morphTargets[0].Normal.HasValue,
                 morphTargets[0].Tangent.HasValue,
                 buffers,
-                deferAgent
+                deferAgent,
+                logger
+
             );
             for (var subMesh = 0; subMesh < primitives.Count; subMesh++)
             {
@@ -134,7 +138,8 @@ namespace Unity.Cloud.Gltfast
                 for (var morphTargetIndex = 0; morphTargetIndex < primitive.Targets.Count; morphTargetIndex++)
                 {
                     var target = primitive.Targets[morphTargetIndex];
-                    m_MorphTargetsGenerator.AddMorphTarget(vertexIntervals[subMesh], subMesh, morphTargetIndex, target);
+                    m_MorphTargetsGenerator.AddMorphTarget(
+                        vertexIntervals[subMesh], subMesh, morphTargetIndex, target, logger);
                 }
             }
             m_MorphTargetsJobHandle = m_MorphTargetsGenerator.GetJobHandle();
@@ -142,7 +147,7 @@ namespace Unity.Cloud.Gltfast
 
         async Task<Mesh> Decode(
             IReadOnlyList<MeshPrimitive> primitives,
-            IGltfBuffers buffers,
+            BufferStore buffers,
             Bounds[] bounds
             )
         {
@@ -152,11 +157,13 @@ namespace Unity.Cloud.Gltfast
             for (var index = 0; index < primitives.Count; index++)
             {
                 var dracoExt = primitives[index].Extensions.DracoMeshCompression;
-                if (dracoExt.BufferView is not { } bufferViewIndex)
+                if (dracoExt.BufferView is not { } bufferViewIndex
+                    || buffers.TryGetBufferView(bufferViewIndex, out var bufferView, out _) != BufferAccessStatus.Success)
                 {
                     return null;
                 }
-                bufferViews[index] = buffers.GetBufferView(bufferViewIndex, out _).AsNativeArrayReadOnly();
+
+                bufferViews[index] = bufferView.AsNativeArrayReadOnly();
                 attributesArray[index] = dracoExt.Attributes;
             }
 

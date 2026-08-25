@@ -360,28 +360,25 @@ Custom implementations of [IMaterialsVariantsSlot](xref:Unity.Cloud.Gltfast.IMat
 
 `IGltfReadable.GetAccessor` and `IGltfReadable.GetAccessorData` are removed. Both were already marked obsolete, announcing exactly this replacement. `GltfImport.GetAccessorSparseIndices` and `GltfImport.GetAccessorSparseValues`, which handed out raw `void*` into buffer memory, are no longer public either.
 
-The replacement is [IGltfBufferData](xref:Unity.Cloud.Gltfast.IGltfBufferData):
+The replacement is [IGltfBufferData](xref:Unity.Cloud.Gltfast.IGltfBufferData). Buffer data exists only while an import is running, so the entry point is the [IBufferDataConsumer](xref:Unity.Cloud.Gltfast.Addons.IBufferDataConsumer) add-on hook rather than a call after `LoadAsync`:
 
-```csharp
-using var gltf = new GltfImport();
-await gltf.LoadAsync(uri);
+[!code-cs [buffer-data-addon](../Runtime/DocExamples/BufferDataAccess.cs#PositionSumAddon)]
 
-using var bufferData = gltf.LeaseBufferData();
-if (bufferData.GetAccessorData<float3>(accessorIndex, out var positions) == BufferAccessStatus.Success)
-{
-    // positions is a NativeArray<float3>.ReadOnly, usable in Burst jobs.
-}
-```
+Inject the add-on before loading:
+
+[!code-cs [read-buffer-data](../Runtime/DocExamples/BufferDataAccess.cs#ReadBufferDataDuringImport)]
+
+To keep reading after the import finished, lease your own inside the hook via [GltfImport.LeaseBufferData](xref:Unity.Cloud.Gltfast.GltfImport.LeaseBufferData*) and dispose it when done. See [Reading Buffer Data](ImportRuntime.md#reading-buffer-data) for that variant.
 
 Three things differ from the removed API:
 
-- **Buffer data comes with a lease.** The import keeps its buffer memory alive until every lease is disposed. The old methods only worked "during loading phase as underlying buffers are disposed right afterward"; data now stays readable for as long as you hold a lease. Dispose it as soon as you are done. Disposing the [GltfImport](xref:Unity.Cloud.Gltfast.GltfImport) releases the memory regardless and logs an error if leases were still open.
+- **Buffer data comes with a lease.** The import keeps its buffer memory alive until every lease is disposed. The old methods only worked "during loading phase as underlying buffers are disposed right afterward", and the lease still has to be taken during loading — but it now extends readability past the end of it, for as long as you hold it. Dispose it as soon as you are done. Disposing the [GltfImport](xref:Unity.Cloud.Gltfast.GltfImport) releases the memory regardless and logs an error if leases were still open.
 - **Failures are reported, not defaulted.** Every call returns a [BufferAccessStatus](xref:Unity.Cloud.Gltfast.BufferAccessStatus). The old methods returned an uncreated view for a bad index, indistinguishable from a sparse accessor or a type mismatch.
 - **Data is raw glTF.** No coordinate flip, no normalization, no conversion. Use `ComponentType`, `Type` and `Normalized` on the public [Accessor](xref:Unity.Cloud.Gltfast.Objects.Accessor) to decide how to interpret it, and schedule your own conversion if you need Unity conventions.
 
 Sparse accessors are not provided; those requests return `BufferAccessStatus.SparseUnsupported`.
 
-To read buffer data *during* import, implement [IBufferDataConsumer](xref:Unity.Cloud.Gltfast.Addons.IBufferDataConsumer) on an [ImportAddonInstance](xref:Unity.Cloud.Gltfast.Addons.ImportAddonInstance). It is called once every buffer is loaded, receives one, and returning `false` aborts the import. That lease is disposed right after the call, so lease your own via `LeaseBufferData` to keep reading beyond it.
+`ConsumeBufferDataAsync` is called once every buffer is loaded and decoded, and returning `false` aborts the import.
 
 ### `IDownload` reduced to `Success`, `Error` and a native `Data`
 

@@ -32,7 +32,7 @@ namespace Unity.Cloud.Gltfast
     /// objects that own the memory (downloads, pinned managed arrays, <see cref="UriValue"/>s) are
     /// handed to the tracking callback and disposed by the owner of this store.
     /// </remarks>
-    class BufferStore : IDisposable
+    sealed class BufferStore : IDisposable
     {
         readonly ImportContext m_Context;
         readonly Action<IDisposable> m_TrackDisposable;
@@ -264,6 +264,74 @@ namespace Unity.Cloud.Gltfast
             return false;
         }
 
+        /// <summary>
+        /// Provides a glTF accessor.
+        /// </summary>
+        /// <param name="index">glTF accessor index</param>
+        /// <returns>The accessor, or null if the index does not address one.</returns>
+        public Accessor GetAccessor(int index)
+        {
+            return GltfIndex.TryGetElement(m_Root.Accessors, index, out var accessor) ? accessor : null;
+        }
+
+        /// <summary>
+        /// Get glTF accessor and its raw data
+        /// </summary>
+        /// <param name="index">glTF accessor index</param>
+        /// <param name="accessor">De-serialized glTF accessor</param>
+        /// <param name="data">Pointer to accessor's data in memory</param>
+        /// <param name="byteStride">Element byte stride</param>
+        public unsafe void GetAccessorAndData(
+            int index, out Accessor accessor, out void* data, out int? byteStride)
+        {
+            if (!GltfIndex.TryGetElement(m_Root.Accessors, index, out accessor)
+                || !GltfIndex.TryGetIndex(accessor.BufferView, m_Root.BufferViews?.Count ?? 0, out var bufferViewIndex))
+            {
+                data = null;
+                byteStride = 0;
+                return;
+            }
+            TryGetBufferViewPointer(bufferViewIndex, accessor.ByteOffset, out data, out byteStride);
+        }
+
+        /// <summary>
+        /// Get sparse indices raw data
+        /// </summary>
+        /// <param name="sparseIndices">glTF sparse indices accessor</param>
+        /// <param name="data">Pointer to accessor's data in memory</param>
+        public unsafe void GetAccessorSparseIndices(AccessorSparseIndices sparseIndices, out void* data)
+        {
+            if (!GltfIndex.TryGetIndex(sparseIndices.BufferView, m_Root.BufferViews?.Count ?? 0, out var bufferViewIndex))
+            {
+                Logger?.Error(
+                    sparseIndices.BufferView.HasValue ? LogCode.IndexOutOfRange : LogCode.RequiredPropertyMissing,
+                    "accessor.sparse.indices.bufferView",
+                    GltfIndex.Describe(sparseIndices.BufferView));
+                data = null;
+                return;
+            }
+            TryGetBufferViewPointer(bufferViewIndex, sparseIndices.ByteOffset, out data, out _);
+        }
+
+        /// <summary>
+        /// Get sparse value raw data
+        /// </summary>
+        /// <param name="sparseValues">glTF sparse values accessor</param>
+        /// <param name="data">Pointer to accessor's data in memory</param>
+        public unsafe void GetAccessorSparseValues(AccessorSparseValues sparseValues, out void* data)
+        {
+            if (!GltfIndex.TryGetIndex(sparseValues.BufferView, m_Root.BufferViews?.Count ?? 0, out var bufferViewIndex))
+            {
+                Logger?.Error(
+                    sparseValues.BufferView.HasValue ? LogCode.IndexOutOfRange : LogCode.RequiredPropertyMissing,
+                    "accessor.sparse.values.bufferView",
+                    GltfIndex.Describe(sparseValues.BufferView));
+                data = null;
+                return;
+            }
+            TryGetBufferViewPointer(bufferViewIndex, sparseValues.ByteOffset, out data, out _);
+        }
+
         public ReadOnlyNativeArray<byte> GetBuffer(int index)
         {
             return m_Buffers[index];
@@ -317,6 +385,36 @@ namespace Unity.Cloud.Gltfast
             return TryGetBufferView(bufferView, out data, offset, length);
         }
 
+        public BufferAccessStatus TryGetBufferView(
+            IBufferView bufferView,
+            out ReadOnlyNativeArray<byte> data,
+            int offset = 0,
+            int length = 0
+        )
+        {
+            data = default;
+            if (offset < 0)
+            {
+                return BufferAccessStatus.DataIndexOutOfRange;
+            }
+            var byteLength = (long)length;
+            if (byteLength <= 0)
+            {
+                byteLength = bufferView.ByteLength - (long)offset;
+            }
+            if (byteLength < 0 || offset + byteLength > bufferView.ByteLength)
+            {
+                return BufferAccessStatus.DataIndexOutOfRange;
+            }
+            var status = TryResolveRange(bufferView, offset, byteLength, out var bufferIndex, out var start);
+            if (status != BufferAccessStatus.Success)
+            {
+                return status;
+            }
+            data = m_Buffers[bufferIndex].GetSubArray(start, (int)byteLength);
+            return BufferAccessStatus.Success;
+        }
+
         public BufferAccessStatus TryGetAccessorData<T>(
             int bufferViewIndex,
             int count,
@@ -330,13 +428,22 @@ namespace Unity.Cloud.Gltfast
                 return BufferAccessStatus.ObjectIndexOutOfRange;
             }
 #if MESHOPT_IS_ENABLED
-            if (bufferView.Extensions?.ExtMeshoptCompression != null)
+            var meshopt = bufferView.Extensions?.ExtMeshoptCompression;
+            if (meshopt != null)
             {
                 if (!TryGetMeshoptBufferView(bufferViewIndex, out var fullSlice))
                 {
                     return BufferAccessStatus.BufferUnavailable;
                 }
-                var meshoptByteLength = (long)count * UnsafeUtility.SizeOf<T>();
+                var meshoptElementByteSize = UnsafeUtility.SizeOf<T>();
+                // The decoded buffer is laid out at the extension's stride, so the same tight
+                // packing requirement applies as for an uncompressed buffer view.
+                var meshoptStride = bufferView.ByteStride ?? meshopt.ByteStride;
+                if (meshoptStride.HasValue && meshoptStride.Value != meshoptElementByteSize)
+                {
+                    return BufferAccessStatus.StridedUnsupported;
+                }
+                var meshoptByteLength = (long)count * meshoptElementByteSize;
                 if (offset == 0 && (count <= 0 || meshoptByteLength == fullSlice.Length))
                 {
                     data = new ReadOnlyNativeArray<byte>(fullSlice).Reinterpret<T>();
@@ -356,6 +463,38 @@ namespace Unity.Cloud.Gltfast
             }
 #endif
             return TryGetAccessorData(bufferView, count, out data, offset);
+        }
+
+        public BufferAccessStatus TryGetAccessorData<T>(
+            IBufferView bufferView,
+            int count,
+            out ReadOnlyNativeArray<T> data,
+            int offset = 0
+        ) where T : unmanaged
+        {
+            data = default;
+            if (count < 0)
+            {
+                return BufferAccessStatus.DataIndexOutOfRange;
+            }
+            var elementByteSize = UnsafeUtility.SizeOf<T>();
+            // A contiguous reinterpret only describes the data when it is tightly packed.
+            if (bufferView.ByteStride.HasValue && bufferView.ByteStride.Value != elementByteSize)
+            {
+                return BufferAccessStatus.StridedUnsupported;
+            }
+            var byteLength = (long)count * elementByteSize;
+            if (offset + byteLength > bufferView.ByteLength)
+            {
+                return BufferAccessStatus.DataIndexOutOfRange;
+            }
+            var status = TryResolveRange(bufferView, offset, byteLength, out var bufferIndex, out var start);
+            if (status != BufferAccessStatus.Success)
+            {
+                return status;
+            }
+            data = m_Buffers[bufferIndex].GetSubArray(start, (int)byteLength).Reinterpret<T>();
+            return BufferAccessStatus.Success;
         }
 
         public BufferAccessStatus TryGetStridedAccessorData<T>(
@@ -412,7 +551,41 @@ namespace Unity.Cloud.Gltfast
                 return BufferAccessStatus.Success;
             }
 #endif
-            return TryGetStridedAccessorData<T>(bufferView, count, out data, offset);
+            return TryGetStridedAccessorData(bufferView, count, out data, offset);
+        }
+
+        public BufferAccessStatus TryGetStridedAccessorData<T>(
+            IBufferView bufferView,
+            int count,
+            out ReadOnlyNativeStridedArray<T> data,
+            int offset = 0
+        ) where T : unmanaged
+        {
+            data = default;
+            if (count < 0)
+            {
+                return BufferAccessStatus.DataIndexOutOfRange;
+            }
+            var elementByteSize = UnsafeUtility.SizeOf<T>();
+            var byteStride = bufferView.ByteStride ?? elementByteSize;
+            if (byteStride < elementByteSize)
+            {
+                return BufferAccessStatus.DataIndexOutOfRange;
+            }
+            // The final element occupies elementByteSize bytes rather than a full stride, so a
+            // spec conforming buffer view may end before offset + count * byteStride.
+            var byteLength = count == 0 ? 0L : (long)(count - 1) * byteStride + elementByteSize;
+            if (offset + byteLength > bufferView.ByteLength)
+            {
+                return BufferAccessStatus.DataIndexOutOfRange;
+            }
+            var status = TryResolveRange(bufferView, offset, byteLength, out var bufferIndex, out var start);
+            if (status != BufferAccessStatus.Success)
+            {
+                return status;
+            }
+            data = m_Buffers[bufferIndex].ToStrided<T>(start, count, byteStride);
+            return BufferAccessStatus.Success;
         }
 
         /// <summary>
@@ -456,62 +629,6 @@ namespace Unity.Cloud.Gltfast
             return true;
         }
 
-        public BufferAccessStatus TryGetAccessorData<T>(
-            IBufferView bufferView,
-            int count,
-            out ReadOnlyNativeArray<T> data,
-            int offset = 0
-        ) where T : unmanaged
-        {
-            data = default;
-            if (count < 0)
-            {
-                return BufferAccessStatus.DataIndexOutOfRange;
-            }
-            var byteLength = (long)count * UnsafeUtility.SizeOf<T>();
-            if (offset + byteLength > bufferView.ByteLength)
-            {
-                return BufferAccessStatus.DataIndexOutOfRange;
-            }
-            var status = TryResolveRange(bufferView, offset, byteLength, out var bufferIndex, out var start);
-            if (status != BufferAccessStatus.Success)
-            {
-                return status;
-            }
-            data = m_Buffers[bufferIndex].GetSubArray(start, (int)byteLength).Reinterpret<T>();
-            return BufferAccessStatus.Success;
-        }
-
-        public BufferAccessStatus TryGetStridedAccessorData<T>(
-            IBufferView bufferView,
-            int count,
-            out ReadOnlyNativeStridedArray<T> data,
-            int offset = 0
-        ) where T : unmanaged
-        {
-            data = default;
-            if (count < 0)
-            {
-                return BufferAccessStatus.DataIndexOutOfRange;
-            }
-            var elementByteSize = UnsafeUtility.SizeOf<T>();
-            var byteStride = bufferView.ByteStride ?? elementByteSize;
-            if (byteStride < elementByteSize)
-            {
-                return BufferAccessStatus.DataIndexOutOfRange;
-            }
-            // The final element occupies elementByteSize bytes rather than a full stride, so a
-            // spec conforming buffer view may end before offset + count * byteStride.
-            var byteLength = count == 0 ? 0L : (long)(count - 1) * byteStride + elementByteSize;
-            var status = TryResolveRange(bufferView, offset, byteLength, out var bufferIndex, out var start);
-            if (status != BufferAccessStatus.Success)
-            {
-                return status;
-            }
-            data = m_Buffers[bufferIndex].ToStrided<T>(start, count, byteStride);
-            return BufferAccessStatus.Success;
-        }
-
         public async ValueTask<NativeArray<byte>.ReadOnly> GetBufferViewAsync(
             IBufferView bufferView,
             int offset = 0,
@@ -520,14 +637,11 @@ namespace Unity.Cloud.Gltfast
         {
             if (GltfIndex.TryGetIndex(bufferView.Buffer, m_Buffers?.Length ?? 0, out var bufferIndex))
             {
-                if (!m_Buffers![bufferIndex].IsCreated)
-                {
-                    if (m_BufferLoadTasks == null
+                if (!m_Buffers![bufferIndex].IsCreated && (m_BufferLoadTasks == null
                         || !m_BufferLoadTasks.TryGetValue(bufferIndex, out var download)
-                        || !await download)
-                    {
-                        return default;
-                    }
+                        || !await download))
+                {
+                    return default;
                 }
 
                 return TryGetBufferView(
@@ -536,36 +650,6 @@ namespace Unity.Cloud.Gltfast
                     : default;
             }
             return default;
-        }
-
-        public BufferAccessStatus TryGetBufferView(
-            IBufferView bufferView,
-            out ReadOnlyNativeArray<byte> data,
-            int offset = 0,
-            int length = 0
-            )
-        {
-            data = default;
-            if (offset < 0)
-            {
-                return BufferAccessStatus.DataIndexOutOfRange;
-            }
-            var byteLength = (long)length;
-            if (byteLength <= 0)
-            {
-                byteLength = bufferView.ByteLength - (long)offset;
-            }
-            if (byteLength < 0 || offset + byteLength > bufferView.ByteLength)
-            {
-                return BufferAccessStatus.DataIndexOutOfRange;
-            }
-            var status = TryResolveRange(bufferView, offset, byteLength, out var bufferIndex, out var start);
-            if (status != BufferAccessStatus.Success)
-            {
-                return status;
-            }
-            data = m_Buffers[bufferIndex].GetSubArray(start, (int)byteLength);
-            return BufferAccessStatus.Success;
         }
 
         /// <summary>
@@ -693,10 +777,8 @@ namespace Unity.Cloud.Gltfast
 
                 if (jobHandlesList != null)
                 {
-                    using (var jobHandles = new NativeArray<JobHandle>(jobHandlesList.ToArray(), Allocator.Temp))
-                    {
-                        m_MeshoptJobHandle = JobHandle.CombineDependencies(jobHandles);
-                    }
+                    using var jobHandles = new NativeArray<JobHandle>(jobHandlesList.ToArray(), Allocator.Temp);
+                    m_MeshoptJobHandle = JobHandle.CombineDependencies(jobHandles);
                 }
             }
         }
@@ -737,7 +819,7 @@ namespace Unity.Cloud.Gltfast
 
         /// <summary>
         /// Releases the buffer memory even when leases are still open on it. Reading from
-        /// those leases afterwards throws <see cref="ObjectDisposedException"/>.
+        /// those leases afterward throws <see cref="ObjectDisposedException"/>.
         /// </summary>
         public void ForceDispose()
         {

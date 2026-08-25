@@ -43,14 +43,14 @@ namespace Unity.Cloud.Gltfast.Tests.Import
             } };
 
             var logger = new CollectingLogger();
-            using var buffers = new GltfBuffersMock();
+            using var fixture = new BufferStoreFixture(CreateRoot(), new byte[k_BufferByteLength]);
             using var mg = new MeshGenerator(
                 primitives,
                 null,
                 null,
                 "meshName",
                 new GltfReadableMock(),
-                buffers,
+                fixture.Store,
                 new UninterruptedDeferAgent(),
                 logger
                 );
@@ -61,6 +61,43 @@ namespace Unity.Cloud.Gltfast.Tests.Import
             var message = logger.Items.First();
             Assert.AreEqual(LogCode.IndexCountInvalid, message.Code);
             Assert.AreEqual("Invalid index count 2", message.ToString());
+        }
+
+        // Three float3 positions, then two ushort indices.
+        const int k_PositionByteLength = 3 * 12;
+        const int k_IndexByteLength = 2 * 2;
+        const int k_BufferByteLength = k_PositionByteLength + k_IndexByteLength;
+
+        static Root CreateRoot()
+        {
+            var positions = new Accessor
+            {
+                BufferView = 0,
+                ByteOffset = 0,
+                ComponentType = AccessorDataType.Float,
+                Count = 3
+            };
+            positions.Type = new EnumOrRawValue<AccessorType>(AccessorType.Vector3);
+
+            var indices = new Accessor
+            {
+                BufferView = 1,
+                ByteOffset = 0,
+                ComponentType = AccessorDataType.UnsignedShort,
+                Count = 2
+            };
+            indices.Type = new EnumOrRawValue<AccessorType>(AccessorType.Scalar);
+
+            return new Root
+            {
+                Buffers = new List<Objects.Buffer> { new() { ByteLength = k_BufferByteLength } },
+                BufferViews = new List<BufferView>
+                {
+                    new() { Buffer = 0, ByteOffset = 0, ByteLength = k_PositionByteLength, ByteStride = 12 },
+                    new() { Buffer = 0, ByteOffset = k_PositionByteLength, ByteLength = k_IndexByteLength }
+                },
+                Accessors = new List<Accessor> { positions, indices }
+            };
         }
     }
 
@@ -167,78 +204,4 @@ namespace Unity.Cloud.Gltfast.Tests.Import
         }
     }
 
-    sealed class GltfBuffersMock : IGltfBuffers, IDisposable
-    {
-        List<IDisposable> m_Disposables = new();
-
-        public Accessor GetAccessor(int index)
-        {
-            switch (index)
-            {
-                case 0:
-                {
-                    var accessor = new Accessor
-                    {
-                        BufferView = 0,
-                        ByteOffset = 0,
-                        ComponentType = AccessorDataType.Float,
-                        Count = 3
-                    };
-                    accessor.Type = new EnumOrRawValue<AccessorType>(AccessorType.Vector3);
-                    return accessor;
-                }
-                case 1:
-                {
-                    var accessor = new Accessor
-                    {
-                        BufferView = 0,
-                        ByteOffset = 0,
-                        ComponentType = AccessorDataType.UnsignedShort,
-                        Count = 2
-                    };
-                    accessor.Type = new EnumOrRawValue<AccessorType>(AccessorType.Scalar);
-                    return accessor;
-                }
-            }
-            throw new NotImplementedException();
-        }
-
-        public unsafe void GetAccessorAndData(int index, out Accessor accessor, out void* data, out int? byteStride)
-        {
-            throw new NotImplementedException();
-        }
-        public unsafe void GetAccessorSparseIndices(AccessorSparseIndices sparseIndices, out void* data)
-        {
-            throw new NotImplementedException();
-        }
-        public unsafe void GetAccessorSparseValues(AccessorSparseValues sparseValues, out void* data)
-        {
-            throw new NotImplementedException();
-        }
-        public ReadOnlyNativeArray<byte> GetBufferView(int bufferViewIndex, out int? byteStride, int offset = 0, int length = 0)
-        {
-            var indices = new NativeArray<ushort>(3, Allocator.Persistent);
-            m_Disposables.Add(indices);
-            byteStride = 2;
-            return new ReadOnlyNativeArray<byte>(indices.Reinterpret<byte>(sizeof(ushort)));
-        }
-        public ReadOnlyNativeArray<T> GetAccessorData<T>(int bufferViewIndex, int count, int offset = 0) where T : unmanaged
-        {
-            throw new NotImplementedException();
-        }
-        public ReadOnlyNativeStridedArray<T> GetStridedAccessorData<T>(int bufferViewIndex, int count, int offset = 0) where T : unmanaged
-        {
-            var buffer = new NativeArray<T>(3, Allocator.Persistent);
-            m_Disposables.Add(buffer);
-            return new ReadOnlyNativeArray<T>(buffer).ToStrided<T>(bufferViewIndex, count, 12);
-        }
-
-        public void Dispose()
-        {
-            foreach (var disposable in m_Disposables)
-            {
-                disposable.Dispose();
-            }
-        }
-    }
 }

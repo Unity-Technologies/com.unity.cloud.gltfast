@@ -368,6 +368,44 @@ namespace Unity.Cloud.Gltfast.Tests.Import
                 h.Store.TryGetAccessorData<Float3>(h.View(1), 1, out _, 8));
         }
 
+        /// <summary>
+        /// A plain array cannot describe interleaved data, so it has to be refused rather than
+        /// reinterpreted contiguously, which would read each element from the wrong offset.
+        /// </summary>
+        [Test]
+        public void AccessorDataOnStridedViewIsRejected()
+        {
+            using var h = new Harness(k_InterleavedJson, memoryLength: 384);
+            Assert.AreEqual(
+                BufferAccessStatus.StridedUnsupported,
+                h.Store.TryGetAccessorData<Float3>(h.View(0), 8, out _, 12));
+            Assert.AreEqual(
+                BufferAccessStatus.StridedUnsupported,
+                h.Store.ReadAccessorData<Float3>(0, out _),
+                "The reader entry point must report it too.");
+            Assert.AreEqual(
+                BufferAccessStatus.Success,
+                h.Store.ReadStridedAccessorData<Float3>(0, out _),
+                "The strided entry point is the one that serves it.");
+        }
+
+        /// <summary>
+        /// A stride equal to the element size is tight packing, spelled out.
+        /// </summary>
+        [Test]
+        public void AccessorDataOnElementSizedStrideSucceeds()
+        {
+            const string json =
+                "{\"asset\":{\"version\":\"2.0\"}," +
+                "\"buffers\":[{\"byteLength\":64}]," +
+                "\"bufferViews\":[{\"buffer\":0,\"byteLength\":48,\"byteStride\":12}]}";
+            using var h = new Harness(json, memoryLength: 64);
+            Assert.AreEqual(
+                BufferAccessStatus.Success,
+                h.Store.TryGetAccessorData<Float3>(h.View(0), 4, out var data));
+            Assert.AreEqual(4, data.Length);
+        }
+
         [Test]
         public void AccessorDataZeroCountSucceeds()
         {
@@ -415,6 +453,49 @@ namespace Unity.Cloud.Gltfast.Tests.Import
             Assert.AreEqual(
                 BufferAccessStatus.DataIndexOutOfRange,
                 h.Store.TryGetStridedAccessorData<Float3>(h.View(0), 9, out _, 12));
+        }
+
+        /// <summary>
+        /// A strided request has to stay inside its buffer view, not merely inside the buffer the
+        /// view points into, or it exposes bytes belonging to a neighbouring view.
+        /// </summary>
+        [Test]
+        public void StridedAccessorBeyondViewInsideBufferIsRejected()
+        {
+            using var h = Simple();
+            // View 1 is the 16 bytes at offset 16 of a 64 byte buffer. Two tightly packed Float3
+            // elements need 24, so the second one would start 8 bytes past the view's end.
+            Assert.AreEqual(
+                BufferAccessStatus.DataIndexOutOfRange,
+                h.Store.TryGetStridedAccessorData<Float3>(h.View(1), 2, out _));
+            // One element fits exactly within the first 12 of the view's 16 bytes.
+            Assert.AreEqual(
+                BufferAccessStatus.Success,
+                h.Store.TryGetStridedAccessorData<Float3>(h.View(1), 1, out var single));
+            Assert.AreEqual(1, single.Length);
+            Assert.AreEqual(
+                BufferAccessStatus.DataIndexOutOfRange,
+                h.Store.TryGetStridedAccessorData<Float3>(h.View(1), 1, out _, 8),
+                "8 + 12 = 20 exceeds view 1's 16 bytes.");
+        }
+
+        /// <summary>
+        /// The buffer view's own length can be satisfied while the memory behind it is shorter,
+        /// when a glTF-binary chunk header claims more than the document holds.
+        /// </summary>
+        [Test]
+        public void StridedAccessorBeyondBufferMemoryIsRejected()
+        {
+            const string json =
+                "{\"asset\":{\"version\":\"2.0\"}," +
+                "\"buffers\":[{\"byteLength\":64}]," +
+                "\"bufferViews\":[{\"buffer\":0,\"byteLength\":48}]}";
+            // The chunk claims 64 bytes, the document only holds 32.
+            using var h = new Harness(json, memoryLength: 32, chunkStart: 0, chunkLength: 64);
+            Assert.AreEqual(
+                BufferAccessStatus.DataIndexOutOfRange,
+                h.Store.TryGetStridedAccessorData<Float3>(h.View(0), 4, out _),
+                "4 tightly packed Float3 fit the 48 byte view but not the 32 bytes behind it.");
         }
 
         [Test]
@@ -545,6 +626,30 @@ namespace Unity.Cloud.Gltfast.Tests.Import
             Assert.IsFalse(
                 h.Store.TryGetBufferViewPointer(1, 128, out data, out _), "Byte offset past the view.");
             Assert.IsTrue(data == null);
+        }
+
+        [Test]
+        public unsafe void SparseAccessorPointersRejectUnresolvableBufferViews()
+        {
+            // Both the sparse indices and the sparse values point at a buffer view that is absent.
+            const string json =
+                "{\"asset\":{\"version\":\"2.0\"}," +
+                "\"buffers\":[{\"byteLength\":64}]," +
+                "\"bufferViews\":[{\"buffer\":0,\"byteLength\":64}]," +
+                "\"accessors\":[{\"bufferView\":0,\"componentType\":5126,\"count\":2,\"type\":\"VEC3\"," +
+                "\"sparse\":{\"count\":1," +
+                "\"indices\":{\"bufferView\":9,\"componentType\":5123}," +
+                "\"values\":{}}}]}";
+            using var h = new Harness(json, memoryLength: 64);
+            var sparse = h.Root.Accessors[0].Sparse;
+
+            h.Store.GetAccessorSparseIndices(sparse.Indices, out var indices);
+            Assert.IsTrue(indices == null, "An absent buffer view must not yield a pointer.");
+            Assert.IsTrue(Logged(h, LogCode.IndexOutOfRange));
+
+            h.Store.GetAccessorSparseValues(sparse.Values, out var values);
+            Assert.IsTrue(values == null, "A missing buffer view must not yield a pointer.");
+            Assert.IsTrue(Logged(h, LogCode.RequiredPropertyMissing));
         }
 
         [Test]

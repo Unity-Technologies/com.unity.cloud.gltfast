@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using System.Collections;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using NUnit.Framework;
@@ -21,6 +22,40 @@ namespace Unity.Cloud.Gltfast.Tests.Import
             "\"buffers\":[{\"byteLength\":4,\"uri\":\"data:application/octet-stream;base64,AQIDBA==\"}]," +
             "\"bufferViews\":[{\"buffer\":0,\"byteLength\":4}]," +
             "\"accessors\":[{\"bufferView\":0,\"componentType\":5121,\"count\":4,\"type\":\"SCALAR\"}]}";
+
+        /// <summary>
+        /// An accessor conversion that cannot be scheduled has to abort the import. Leaving the
+        /// entry unset instead would surface as a null unboxed to a value type in
+        /// EXT_mesh_gpu_instancing or skin inverse bind matrices, far from the cause.
+        /// </summary>
+        [UnityTest]
+        public IEnumerator UnresolvableRotationAccessorAbortsImport()
+        {
+            yield return AsyncWrapper.WaitForTask(UnresolvableRotationAccessorAbortsImportAsync());
+        }
+
+        static async Task UnresolvableRotationAccessorAbortsImportAsync()
+        {
+            // The instancing ROTATION accessor points at buffer view 9, which does not exist.
+            const string json =
+                "{\"asset\":{\"version\":\"2.0\"}," +
+                "\"extensionsUsed\":[\"EXT_mesh_gpu_instancing\"]," +
+                "\"buffers\":[{\"byteLength\":32," +
+                "\"uri\":\"data:application/octet-stream;base64,AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==\"}]," +
+                "\"bufferViews\":[{\"buffer\":0,\"byteLength\":32}]," +
+                "\"accessors\":[{\"bufferView\":9,\"componentType\":5126,\"count\":2,\"type\":\"VEC4\"}]," +
+                "\"nodes\":[{\"extensions\":{\"EXT_mesh_gpu_instancing\":{\"attributes\":{\"ROTATION\":0}}}}]," +
+                "\"scenes\":[{\"nodes\":[0]}],\"scene\":0}";
+
+            var logger = new CollectingLogger();
+            using var gltf = new GltfImport(logger: logger);
+            var success = await gltf.LoadGltfJsonAsync(json);
+
+            Assert.IsFalse(success, "An unresolvable rotation accessor must abort the import.");
+            Assert.IsTrue(
+                logger.Items != null && logger.Items.Any(item => item.Code == LogCode.IndexOutOfRange),
+                "The unresolvable buffer view index should be reported.");
+        }
 
         /// <summary>
         /// Runs an assertion against a lease while the glTF's buffers are still loaded.

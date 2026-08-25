@@ -40,7 +40,10 @@ namespace Unity.Cloud.Gltfast.Documentation.Examples
                     continue;
                 }
 
-                var status = bufferData.GetAccessorData<Vector3>(accessorIndex, out var values);
+                // Vertex data is usually interleaved, so ask for a strided view. It serves tightly
+                // packed data just as well, whereas GetAccessorData reports StridedUnsupported for
+                // anything interleaved.
+                var status = bufferData.GetStridedAccessorData<Vector3>(accessorIndex, out var values);
                 if (status != BufferAccessStatus.Success)
                 {
                     // For example SparseUnsupported, or IndexOutOfRange for a malformed asset.

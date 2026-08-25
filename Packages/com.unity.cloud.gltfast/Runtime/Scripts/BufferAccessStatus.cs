@@ -39,6 +39,14 @@ namespace Unity.Cloud.Gltfast
         /// <summary>
         /// The accessor is sparse. Sparse accessor data is not provided by this API.
         /// </summary>
-        SparseUnsupported
+        SparseUnsupported,
+
+        /// <summary>
+        /// The accessor's data is interleaved, because its buffer view declares a byte stride that
+        /// differs from the element size. Only tightly packed data can be provided as a plain
+        /// array; request interleaved data via
+        /// <see cref="IGltfBufferData.GetStridedAccessorData{T}"/> instead.
+        /// </summary>
+        StridedUnsupported
     }
 }

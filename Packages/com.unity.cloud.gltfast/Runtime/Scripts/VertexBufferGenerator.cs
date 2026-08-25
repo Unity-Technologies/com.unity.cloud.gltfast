@@ -64,7 +64,7 @@ namespace Unity.Cloud.Gltfast
             return false;
         }
 
-        public VertexBufferGenerator(int primitiveCount, IGltfBuffers buffers, ICodeLogger logger)
+        public VertexBufferGenerator(int primitiveCount, BufferStore buffers, ICodeLogger logger)
             : base(primitiveCount, buffers, logger)
         { }
 
@@ -188,7 +188,7 @@ namespace Unity.Cloud.Gltfast
                     return null;
 
                 if (att.Normal >= 0
-                    && !ScheduleNormalsJobs(att, vDataPtr, outputByteStride, i, handles, ref handleIndex)
+                    && !ScheduleNormalsJobs(att, vDataPtr, outputByteStride, i, handles, ref handleIndex, m_Logger)
                     )
                     return null;
 
@@ -221,9 +221,11 @@ namespace Unity.Cloud.Gltfast
             {
                 h = GetVector3Job(
                     m_Buffers,
+                    m_Attributes[i].Position.Value,
                     m_PositionAccessors[i],
                     (float3*)(vDataPtr + outputByteStride * VertexIntervals[i]),
                     outputByteStride,
+                    m_Logger,
                     m_PositionAccessors[i].Normalized,
                     false // positional data never needs to be normalized
                 );
@@ -270,7 +272,15 @@ namespace Unity.Cloud.Gltfast
             return true;
         }
 
-        unsafe bool ScheduleNormalsJobs(Attributes att, byte* vDataPtr, int outputByteStride, int i, NativeArray<JobHandle> handles, ref int handleIndex)
+        unsafe bool ScheduleNormalsJobs(
+            Attributes att,
+            byte* vDataPtr,
+            int outputByteStride,
+            int i,
+            NativeArray<JobHandle> handles,
+            ref int handleIndex,
+            ICodeLogger logger
+            )
         {
             m_Buffers.GetAccessorAndData(
                 att.Normal.Value,
@@ -285,9 +295,11 @@ namespace Unity.Cloud.Gltfast
 
             var h = GetVector3Job(
                 m_Buffers,
+                att.Normal.Value,
                 nrmAcc,
                 (float3*)(vDataPtr + outputByteStride * VertexIntervals[i] + 12),
                 outputByteStride,
+                logger,
                 nrmAcc.Normalized
 
             //, normals need to be unit length

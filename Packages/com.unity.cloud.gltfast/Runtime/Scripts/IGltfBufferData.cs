@@ -51,6 +51,12 @@ namespace Unity.Cloud.Gltfast
         /// <summary>
         /// Provides an accessor's tightly packed data.
         /// </summary>
+        /// <remarks>
+        /// Only tightly packed data can be provided as a plain array. An accessor whose buffer view
+        /// declares a byte stride differing from the element size holds interleaved data and is
+        /// reported as <see cref="BufferAccessStatus.StridedUnsupported"/>; request it via
+        /// <see cref="GetStridedAccessorData{T}"/> instead.
+        /// </remarks>
         /// <param name="accessorIndex">glTF accessor index.</param>
         /// <param name="data">The accessor's elements, if the result is
         /// <see cref="BufferAccessStatus.Success"/>.</param>

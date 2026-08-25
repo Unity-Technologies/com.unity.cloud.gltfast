@@ -34,7 +34,7 @@ namespace Unity.Cloud.Gltfast
             int weightsAccessorIndex,
             int jointsAccessorIndex,
             int offset,
-            IGltfBuffers buffers
+            BufferStore buffers
         )
         {
             Profiler.BeginSample("ScheduleVertexBonesJob");

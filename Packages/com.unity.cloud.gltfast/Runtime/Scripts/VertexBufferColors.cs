@@ -39,7 +39,7 @@ namespace Unity.Cloud.Gltfast
             int colorAccessorIndex,
             int offset,
             NativeArray<JobHandle> handles,
-            IGltfBuffers buffers
+            BufferStore buffers
             )
         {
             Profiler.BeginSample("VertexBufferColors.Schedule");
