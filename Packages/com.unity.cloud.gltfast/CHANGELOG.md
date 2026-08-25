@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [6.20.0] - 2026-08-25
 
 ### Added
 - [IInstantiator.AddMesh](xref:GLTFast.IInstantiator.AddMesh*) and [IInstantiator.AddMeshInstanced](xref:GLTFast.IInstantiator.AddMeshInstanced*), replacing the `Primitive` naming.
@@ -35,13 +35,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - (Documentation) Updated the features' animation section to reflect that Playables support was removed and to list animation import into custom animation systems via add-ons.
 - (Performance) Removed unnecessary texture file read during Editor imports.
 
-### Removed
-
 ### Deprecated
 - `IInstantiator.CreateNode` without a `name` parameter and `IInstantiator.SetNodeName`. Implement the [CreateNode](xref:GLTFast.IInstantiator.CreateNode*) overload that receives the name instead. Both remain functional.
 - `IInstantiator.AddPrimitive` and `IInstantiator.AddPrimitiveInstanced`, including their `GameObjectInstantiator`, `GameObjectBoundsInstantiator` and `EntityInstantiator` implementations. Call [IInstantiator.AddMesh](xref:GLTFast.IInstantiator.AddMesh*) and [IInstantiator.AddMeshInstanced](xref:GLTFast.IInstantiator.AddMeshInstanced*) through an `IInstantiator` reference instead.
-
-### Security
 
 ## [6.19.0] - 2026-05-19
 
