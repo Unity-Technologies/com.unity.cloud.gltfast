@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased Preview]
+## [Unreleased]
 
 ### Added
 - [IGltfBufferData](xref:Unity.Cloud.Gltfast.IGltfBufferData), read access to a glTF asset's buffer view and accessor data, acquired via [GltfImport.LeaseBufferData](xref:Unity.Cloud.Gltfast.GltfImport.LeaseBufferData*). It is also a lease: the import keeps its buffer memory alive until every lease is disposed, so data can be read past the end of loading. Results are reported as [BufferAccessStatus](xref:Unity.Cloud.Gltfast.BufferAccessStatus) rather than thrown or silently defaulted. Data is provided in glTF's own coordinate system and value range.
@@ -217,7 +217,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
-## [Unreleased]
+## [6.20.0] - 2026-08-25
 
 ### Added
 - [IInstantiator.AddMesh](xref:GLTFast.IInstantiator.AddMesh*) and [IInstantiator.AddMeshInstanced](xref:GLTFast.IInstantiator.AddMeshInstanced*), replacing the `Primitive` naming.
@@ -248,13 +248,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - (Documentation) Updated the features' animation section to reflect that Playables support was removed and to list animation import into custom animation systems via add-ons.
 - (Performance) Removed unnecessary texture file read during Editor imports.
 
-### Removed
-
 ### Deprecated
 - `IInstantiator.CreateNode` without a `name` parameter and `IInstantiator.SetNodeName`. Implement the [CreateNode](xref:GLTFast.IInstantiator.CreateNode*) overload that receives the name instead. Both remain functional.
 - `IInstantiator.AddPrimitive` and `IInstantiator.AddPrimitiveInstanced`, including their `GameObjectInstantiator`, `GameObjectBoundsInstantiator` and `EntityInstantiator` implementations. Call [IInstantiator.AddMesh](xref:GLTFast.IInstantiator.AddMesh*) and [IInstantiator.AddMeshInstanced](xref:GLTFast.IInstantiator.AddMeshInstanced*) through an `IInstantiator` reference instead.
-
-### Security
 
 ## [6.19.0] - 2026-05-19
 
