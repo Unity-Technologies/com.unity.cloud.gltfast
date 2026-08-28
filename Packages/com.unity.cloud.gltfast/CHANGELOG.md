@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [7.0.0-exp.1] - 2026-08-28
 
 ### Added
 - [IGltfBufferData](xref:Unity.Cloud.Gltfast.IGltfBufferData), read access to a glTF asset's buffer view and accessor data, acquired via [GltfImport.LeaseBufferData](xref:Unity.Cloud.Gltfast.GltfImport.LeaseBufferData*). It is also a lease: the import keeps its buffer memory alive until every lease is disposed, so data can be read past the end of loading. Results are reported as [BufferAccessStatus](xref:Unity.Cloud.Gltfast.BufferAccessStatus) rather than thrown or silently defaulted. Data is provided in glTF's own coordinate system and value range.
@@ -214,8 +214,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - (Export) `Root.GltfSerialize(StreamWriter)` is obsolete. Use [Root.Serialize(Stream)](xref:Unity.Cloud.Gltfast.Objects.Root.Serialize*) instead.
 - The un-suffixed names of the renamed `Task`-returning class methods (`GltfImport.Load`/`LoadFile`/`LoadStream`/`LoadGltfJson`, `GltfAssetBase.Load`/`Instantiate`/`InstantiateScene`, `GameObjectExport` and `GltfWriter` `SaveToFileAndDispose`/`SaveToStreamAndDispose`, `DefaultDownloadProvider`/`CustomHeaderDownloadProvider` `Request`/`RequestTexture`, and the defer agents' `BreakPoint`). They are compile **errors**, not warnings, and exist so the API Updater can rewrite call sites to the `Async` name.
 - `GameObjectInstantiator.AddPrimitive`/`AddPrimitiveInstanced` and the `EntityInstantiator` pair, on the same terms: compile **errors** that let the API Updater rewrite call sites to `AddMesh`/`AddMeshInstanced`. They cannot be overridden, so an implementation that overrode them has to be renamed by hand — including `GameObjectBoundsInstantiator`, which inherits the shims for call sites but whose own `AddPrimitive` override is gone.
-
-### Security
 
 ## [6.20.0] - 2026-08-25
 
