@@ -92,6 +92,9 @@ namespace Unity.Cloud.Gltfast.Tests.Performance
         [Test]
         public void FlatHierarchyCheck()
         {
+#if !RUN_PERFORMANCE_TESTS
+            Assert.Ignore("Skipping performance tests (scripting define RUN_PERFORMANCE_TESTS is not set).");
+#endif
             var gltf = DeserializeWrapper(m_GltfJsonFlatHierarchy.AsReadOnly());
             CheckFlatHierarchy(gltf);
         }
