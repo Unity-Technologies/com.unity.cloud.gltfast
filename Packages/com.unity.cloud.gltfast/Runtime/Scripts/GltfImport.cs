@@ -2935,10 +2935,18 @@ namespace GLTFast
         }
 
         /// <summary>
+        /// Called at the beginning of <see cref="DisposeVolatileData"/> before buffers are freed.
+        /// Override to process data while it is still accessible.
+        /// </summary>
+        protected virtual void OnBeforeDisposeVolatileData() { }
+
+        /// <summary>
         /// Free up volatile loading resources
         /// </summary>
         void DisposeVolatileData()
         {
+            OnBeforeDisposeVolatileData();
+
             m_Buffers = null;
             m_BinChunks = null;
 
