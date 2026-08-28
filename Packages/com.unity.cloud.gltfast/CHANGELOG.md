@@ -76,6 +76,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improved comma placement in export summary (thanks anonymous for [#46](https://github.com/Unity-Technologies/com.unity.cloud.gltfast/pull/46)).
 - [Materials variants](xref:GLTFast.MaterialsVariantsComponent)' inspector shows correct variant when regaining focus (thanks [anonymous2585](https://github.com/anonymous2585) for [#48](https://github.com/Unity-Technologies/com.unity.cloud.gltfast/pull/48)).
 - (Import) Fixed merging of mesh primitives with shared vertex buffer, but different indices type.
+- (Import) Animation clips now clamp to the first key when glTF animation sampler input times start after zero, avoiding incorrect samples at time 0.
 
 ## [6.18.0] - 2026-04-01
 

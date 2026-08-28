@@ -67,6 +67,95 @@ namespace GLTFast.Tests
             AddMorphTargetWeightCurvesWithDefaultValues(InterpolationType.Step);
         }
 
+        [TestCase(InterpolationType.Linear)]
+        [TestCase(InterpolationType.CubicSpline)]
+        [TestCase(InterpolationType.Step)]
+        public void AddVec3CurvesClampsBeforeFirstKey(InterpolationType interpolationType)
+        {
+#if UNITY_ANIMATION
+            using var times = CreateNonZeroStartTimes();
+            using var values = CreateVec3Values(interpolationType, new float3(1f, 2f, 3f), new float3(4f, 5f, 6f));
+            var hierarchy = new NodeHierarchyInfo(new[] { "Target" }, new[] { -1 });
+
+            using var anim = new AnimationModuleProcessor(1, true);
+            anim.AddClip(0, "TestClip");
+            anim.AddTranslationCurves(0, 0, hierarchy, times.AsReadOnly(), values.AsReadOnly(), interpolationType);
+            anim.AddScaleCurves(0, 0, hierarchy, times.AsReadOnly(), values.AsReadOnly(), interpolationType);
+
+            var parent = new GameObject("Parent");
+            var go = new GameObject("Target");
+            go.transform.SetParent(parent.transform);
+            SampleAtZero(anim.AnimationClips[0], parent);
+
+            AssertVector3AreEqual(new Vector3(1f, 2f, 3f), go.transform.localPosition, "Expected local position to clamp to the first key before the first key time.");
+            AssertVector3AreEqual(new Vector3(1f, 2f, 3f), go.transform.localScale, "Expected local scale to clamp to the first key before the first key time.");
+            Object.Destroy(parent);
+#else
+            Assert.Ignore("UNITY_ANIMATION is not defined; AnimationModuleUtils is not compiled.");
+#endif
+        }
+
+        [TestCase(InterpolationType.Linear)]
+        [TestCase(InterpolationType.CubicSpline)]
+        [TestCase(InterpolationType.Step)]
+        public void AddRotationCurvesClampsBeforeFirstKey(InterpolationType interpolationType)
+        {
+#if UNITY_ANIMATION
+            using var times = CreateNonZeroStartTimes();
+            var expectedRotation = quaternion.EulerXYZ(math.radians(new float3(10f, 20f, 30f)));
+            using var values = CreateQuaternionValues(
+                interpolationType,
+                expectedRotation,
+                quaternion.EulerXYZ(math.radians(new float3(70f, 80f, 90f))));
+            var hierarchy = new NodeHierarchyInfo(new[] { "Target" }, new[] { -1 });
+
+            using var anim = new AnimationModuleProcessor(1, true);
+            anim.AddClip(0, "TestClip");
+            anim.AddRotationCurves(0, 0, hierarchy, times.AsReadOnly(), values.AsReadOnly(), interpolationType);
+
+            var parent = new GameObject("Parent");
+            var go = new GameObject("Target");
+            go.transform.SetParent(parent.transform);
+            SampleAtZero(anim.AnimationClips[0], parent);
+
+            Assert.AreEqual(
+                0f,
+                Quaternion.Angle(new Quaternion(expectedRotation.value.x, expectedRotation.value.y, expectedRotation.value.z, expectedRotation.value.w), go.transform.localRotation),
+                1e-3f,
+                "Expected local rotation to clamp to the first key before the first key time.");
+            Object.Destroy(parent);
+#else
+            Assert.Ignore("UNITY_ANIMATION is not defined; AnimationModuleUtils is not compiled.");
+#endif
+        }
+
+        [TestCase(InterpolationType.Linear)]
+        [TestCase(InterpolationType.CubicSpline)]
+        [TestCase(InterpolationType.Step)]
+        public void AddMorphTargetWeightCurvesClampsBeforeFirstKey(InterpolationType interpolationType)
+        {
+#if UNITY_ANIMATION
+            var morphTargetNames = new[] { "Shape0" };
+            using var times = CreateNonZeroStartTimes();
+            using var values = CreateScalarValues(interpolationType, 25f, 75f);
+            var hierarchy = new NodeHierarchyInfo(new[] { "Target" }, new[] { -1 });
+
+            using var anim = new AnimationModuleProcessor(1, true);
+            anim.AddClip(0, "TestClip");
+            anim.AddMorphTargetWeightCurves(
+                0, 0, 0, null, hierarchy, times.AsReadOnly(), values.AsReadOnly(), interpolationType, morphTargetNames);
+
+            var parent = new GameObject("Parent");
+            CreateSkinnedTargetWithBlendShape(parent.transform, "Shape0", out var mainRenderer, out _);
+            SampleAtZero(anim.AnimationClips[0], parent);
+
+            Assert.AreEqual(25f, mainRenderer.GetBlendShapeWeight(0), 1e-3f, "Expected blend shape weight to clamp to the first key before the first key time.");
+            Object.Destroy(parent);
+#else
+            Assert.Ignore("UNITY_ANIMATION is not defined; AnimationModuleUtils is not compiled.");
+#endif
+        }
+
         static void AddRotationCurvesWithDefaultValues(InterpolationType interpolationType)
         {
 #if UNITY_ANIMATION
@@ -160,6 +249,53 @@ namespace GLTFast.Tests
         }
 
 #if UNITY_ANIMATION
+        static NativeArray<float> CreateNonZeroStartTimes()
+        {
+            return new NativeArray<float>(new[] { 0.033333335f, 1f }, Allocator.Temp);
+        }
+
+        static NativeArray<float3> CreateVec3Values(InterpolationType interpolationType, float3 firstValue, float3 secondValue)
+        {
+            return interpolationType == InterpolationType.CubicSpline
+                ? new NativeArray<float3>(new[] { float3.zero, firstValue, float3.zero, float3.zero, secondValue, float3.zero }, Allocator.Temp)
+                : new NativeArray<float3>(new[] { firstValue, secondValue }, Allocator.Temp);
+        }
+
+        static NativeArray<quaternion> CreateQuaternionValues(
+            InterpolationType interpolationType,
+            quaternion firstValue,
+            quaternion secondValue
+            )
+        {
+            var zeroTangent = new quaternion(new float4(0f));
+            return interpolationType == InterpolationType.CubicSpline
+                ? new NativeArray<quaternion>(new[]
+                {
+                    zeroTangent, firstValue, zeroTangent,
+                    zeroTangent, secondValue, zeroTangent
+                }, Allocator.Temp)
+                : new NativeArray<quaternion>(new[] { firstValue, secondValue }, Allocator.Temp);
+        }
+
+        static NativeArray<float> CreateScalarValues(InterpolationType interpolationType, float firstValue, float secondValue)
+        {
+            return interpolationType == InterpolationType.CubicSpline
+                ? new NativeArray<float>(new[] { 0f, firstValue, 0f, 0f, secondValue, 0f }, Allocator.Temp)
+                : new NativeArray<float>(new[] { firstValue, secondValue }, Allocator.Temp);
+        }
+
+        static void SampleAtZero(AnimationClip clip, GameObject parent)
+        {
+            clip.SampleAnimation(parent, 0f);
+        }
+
+        static void AssertVector3AreEqual(Vector3 expected, Vector3 actual, string message)
+        {
+            Assert.AreEqual(expected.x, actual.x, 1e-3f, message);
+            Assert.AreEqual(expected.y, actual.y, 1e-3f, message);
+            Assert.AreEqual(expected.z, actual.z, 1e-3f, message);
+        }
+
         static void CreateSkinnedTargetWithBlendShape(
             Transform parent,
             string blendShapeName,

@@ -144,6 +144,11 @@ namespace GLTFast.Animations
 #endif
         }
 
+        static bool NeedsInitialKey(NativeArray<float>.ReadOnly times)
+        {
+            return times.Length > 0 && times[0] > 0f;
+        }
+
 #if !UNITY_6000_2_OR_NEWER
         static
 #endif
@@ -308,6 +313,7 @@ namespace GLTFast.Animations
             var rotY = new AnimationCurve();
             var rotZ = new AnimationCurve();
             var rotW = new AnimationCurve();
+            var addInitialKey = NeedsInitialKey(times);
 
 #if DEBUG
             uint duplicates = 0;
@@ -318,6 +324,14 @@ namespace GLTFast.Animations
                 case InterpolationType.Step:
                 case InterpolationType.CubicSpline:
                 {
+                    if (addInitialKey)
+                    {
+                        rotX.AddKey(new Keyframe(0, 0));
+                        rotY.AddKey(new Keyframe(0, 0));
+                        rotZ.AddKey(new Keyframe(0, 0));
+                        rotW.AddKey(new Keyframe(0, 0));
+                    }
+
                     foreach (var time in times)
                     {
                         rotX.AddKey(new Keyframe(time, 0));
@@ -331,9 +345,9 @@ namespace GLTFast.Animations
                 case InterpolationType.Linear:
                 default:
                 {
-                    var prevTime = times[0];
+                    var prevTime = addInitialKey ? 0f : times[0];
 
-                    for (var i = 1; i < times.Length; i++)
+                    for (var i = addInitialKey ? 0 : 1; i < times.Length; i++)
                     {
                         var time = times[i];
 
@@ -389,7 +403,8 @@ namespace GLTFast.Animations
         )
         {
             Profiler.BeginSample("AnimationModuleLoader.AddQuaternionCurves");
-            keyframeArrayPool.ReserveBuffers(times.Length, 4);
+            var addInitialKey = NeedsInitialKey(times);
+            keyframeArrayPool.ReserveBuffers(times.Length + (addInitialKey ? 1 : 0), 4);
             var keyframesX = keyframeArrayPool.GetBuffer(0);
             var keyframesY = keyframeArrayPool.GetBuffer(1);
             var keyframesZ = keyframeArrayPool.GetBuffer(2);
@@ -404,49 +419,69 @@ namespace GLTFast.Animations
             {
                 case InterpolationType.Step:
                 {
+                    if (addInitialKey)
+                    {
+                        var value = values[0];
+                        keyframesX[count] = new Keyframe(0, value.value.x, float.PositiveInfinity, 0);
+                        keyframesY[count] = new Keyframe(0, value.value.y, float.PositiveInfinity, 0);
+                        keyframesZ[count] = new Keyframe(0, value.value.z, float.PositiveInfinity, 0);
+                        keyframesW[count] = new Keyframe(0, value.value.w, float.PositiveInfinity, 0);
+                        count++;
+                    }
+
                     for (var i = 0; i < times.Length; i++)
                     {
                         var time = times[i];
                         var value = values[i];
-                        keyframesX[i] = new Keyframe(time, value.value.x, float.PositiveInfinity, 0);
-                        keyframesY[i] = new Keyframe(time, value.value.y, float.PositiveInfinity, 0);
-                        keyframesZ[i] = new Keyframe(time, value.value.z, float.PositiveInfinity, 0);
-                        keyframesW[i] = new Keyframe(time, value.value.w, float.PositiveInfinity, 0);
+                        keyframesX[count] = new Keyframe(time, value.value.x, float.PositiveInfinity, 0);
+                        keyframesY[count] = new Keyframe(time, value.value.y, float.PositiveInfinity, 0);
+                        keyframesZ[count] = new Keyframe(time, value.value.z, float.PositiveInfinity, 0);
+                        keyframesW[count] = new Keyframe(time, value.value.w, float.PositiveInfinity, 0);
+                        count++;
                     }
 
-                    count = times.Length;
                     break;
                 }
                 case InterpolationType.CubicSpline:
                 {
+                    if (addInitialKey)
+                    {
+                        var value = values[1];
+                        keyframesX[count] = new Keyframe(0, value.value.x, 0, 0, .5f, .5f);
+                        keyframesY[count] = new Keyframe(0, value.value.y, 0, 0, .5f, .5f);
+                        keyframesZ[count] = new Keyframe(0, value.value.z, 0, 0, .5f, .5f);
+                        keyframesW[count] = new Keyframe(0, value.value.w, 0, 0, .5f, .5f);
+                        count++;
+                    }
+
                     for (var i = 0; i < times.Length; i++)
                     {
                         var time = times[i];
-                        var inTangent = values[i * 3];
+                        var inTangent = addInitialKey && i == 0 ? new quaternion(new float4(0f)) : values[i * 3];
                         var value = values[i * 3 + 1];
                         var outTangent = values[i * 3 + 2];
-                        keyframesX[i] = new Keyframe(time, value.value.x, inTangent.value.x, outTangent.value.x, .5f,
+                        keyframesX[count] = new Keyframe(time, value.value.x, inTangent.value.x, outTangent.value.x, .5f,
                             .5f);
-                        keyframesY[i] = new Keyframe(time, value.value.y, inTangent.value.y, outTangent.value.y, .5f,
+                        keyframesY[count] = new Keyframe(time, value.value.y, inTangent.value.y, outTangent.value.y, .5f,
                             .5f);
-                        keyframesZ[i] = new Keyframe(time, value.value.z, inTangent.value.z, outTangent.value.z, .5f,
+                        keyframesZ[count] = new Keyframe(time, value.value.z, inTangent.value.z, outTangent.value.z, .5f,
                             .5f);
-                        keyframesW[i] = new Keyframe(time, value.value.w, inTangent.value.w, outTangent.value.w, .5f,
+                        keyframesW[count] = new Keyframe(time, value.value.w, inTangent.value.w, outTangent.value.w, .5f,
                             .5f);
+                        count++;
                     }
 
-                    count = times.Length;
                     break;
                 }
                 default:
                 {
                     // LINEAR
-                    var prevTime = times[0];
+                    var prevTime = addInitialKey ? 0f : times[0];
                     var prevValue = values[0];
                     var inTangent = new quaternion(new float4(0f));
 
                     Assert.AreEqual(times.Length, values.Length);
-                    for (var i = 1; i < times.Length; i++)
+                    for (var i = addInitialKey ? 0 : 1; i < times.Length; i++)
                     {
                         var time = times[i];
                         var value = values[i];
@@ -548,6 +583,7 @@ namespace GLTFast.Animations
             var rotY = new AnimationCurve();
             var rotZ = new AnimationCurve();
             var rotW = new AnimationCurve();
+            var addInitialKey = NeedsInitialKey(times);
 
 #if DEBUG
             uint duplicates = 0;
@@ -557,6 +593,15 @@ namespace GLTFast.Animations
             {
                 case InterpolationType.Step:
                 {
+                    if (addInitialKey)
+                    {
+                        var value = values[0];
+                        rotX.AddKey(new Keyframe(0, value.value.x, float.PositiveInfinity, 0));
+                        rotY.AddKey(new Keyframe(0, value.value.y, float.PositiveInfinity, 0));
+                        rotZ.AddKey(new Keyframe(0, value.value.z, float.PositiveInfinity, 0));
+                        rotW.AddKey(new Keyframe(0, value.value.w, float.PositiveInfinity, 0));
+                    }
+
                     for (var i = 0; i < times.Length; i++)
                     {
                         var time = times[i];
@@ -570,10 +615,19 @@ namespace GLTFast.Animations
                 }
                 case InterpolationType.CubicSpline:
                 {
+                    if (addInitialKey)
+                    {
+                        var value = values[1];
+                        rotX.AddKey(new Keyframe(0, value.value.x, 0, 0, .5f, .5f));
+                        rotY.AddKey(new Keyframe(0, value.value.y, 0, 0, .5f, .5f));
+                        rotZ.AddKey(new Keyframe(0, value.value.z, 0, 0, .5f, .5f));
+                        rotW.AddKey(new Keyframe(0, value.value.w, 0, 0, .5f, .5f));
+                    }
+
                     for (var i = 0; i < times.Length; i++)
                     {
                         var time = times[i];
-                        var inTangent = values[i * 3];
+                        var inTangent = addInitialKey && i == 0 ? new quaternion(new float4(0f)) : values[i * 3];
                         var value = values[i * 3 + 1];
                         var outTangent = values[i * 3 + 2];
                         rotX.AddKey(new Keyframe(time, value.value.x, inTangent.value.x, outTangent.value.x, .5f, .5f));
@@ -586,12 +640,12 @@ namespace GLTFast.Animations
                 default:
                 {
                     // LINEAR
-                    var prevTime = times[0];
+                    var prevTime = addInitialKey ? 0f : times[0];
                     var prevValue = values[0];
                     var inTangent = new quaternion(new float4(0f));
 
                     Assert.AreEqual(times.Length, values.Length);
-                    for (var i = 1; i < times.Length; i++)
+                    for (var i = addInitialKey ? 0 : 1; i < times.Length; i++)
                     {
                         var time = times[i];
                         var value = values[i];
@@ -673,6 +727,7 @@ namespace GLTFast.Animations
             var curveX = new AnimationCurve();
             var curveY = new AnimationCurve();
             var curveZ = new AnimationCurve();
+            var addInitialKey = NeedsInitialKey(times);
 
 #if DEBUG
             var duplicates = 0u;
@@ -682,6 +737,13 @@ namespace GLTFast.Animations
             {
                 case InterpolationType.Step:
                 {
+                    if (addInitialKey)
+                    {
+                        curveX.AddKey(new Keyframe(0, 0, float.PositiveInfinity, 0));
+                        curveY.AddKey(new Keyframe(0, 0, float.PositiveInfinity, 0));
+                        curveZ.AddKey(new Keyframe(0, 0, float.PositiveInfinity, 0));
+                    }
+
                     foreach (var time in times)
                     {
                         curveX.AddKey(new Keyframe(time, 0, float.PositiveInfinity, 0));
@@ -693,6 +755,13 @@ namespace GLTFast.Animations
                 }
                 case InterpolationType.CubicSpline:
                 {
+                    if (addInitialKey)
+                    {
+                        curveX.AddKey(new Keyframe(0, 0, 0, 0, .5f, .5f));
+                        curveY.AddKey(new Keyframe(0, 0, 0, 0, .5f, .5f));
+                        curveZ.AddKey(new Keyframe(0, 0, 0, 0, .5f, .5f));
+                    }
+
                     foreach (var time in times)
                     {
                         curveX.AddKey(new Keyframe(time, 0, 0, 0, .5f, .5f));
@@ -705,9 +774,9 @@ namespace GLTFast.Animations
                 case InterpolationType.Linear:
                 default:
                 {
-                    var prevTime = times[0];
+                    var prevTime = addInitialKey ? 0f : times[0];
 
-                    for (var i = 1; i < times.Length; i++)
+                    for (var i = addInitialKey ? 0 : 1; i < times.Length; i++)
                     {
                         var time = times[i];
 
@@ -761,7 +830,8 @@ namespace GLTFast.Animations
         )
         {
             Profiler.BeginSample("AnimationModuleLoader.AddVec3Curves");
-            keyframeArrayPool.ReserveBuffers(times.Length, 3);
+            var addInitialKey = NeedsInitialKey(times);
+            keyframeArrayPool.ReserveBuffers(times.Length + (addInitialKey ? 1 : 0), 3);
             var keyframesX = keyframeArrayPool.GetBuffer(0);
             var keyframesY = keyframeArrayPool.GetBuffer(1);
             var keyframesZ = keyframeArrayPool.GetBuffer(2);
@@ -776,42 +846,60 @@ namespace GLTFast.Animations
             {
                 case InterpolationType.Step:
                 {
+                    if (addInitialKey)
+                    {
+                        var value = values[0];
+                        keyframesX[count] = new Keyframe(0, value.x, float.PositiveInfinity, 0);
+                        keyframesY[count] = new Keyframe(0, value.y, float.PositiveInfinity, 0);
+                        keyframesZ[count] = new Keyframe(0, value.z, float.PositiveInfinity, 0);
+                        count++;
+                    }
+
                     for (var i = 0; i < times.Length; i++)
                     {
                         var time = times[i];
                         var value = values[i];
-                        keyframesX[i] = new Keyframe(time, value.x, float.PositiveInfinity, 0);
-                        keyframesY[i] = new Keyframe(time, value.y, float.PositiveInfinity, 0);
-                        keyframesZ[i] = new Keyframe(time, value.z, float.PositiveInfinity, 0);
+                        keyframesX[count] = new Keyframe(time, value.x, float.PositiveInfinity, 0);
+                        keyframesY[count] = new Keyframe(time, value.y, float.PositiveInfinity, 0);
+                        keyframesZ[count] = new Keyframe(time, value.z, float.PositiveInfinity, 0);
+                        count++;
                     }
 
-                    count = times.Length;
                     break;
                 }
                 case InterpolationType.CubicSpline:
                 {
+                    if (addInitialKey)
+                    {
+                        var value = values[1];
+                        keyframesX[count] = new Keyframe(0, value.x, 0, 0, .5f, .5f);
+                        keyframesY[count] = new Keyframe(0, value.y, 0, 0, .5f, .5f);
+                        keyframesZ[count] = new Keyframe(0, value.z, 0, 0, .5f, .5f);
+                        count++;
+                    }
+
                     for (var i = 0; i < times.Length; i++)
                     {
                         var time = times[i];
-                        var inTangent = values[i * 3];
+                        var inTangent = addInitialKey && i == 0 ? new float3(0f) : values[i * 3];
                         var value = values[i * 3 + 1];
                         var outTangent = values[i * 3 + 2];
-                        keyframesX[i] = new Keyframe(time, value.x, inTangent.x, outTangent.x, .5f, .5f);
-                        keyframesY[i] = new Keyframe(time, value.y, inTangent.y, outTangent.y, .5f, .5f);
-                        keyframesZ[i] = new Keyframe(time, value.z, inTangent.z, outTangent.z, .5f, .5f);
+                        keyframesX[count] = new Keyframe(time, value.x, inTangent.x, outTangent.x, .5f, .5f);
+                        keyframesY[count] = new Keyframe(time, value.y, inTangent.y, outTangent.y, .5f, .5f);
+                        keyframesZ[count] = new Keyframe(time, value.z, inTangent.z, outTangent.z, .5f, .5f);
+                        count++;
                     }
 
-                    count = times.Length;
                     break;
                 }
                 default:
                 {
                     // LINEAR
-                    var prevTime = times[0];
+                    var prevTime = addInitialKey ? 0f : times[0];
                     var prevValue = values[0];
                     var inTangent = new float3(0f);
 
-                    for (var i = 1; i < times.Length; i++)
+                    for (var i = addInitialKey ? 0 : 1; i < times.Length; i++)
                     {
                         var time = times[i];
                         var value = values[i];
@@ -896,6 +984,7 @@ namespace GLTFast.Animations
             var curveX = new AnimationCurve();
             var curveY = new AnimationCurve();
             var curveZ = new AnimationCurve();
+            var addInitialKey = NeedsInitialKey(times);
 
 #if DEBUG
             uint duplicates = 0;
@@ -905,6 +994,14 @@ namespace GLTFast.Animations
             {
                 case InterpolationType.Step:
                 {
+                    if (addInitialKey)
+                    {
+                        var value = values[0];
+                        curveX.AddKey(new Keyframe(0, value.x, float.PositiveInfinity, 0));
+                        curveY.AddKey(new Keyframe(0, value.y, float.PositiveInfinity, 0));
+                        curveZ.AddKey(new Keyframe(0, value.z, float.PositiveInfinity, 0));
+                    }
+
                     for (var i = 0; i < times.Length; i++)
                     {
                         var time = times[i];
@@ -917,10 +1014,18 @@ namespace GLTFast.Animations
                 }
                 case InterpolationType.CubicSpline:
                 {
+                    if (addInitialKey)
+                    {
+                        var value = values[1];
+                        curveX.AddKey(new Keyframe(0, value.x, 0, 0, .5f, .5f));
+                        curveY.AddKey(new Keyframe(0, value.y, 0, 0, .5f, .5f));
+                        curveZ.AddKey(new Keyframe(0, value.z, 0, 0, .5f, .5f));
+                    }
+
                     for (var i = 0; i < times.Length; i++)
                     {
                         var time = times[i];
-                        var inTangent = values[i * 3];
+                        var inTangent = addInitialKey && i == 0 ? new float3(0f) : values[i * 3];
                         var value = values[i * 3 + 1];
                         var outTangent = values[i * 3 + 2];
                         curveX.AddKey(new Keyframe(time, value.x, inTangent.x, outTangent.x, .5f, .5f));
@@ -931,11 +1036,11 @@ namespace GLTFast.Animations
                 }
                 default:
                 { // LINEAR
-                    var prevTime = times[0];
+                    var prevTime = addInitialKey ? 0f : times[0];
                     var prevValue = values[0];
                     var inTangent = new float3(0f);
 
-                    for (var i = 1; i < times.Length; i++)
+                    for (var i = addInitialKey ? 0 : 1; i < times.Length; i++)
                     {
                         var time = times[i];
                         var value = values[i];
@@ -1005,6 +1110,7 @@ namespace GLTFast.Animations
         {
             Profiler.BeginSample("AnimationModuleLoader.AddScalarCurve");
             var curve = new AnimationCurve();
+            var addInitialKey = NeedsInitialKey(times);
 
 #if DEBUG
             uint duplicates = 0;
@@ -1015,6 +1121,11 @@ namespace GLTFast.Animations
                 case InterpolationType.Step:
                 case InterpolationType.CubicSpline:
                 {
+                    if (addInitialKey)
+                    {
+                        curve.AddKey(new Keyframe(0, 0));
+                    }
+
                     foreach (var time in times)
                     {
                         curve.AddKey(new Keyframe(time, 0));
@@ -1025,9 +1136,9 @@ namespace GLTFast.Animations
                 case InterpolationType.Linear:
                 default:
                 {
-                    var prevTime = times[0];
+                    var prevTime = addInitialKey ? 0f : times[0];
 
-                    for (var i = 1; i < times.Length; i++)
+                    for (var i = addInitialKey ? 0 : 1; i < times.Length; i++)
                     {
                         var time = times[i];
 
@@ -1073,6 +1184,7 @@ namespace GLTFast.Animations
         {
             Profiler.BeginSample("AnimationModuleLoader.AddScalarCurve");
             var curve = new AnimationCurve();
+            var addInitialKey = NeedsInitialKey(times);
 
 #if DEBUG
             uint duplicates = 0;
@@ -1082,6 +1194,12 @@ namespace GLTFast.Animations
             {
                 case InterpolationType.Step:
                 {
+                    if (addInitialKey)
+                    {
+                        var value = values[curveIndex];
+                        curve.AddKey(new Keyframe(0, value, float.PositiveInfinity, 0));
+                    }
+
                     for (var i = 0; i < times.Length; i++)
                     {
                         var time = times[i];
@@ -1093,11 +1211,17 @@ namespace GLTFast.Animations
                 }
                 case InterpolationType.CubicSpline:
                 {
+                    if (addInitialKey)
+                    {
+                        var value = values[curveIndex * 3 + 1];
+                        curve.AddKey(new Keyframe(0, value, 0, 0, .5f, .5f));
+                    }
+
                     for (var i = 0; i < times.Length; i++)
                     {
                         var time = times[i];
                         var valueIndex = i * valueStride + curveIndex;
-                        var inTangent = values[valueIndex * 3];
+                        var inTangent = addInitialKey && i == 0 ? 0f : values[valueIndex * 3];
                         var value = values[valueIndex * 3 + 1];
                         var outTangent = values[valueIndex * 3 + 2];
                         curve.AddKey(new Keyframe(time, value, inTangent, outTangent, .5f, .5f));
@@ -1106,11 +1230,11 @@ namespace GLTFast.Animations
                 }
                 default:
                 { // LINEAR
-                    var prevTime = times[0];
+                    var prevTime = addInitialKey ? 0f : times[0];
                     var prevValue = values[curveIndex];
                     var inTangent = 0f;
 
-                    for (var i = 1; i < times.Length; i++)
+                    for (var i = addInitialKey ? 0 : 1; i < times.Length; i++)
                     {
                         var time = times[i];
                         var valueIndex = i * valueStride + curveIndex;
