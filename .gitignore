@@ -61,6 +61,7 @@ sysinfo.txt
 /Projects/*/UserSettings
 /Projects/*/Assets/Resources*
 /Projects/*/Assets/StreamingAssets*
+/Projects/*/Assets/ActualImages*
 /Projects/*/Packages/packages-lock.json
 /Projects/*/Logs
 

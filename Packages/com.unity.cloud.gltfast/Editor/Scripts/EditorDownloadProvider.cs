@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Threading.Tasks;
 using Unity.Collections;
 using UnityEditor;
@@ -47,22 +46,21 @@ namespace Unity.Cloud.Gltfast.Editor
 
     class SyncFileLoader : IDownload
     {
-        ReadOnlyNativeArrayFromManagedArray<byte> m_ManagedNativeArray;
-        byte[] m_FileBytes;
+        NativeArray<byte> m_FileBytes;
+        bool m_Success;
+
+        protected SyncFileLoader() { }
 
         public SyncFileLoader(Uri url)
         {
-            var path = url.OriginalString;
-            if (File.Exists(path))
+            if (NativeFileReader.TryReadAllBytes(url.OriginalString, out m_FileBytes, out var error))
             {
-                m_FileBytes = File.ReadAllBytes(path);
-                // TODO: Is there a better way to load a file into a NativeArray, like AsyncReadManager?
-                m_ManagedNativeArray = new ReadOnlyNativeArrayFromManagedArray<byte>(m_FileBytes);
-                Data = m_ManagedNativeArray.Array.AsNativeArrayReadOnly();
+                Data = m_FileBytes.AsReadOnly();
+                m_Success = true;
             }
             else
             {
-                Error = $"Cannot find resource at path {path}";
+                Error = error;
             }
         }
 
@@ -70,11 +68,25 @@ namespace Unity.Cloud.Gltfast.Editor
         public bool MoveNext() { return false; }
         public void Reset() { }
 
-        public virtual bool Success => m_FileBytes != null;
+        public virtual bool Success => m_Success;
 
         public string Error { get; protected set; }
 
         public NativeArray<byte>.ReadOnly Data { get; private set; }
+
+        public string Text => m_Success ? System.Text.Encoding.UTF8.GetString(m_FileBytes.AsReadOnlySpan()) : null;
+
+        public bool? IsBinary
+        {
+            get
+            {
+                if (Success)
+                {
+                    return GltfGlobals.IsGltfBinary(Data);
+                }
+                return null;
+            }
+        }
 
         public void Dispose()
         {
@@ -86,9 +98,10 @@ namespace Unity.Cloud.Gltfast.Editor
         {
             if (disposing)
             {
-                m_ManagedNativeArray?.Dispose();
-                m_ManagedNativeArray = null;
-                m_FileBytes = null;
+                if (m_FileBytes.IsCreated)
+                    m_FileBytes.Dispose();
+                m_FileBytes = default;
+                m_Success = false;
                 Data = default;
             }
         }
@@ -102,7 +115,6 @@ namespace Unity.Cloud.Gltfast.Editor
         public override bool Success => Texture != null;
 
         public SyncTextureLoader(Uri url)
-            : base(url)
         {
             Texture = AssetDatabase.LoadAssetAtPath<Texture2D>(url.OriginalString);
             if (Texture == null)

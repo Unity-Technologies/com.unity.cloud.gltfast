@@ -19,6 +19,7 @@ class PerformanceJobsRecipe : RecipeBase
     const string k_EditorPath = "Editor";
     const string k_ProjectPath = "Projects/glTFast-Test";
     const string k_ArtifactsPath = "test-results~";
+    const string k_UtrPlatform = "StandaloneWindows64";
 
     IEnumerable<string> m_SupportedEditorVersions;
 
@@ -49,7 +50,7 @@ class PerformanceJobsRecipe : RecipeBase
         {
             commands.Add(UnityEditorCommand.Execute($"{k_EditorPath}\\Unity.exe", CreateTestGltfFiles));
         }
-        commands.Add(UtrCommand.Run(SystemType.Windows, CreateUtrCommand).ToRetryCommand(2, 20));
+        commands.Add(UtrCommand.Run(HostPlatform.Windows, CreateUtrCommand).ToRetryCommand(2, 20));
 
         return FluentJob
             .Create($"Performance_{editorVersion}_Win")
@@ -97,7 +98,7 @@ class PerformanceJobsRecipe : RecipeBase
         builder
             .WithSuite(UtrTestSuiteType.Playmode)
             .WithScriptingBackend(ScriptingBackendType.Il2Cpp)
-            .WithPlatform(SystemType.Windows)
+            .WithPlatform(k_UtrPlatform)
             .WithEditor(k_EditorPath)
             .WithTestProject(k_ProjectPath)
             .WithArtifacts(k_ArtifactsPath)

@@ -14,7 +14,7 @@ reset_materials()
     pushd Projects/glTFast-Test/Assets/
     git restore 'Settings/*PipelineAsset.asset'
     git restore 'Settings/*ForwardRenderer.asset'
-    git restore 'UniversalRenderPipelineGlobalSettings.asset'
+    git restore 'Settings/UniversalRenderPipelineGlobalSettings.asset'
     popd
 
     git restore 'Projects/glTFast-Test/ProjectSettings/GraphicsSettings.asset'

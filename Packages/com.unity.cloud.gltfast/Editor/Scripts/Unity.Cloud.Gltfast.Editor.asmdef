@@ -30,11 +30,6 @@
             "define": "USING_HDRP"
         },
         {
-            "name": "com.unity.testframework.graphics",
-            "expression": "7.7.0",
-            "define": "GLTFAST_RENDER_TEST"
-        },
-        {
             "name": "com.unity.modules.animation",
             "expression": "1.0.0",
             "define": "UNITY_ANIMATION"
