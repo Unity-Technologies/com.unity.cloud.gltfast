@@ -5,13 +5,13 @@ using UnityEngine;
 
 namespace GLTFast
 {
-    readonly struct GlbBinChunk
+    readonly struct GltfBufferRange
     {
-        public int Start { get; }
+        public long Start { get; }
 
-        public uint Length { get; }
+        public long Length { get; }
 
-        public GlbBinChunk(int start, uint length)
+        public GltfBufferRange(long start, long length)
         {
             Start = start;
             Length = length;

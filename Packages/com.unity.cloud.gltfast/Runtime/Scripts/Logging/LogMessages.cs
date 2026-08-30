@@ -110,9 +110,17 @@ namespace GLTFast.Logging
         /// </summary>
         ExportImageFailed,
         /// <summary>
+        /// glTF-Binary length exceeds C# maximum byte array size
+        /// </summary>
+        GltfBinaryTooLarge,
+        /// <summary>
         /// Not a glTF-binary file
         /// </summary>
         GltfNotBinary,
+        /// <summary>
+        /// Unsupported glTF chunk encoding (such as compression or encryption)
+        /// </summary>
+        GltfUnsupportedChunkEncoding,
         /// <summary>
         /// Unsupported glTF version
         /// </summary>
@@ -306,8 +314,10 @@ See details in corresponding issue at https://github.com/atteneder/glTFast/issue
             { LogCode.EmbedSlow, "JSON embed buffers are slow! consider using glTF binary" },
             { LogCode.ExtensionUnsupported, "glTF extension {0} is not supported" },
             { LogCode.ExportImageFailed, "Export image failed" },
+            { LogCode.GltfBinaryTooLarge, "glTF-Binary length {0} exceeds C# maximum byte array size {1}" },
             { LogCode.GltfNotBinary, "Not a glTF-binary file" },
             { LogCode.UnexpectedEndOfContent, "Unexpected end of content" },
+            { LogCode.GltfUnsupportedChunkEncoding, "Unsupported glTF chunk encoding {0} (data is compressed or encrypted)" },
             { LogCode.GltfUnsupportedVersion, "Unsupported glTF version {0}" },
             { LogCode.HierarchyInvalid, "Invalid hierarchy" },
             { LogCode.ImageConversionNotEnabled, $"Jpeg/PNG textures failed because required built-in packages \"Image Conversion\"/\"Unity Web Request Texture\" are not enabled. {k_LinkProjectSetupTextureSupport}" },

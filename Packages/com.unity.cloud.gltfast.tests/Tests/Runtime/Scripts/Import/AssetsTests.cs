@@ -26,7 +26,7 @@ namespace GLTFast.Tests.Import
             m_Runner.Dispose();
         }
 
-        [GltfTestCase("glTF-test-models", 65)]
+        [GltfTestCase("glTF-test-models", 66)]
         public IEnumerator GltfTestModels(GltfTestCaseSet testCaseSet, GltfTestCase testCase)
         {
             yield return AsyncWrapper.WaitForTask(m_Runner.Run(testCaseSet, testCase));

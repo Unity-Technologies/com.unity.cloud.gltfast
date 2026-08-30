@@ -5,7 +5,7 @@
 Textured cube in three format variants:
 
 1. glTF (JSON) with separate buffer and texture files.
-2. glTF-Binary (.glb)
+2. glTF-Binary (.glb) version 2 and version 3.
 3. glTF (JSON) with embedded buffer and texture.
 
 ## Legal

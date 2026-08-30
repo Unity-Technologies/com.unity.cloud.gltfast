@@ -197,10 +197,10 @@ namespace GLTFast
 
         ImportSettings m_Settings;
 
-        ReadOnlyNativeArray<byte>[] m_Buffers;
+        ReadOnlyNativeArray<byte>[] m_BufferData;
         List<IDisposable> m_VolatileDisposables;
 
-        GlbBinChunk[] m_BinChunks;
+        GltfBufferRange[] m_BufferRanges;
 
         Dictionary<int, Task<bool>> m_BufferLoadTasks;
         Dictionary<int, Task<ImageResult>> m_TextureLoadTasks;
@@ -228,7 +228,7 @@ namespace GLTFast
 
         /// optional glTF-binary buffer
         /// https://github.com/KhronosGroup/glTF/tree/master/specification/2.0#binary-buffer
-        GlbBinChunk? m_GlbBinChunk;
+        GltfBufferRange? m_GlbBinChunk;
 
 #if MESHOPT_IS_ENABLED
         Dictionary<int, NativeArray<byte>> m_MeshoptBufferViews;
@@ -1491,8 +1491,8 @@ namespace GLTFast
                 var bufferCount = Root.Buffers.Count;
                 if (bufferCount > 0)
                 {
-                    m_Buffers = new ReadOnlyNativeArray<byte>[bufferCount];
-                    m_BinChunks = new GlbBinChunk[bufferCount];
+                    m_BufferData = new ReadOnlyNativeArray<byte>[bufferCount];
+                    m_BufferRanges = new GltfBufferRange[bufferCount];
                 }
 
                 for (var i = 0; i < bufferCount; i++)
@@ -1545,10 +1545,10 @@ namespace GLTFast
             }
             m_VolatileDisposables ??= new List<IDisposable>();
             m_VolatileDisposables.Add(data);
-            m_Buffers[bufferIndex] = new ReadOnlyNativeArray<byte>(data);
+            m_BufferData[bufferIndex] = new ReadOnlyNativeArray<byte>(data);
             if (bufferIndex != 0 || !m_GlbBinChunk.HasValue)
             {
-                m_BinChunks[bufferIndex] = new GlbBinChunk(0, (uint)m_Buffers[bufferIndex].Length);
+                m_BufferRanges[bufferIndex] = new GltfBufferRange(0, (uint)m_BufferData[bufferIndex].Length);
             }
             return true;
         }
@@ -1936,12 +1936,12 @@ namespace GLTFast
                 if (download is INativeDownload nativeDownload)
                 {
                     var wrapper = new ReadOnlyNativeArrayFromNativeArray<byte>(nativeDownload.NativeData);
-                    m_Buffers[index] = wrapper.Array;
+                    m_BufferData[index] = wrapper.Array;
                 }
                 else
                 {
                     var wrapper = new ReadOnlyNativeArrayFromManagedArray<byte>(download.Data);
-                    m_Buffers[index] = wrapper.Array;
+                    m_BufferData[index] = wrapper.Array;
                     m_VolatileDisposables.Add(wrapper);
                 }
 
@@ -1951,7 +1951,7 @@ namespace GLTFast
 
                 if (index != 0 || !m_GlbBinChunk.HasValue)
                 {
-                    m_BinChunks[index] = new GlbBinChunk(0, (uint)m_Buffers[index].Length);
+                    m_BufferRanges[index] = new GltfBufferRange(0, (uint)m_BufferData[index].Length);
                 }
 
                 return true;
@@ -2005,6 +2005,12 @@ namespace GLTFast
             return false;
         }
 
+        /// <summary>
+        /// The maximum size of a byte array as limited by C# (a bit under 2 GiB).
+        /// https://learn.microsoft.com/en-us/dotnet/framework/configure-apps/file-schema/runtime/gcallowverylargeobjects-element
+        /// </summary>
+        private const long k_MaxByteArraySize = 0x7FFFFFC7L;
+
         async Task<bool> LoadGltfBinaryBuffer(
             NativeArray<byte>.ReadOnly bytes,
             CancellationToken cancellationToken
@@ -2020,23 +2026,40 @@ namespace GLTFast
             }
 
             var version = bytes.ReadUInt32(4);
-
-            if (version != 2)
+            long totalLength;
+            long index;
+            long chAlignmentBitmask;
+            if (version == 2)
+            {
+                totalLength = bytes.ReadUInt32(8);
+                index = 12;
+                chAlignmentBitmask = 3;
+            }
+            else if (version == 3)
+            {
+                totalLength = (long)bytes.ReadUInt64(8);
+                index = 16;
+                chAlignmentBitmask = 7;
+            }
+            else
             {
                 Logger?.Error(LogCode.GltfUnsupportedVersion, version.ToString());
                 Profiler.EndSample();
                 return false;
             }
-
-            var totalLength = bytes.ReadUInt32(8);
-            if (totalLength > bytes.Length)
+            if (totalLength > k_MaxByteArraySize)
+            {
+                Logger?.Error(LogCode.GltfBinaryTooLarge, totalLength.ToString(), k_MaxByteArraySize.ToString());
+                Profiler.EndSample();
+                return false;
+            }
+            long bytesLength = (long)bytes.Length;
+            if (totalLength > bytesLength)
             {
                 Logger?.Error(LogCode.UnexpectedEndOfContent);
                 Profiler.EndSample();
                 return false;
             }
-
-            int index = 12; // first chunk header
 
             Profiler.EndSample();
 
@@ -2048,11 +2071,32 @@ namespace GLTFast
                     Logger?.Error(LogCode.ChunkIncomplete);
                     return false;
                 }
-
-                var chLength = bytes.ReadUInt32(index);
-                index += 4;
-                var chType = bytes.ReadUInt32(index);
-                index += 4;
+                // Read the chunk header (type, encoding, length).
+                uint chType = 0;
+                uint chEncoding = 0;
+                long chLength = 0;
+                if (version == 2)
+                {
+                    chLength = (long)bytes.ReadUInt32(index);
+                    index += 4;
+                    chType = bytes.ReadUInt32(index);
+                    index += 4;
+                }
+                else if (version == 3)
+                {
+                    chType = bytes.ReadUInt32(index);
+                    index += 4;
+                    chEncoding = bytes.ReadUInt32(index);
+                    index += 4;
+                    chLength = (long)bytes.ReadUInt64(index);
+                    index += 8;
+                }
+                // Only support plainly encoded chunks for now.
+                if (chEncoding != 0)
+                {
+                    Logger?.Error(LogCode.GltfUnsupportedChunkEncoding, chEncoding.ToString());
+                    return false;
+                }
 
                 if (index + chLength > totalLength)
                 {
@@ -2063,14 +2107,14 @@ namespace GLTFast
                 if (chType == (uint)ChunkFormat.Binary)
                 {
                     Assert.IsFalse(m_GlbBinChunk.HasValue); // There can only be one binary chunk
-                    m_GlbBinChunk = new GlbBinChunk(index, chLength);
+                    m_GlbBinChunk = new GltfBufferRange(index, chLength);
                 }
                 else if (chType == (uint)ChunkFormat.Json)
                 {
                     Assert.IsNull(Root);
 
                     Profiler.BeginSample("GetJSON");
-                    var bytesStream = bytes.ToUnmanagedMemoryStream((uint)index, chLength);
+                    var bytesStream = bytes.ToUnmanagedMemoryStream((uint)index, (uint)chLength);
                     var reader = new StreamReader(bytesStream);
                     var json = await reader.ReadToEndAsync();
                     Profiler.EndSample();
@@ -2087,8 +2131,9 @@ namespace GLTFast
                     Logger?.Error(LogCode.ChunkUnknown, chType.ToString());
                     return false;
                 }
-
-                index += (int)chLength;
+                // GLB spec says that the starts of chunks must be aligned to 4 or 8 byte boundaries, depending on the GLB version.
+                long paddedChLength = (chLength + chAlignmentBitmask) & ~chAlignmentBitmask;
+                index += paddedChLength;
             }
 
             if (Root == null)
@@ -2097,11 +2142,11 @@ namespace GLTFast
                 return false;
             }
 
-            if (m_GlbBinChunk.HasValue && m_BinChunks != null)
+            if (m_GlbBinChunk.HasValue && m_BufferRanges != null)
             {
-                m_BinChunks[0] = m_GlbBinChunk.Value;
+                m_BufferRanges[0] = m_GlbBinChunk.Value;
                 var wrapper = new ReadOnlyNativeArrayFromNativeArray<byte>(bytes);
-                m_Buffers[0] = wrapper.Array;
+                m_BufferData[0] = wrapper.Array;
             }
             LoadImages(cancellationToken);
             return true;
@@ -2109,7 +2154,7 @@ namespace GLTFast
 
         ReadOnlyNativeArray<byte> GetBuffer(int index)
         {
-            return m_Buffers[index];
+            return m_BufferData[index];
         }
 
         ReadOnlyNativeArray<byte> IGltfBuffers.GetBufferView(int bufferViewIndex, out int byteStride, int offset, int length)
@@ -2202,13 +2247,13 @@ namespace GLTFast
         {
             Assert.IsTrue(offset >= 0);
             var bufferIndex = bufferView.Buffer;
-            Assert.IsNotNull(m_Buffers);
-            Assert.IsTrue(bufferIndex < m_Buffers.Length);
-            Assert.IsTrue(m_Buffers[bufferIndex].IsCreated);
-            var chunk = m_BinChunks[bufferIndex];
+            Assert.IsNotNull(m_BufferData);
+            Assert.IsTrue(bufferIndex < m_BufferData.Length);
+            Assert.IsTrue(m_BufferData[bufferIndex].IsCreated);
+            var chunk = m_BufferRanges[bufferIndex];
             var totalOffset = chunk.Start + bufferView.ByteOffset + offset;
             Assert.IsTrue(bufferView.ByteOffset + offset <= chunk.Length);
-            return m_Buffers[bufferIndex].GetSubArray(totalOffset, count * UnsafeUtility.SizeOf<T>()).Reinterpret<T>();
+            return m_BufferData[bufferIndex].GetSubArray((int)totalOffset, count * UnsafeUtility.SizeOf<T>()).Reinterpret<T>();
         }
 
         ReadOnlyNativeStridedArray<T> GetStridedAccessorData<T>(
@@ -2219,14 +2264,14 @@ namespace GLTFast
         {
             Assert.IsTrue(offset >= 0);
             var bufferIndex = bufferView.Buffer;
-            Assert.IsNotNull(m_Buffers);
-            Assert.IsTrue(bufferIndex < m_Buffers.Length);
-            Assert.IsTrue(m_Buffers[bufferIndex].IsCreated);
-            var chunk = m_BinChunks[bufferIndex];
+            Assert.IsNotNull(m_BufferData);
+            Assert.IsTrue(bufferIndex < m_BufferData.Length);
+            Assert.IsTrue(m_BufferData[bufferIndex].IsCreated);
+            var chunk = m_BufferRanges[bufferIndex];
             var totalOffset = chunk.Start + bufferView.ByteOffset + offset;
             Assert.IsTrue(bufferView.ByteOffset + offset <= chunk.Length);
             var byteStride = bufferView.ByteStride > 0 ? bufferView.ByteStride : UnsafeUtility.SizeOf(typeof(T));
-            return m_Buffers[bufferIndex].ToStrided<T>(totalOffset, count, byteStride);
+            return m_BufferData[bufferIndex].ToStrided<T>((int)totalOffset, count, byteStride);
         }
 
         async ValueTask<NativeArray<byte>.ReadOnly> GetBufferViewAsync(
@@ -2236,7 +2281,7 @@ namespace GLTFast
             )
         {
             var bufferIndex = bufferView.Buffer;
-            if (!m_Buffers[bufferIndex].IsCreated)
+            if (!m_BufferData[bufferIndex].IsCreated)
             {
                 var download = m_BufferLoadTasks?[bufferIndex];
                 if (download != null)
@@ -2264,16 +2309,16 @@ namespace GLTFast
             Assert.IsTrue(offset + length <= bufferView.ByteLength);
 
             var bufferIndex = bufferView.Buffer;
-            Assert.IsNotNull(m_Buffers);
-            Assert.IsTrue(bufferIndex < m_Buffers.Length);
-            Assert.IsTrue(m_Buffers[bufferIndex].IsCreated);
+            Assert.IsNotNull(m_BufferData);
+            Assert.IsTrue(bufferIndex < m_BufferData.Length);
+            Assert.IsTrue(m_BufferData[bufferIndex].IsCreated);
 
-            var chunk = m_BinChunks[bufferIndex];
-            var nativeBuffer = m_Buffers[bufferIndex];
+            var chunk = m_BufferRanges[bufferIndex];
+            var nativeBuffer = m_BufferData[bufferIndex];
             var totalOffset = chunk.Start + bufferView.ByteOffset + offset;
             Assert.IsTrue(bufferView.ByteOffset + offset <= chunk.Length);
             Assert.IsTrue(totalOffset + length <= nativeBuffer.Length);
-            return m_Buffers[bufferIndex].GetSubArray(totalOffset, length);
+            return m_BufferData[bufferIndex].GetSubArray((int)totalOffset, length);
         }
 
 #if MESHOPT_IS_ENABLED
@@ -2939,8 +2984,8 @@ namespace GLTFast
         /// </summary>
         void DisposeVolatileData()
         {
-            m_Buffers = null;
-            m_BinChunks = null;
+            m_BufferData = null;
+            m_BufferRanges = null;
 
             if (m_VolatileDisposables != null)
             {
@@ -4037,7 +4082,7 @@ namespace GLTFast
                 var bufferIndex = bufferView.buffer;
                 var buffer = GetBuffer(bufferIndex);
                 data = (byte*)buffer.GetUnsafeReadOnlyPtr()
-                    + (accessor.byteOffset + bufferView.byteOffset + m_BinChunks[bufferIndex].Start);
+                    + (accessor.byteOffset + bufferView.byteOffset + m_BufferRanges[bufferIndex].Start);
             }
 
             // // Alternative that uses NativeArray/Slice
@@ -4065,7 +4110,7 @@ namespace GLTFast
                 var bufferIndex = bufferView.buffer;
                 var buffer = GetBuffer(bufferIndex);
                 data = (byte*)buffer.GetUnsafeReadOnlyPtr()
-                    + (sparseIndices.byteOffset + bufferView.byteOffset + m_BinChunks[bufferIndex].Start);
+                    + (sparseIndices.byteOffset + bufferView.byteOffset + m_BufferRanges[bufferIndex].Start);
             }
         }
 
@@ -4089,7 +4134,7 @@ namespace GLTFast
                 var bufferIndex = bufferView.buffer;
                 var buffer = GetBuffer(bufferIndex);
                 data = (byte*)buffer.GetUnsafeReadOnlyPtr()
-                    + (sparseValues.byteOffset + bufferView.byteOffset + m_BinChunks[bufferIndex].Start);
+                    + (sparseValues.byteOffset + bufferView.byteOffset + m_BufferRanges[bufferIndex].Start);
             }
         }
 

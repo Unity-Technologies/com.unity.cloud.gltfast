@@ -36,7 +36,7 @@ namespace GLTFast.Editor.Tests
             AssetDatabase.Refresh();
         }
 
-        [GltfTestCase("glTF-test-models", 65)]
+        [GltfTestCase("glTF-test-models", 66)]
         public IEnumerator GltfTestModels(GltfTestCaseSet testCaseSet, GltfTestCase testCase)
         {
 #if GLTFAST_EDITOR_IMPORT_OFF

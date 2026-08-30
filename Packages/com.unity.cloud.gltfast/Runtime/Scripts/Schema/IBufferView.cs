@@ -26,7 +26,7 @@ namespace GLTFast.Schema
         int ByteLength { get; }
 
         /// <summary>
-        /// The stride, in bytes, between vertex attributes.
+        /// The stride, in bytes, between vertex attributes. If defined, must be a multiple of 4 and between 4 and 252.
         /// </summary>
         /// <remarks>When this is 0 or negative, data is tightly packed.</remarks>
         int ByteStride { get; }

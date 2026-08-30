@@ -32,9 +32,15 @@ namespace GLTFast
             );
         }
 
-        internal static unsafe uint ReadUInt32(this NativeArray<byte>.ReadOnly data, int offset)
+        internal static unsafe uint ReadUInt32(this NativeArray<byte>.ReadOnly data, long offset)
         {
             var ptr = (uint*)((byte*)data.GetUnsafeReadOnlyPtr() + offset);
+            return *ptr;
+        }
+
+        internal static unsafe ulong ReadUInt64(this NativeArray<byte>.ReadOnly data, long offset)
+        {
+            var ptr = (ulong*)((byte*)data.GetUnsafeReadOnlyPtr() + offset);
             return *ptr;
         }
     }
