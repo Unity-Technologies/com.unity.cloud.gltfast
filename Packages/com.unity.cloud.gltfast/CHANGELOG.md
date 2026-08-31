@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- Main thread stall when loading glTF-binary files with large JSON chunks: the JSON string decode now runs on a background thread (gated by the defer agent, like the JSON parse), instead of always executing synchronously on the calling thread.
+
+## [6.19.0] - 2026-05-19
+
 ### Added
 - [IInstantiator.AddMesh](xref:GLTFast.IInstantiator.AddMesh*) and [IInstantiator.AddMeshInstanced](xref:GLTFast.IInstantiator.AddMeshInstanced*), replacing the `Primitive` naming.
 - `LogCode.AnimationComponentFail`
