@@ -36,6 +36,9 @@ namespace GLTFast.Schema
         /// <inheritdoc cref="MaterialIor"/>
         public MaterialIor KHR_materials_ior;
 
+        /// <inheritdoc cref="MaterialEmissiveStrength"/>
+        public MaterialEmissiveStrength KHR_materials_emissive_strength;
+
         // ReSharper restore InconsistentNaming
 
         internal void GltfSerialize(JsonWriter writer)
@@ -75,6 +78,11 @@ namespace GLTFast.Schema
             {
                 writer.AddProperty("KHR_materials_ior");
                 KHR_materials_ior.GltfSerialize(writer);
+            }
+            if (KHR_materials_emissive_strength != null)
+            {
+                writer.AddProperty("KHR_materials_emissive_strength");
+                KHR_materials_emissive_strength.GltfSerialize(writer);
             }
             writer.Close();
         }

@@ -64,6 +64,14 @@ All [`GltfImport.Load`][GltfImportLoad] overloads accept an optional instance of
 
 [!code-cs [import-settings](../Runtime/DocExamples/LoadGltfFromMemory.cs#ImportSettings)]
 
+#### Unsupported Required Extensions
+
+By default (`UnsupportedExtensionHandling.Warn`), glTFast imports a glTF asset even if it lists a
+`extensionsRequired` entry that neither glTFast nor any registered import add-on supports - it
+logs a warning and continues, since most extensions degrade gracefully. Set
+[`ImportSettings.UnsupportedExtensionHandling`][ImportSettings] to `UnsupportedExtensionHandling.Abort`
+to restore the strict behavior of failing the import instead.
+
 ### Custom Post-Loading Behavior
 
 The async `Load` method can be awaited and followed up by custom behavior.

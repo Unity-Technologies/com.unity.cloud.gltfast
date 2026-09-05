@@ -174,6 +174,7 @@ namespace GLTFast
             var settings = root.Query<VisualElement>(name: "AdvancedSettings").First();
             ImportSettingsEditor.CreateUI(serializedObject, settings.contentContainer, "importSettings.", true);
             InstantiationSettingsEditor.CreateUI(serializedObject, settings.contentContainer, "instantiationSettings.");
+            EditorImportSettingsEditor.CreateUI(serializedObject, settings.contentContainer, "editorImportSettings.");
 
             // Apply the changes so Undo/Redo is working
             serializedObject.ApplyModifiedProperties();

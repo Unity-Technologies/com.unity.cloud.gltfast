@@ -582,6 +582,11 @@ namespace GLTFast.Schema
                     {
                         mat.Extensions.KHR_materials_specular = null;
                     }
+
+                    if (fake.KHR_materials_emissive_strength == null)
+                    {
+                        mat.Extensions.KHR_materials_emissive_strength = null;
+                    }
                 }
             }
 

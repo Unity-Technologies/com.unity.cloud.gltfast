@@ -107,7 +107,7 @@ glTF defines an [extension mechanism][gltf-ext] that allows the base format to b
 | KHR_materials_clearcoat | ✅ | ✅
 | KHR_materials_diffuse_transmission | | |
 | KHR_materials_dispersion | | |
-| KHR_materials_emissive_strength | | |
+| KHR_materials_emissive_strength | ✅ | |
 | KHR_materials_ior | [ℹ️][IOR] |
 | KHR_materials_iridescence | | |
 | KHR_materials_sheen | [ℹ️][Sheen] |
@@ -126,7 +126,7 @@ glTF defines an [extension mechanism][gltf-ext] that allows the base format to b
 | ¹EXT_mesh_gpu_instancing | ✅ |
 | EXT_meshopt_compression | ✅ |
 | EXT_lights_image_based | [ℹ️][IBL] |
-| EXT_texture_webp | | |
+| EXT_texture_webp | ✅ | |
 
 ¹: Without support for custom vertex attributes (e.g. `_ID`)
 
@@ -182,6 +182,7 @@ See [glTFast Add-on API](UseCaseCustomExtras.md) for an example to import the `e
 | Normal texture                | ✅  | ✅   | ✅       |
 | Occlusion texture             | ✅  | ✅   | ✅       |
 | Emission texture              | ✅  | ✅   | ✅       |
+| Emissive strength              | ✅  | ✅   | ✅       |
 | Alpha modes OPAQUE/MASK/BLEND | ✅  | ✅   | ✅       |
 | Double sided / Two sided      | ✅  | ✅   | ✅       |
 | Vertex colors                 | ✅  | ✅   | ✅       |

@@ -15,6 +15,7 @@ namespace GLTFast.FakeSchema
         public string KHR_materials_sheen;
         public string KHR_materials_ior;
         public string KHR_materials_specular;
+        public string KHR_materials_emissive_strength;
         // ReSharper restore InconsistentNaming
     }
 }
