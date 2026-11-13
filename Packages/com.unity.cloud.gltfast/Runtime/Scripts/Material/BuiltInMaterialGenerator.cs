@@ -384,7 +384,7 @@ namespace GLTFast.Materials
 
             if (gltfMaterial.Emissive != Color.black)
             {
-                material.SetColor(MaterialProperty.EmissiveFactor, gltfMaterial.Emissive);
+                material.SetColor(MaterialProperty.EmissiveFactor, GetEmissive(gltfMaterial));
                 material.EnableKeyword(k_EmissionKeyword);
             }
 

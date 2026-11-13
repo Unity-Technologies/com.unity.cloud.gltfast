@@ -17,12 +17,23 @@ namespace GLTFast.Addons
         static List<ImportAddon> s_Addons;
 
         /// <summary>
-        /// Registers an add-on.
+        /// Registers an add-on. If an add-on of the same concrete type is already registered,
+        /// the duplicate is skipped (and a warning logged) rather than registered a second time,
+        /// which would otherwise make two live instances claim every matching texture/extension.
         /// </summary>
         /// <param name="addon">Import add-on to register.</param>
         public static void RegisterImportAddon(ImportAddon addon)
         {
             CertifyDefaultAddonsRegistered();
+            var type = addon.GetType();
+            foreach (var existing in s_Addons)
+            {
+                if (existing.GetType() == type)
+                {
+                    Debug.LogWarning($"An import add-on of type {type} is already registered. Skipping duplicate registration.");
+                    return;
+                }
+            }
             s_Addons.Add(addon);
         }
 

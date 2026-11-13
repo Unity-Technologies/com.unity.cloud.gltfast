@@ -30,6 +30,8 @@ namespace GLTFast.Editor
                 Utils.CreateProperty(container, serializedObject.FindProperty($"{pathPrefix}animationMethod"));
             }
 
+            Utils.CreateProperty(container, serializedObject.FindProperty($"{pathPrefix}unsupportedExtensionHandling"));
+
             // Group texture related properties in a foldout
             var properties = new[] {
                 serializedObject.FindProperty($"{pathPrefix}generateMipMaps"),
@@ -40,6 +42,21 @@ namespace GLTFast.Editor
             };
             var foldout = new Foldout { text = "Textures", value = true };
             Utils.CreateProperties(foldout, properties);
+
+            var uncompressedTexturesField = Utils.CreateProperty(
+                foldout,
+                serializedObject.FindProperty($"{pathPrefix}uncompressedTextures")
+                );
+            if (importerContext)
+            {
+                // Design-time imports always force this on (see GltfImporter.OnImportAsset),
+                // so surface it as disabled here rather than a checkbox that silently reverts.
+                uncompressedTexturesField.SetEnabled(false);
+                uncompressedTexturesField.tooltip = "Design-time imports always transcode KTX/Basis "
+                    + "textures uncompressed, because the Editor's graphics device is not the build "
+                    + "target's. Use Texture Compression below to GPU-compress for the build target instead.";
+            }
+
             container.Add(foldout);
         }
     }

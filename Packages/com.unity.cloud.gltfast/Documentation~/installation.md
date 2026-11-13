@@ -27,6 +27,7 @@ There are some related package that improve *Unity glTFast* by extending its fea
 - [Draco&trade; for Unity][DracoForUnity] (provides support for [KHR_draco_mesh_compression][ExtDraco])
 - [KTX&trade; for Unity][KtxUnity] (provides support for [KHR_texture_basisu][ExtBasisU])
 - [*meshoptimizer decompression for Unity*][Meshopt] (provides support for [EXT_meshopt_compression][ExtMeshopt])
+- *com.netpyoung.webp* (provides support for EXT_texture_webp)
 
 ## Project Setup
 

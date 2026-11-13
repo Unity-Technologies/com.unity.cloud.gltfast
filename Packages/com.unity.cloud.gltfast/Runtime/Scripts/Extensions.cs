@@ -73,6 +73,10 @@ namespace GLTFast
         /// <a href="https://github.com/KhronosGroup/glTF/blob/main/extensions/2.0/Vendor/EXT_texture_webp/README.md">EXT_texture_webp</a> glTF extension
         /// </summary>
         TextureWebP,
+        /// <summary>
+        /// <a href="https://github.com/KhronosGroup/glTF/tree/main/extensions/2.0/Khronos/KHR_materials_emissive_strength">KHR_materials_emissive_strength</a> glTF extension
+        /// </summary>
+        MaterialsEmissiveStrength,
     }
 
     /// <summary>
@@ -112,6 +116,8 @@ namespace GLTFast
         public const string MaterialsSpecular = "KHR_materials_specular";
         /// <inheritdoc cref="Extension.MaterialsVariants"/>
         public const string MaterialsVariants = "KHR_materials_variants";
+        /// <inheritdoc cref="Extension.MaterialsEmissiveStrength"/>
+        public const string MaterialsEmissiveStrength = "KHR_materials_emissive_strength";
 
         /// <summary>
         /// Returns the official name of the glTF extension
@@ -154,6 +160,8 @@ namespace GLTFast
                     return MaterialsSpecular;
                 case Extension.MaterialsSheen:
                     return MaterialsSheen;
+                case Extension.MaterialsEmissiveStrength:
+                    return MaterialsEmissiveStrength;
                 default:
                     return null;
             }

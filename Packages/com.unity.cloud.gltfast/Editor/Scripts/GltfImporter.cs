@@ -34,9 +34,12 @@ namespace GLTFast.Editor
 {
 
 #if ENABLE_DEFAULT_GLB_IMPORTER
-    [ScriptedImporter(1, new[] { "gltf", "glb" })]
+    // Version bumped to 2: forces existing imports to be reimported once, so cached texture
+    // artifacts pick up the design-time uncompressed-KTX-transcoding fix and build-target
+    // texture compression (see ImportSettings.UncompressedTextures, EditorTextureCompression).
+    [ScriptedImporter(2, new[] { "gltf", "glb" })]
 #else
-    [ScriptedImporter(1, null, overrideExts: new[] { "gltf","glb" })]
+    [ScriptedImporter(2, null, overrideExts: new[] { "gltf","glb" })]
 #endif
     class GltfImporter : ScriptedImporter
     {
@@ -113,6 +116,31 @@ namespace GLTFast.Editor
                 instantiationSettings = new InstantiationSettings();
             }
 
+            // All three of the following are user-facing SerializedFields. OnImportAsset must
+            // never permanently mutate them - the inspector's SerializedObject reads the same
+            // instance, so an unrestored change would get baked into the .meta on the next
+            // unrelated Apply. Restored in the finally block below.
+            var uncompressedTexturesRequested = importSettings.UncompressedTextures;
+            var texturesReadableRequested = importSettings.TexturesReadable;
+            var sceneObjectCreationRequested = instantiationSettings.SceneObjectCreation;
+
+            try
+            {
+
+            // Design-time imports must never bake a texture format chosen for the Editor's
+            // graphics device (see ImportSettings.UncompressedTextures) - it is not necessarily
+            // the build target's device. Forced unconditionally, not just for freshly created
+            // settings, so existing .meta files pick up the fix too.
+            importSettings.UncompressedTextures = true;
+
+            // Texture compression (below) needs CPU access to decoded pixel data, but a texture
+            // decoded non-readable is permanently locked that way - Reinitialize/SetPixels32
+            // cannot undo it. So textures are decoded readable here whenever compression might
+            // actually run, and locked back down to whatever was actually requested once
+            // compression has had its turn.
+            var needsReadableForCompression = editorImportSettings.textureCompression != EditorImportSettings.TextureCompressionMode.None;
+            importSettings.TexturesReadable = texturesReadableRequested || needsReadableForCompression;
+
             var success = AsyncHelpers.RunSync(() => m_Gltf.Load(ctx.assetPath, importSettings));
 
             CollectingLogger instantiationLogger = null;
@@ -161,14 +189,37 @@ namespace GLTFast.Editor
                     }
                 }
 
+                if (m_Gltf.TextureCount > 0)
+                {
+                    // Ties this import to the active build target's texture compression format,
+                    // so it reimports on a platform switch, but never on an unrelated build.
+                    ctx.DependsOnCustomDependency(EditorTextureCompression.CustomDependencyName);
+                }
+
+                var processedTextures = new HashSet<Texture2D>();
                 for (var i = 0; i < m_Gltf.TextureCount; i++)
                 {
                     var texture = m_Gltf.GetTexture(i);
-                    if (texture != null)
+                    if (texture != null && processedTextures.Add(texture))
                     {
                         var textureAssetPath = AssetDatabase.GetAssetPath(texture);
                         if (string.IsNullOrEmpty(textureAssetPath))
                         {
+                            if (editorImportSettings.textureCompression != EditorImportSettings.TextureCompressionMode.None
+                                && !EditorTextureCompression.TryCompress(texture, editorImportSettings.textureCompressionQuality, out var compressionWarning)
+                                && compressionWarning != null)
+                            {
+                                Debug.LogWarning($"{texture.name}: {compressionWarning}", this);
+                            }
+                            if (needsReadableForCompression && !texturesReadableRequested)
+                            {
+                                // Decoding was forced readable above so compression could access
+                                // pixel data; restore the actually requested (default: non-readable)
+                                // state now that it's done. Only reachable when readability was
+                                // actually forced - otherwise the texture was never made readable
+                                // in the first place and Apply() would throw.
+                                texture.Apply(false, true);
+                            }
                             AddObjectToAsset(ctx, $"textures/{texture.name}", texture);
                         }
                     }
@@ -296,6 +347,15 @@ namespace GLTFast.Editor
             reportItems = reportItemList.ToArray();
 
             m_Gltf.DisposeRequiredForInstantiationData();
+
+            }
+            finally
+            {
+                // Restore user-facing settings mutated above - see the comment where they were captured.
+                importSettings.UncompressedTextures = uncompressedTexturesRequested;
+                importSettings.TexturesReadable = texturesReadableRequested;
+                instantiationSettings.SceneObjectCreation = sceneObjectCreationRequested;
+            }
         }
 
         void ImportScene(

@@ -50,6 +50,19 @@ namespace GLTFast
         }
 
         /// <summary>
+        /// Transcode KTX/Basis Universal textures to an uncompressed format (RGBA32) instead of a
+        /// GPU compressed format that is selected based on the currently running graphics device.
+        /// Required for design-time (Editor) imports, where the Editor's graphics device is not
+        /// necessarily the build target's. Runtime loading already transcodes correctly for the
+        /// device it runs on, so this defaults to false and only needs to be enabled explicitly.
+        /// </summary>
+        public bool UncompressedTextures
+        {
+            get => uncompressedTextures;
+            set => uncompressedTextures = value;
+        }
+
+        /// <summary>
         /// Defines the default minification filter mode for textures that have no such specification in data
         /// </summary>
         public Sampler.MinFilterMode DefaultMinFilterMode
@@ -76,6 +89,13 @@ namespace GLTFast
             set => anisotropicFilterLevel = value;
         }
 
+        /// <inheritdoc cref="GLTFast.UnsupportedExtensionHandling"/>
+        public UnsupportedExtensionHandling UnsupportedExtensionHandling
+        {
+            get => unsupportedExtensionHandling;
+            set => unsupportedExtensionHandling = value;
+        }
+
         [SerializeField]
         [Tooltip("Controls how node names are created.")]
         NameImportMethod nodeNameMethod = NameImportMethod.Original;
@@ -93,6 +113,10 @@ namespace GLTFast
         bool texturesReadable;
 
         [SerializeField]
+        [Tooltip("Transcode KTX/Basis Universal textures uncompressed. Required for correct design-time (Editor) imports.")]
+        bool uncompressedTextures;
+
+        [SerializeField]
         [Tooltip("Minification filter mode fallback if no mode was provided.")]
         Sampler.MinFilterMode defaultMinFilterMode = Sampler.MinFilterMode.Linear;
 
@@ -103,5 +127,9 @@ namespace GLTFast
         [SerializeField]
         [Tooltip("Anisotropic filtering level for imported textures.")]
         int anisotropicFilterLevel = 1;
+
+        [SerializeField]
+        [Tooltip("How to handle a required glTF extension that is not supported. Warn (default) logs a warning and continues importing; Abort logs an error and fails the import.")]
+        UnsupportedExtensionHandling unsupportedExtensionHandling = UnsupportedExtensionHandling.Warn;
     }
 }

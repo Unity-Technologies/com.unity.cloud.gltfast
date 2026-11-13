@@ -269,6 +269,8 @@ namespace GLTFast.Logging
         AccessorAccessFailed,
         /// <summary>Could not create <see cref="Animation"/> component.</summary>
         AnimationComponentFail,
+        /// <summary>A required glTF extension is not supported, but the import continues anyway.</summary>
+        ExtensionRequiredIgnored,
     }
 
     /// <summary>
@@ -304,6 +306,7 @@ See details in corresponding issue at https://github.com/atteneder/glTFast/issue
             { LogCode.EmbedImageLoadFailed, "Loading embedded image failed" },
             { LogCode.EmbedImageUnsupportedType, "Unsupported embed image format {0}" },
             { LogCode.EmbedSlow, "JSON embed buffers are slow! consider using glTF binary" },
+            { LogCode.ExtensionRequiredIgnored, "Required glTF extension {0} is not supported. Continuing import anyway; the result may be incomplete or incorrect." },
             { LogCode.ExtensionUnsupported, "glTF extension {0} is not supported" },
             { LogCode.ExportImageFailed, "Export image failed" },
             { LogCode.GltfNotBinary, "Not a glTF-binary file" },

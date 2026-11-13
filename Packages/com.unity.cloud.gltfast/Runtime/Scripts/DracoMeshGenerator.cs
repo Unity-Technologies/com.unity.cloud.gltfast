@@ -10,6 +10,7 @@ using Draco;
 using GLTFast.Logging;
 using GLTFast.Schema;
 using Unity.Collections;
+using Unity.Collections.LowLevel.Unsafe;
 using Unity.Jobs;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -163,6 +164,14 @@ namespace GLTFast
                 return null;
             }
 
+            if (ApplyNormalizedFormats(mesh, primitives[0].attributes, buffers)
+                && bounds == null)
+            {
+                // Draco measured the bounds from the raw integers. Mesh.RecalculateBounds refuses any position
+                // format but Float32 ("Can't recalculate bounds ..."), so measure the converted vertices instead.
+                RecalculateBoundsFromVertices(mesh);
+            }
+
             if (bounds != null)
             {
                 UpdateSubMeshBounds(0);
@@ -231,6 +240,191 @@ namespace GLTFast
             }
 
             return await DracoDecoder.DecodeMesh(data, decodeSettings, GenerateAttributeIdMaps(attributesArray));
+        }
+
+        /// <summary>
+        /// Draco for Unity resolves attributes it is handed by id (which glTFast always does) without
+        /// their `normalized` flag, so a KHR_mesh_quantization attribute declared normalized (UNSIGNED_SHORT UVs,
+        /// BYTE normals, SHORT positions) lands in the vertex buffer as a raw integer format. The GPU then reads UVs
+        /// of 0..65535 instead of 0..1, and every texture, palette colour and alpha sampled through them collapses to
+        /// one texel. The decoded bytes are already right; only the format label is wrong, so this relabels the
+        /// affected attributes (UInt16 -> UNorm16 etc.) per the glTF accessors and re-uploads the same bytes.
+        /// The cluster key in <see cref="VertexBufferDescriptor"/> guarantees every primitive of this mesh shares the
+        /// first one's accessor formats.
+        /// </summary>
+        /// <returns>True if any attribute was relabelled.</returns>
+        static bool ApplyNormalizedFormats(Mesh mesh, Attributes attributes, IGltfBuffers buffers)
+        {
+            var descriptors = mesh.GetVertexAttributes();
+            var changed = false;
+            List<VertexAttributeDescriptor> flippedTexCoords = null;
+            for (var i = 0; i < descriptors.Length; i++)
+            {
+                var accessorIndex = AccessorIndex(attributes, descriptors[i].attribute);
+                if (accessorIndex < 0 || !buffers.GetAccessor(accessorIndex).normalized)
+                {
+                    continue;
+                }
+                var normalizedFormat = ToNormalized(descriptors[i].format);
+                if (normalizedFormat != descriptors[i].format)
+                {
+                    if (IsTexCoord(descriptors[i].attribute)
+                        && (descriptors[i].format == VertexAttributeFormat.UInt8
+                            || descriptors[i].format == VertexAttributeFormat.UInt16))
+                    {
+                        flippedTexCoords ??= new List<VertexAttributeDescriptor>();
+                        flippedTexCoords.Add(descriptors[i]);
+                    }
+                    descriptors[i].format = normalizedFormat;
+                    changed = true;
+                }
+            }
+
+            if (!changed)
+            {
+                return false;
+            }
+
+            var vertexCount = mesh.vertexCount;
+            NativeArray<byte>[] streams;
+            using (var meshData = Mesh.AcquireReadOnlyMeshData(mesh))
+            {
+                streams = new NativeArray<byte>[meshData[0].vertexBufferCount];
+                for (var stream = 0; stream < streams.Length; stream++)
+                {
+                    streams[stream] = new NativeArray<byte>(meshData[0].GetVertexData<byte>(stream), Allocator.Temp);
+                }
+            }
+
+            // Draco's ConvertSpace (always on, see StartDecode) flips V as `1 - v` in the attribute's own integer
+            // type, so a raw UNSIGNED_SHORT v comes out as (1 - v) mod 65536 instead of 65535 - v: one step off
+            // everywhere, and v = 0 wraps to 1 (the opposite edge of the texture) instead of 65535. Verified
+            // against Google's draco3d: raw + flipped == 1 (mod 65536) for every vertex.
+            // The correct value is the flipped one minus 2, modulo the type's range. U is not touched by Draco.
+            // Signed normalized UVs (BYTE/SHORT) are left as decoded: 1 - v does not fit their range at all.
+            if (flippedTexCoords != null)
+            {
+                foreach (var texCoord in flippedTexCoords)
+                {
+                    FixFlippedV(
+                        streams[texCoord.stream],
+                        mesh.GetVertexBufferStride(texCoord.stream),
+                        mesh.GetVertexAttributeOffset(texCoord.attribute),
+                        texCoord.format == VertexAttributeFormat.UInt16,
+                        vertexCount
+                    );
+                }
+            }
+
+            // Same strides and offsets (each normalized format is its integer twin's size), so the bytes fit as-is.
+            // Shrinking to zero vertices first stops Unity from trying to convert the old data into the new
+            // layout, which it can't do between integer and normalized formats: it would log
+            // "Unsupported conversion of vertex data" once per attribute. Submeshes, indices and bone weights survive.
+            mesh.SetVertexBufferParams(0, descriptors);
+            mesh.SetVertexBufferParams(vertexCount, descriptors);
+            const MeshUpdateFlags flags = MeshUpdateFlags.DontValidateIndices
+                | MeshUpdateFlags.DontResetBoneBounds
+                | MeshUpdateFlags.DontNotifyMeshUsers
+                | MeshUpdateFlags.DontRecalculateBounds;
+            for (var stream = 0; stream < streams.Length; stream++)
+            {
+                mesh.SetVertexBufferData(streams[stream], 0, 0, streams[stream].Length, stream, flags);
+                streams[stream].Dispose();
+            }
+            return true;
+        }
+
+        static void RecalculateBoundsFromVertices(Mesh mesh)
+        {
+            var vertices = new List<Vector3>(mesh.vertexCount);
+            mesh.GetVertices(vertices);
+            if (vertices.Count == 0)
+            {
+                return;
+            }
+            const MeshUpdateFlags flags = MeshUpdateFlags.DontValidateIndices
+                | MeshUpdateFlags.DontResetBoneBounds
+                | MeshUpdateFlags.DontNotifyMeshUsers
+                | MeshUpdateFlags.DontRecalculateBounds;
+            var overall = new Bounds(vertices[0], Vector3.zero);
+            for (var subMesh = 0; subMesh < mesh.subMeshCount; subMesh++)
+            {
+                var descriptor = mesh.GetSubMesh(subMesh);
+                if (descriptor.vertexCount <= 0)
+                {
+                    continue;
+                }
+                var subBounds = new Bounds(vertices[descriptor.firstVertex], Vector3.zero);
+                for (var i = descriptor.firstVertex; i < descriptor.firstVertex + descriptor.vertexCount; i++)
+                {
+                    subBounds.Encapsulate(vertices[i]);
+                }
+                descriptor.bounds = subBounds;
+                mesh.SetSubMesh(subMesh, descriptor, flags);
+                overall.Encapsulate(subBounds);
+            }
+            mesh.bounds = overall;
+        }
+
+        static unsafe void FixFlippedV(NativeArray<byte> stream, int stride, int offset, bool is16Bit, int vertexCount)
+        {
+            var data = (byte*)NativeArrayUnsafeUtility.GetUnsafePtr(stream);
+            if (is16Bit)
+            {
+                // V is the second component: two bytes past U.
+                for (var i = 0; i < vertexCount; i++)
+                {
+                    var v = (ushort*)(data + i * stride + offset + 2);
+                    *v = (ushort)(*v - 2);
+                }
+            }
+            else
+            {
+                for (var i = 0; i < vertexCount; i++)
+                {
+                    var v = data + i * stride + offset + 1;
+                    *v = (byte)(*v - 2);
+                }
+            }
+        }
+
+        static bool IsTexCoord(VertexAttribute attribute)
+        {
+            return attribute >= VertexAttribute.TexCoord0 && attribute <= VertexAttribute.TexCoord7;
+        }
+
+        static VertexAttributeFormat ToNormalized(VertexAttributeFormat format)
+        {
+            switch (format)
+            {
+                case VertexAttributeFormat.UInt8: return VertexAttributeFormat.UNorm8;
+                case VertexAttributeFormat.SInt8: return VertexAttributeFormat.SNorm8;
+                case VertexAttributeFormat.UInt16: return VertexAttributeFormat.UNorm16;
+                case VertexAttributeFormat.SInt16: return VertexAttributeFormat.SNorm16;
+                default: return format;
+            }
+        }
+
+        static int AccessorIndex(Attributes attributes, VertexAttribute attribute)
+        {
+            switch (attribute)
+            {
+                case VertexAttribute.Position: return attributes.POSITION;
+                case VertexAttribute.Normal: return attributes.NORMAL;
+                case VertexAttribute.Tangent: return attributes.TANGENT;
+                case VertexAttribute.Color: return attributes.COLOR_0;
+                case VertexAttribute.TexCoord0: return attributes.TEXCOORD_0;
+                case VertexAttribute.TexCoord1: return attributes.TEXCOORD_1;
+                case VertexAttribute.TexCoord2: return attributes.TEXCOORD_2;
+                case VertexAttribute.TexCoord3: return attributes.TEXCOORD_3;
+                case VertexAttribute.TexCoord4: return attributes.TEXCOORD_4;
+                case VertexAttribute.TexCoord5: return attributes.TEXCOORD_5;
+                case VertexAttribute.TexCoord6: return attributes.TEXCOORD_6;
+                case VertexAttribute.TexCoord7: return attributes.TEXCOORD_7;
+                // Joints/weights are left alone: JOINTS_0 is never normalized, and the bone data does not live in
+                // the vertex buffer once Draco has applied it.
+                default: return -1;
+            }
         }
 
         static Dictionary<VertexAttribute, int>[] GenerateAttributeIdMaps(Attributes[] attributesArray)

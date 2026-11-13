@@ -512,6 +512,26 @@ namespace GLTFast.Materials
             }
         }
 
+        /// <summary>
+        /// Resolves a glTF material's emissive color, applying the
+        /// <see cref="MaterialEmissiveStrength">KHR_materials_emissive_strength</see> multiplier
+        /// (if present) to the RGB components only - alpha is always 1 and must stay that way,
+        /// since <see cref="MaterialBase.Emissive"/> returning a=1 is relied upon elsewhere.
+        /// </summary>
+        /// <param name="gltfMaterial">Source glTF material</param>
+        /// <returns>Emissive color, scaled by the emissive strength extension if present</returns>
+        protected static Color GetEmissive(MaterialBase gltfMaterial)
+        {
+            var emissive = gltfMaterial.Emissive;
+            var strength = gltfMaterial.Extensions?.KHR_materials_emissive_strength?.emissiveStrength
+                ?? MaterialEmissiveStrength.defaultEmissiveStrength;
+            if (strength != MaterialEmissiveStrength.defaultEmissiveStrength)
+            {
+                emissive = new Color(emissive.r * strength, emissive.g * strength, emissive.b * strength, emissive.a);
+            }
+            return emissive;
+        }
+
 #if UNITY_EDITOR
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         static void ResetStaticsOnLoad()

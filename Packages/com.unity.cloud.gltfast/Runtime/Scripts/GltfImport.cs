@@ -178,6 +178,7 @@ namespace GLTFast
             ExtensionName.MeshGPUInstancing,
             ExtensionName.LightsPunctual,
             ExtensionName.MaterialsClearcoat,
+            ExtensionName.MaterialsEmissiveStrength,
         };
 
         static IDeferAgent s_DefaultDeferAgent;
@@ -1559,15 +1560,17 @@ namespace GLTFast
         /// <returns>False if a required extension is not supported. True otherwise.</returns>
         bool CheckExtensionSupport()
         {
-            if (!CheckExtensionSupport(Root.extensionsRequired))
-            {
-                return false;
-            }
-            CheckExtensionSupport(Root.extensionsUsed, false);
-            return true;
+            // extensionsUsed is spec-required to be a superset of extensionsRequired, so without
+            // this set most files would report every unsupported required extension twice (once
+            // per pass, with different wording/severity). Shared across both passes so an
+            // extension unsupported in both is only ever reported once, via its most severe role.
+            var reportedExtensions = new HashSet<string>();
+            var requiredSupported = CheckExtensionSupport(Root.extensionsRequired, true, reportedExtensions);
+            CheckExtensionSupport(Root.extensionsUsed, false, reportedExtensions);
+            return requiredSupported || m_Settings.UnsupportedExtensionHandling == UnsupportedExtensionHandling.Warn;
         }
 
-        bool CheckExtensionSupport(IEnumerable<string> extensions, bool required = true)
+        bool CheckExtensionSupport(IEnumerable<string> extensions, bool required, HashSet<string> reportedExtensions)
         {
             if (extensions == null)
                 return true;
@@ -1579,7 +1582,10 @@ namespace GLTFast
 
                 if (!supported)
                 {
-                    ReportUnsupportedExtension(ext, required);
+                    if (reportedExtensions.Add(ext))
+                    {
+                        ReportUnsupportedExtension(ext, required);
+                    }
                     allExtensionsSupported = false;
                 }
             }
@@ -1588,11 +1594,15 @@ namespace GLTFast
 
         void ReportUnsupportedExtension(string ext, bool required)
         {
+            // Whether the unsupported extension being required actually aborts the import - only
+            // true when required AND the user opted into the strict (pre-UnsupportedExtensionHandling) behavior.
+            var abortOnRequired = required && m_Settings.UnsupportedExtensionHandling == UnsupportedExtensionHandling.Abort;
+            var severity = abortOnRequired ? LogType.Error : LogType.Warning;
 #if !DRACO_IS_ENABLED
             if (ext == ExtensionName.DracoMeshCompression)
             {
                 Logger?.Log(
-                    required ? LogType.Error : LogType.Warning,
+                    severity,
                     LogCode.PackageMissing,
                     "Draco for Unity",
                     ext
@@ -1604,7 +1614,7 @@ namespace GLTFast
             if (ext == ExtensionName.MeshoptCompression)
             {
                 Logger?.Log(
-                    required ? LogType.Error : LogType.Warning,
+                    severity,
                     LogCode.PackageMissing,
                     "meshoptimizer decompression for Unity",
                     ext
@@ -1616,7 +1626,7 @@ namespace GLTFast
             if (ext == ExtensionName.TextureBasisUniversal)
             {
                 Logger?.Log(
-                    required ? LogType.Error : LogType.Warning,
+                    severity,
                     LogCode.PackageMissing,
                     "KTX for Unity",
                     ext
@@ -1624,8 +1634,27 @@ namespace GLTFast
                 return;
             }
 #endif
+#if !WEBP_IS_INSTALLED
+            if (ext == ExtensionName.TextureWebP)
+            {
+                Logger?.Log(
+                    severity,
+                    LogCode.PackageMissing,
+                    "unity.webp",
+                    ext
+                    );
+                return;
+            }
+#endif
+            if (required && !abortOnRequired)
+            {
+                // Required extension, but UnsupportedExtensionHandling.Warn means we continue
+                // anyway - call that out explicitly rather than using the generic message.
+                Logger?.Log(LogType.Warning, LogCode.ExtensionRequiredIgnored, ext);
+                return;
+            }
             Logger?.Log(
-                required ? LogType.Error : LogType.Warning,
+                severity,
                 LogCode.ExtensionUnsupported,
                 ext
                 );
@@ -1807,14 +1836,19 @@ namespace GLTFast
 
                     if (textureImageLoaderMap != null && textureImageLoaderMap.TryGetValue(textureIndex, out var loader))
                     {
-                        m_TextureLoadTasks[textureIndex] = ImageImport.LoadImageAsync(
-                                GetImageDataAsync(img, cancellationToken),
-                                forceSampleLinear,
-                                readable,
-                                m_Settings.GenerateMipMaps,
-                                cancellationToken,
-                                loader,
-                                DeferAgent
+                        // Per spec, when the add-on's extension is used (not required),
+                        // texture.source may hold a PNG/JPEG fallback image. If the add-on fails
+                        // to decode its claimed image, retry through the standard loading path
+                        // with that fallback, instead of leaving the texture unloaded.
+                        var fallbackImageIndex = texture.source;
+                        m_TextureLoadTasks[textureIndex] = LoadClaimedImageWithFallback(
+                            img,
+                            loader,
+                            fallbackImageIndex,
+                            imageIndex,
+                            forceSampleLinear,
+                            readable,
+                            cancellationToken
                             );
                         continue;
                     }
@@ -1876,12 +1910,14 @@ namespace GLTFast
                         }
 
                         // Abort for formats known to be not supported to avoid pointless downloads.
-                        if (
-                            imgFormat == ImageFormat.WebP
-#if !KTX_IS_ENABLED
-                            || imgFormat == ImageFormat.Ktx
+                        var formatUnsupported = false;
+#if !WEBP_IS_INSTALLED
+                        formatUnsupported |= imgFormat == ImageFormat.WebP;
 #endif
-                            )
+#if !KTX_IS_ENABLED
+                        formatUnsupported |= imgFormat == ImageFormat.Ktx;
+#endif
+                        if (formatUnsupported)
                         {
                             Logger?.Error(
                                 LogCode.ImageFormatUnsupported,
@@ -1905,6 +1941,54 @@ namespace GLTFast
                     );
                 }
             }
+        }
+
+        /// <summary>
+        /// Loads an image an add-on claimed (<paramref name="loader"/>/<paramref name="claimedImageIndex"/>).
+        /// If that fails and <paramref name="fallbackImageIndex"/> names a different, valid image
+        /// - the PNG/JPEG fallback glTF requires <c>texture.source</c> to hold whenever an add-on's
+        /// extension is used but not required - retries through the standard loading path with it.
+        /// </summary>
+        async Task<ImageResult> LoadClaimedImageWithFallback(
+            Image img,
+            ITextureImageLoader loader,
+            int fallbackImageIndex,
+            int claimedImageIndex,
+            bool forceSampleLinear,
+            bool readable,
+            CancellationToken cancellationToken
+            )
+        {
+            var result = await ImageImport.LoadImageAsync(
+                GetImageDataAsync(img, cancellationToken),
+                forceSampleLinear,
+                readable,
+                m_Settings.GenerateMipMaps,
+                cancellationToken,
+                loader,
+                DeferAgent
+                );
+
+            if (result.Texture == null
+                && fallbackImageIndex >= 0
+                && fallbackImageIndex != claimedImageIndex
+                && fallbackImageIndex < Root.Images.Count)
+            {
+                var fallbackImg = Root.Images[fallbackImageIndex];
+                result = await ImageImport.LoadImageAsync(
+                    m_Context,
+                    m_Settings,
+                    fallbackImageIndex,
+                    forceSampleLinear,
+                    readable,
+                    m_Settings.GenerateMipMaps,
+                    GetImageDataAsync(fallbackImg, cancellationToken),
+                    m_Addons,
+                    cancellationToken
+                    );
+            }
+
+            return result;
         }
 
         async Task<bool> WaitForBufferDownloads(CancellationToken cancellationToken)
@@ -2156,7 +2240,11 @@ namespace GLTFast
                 Assert.IsTrue(offset >= 0);
                 Assert.IsTrue(count > 0);
                 Assert.IsTrue(offset + count * UnsafeUtility.SizeOf(typeof(T)) <= fullSlice.Length);
-                return new ReadOnlyNativeArray<byte>(fullSlice).GetSubArray(offset, count).Reinterpret<T>();
+                // GetSubArray on a byte array takes a BYTE length. Passing the element count here
+                // returned count bytes, which Reinterpret<T> then rejected (or truncated) whenever
+                // the accessor did not span the whole compressed view.
+                return new ReadOnlyNativeArray<byte>(fullSlice)
+                    .GetSubArray(offset, count * UnsafeUtility.SizeOf(typeof(T))).Reinterpret<T>();
             }
 #endif
             return GetAccessorData<T>(bufferView, count, offset);
@@ -2178,12 +2266,18 @@ namespace GLTFast
 #if ENABLE_UNITY_COLLECTIONS_CHECKS
                     var safety = NativeArrayUnsafeUtility.GetAtomicSafetyHandle(fullSlice);
 #endif
+                    // The decoded buffer's stride is the meshopt extension's, not the bufferView's
+                    // own byteStride - that one is absent (-1) on a compressed view, which read every
+                    // element after the first from the wrong address (garbage animation translation
+                    // keys). Same sizeof(T) fallback as the uncompressed path below.
+                    var byteStride = bufferView.Extensions.EXT_meshopt_compression.byteStride;
+                    if (byteStride <= 0) byteStride = UnsafeUtility.SizeOf(typeof(T));
                     return new ReadOnlyNativeStridedArray<T>(
                         fullSlice.GetUnsafeReadOnlyPtr(),
                         fullSlice.Length,
                         offset,
                         count,
-                        bufferView.byteStride
+                        byteStride
 #if ENABLE_UNITY_COLLECTIONS_CHECKS
                         , ref safety
 #endif
@@ -2388,6 +2482,14 @@ namespace GLTFast
                         var textureIndex = textureLoadTask.Key;
                         result.Texture.name = GetTextureName(textureIndex);
                         result.Texture.anisoLevel = m_Settings.AnisotropicFilterLevel;
+                        // Variants (PopulateTextureVariants) clone this texture, so they inherit this sampler
+                        // before applying their own.
+                        var txt = Root.Textures[textureIndex];
+                        if (Root.Samplers != null && txt.sampler >= 0 && txt.sampler < Root.Samplers.Count)
+                        {
+                            Root.Samplers[txt.sampler].Apply(
+                                result.Texture, m_Settings.DefaultMinFilterMode, m_Settings.DefaultMagFilterMode);
+                        }
                         m_Textures[textureIndex] = result.Texture;
                         m_Resources.Add(result.Texture);
                     }
@@ -2923,7 +3025,18 @@ namespace GLTFast
             {
                 foreach (var textureLoadTask in m_TextureLoadTasks)
                 {
-                    var result = await textureLoadTask.Value;
+                    ImageResult result;
+                    try
+                    {
+                        result = await textureLoadTask.Value;
+                    }
+                    catch
+                    {
+                        // The task already failed or was cancelled (that's why we're disposing
+                        // in the first place) - nothing to destroy, and the original exception
+                        // must keep propagating from the caller rather than being replaced here.
+                        continue;
+                    }
                     if (result.Texture is not null)
                     {
                         DestroyUtils.SafeDestroy(result.Texture);
@@ -3367,7 +3480,7 @@ namespace GLTFast
                 {
                     var primitive = mesh.Primitives[primIndex];
                     {
-                        var vertexBufferDesc = VertexBufferDescriptor.FromPrimitive(primitive);
+                        var vertexBufferDesc = VertexBufferDescriptor.FromPrimitive(primitive, Root.Accessors);
                         if (!clusteredPrimitives.ContainsKey(vertexBufferDesc))
                         {
                             clusteredPrimitives[vertexBufferDesc] = new PrimitiveSet();

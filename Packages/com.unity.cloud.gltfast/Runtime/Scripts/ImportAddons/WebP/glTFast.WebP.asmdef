@@ -1,0 +1,26 @@
+{
+    "name": "glTFast.WebP",
+    "rootNamespace": "GLTFast.Addons",
+    "references": [
+        "Unity.Burst",
+        "Unity.Collections",
+        "Unity.Mathematics",
+        "glTFast",
+        "unity.webp"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "com.netpyoung.webp",
+            "expression": "",
+            "define": "WEBP_IS_INSTALLED"
+        }
+    ],
+    "noEngineReferences": false
+}

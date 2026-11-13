@@ -11,6 +11,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `LogCode.AnimationComponentFail`
 - [SaveToFileAndDispose](xref:GLTFast.Export.GameObjectExport.SaveToFileAndDispose*) and [SaveToStreamAndDispose](xref:GLTFast.Export.GameObjectExport.SaveToStreamAndDispose*) overloads with `forceSync` parameter to enforce synchronous I/O. Recommended when exporting from Editor scripts (menu items, inspectors, post-processors), where the main-thread `SynchronizationContext` is not pumped in Edit Mode and awaited I/O continuations may never resume.
 - [IInstantiator.CreateNode](xref:GLTFast.IInstantiator.CreateNode*) overload that receives the node's name, so instantiators no longer need a separate naming call. It has a default implementation that routes to the previous `CreateNode` and `SetNodeName`, so existing implementations keep working unchanged. [GameObjectInstantiator](xref:GLTFast.GameObjectInstantiator) and `EntityInstantiator` implement it as a virtual method.
+- (Add-Ons) [EXT_texture_webp](https://github.com/KhronosGroup/glTF/blob/main/extensions/2.0/Vendor/EXT_texture_webp/README.md) import via a new `glTFast.WebP` add-on assembly, backed by the optional `com.netpyoung.webp` package.
+  - Falls back to a texture's regular (PNG/JPEG) `source` image when the WebP one fails to decode and the extension is used (not required).
+- (Import) [KHR_materials_emissive_strength](https://github.com/KhronosGroup/glTF/tree/main/extensions/2.0/Khronos/KHR_materials_emissive_strength) support.
+- (Import) `ImportSettings.UncompressedTextures` transcodes KTX/Basis Universal textures to an uncompressed format (RGBA32) instead of one selected based on the currently running graphics device.
+- (Import) `ImportSettings.UnsupportedExtensionHandling` controls how an unsupported *required* glTF extension is handled. Defaults to `Warn`, which logs a warning and continues importing instead of aborting - most extensions degrade gracefully, and this lets glTFast load arbitrary glTF assets out of the box. Set to `Abort` to restore the previous strict behavior.
+- (Editor Import) Imported textures (KTX2, WebP, Jpeg, PNG alike) are now GPU-compressed for the active build target's texture compression format (e.g. ASTC on Android/iOS) right after import, toggled per-model via a new *Texture Compression* setting in the importer inspector. Reimports automatically when the build target (including switching between Build Profiles) or its texture compression format changes.
+  - Added a *Texture Compression* quality tier (Normal/High) - on Desktop/UWP, High compresses to BC7 instead of DXT1/DXT5.
+  - WebGL and UWP (WSAPlayer) build targets now get a compressed format (DXTC) too, instead of being left uncompressed.
 
 ### Changed
 - (Performance) Internal mesh export, buffer view and image data methods return `ValueTask` instead of `Task`, which removes an allocation per vertex stream and per index buffer when exporting a readable mesh.
@@ -30,10 +38,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Removed useless `SerializeFieldAttribute` from `MaterialsVariantsComponent.Control` to avoid compiler warning in Unity 6.6 and newer.
 - Removed usage of obsolete `FindObjectsByType` overloads.
 - (Test) Avoid `Animation` component conflict by accidentally loading glTF twice in `DocExamplesTest`.
+- (Import) The first texture created from an image now gets its glTF sampler applied (wrap and filter modes). Previously only additional sampler variants of the same image did, so e.g. `NEAREST` filtering or `CLAMP_TO_EDGE` wrapping were ignored.
+- (Import) `EXT_meshopt_compression` accessors that do not span their whole buffer view are read correctly (byte length passed to `GetSubArray` instead of element count).
+- (Import) Strided `EXT_meshopt_compression` accessors use the extension's `byteStride` instead of the (absent) buffer view stride, fixing corrupted data such as animation translation keys.
+- (Import) Draco compressed, `KHR_mesh_quantization` normalized attributes (e.g. `UNSIGNED_SHORT` texture coordinates) are now relabelled to their normalized vertex formats, including correcting Draco's off-by-one V flip, instead of being read as raw integers.
+- (Import) Draco compressed primitives whose attributes differ in component type are no longer clustered into one vertex buffer, which logged "Inconsistent ... attribute format in submeshes" and threw an `ArgumentOutOfRangeException`.
 - [IsTextureYFlipped](xref:GLTFast.GltfImportBase.IsTextureYFlipped(System.Int32)) returns correct value when multiple textures reference one image.
 - (Export) Exceptions thrown during synchronous mesh export (`BakeMesh` / `BakeMeshDraco`) are now surfaced instead of being silently swallowed by unobserved tasks.
 - (Documentation) Updated the features' animation section to reflect that Playables support was removed and to list animation import into custom animation systems via add-ons.
 - (Performance) Removed unnecessary texture file read during Editor imports.
+- (Import) WebP textures now generate mipmaps as requested by `ImportSettings.GenerateMipMaps`; previously they were always decoded and constructed without mip chain storage, so every imported WebP texture silently shipped without mipmaps.
+- (Import) KTX/Basis Universal textures loaded via `ImportSettings.UncompressedTextures` no longer require a real graphics device to become readable. Previously this went through a GPU blit + readback that produced black textures with no error under `-batchmode -nographics` (the common case for Editor imports/CI), stalled the main thread, and discarded the KTX file's real mip chain.
+- (Import) Cancelled or failed texture loads no longer leak their `Texture2D` objects, and the original exception is no longer masked by an `OperationCanceledException` thrown while cleaning up the remaining (already failed/cancelled) texture load tasks.
+- (Import) `Texture.GetImageIndex()` now recognizes `EXT_texture_webp`, matching the existing `KHR_texture_basisu` handling.
+- (Import) External `.webp` image URIs are no longer rejected when the WebP add-on is installed; the abort-early check was hardcoded regardless of `WEBP_IS_INSTALLED`.
+- (Add-Ons) The WebP add-on now forwards decode errors to the importer's logger/report instead of only `Debug.LogError`, respects cancellation before creating a `Texture2D`, and uses the existing `ExtensionName.TextureWebP` constant instead of a duplicated string literal.
+- (Add-Ons) `ImportAddonRegistry.RegisterImportAddon` now skips (and warns on) registering a second instance of an add-on type that's already registered, instead of both instances claiming every matching texture/extension.
+- (Editor Import) Design-time (Editor) import of KTX2/Basis Universal textures no longer bakes a GPU texture format chosen for the Editor's graphics device (e.g. DXT1 on Windows), which could be unsupported on the actual build target (e.g. Android/iOS) and render as black/unlit. `GltfImporter` now always imports KTX/Basis textures uncompressed and relies on the new build-target texture compression (see above) instead.
+  - Bumped `GltfImporter`'s `ScriptedImporter` version so already-imported `.gltf`/`.glb` assets reimport once automatically.
+- (Editor Import) Fixed `UnityException: Texture '...' is not readable` thrown during import when a texture is reused across multiple glTF textures (e.g. shared by several materials) - `GltfImporter` no longer runs compression/readability locking more than once on the same shared `Texture2D`.
+- (Editor Import) `GltfImporter` no longer permanently writes design-time-only settings (`ImportSettings.UncompressedTextures`/`TexturesReadable`, `InstantiationSettings.SceneObjectCreation`) back into the user's serialized importer settings/`.meta` file; they're now restored after each import.
+- (Editor Import) Textures are no longer forced readable when texture compression is disabled; readability is now only forced when compression actually needs CPU access to pixel data.
+- (Editor Import) Texture compression now checks each texture's actual pixel data for a meaningful alpha channel instead of assuming every decoded texture has one (they're all decoded to RGBA32), so opaque textures compress to a smaller format (e.g. `ETC2_RGB`/`DXT1`) instead of always paying for an alpha channel (`ETC2_RGBA8`/`DXT5`).
 
 ### Removed
 
