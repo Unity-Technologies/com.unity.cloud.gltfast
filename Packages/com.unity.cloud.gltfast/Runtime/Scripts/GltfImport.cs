@@ -2240,7 +2240,11 @@ namespace GLTFast
                 Assert.IsTrue(offset >= 0);
                 Assert.IsTrue(count > 0);
                 Assert.IsTrue(offset + count * UnsafeUtility.SizeOf(typeof(T)) <= fullSlice.Length);
-                return new ReadOnlyNativeArray<byte>(fullSlice).GetSubArray(offset, count).Reinterpret<T>();
+                // GetSubArray on a byte array takes a BYTE length. Passing the element count here
+                // returned count bytes, which Reinterpret<T> then rejected (or truncated) whenever
+                // the accessor did not span the whole compressed view.
+                return new ReadOnlyNativeArray<byte>(fullSlice)
+                    .GetSubArray(offset, count * UnsafeUtility.SizeOf(typeof(T))).Reinterpret<T>();
             }
 #endif
             return GetAccessorData<T>(bufferView, count, offset);
@@ -2262,12 +2266,18 @@ namespace GLTFast
 #if ENABLE_UNITY_COLLECTIONS_CHECKS
                     var safety = NativeArrayUnsafeUtility.GetAtomicSafetyHandle(fullSlice);
 #endif
+                    // The decoded buffer's stride is the meshopt extension's, not the bufferView's
+                    // own byteStride - that one is absent (-1) on a compressed view, which read every
+                    // element after the first from the wrong address (garbage animation translation
+                    // keys). Same sizeof(T) fallback as the uncompressed path below.
+                    var byteStride = bufferView.Extensions.EXT_meshopt_compression.byteStride;
+                    if (byteStride <= 0) byteStride = UnsafeUtility.SizeOf(typeof(T));
                     return new ReadOnlyNativeStridedArray<T>(
                         fullSlice.GetUnsafeReadOnlyPtr(),
                         fullSlice.Length,
                         offset,
                         count,
-                        bufferView.byteStride
+                        byteStride
 #if ENABLE_UNITY_COLLECTIONS_CHECKS
                         , ref safety
 #endif
@@ -2472,6 +2482,14 @@ namespace GLTFast
                         var textureIndex = textureLoadTask.Key;
                         result.Texture.name = GetTextureName(textureIndex);
                         result.Texture.anisoLevel = m_Settings.AnisotropicFilterLevel;
+                        // Variants (PopulateTextureVariants) clone this texture, so they inherit this sampler
+                        // before applying their own.
+                        var txt = Root.Textures[textureIndex];
+                        if (Root.Samplers != null && txt.sampler >= 0 && txt.sampler < Root.Samplers.Count)
+                        {
+                            Root.Samplers[txt.sampler].Apply(
+                                result.Texture, m_Settings.DefaultMinFilterMode, m_Settings.DefaultMagFilterMode);
+                        }
                         m_Textures[textureIndex] = result.Texture;
                         m_Resources.Add(result.Texture);
                     }
@@ -3462,7 +3480,7 @@ namespace GLTFast
                 {
                     var primitive = mesh.Primitives[primIndex];
                     {
-                        var vertexBufferDesc = VertexBufferDescriptor.FromPrimitive(primitive);
+                        var vertexBufferDesc = VertexBufferDescriptor.FromPrimitive(primitive, Root.Accessors);
                         if (!clusteredPrimitives.ContainsKey(vertexBufferDesc))
                         {
                             clusteredPrimitives[vertexBufferDesc] = new PrimitiveSet();

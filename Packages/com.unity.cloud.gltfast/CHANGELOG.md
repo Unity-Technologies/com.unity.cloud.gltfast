@@ -38,6 +38,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Removed useless `SerializeFieldAttribute` from `MaterialsVariantsComponent.Control` to avoid compiler warning in Unity 6.6 and newer.
 - Removed usage of obsolete `FindObjectsByType` overloads.
 - (Test) Avoid `Animation` component conflict by accidentally loading glTF twice in `DocExamplesTest`.
+- (Import) The first texture created from an image now gets its glTF sampler applied (wrap and filter modes). Previously only additional sampler variants of the same image did, so e.g. `NEAREST` filtering or `CLAMP_TO_EDGE` wrapping were ignored.
+- (Import) `EXT_meshopt_compression` accessors that do not span their whole buffer view are read correctly (byte length passed to `GetSubArray` instead of element count).
+- (Import) Strided `EXT_meshopt_compression` accessors use the extension's `byteStride` instead of the (absent) buffer view stride, fixing corrupted data such as animation translation keys.
+- (Import) Draco compressed, `KHR_mesh_quantization` normalized attributes (e.g. `UNSIGNED_SHORT` texture coordinates) are now relabelled to their normalized vertex formats, including correcting Draco's off-by-one V flip, instead of being read as raw integers.
+- (Import) Draco compressed primitives whose attributes differ in component type are no longer clustered into one vertex buffer, which logged "Inconsistent ... attribute format in submeshes" and threw an `ArgumentOutOfRangeException`.
 - [IsTextureYFlipped](xref:GLTFast.GltfImportBase.IsTextureYFlipped(System.Int32)) returns correct value when multiple textures reference one image.
 - (Export) Exceptions thrown during synchronous mesh export (`BakeMesh` / `BakeMeshDraco`) are now surfaced instead of being silently swallowed by unobserved tasks.
 - (Documentation) Updated the features' animation section to reflect that Playables support was removed and to list animation import into custom animation systems via add-ons.
